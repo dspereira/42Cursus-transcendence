@@ -1,0 +1,5 @@
+# Ambiente virtual
+venv/
+
+#project django
+backend/transcendence/transcendence/__pycache__
