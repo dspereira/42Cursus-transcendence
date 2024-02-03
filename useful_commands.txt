@@ -10,3 +10,6 @@ pip3 install django
 => django
 django-admin startproject <project name>
 python3 manage.py runserver
+
+=> start new app django
+python manage.py startapp user_management
