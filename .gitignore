@@ -1,9 +1,3 @@
 # Ambiente virtual
 venv/
-
-#project django
-backend/transcendence/transcendence/__pycache__
-
-#user_management 
-backend/transcendence/user_management/__pycache__
-
+__pycache__
