@@ -1,0 +1,27 @@
+
+=>venv
+sudo apt install python3-venv
+
+python3 -m venv venv
+source venv/bin/activate
+
+=>dependencies
+pip3 install -r requirements.txt
+pip3 install django
+
+=> django
+django-admin startproject <project name>
+python3 manage.py runserver
+
+=> start new app django
+python manage.py startapp user_management
+
+
+-------------------------------------------------------------------------------------------------------------------
+=> To initialize the virtual environment, activate it, and run the server, follow the steps below.
+
+1.    Run the command ./init_venv.sh.
+2.    Activate the virtual environment using the command source ./activate_venv.sh
+3.    Navigate to the transcendence directory using the command cd transcendence and execute the script ./runserver.sh
+
+IMPORTANT: Initializing the virtual environment is necessary only during the first start of the server when it's needed to install dependencies.
