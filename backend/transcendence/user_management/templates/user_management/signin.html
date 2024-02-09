@@ -1,13 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
     <head>
-        <title>login</title>
+        <title>Signin</title>
     </head>
     <body>
-        <h1>Login</h1>
+        <h1>Signin</h1>
 
-        {% if not success %}
-            <p style="color: red;">Username or password is incorrect</p>
+        {% if message %}
+        <p style="color: red;"> {{ message }} </p>
         {% endif %}
 
         <form action="" method="post">
@@ -15,10 +15,12 @@
             
             <div>Username: </div>
             <input id="text" type="text" name="username"><br><br>
+            <div>email: </div>
+            <input id="text" type="email" name="email"><br><br>
             <div>Password: </div>
             <input id="text" type="password" name="password"><br><br>
-            <input id="button" type="submit" value="Login"><br><br>
 
+            <input id="button" type="submit" value="Login"><br><br>
         </form>
     </body>
 </html>

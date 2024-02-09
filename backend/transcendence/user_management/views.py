@@ -1,13 +1,16 @@
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
-from django.contrib import messages
+from django.contrib.auth.models import User
 
 # Create your views here.
 def index(request):
-	return HttpResponse("Hello from the user_management app!")
+	return render(request, "user_management/index.html", {})
 
 def userLogin(request):
+
+	if request.user.is_authenticated:
+		return render(request, "user_management/index.html", {})
 
 	if request.method == "POST":
 		username = request.POST["username"]
@@ -15,9 +18,42 @@ def userLogin(request):
 		user = authenticate(request, username=username, password=password)
 		if user is not None:
 			login(request, user)
-			return HttpResponse("Login success")
-			#return redirect("index")
+			return render(request, "user_management/index.html", {})
 		else:
-			return HttpResponse("Login Fail")
+			return render(request, "user_management/login.html", {
+				"success": False
+			})
 
-	return render(request, "user_management/login.html", {})
+	return render(request, "user_management/login.html", {
+		"success": True
+	})
+
+def userLogout(request):
+	logout(request)
+	return render(request, "user_management/index.html", {})
+
+def userSignin(request):
+
+	if request.method == "POST":
+
+		username = request.POST["username"]
+		email = request.POST["email"]
+		password = request.POST["password"]
+
+		if not username or not email or not password:
+			return render(request, "user_management/signin.html", {
+				"message": "Fail to create user."
+			})		
+
+		if User.objects.filter(username=username).exists() or User.objects.filter(email=email).exists():
+			return render(request, "user_management/signin.html", {
+				"message": "Username already exists."
+			})
+        
+		user = User.objects.create_user(username=username, email=email, password=password)
+		user = authenticate(request, username=username, password=password)
+		if user is not None:
+			login(request, user)
+			return render(request, "user_management/index.html", {})
+
+	return render(request, "user_management/signin.html", {})
