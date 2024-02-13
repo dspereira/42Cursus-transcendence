@@ -2,6 +2,7 @@ from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
+from django.http import JsonResponse
 
 # Create your views here.
 def index(request):
@@ -57,3 +58,23 @@ def userSignin(request):
 			return render(request, "user_management/index.html", {})
 
 	return render(request, "user_management/signin.html", {})
+
+
+def apiLogin(request):
+
+	print(request.method)
+
+	if request.method == "OPTIONS":
+		print("options entra")
+		data = {
+        'mesage': 'OPTIONS',
+        'status': 'ok'
+    	}
+	else:
+		print("entra aqui")
+		data = {
+			'mesage': 'test json',
+			'status': 'ok'
+		}
+
+	return JsonResponse(data)

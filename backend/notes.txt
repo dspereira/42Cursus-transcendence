@@ -14,11 +14,11 @@ pip3 install -r requirements.txt
 pip3 install django
 
 => django
-django-admin startproject <project name>
+django-admin startproject <project_name>
 python3 manage.py runserver
 
 => start new app django
-python manage.py startapp user_management
+python manage.py startapp <app_name>
 
 => Applying migrations to database
 python manage.py migrate
