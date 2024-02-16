@@ -18,7 +18,6 @@ methods_data = [
     "DELETE",
 ]
 
-
 class Cors:
 
     def __init__(self, get_response):
@@ -28,10 +27,6 @@ class Cors:
         return process_response(self.get_response(request))
 
 def process_response(response):
-
-    #response["Access-Control-Allow-Origin"] = "*"
-    #response["Access-Control-Allow-Headers"] = "Content-Type"
-    #response["Access-Control-Allow-Methods"] = "PUT, PATCH, DELETE"
 
     create_header(response, origin_name, origin_data)
     create_header(response, headers_name, headers_data)
