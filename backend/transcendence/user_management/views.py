@@ -62,18 +62,8 @@ def userSignin(request):
 
 def apiLogin(request):
 
-	print("View Processing ...")
-
-	if request.method == "OPTIONS":
-		data = {
-        'mesage': 'OPTIONS',
-        'status': 'ok'
-    	}
-	else:
-		print("entra aqui")
-		data = {
-			'mesage': 'test json',
-			'status': 'ok'
-		}
-
+	data = {
+		'mesage': 'test json',
+		'status': 'ok'
+	}
 	return JsonResponse(data)
