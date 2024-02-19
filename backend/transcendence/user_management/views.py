@@ -62,8 +62,17 @@ def userSignin(request):
 
 def apiLogin(request):
 
+	print("apiLogin")
+
 	data = {
 		'mesage': 'test json',
+		'status': 'ok'
+	}
+	return JsonResponse(data)
+
+def apiTest(request):
+	data = {
+		'test': 'Hello World',
 		'status': 'ok'
 	}
 	return JsonResponse(data)

@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<title>Authentication test</title>
+		<style>
+			div {
+  				font-size: 20px;
+			}
+		</style>
+	</head>
+	<body>
+		<h1>info</h1>
+
+
+		<script>
+			async function logData() 
+			{
+				const response = await fetch("http://127.0.0.1:8000/user/api/test");
+				const data = await response.json();
+				console.log(data);
+			}
+			logData();		
+
+		</script>
+	</body>
+</html>

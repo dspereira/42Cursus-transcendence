@@ -23,31 +23,24 @@
             document.getElementById("loginForm").addEventListener("submit", function(event) {
                 event.preventDefault();
     
-                var username = document.getElementById("username").value;
-                var password = document.getElementById("password").value;
+                /*const username = document.getElementById("username").value;
+                const password = document.getElementById("password").value;
     
-                var data = {
+                const data = JSON.stringify({
                     username: username,
                     password: password
-                };
-    
+                });*/
+
+                const formData = new FormData(loginForm);
+                const payload = new URLSearchParams(formData);
+
                 fetch("http://127.0.0.1:8000/user/api/login", {
                     method: "POST",
-                    headers: {
-                        "Content-Type": "application/json"
-                    },
-                    body: JSON.stringify(data)
+                    body: payload
                 })
                 .then(response => response.json())
-                .then(data => {
-                    // Exibe a resposta da API
-                    //document.getElementById("message").innerText = data.message;
-
-                    console.log(data.message);
-                })
                 .catch(error => {
-                    // Exibe qualquer erro ocorrido
-                    document.getElementById("message").innerText = "Ocorreu um erro: " + error;
+                    console.log("error");
                 });
             });
         </script>
