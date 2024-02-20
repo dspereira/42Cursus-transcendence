@@ -3,46 +3,70 @@
 	<head>
 		<title>Login</title>
 		<style>
-			div {
-  				font-size: 30px;
+			.message {
+  				font-size: 20px;
+			}
+			.success {
+				color: green;
+				display: none;
+			}
+			.error {
+				color: red;
+				display: none;
 			}
 		</style>
 	</head>
 	<body>
-        <h1>Login</h1>
+		<h1>Login</h1>
 
-        <form id="loginForm">
-            <label for="username">Username:</label><br>
-            <input type="text" id="username" name="username"><br>
-            <label for="password">Password:</label><br>
-            <input type="password" id="password" name="password"><br><br>
-            <button type="submit">Login</button>
-        </form>
+		<div class="success message">Login Success</div>
+		<div class="error message">Login Error</div>
+		<br>
+		<form id="loginForm">
+			<label for="username">Username:</label><br>
+			<input type="text" id="username" name="username"><br>
+			<label for="password">Password:</label><br>
+			<input type="password" id="password" name="password"><br><br>
+			<button type="submit">Login</button>
+		</form>
 
-        <script>
-            document.getElementById("loginForm").addEventListener("submit", function(event) {
-                event.preventDefault();
-    
-                /*const username = document.getElementById("username").value;
-                const password = document.getElementById("password").value;
-    
-                const data = JSON.stringify({
-                    username: username,
-                    password: password
-                });*/
+		<script>
+			document.getElementById("loginForm").addEventListener("submit", function(event) {
+				event.preventDefault();
 
-                const formData = new FormData(loginForm);
-                const payload = new URLSearchParams(formData);
+				const formData = new FormData(loginForm);
+				const jsonData = {};
+				formData.forEach((value, key) => {
+					jsonData[key] = value;
+				});
 
-                fetch("http://127.0.0.1:8000/user/api/login", {
-                    method: "POST",
-                    body: payload
-                })
-                .then(response => response.json())
-                .catch(error => {
-                    console.log("error");
-                });
-            });
-        </script>
+				fetch("http://127.0.0.1:8000/user/api/login", {
+					method: "POST",
+					headers: {
+						"Content-Type": "application/json"
+					},
+					body: JSON.stringify(jsonData)
+				})
+				.then(response => data = response.json())
+				.then (data => {
+					console.log("=========================");
+					console.log(`message	: ${data["message"]}`);
+					console.log(`session_id	: ${data["session_id"]}`);
+
+					document.querySelector(".success").style.display = 'none';
+					document.querySelector(".error").style.display = 'none';
+					if (data["message"] == "Login Success")
+						document.querySelector(".success").style.display = 'block';
+					else
+						document.querySelector(".error").style.display = 'block';
+
+					if (data["session_id"])
+						document.cookie = `session_id=${data["session_id"]}; path=/`;
+				})
+				.catch(error => {
+					console.log("Login fetch Error");
+				});
+			});
+		</script>
 	</body>
 </html>

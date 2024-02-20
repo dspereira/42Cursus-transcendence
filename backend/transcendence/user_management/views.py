@@ -3,6 +3,7 @@ from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
 from django.http import JsonResponse
+import json
 
 
 def index(request):
@@ -62,15 +63,27 @@ def userSignin(request):
 
 def apiLogin(request):
 
-	print("apiLogin")
+	message = "Login Error"
+	session_id = None
+	req_data = None
+	if request.method == "POST" and request.body:
+		req_data = json.loads(request.body)
+		user = authenticate(request, username=req_data["username"], password=req_data["password"])
+		if user:
+			login(request, user)
+			session_id = request.session.session_key
+			message = "Login Success"
 
-	data = {
-		'mesage': 'test json',
-		'status': 'ok'
+	res_data = {
+		"message": message,
+		"session_id": session_id
 	}
-	return JsonResponse(data)
+	return JsonResponse(res_data)
 
 def apiTest(request):
+
+	#print(user)
+
 	data = {
 		'test': 'Hello World',
 		'status': 'ok'
