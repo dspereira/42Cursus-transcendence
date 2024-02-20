@@ -24,24 +24,22 @@ class Cors:
 		self.get_response = get_response
 
 	def __call__(self, request):
-		return process_response(self.get_response(request))
+		return self.process_response(self.get_response(request))
 
-def process_response(response):
+	def process_response(self, response):
 
-	add_new_header(response, origin_name, origin_data)
-	add_new_header(response, headers_name, headers_data)
-	add_new_header(response, methods_name, methods_data)
-	return response
-
-def add_new_header(response, name, data):
-
-	response[name] = ""
-	list_len = len(data)
-	if (list_len == 0):
+		self.add_new_header(response, origin_name, origin_data)
+		self.add_new_header(response, headers_name, headers_data)
+		self.add_new_header(response, methods_name, methods_data)
 		return response
-	for idx, item in enumerate(data):
-		if (idx < list_len - 1):
-			item += ", "
-		response[name] += item
-	return response
-	
+
+	def add_new_header(self, response, name, data):
+
+		response[name] = ""
+		list_len = len(data)
+		if (list_len != 0 and name):
+			for idx, item in enumerate(data):
+				if (idx < list_len - 1):
+					item += ", "
+				response[name] += item
+
