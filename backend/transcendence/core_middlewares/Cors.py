@@ -18,6 +18,13 @@ methods_data = [
 	"DELETE",
 ]
 
+# Just for testing purposes because this option is not secure, it allows CSRF attacks.
+# https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Access-Control-Allow-Credentials
+credentials_name = "Access-Control-Allow-Credentials"
+credentials_data = [
+	"true"
+]
+
 class Cors:
 
 	def __init__(self, get_response):
@@ -31,6 +38,7 @@ class Cors:
 		self.add_new_header(response, origin_name, origin_data)
 		self.add_new_header(response, headers_name, headers_data)
 		self.add_new_header(response, methods_name, methods_data)
+		self.add_new_header(response, credentials_name, credentials_data)
 		return response
 
 	def add_new_header(self, response, name, data):

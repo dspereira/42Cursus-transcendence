@@ -61,31 +61,50 @@ def userSignin(request):
 	return render(request, "user_management/signin.html", {})
 
 
+# REST API test login
 def apiLogin(request):
 
 	message = "Login Error"
-	session_id = None
+	sessionid = None
 	req_data = None
 	if request.method == "POST" and request.body:
 		req_data = json.loads(request.body)
 		user = authenticate(request, username=req_data["username"], password=req_data["password"])
 		if user:
 			login(request, user)
-			session_id = request.session.session_key
+			sessionid = request.session.session_key
 			message = "Login Success"
 
 	res_data = {
 		"message": message,
-		"session_id": session_id
+		"sessionid": sessionid
 	}
 	return JsonResponse(res_data)
 
+def apiSignin(request):
+
+	message = "Signin Error"
+	req_data = None
+	if request.method == "POST" and request.body:
+		req_data = json.loads(request.body)
+		email = req_data['email']
+		username = req_data['username']
+		password = req_data['password']
+
+		#print(req_data)
+		if (not email or not username or not password):
+			return JsonResponse({"message": "Signin Error", "success": "false"})
+		if User.objects.filter(username=username).exists() or User.objects.filter(email=email).exists():
+			return JsonResponse({"message": "User already exists", "success": "false"})
+		User.objects.create_user(username=username, email=email, password=password)
+		user = authenticate(request, username=username, password=password)
+		if not user:
+			return JsonResponse({"message": "Signin Error", "success": "false"})
+	return JsonResponse({"message": "Signin Success", "success": "true"})
+
 def apiTest(request):
 
-	#print(user)
-
-	data = {
-		'test': 'Hello World',
-		'status': 'ok'
+	res_data = {
+		"user": request.user.username,
 	}
-	return JsonResponse(data)
+	return JsonResponse(res_data)

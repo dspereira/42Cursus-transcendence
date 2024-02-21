@@ -51,7 +51,7 @@
 				.then (data => {
 					console.log("=========================");
 					console.log(`message	: ${data["message"]}`);
-					console.log(`session_id	: ${data["session_id"]}`);
+					console.log(`sessionid	: ${data["sessionid"]}`);
 
 					document.querySelector(".success").style.display = 'none';
 					document.querySelector(".error").style.display = 'none';
@@ -60,8 +60,8 @@
 					else
 						document.querySelector(".error").style.display = 'block';
 
-					if (data["session_id"])
-						document.cookie = `session_id=${data["session_id"]}; path=/`;
+					if (data["sessionid"])
+						document.cookie = `sessionid=${data["sessionid"]}; path=/`;
 				})
 				.catch(error => {
 					console.log("Login fetch Error");
