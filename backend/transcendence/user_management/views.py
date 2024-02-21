@@ -85,13 +85,13 @@ def apiSignin(request):
 
 	message = "Signin Error"
 	req_data = None
+	if request.method != "POST":
+		return JsonResponse({"message": "Signin Error, not a valid method", "success": "false"})
 	if request.method == "POST" and request.body:
 		req_data = json.loads(request.body)
 		email = req_data['email']
 		username = req_data['username']
 		password = req_data['password']
-
-		#print(req_data)
 		if (not email or not username or not password):
 			return JsonResponse({"message": "Signin Error", "success": "false"})
 		if User.objects.filter(username=username).exists() or User.objects.filter(email=email).exists():
@@ -101,6 +101,14 @@ def apiSignin(request):
 		if not user:
 			return JsonResponse({"message": "Signin Error", "success": "false"})
 	return JsonResponse({"message": "Signin Success", "success": "true"})
+
+def apiLogout(request):
+
+	if not request.user.username:
+		return JsonResponse({"message": "No user loged", "success": "false"})
+
+	logout(request)
+	return JsonResponse({"message": "Logout Success", "success": "true"})
 
 def apiTest(request):
 
