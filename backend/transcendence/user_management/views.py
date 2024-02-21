@@ -64,26 +64,18 @@ def userSignin(request):
 # REST API test login
 def apiLogin(request):
 
-	message = "Login Error"
-	sessionid = None
-	req_data = None
 	if request.method == "POST" and request.body:
 		req_data = json.loads(request.body)
 		user = authenticate(request, username=req_data["username"], password=req_data["password"])
 		if user:
 			login(request, user)
 			sessionid = request.session.session_key
-			message = "Login Success"
+			return JsonResponse({"message": "Login Success", "success": "true"})
 
-	res_data = {
-		"message": message,
-		"sessionid": sessionid
-	}
-	return JsonResponse(res_data)
+	return JsonResponse({"message": "Login Error", "success": "false"})
 
 def apiSignin(request):
 
-	message = "Signin Error"
 	req_data = None
 	if request.method != "POST":
 		return JsonResponse({"message": "Signin Error, not a valid method", "success": "false"})

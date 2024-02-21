@@ -3,15 +3,21 @@
 	<head>
 		<title>Login</title>
 		<style>
-			.message {
+			div {
+  				font-size: 20px;
+			}
+            .message {
   				font-size: 20px;
 			}
 			.success {
 				color: green;
-				display: none;
+				display: block;
 			}
 			.error {
 				color: red;
+				display: block;
+			}
+			.displayNone {
 				display: none;
 			}
 		</style>
@@ -19,12 +25,13 @@
 	<body>
 		<h1>Login</h1>
 
-		<div class="success message">Login Success</div>
-		<div class="error message">Login Error</div>
+		<div class="displayNone message"></div>
+
 		<br>
 		<form id="loginForm">
 			<label for="username">Username:</label><br>
 			<input type="text" id="username" name="username"><br>
+			<br>
 			<label for="password">Password:</label><br>
 			<input type="password" id="password" name="password"><br><br>
 			<button type="submit">Login</button>
@@ -41,6 +48,7 @@
 				});
 
 				fetch("http://127.0.0.1:8000/user/api/login", {
+					credentials: 'include',
 					method: "POST",
 					headers: {
 						"Content-Type": "application/json"
@@ -51,17 +59,16 @@
 				.then (data => {
 					console.log("=========================");
 					console.log(`message	: ${data["message"]}`);
-					console.log(`sessionid	: ${data["sessionid"]}`);
 
-					document.querySelector(".success").style.display = 'none';
-					document.querySelector(".error").style.display = 'none';
-					if (data["message"] == "Login Success")
-						document.querySelector(".success").style.display = 'block';
-					else
-						document.querySelector(".error").style.display = 'block';
-
-					if (data["sessionid"])
-						document.cookie = `sessionid=${data["sessionid"]}; path=/`;
+                    const msgElm = document.querySelector(".message");
+					msgElm.classList.remove("displayNone");
+					msgElm.classList.remove("success");
+					msgElm.classList.remove("error");
+					msgElm.innerHTML = data["message"];
+					if (data["success"] == "true")
+						msgElm.classList.add("success");
+					else if (data["success"] == "false")
+						msgElm.classList.add("error");
 				})
 				.catch(error => {
 					console.log("Login fetch Error");
