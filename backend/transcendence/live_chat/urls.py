@@ -2,6 +2,6 @@ from django.urls import path
 from . import views
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
-    path("", include("live_chat")),
+    path('', views.index, name='chat-index'),
+    path('<str:room_name>/', views.room_view, name='chat-room'),
 ]
