@@ -3,8 +3,9 @@ from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
 from django.http import JsonResponse
+import json
 
-# Create your views here.
+
 def index(request):
 	return render(request, "user_management/index.html", {})
 
@@ -60,21 +61,50 @@ def userSignin(request):
 	return render(request, "user_management/signin.html", {})
 
 
+# REST API test login
 def apiLogin(request):
 
-	print(request.method)
+	if request.method == "POST" and request.body:
+		req_data = json.loads(request.body)
+		user = authenticate(request, username=req_data["username"], password=req_data["password"])
+		if user:
+			login(request, user)
+			sessionid = request.session.session_key
+			return JsonResponse({"message": "Login Success", "success": "true"})
 
-	if request.method == "OPTIONS":
-		print("options entra")
-		data = {
-        'mesage': 'OPTIONS',
-        'status': 'ok'
-    	}
-	else:
-		print("entra aqui")
-		data = {
-			'mesage': 'test json',
-			'status': 'ok'
-		}
+	return JsonResponse({"message": "Login Error", "success": "false"})
 
-	return JsonResponse(data)
+def apiSignin(request):
+
+	req_data = None
+	if request.method != "POST":
+		return JsonResponse({"message": "Signin Error, not a valid method", "success": "false"})
+	if request.method == "POST" and request.body:
+		req_data = json.loads(request.body)
+		email = req_data['email']
+		username = req_data['username']
+		password = req_data['password']
+		if (not email or not username or not password):
+			return JsonResponse({"message": "Signin Error", "success": "false"})
+		if User.objects.filter(username=username).exists() or User.objects.filter(email=email).exists():
+			return JsonResponse({"message": "User already exists", "success": "false"})
+		User.objects.create_user(username=username, email=email, password=password)
+		user = authenticate(request, username=username, password=password)
+		if not user:
+			return JsonResponse({"message": "Signin Error", "success": "false"})
+	return JsonResponse({"message": "Signin Success", "success": "true"})
+
+def apiLogout(request):
+
+	if not request.user.username:
+		return JsonResponse({"message": "No user loged", "success": "false"})
+
+	logout(request)
+	return JsonResponse({"message": "Logout Success", "success": "true"})
+
+def apiTest(request):
+
+	res_data = {
+		"user": request.user.username,
+	}
+	return JsonResponse(res_data)
