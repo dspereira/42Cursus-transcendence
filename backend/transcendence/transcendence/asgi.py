@@ -9,8 +9,16 @@ https://docs.djangoproject.com/en/4.2/howto/deployment/asgi/
 
 import os
 
+from channels.routing import ProtocolTypeRouter, URLRouter
 from django.core.asgi import get_asgi_application
+
+import live_chat.routing
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'transcendence.settings')
 
-application = get_asgi_application()
+application = ProtocolTypeRouter({
+  'http': get_asgi_application(),
+  'websocket': URLRouter(
+      live_chat.routing.websocket_urlpatterns
+    ),
+})

@@ -5,13 +5,13 @@ class ChatRoom(models.Model):
     name = models.CharField(max_length=20)
     online = models.ManyToManyField(to=User, blank=True)
 
-    def getOnlineUsers(self):
+    def get_online_count(self):
         return (self.online.count())
 
     def join(self, user):
         self.online.aadd(user)
         self.save()
-    
+
     def leave(self, user):
         self.online.remove(user)
         self.save()
