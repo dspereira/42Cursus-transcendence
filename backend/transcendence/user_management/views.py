@@ -4,6 +4,12 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
 from django.http import JsonResponse
 import json
+import jwt
+#import datetime
+from datetime import datetime, timedelta
+
+# Just for testing purposes, the key must be 256 bit and it has to be in a .env file.
+jwt_secret_key = "your-256-bit-secret"
 
 
 def index(request):
@@ -69,8 +75,15 @@ def apiLogin(request):
 		user = authenticate(request, username=req_data["username"], password=req_data["password"])
 		if user:
 			login(request, user)
-			sessionid = request.session.session_key
-			return JsonResponse({"message": "Login Success", "success": "true"})
+			jwt_token = generate_jwt(req_data["username"], user.id)
+			response = JsonResponse({"message": "Login Success", "success": True})
+			#response["Authorization"] = f"Bearer {jwt_token}"
+			#response["Set-Cookie"] =  f"jwt_token={jwt_token}"
+			#expiration_date = datetime.utcnow() + datetime.timedelta(days=1)
+			
+			expiration_date = datetime.utcnow() + timedelta(days=1)
+			response.set_cookie(key="jwt_token", value=jwt_token, httponly=True, expires=expiration_date, samesite="Lax")
+			return response
 
 	return JsonResponse({"message": "Login Error", "success": "false"})
 
@@ -108,3 +121,17 @@ def apiTest(request):
 		"user": request.user.username,
 	}
 	return JsonResponse(res_data)
+
+
+def generate_jwt(username, id):
+	token = jwt.encode(
+		{
+			"user_id": id,
+			"user_name": username,
+			"exp": datetime.utcnow() + timedelta(days=1)
+			#"exp": datetime.datetime.utcnow() + datetime.timedelta(days=1)
+ 		},
+		jwt_secret_key,
+		algorithm='HS256'
+	)
+	return token
