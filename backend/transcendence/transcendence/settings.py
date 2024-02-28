@@ -49,6 +49,7 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'core_middlewares.Cors.Cors',
+    'core_middlewares.Jwt.Jwt'
 ]
 
 ROOT_URLCONF = 'transcendence.urls'

@@ -5,7 +5,6 @@ from django.contrib.auth.models import User
 from django.http import JsonResponse
 import json
 import jwt
-#import datetime
 from datetime import datetime, timedelta
 
 # Just for testing purposes, the key must be 256 bit and it has to be in a .env file.
@@ -77,10 +76,6 @@ def apiLogin(request):
 			login(request, user)
 			jwt_token = generate_jwt(req_data["username"], user.id)
 			response = JsonResponse({"message": "Login Success", "success": True})
-			#response["Authorization"] = f"Bearer {jwt_token}"
-			#response["Set-Cookie"] =  f"jwt_token={jwt_token}"
-			#expiration_date = datetime.utcnow() + datetime.timedelta(days=1)
-			
 			expiration_date = datetime.utcnow() + timedelta(days=1)
 			response.set_cookie(key="jwt_token", value=jwt_token, httponly=True, expires=expiration_date, samesite="Lax")
 			return response
@@ -117,6 +112,12 @@ def apiLogout(request):
 
 def apiTest(request):
 
+	#print(request.is_authenticated)
+	#print(request.user_id)
+	#print(request.username)
+
+	print(request.jwt_data)
+
 	res_data = {
 		"user": request.user.username,
 	}
@@ -127,9 +128,8 @@ def generate_jwt(username, id):
 	token = jwt.encode(
 		{
 			"user_id": id,
-			"user_name": username,
+			"username": username,
 			"exp": datetime.utcnow() + timedelta(days=1)
-			#"exp": datetime.datetime.utcnow() + datetime.timedelta(days=1)
  		},
 		jwt_secret_key,
 		algorithm='HS256'

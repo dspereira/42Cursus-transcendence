@@ -18,8 +18,6 @@ methods_data = [
 	"DELETE",
 ]
 
-# Just for testing purposes because this option is not secure, it allows CSRF attacks.
-# https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Access-Control-Allow-Credentials
 credentials_name = "Access-Control-Allow-Credentials"
 credentials_data = [
 	"true"
