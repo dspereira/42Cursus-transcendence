@@ -1,4 +1,11 @@
+from django.http import JsonResponse
 import jwt
+
+public_routes = {
+	"/user/api/login": True,
+	"/user/api/logout": True,
+	"/user/api/signin": True,
+}
 
 class Jwt:
 
@@ -6,33 +13,42 @@ class Jwt:
 		self.get_response = get_response
 
 	def __call__(self, request):
-
-		self.token_validation(request)
-
-		return self.get_response(request)
-	
-	def token_validation(self, request):
-
-
-		token = request.COOKIES.get("jwt_token")
-	
-		try:
-			jwt_data = jwt.decode(token, "your-256-bit-secret", algorithms="HS256")
-		except Exception as e:
-			print(e)
-			jwt_data = ""
-
-		if jwt_data:
-			request.jwt_data = jwt_data
-			setattr(request, "jwt_data", jwt_data)
+		token = self.get_token(request)
+		token_data, error_msg = self.validate_token(token)
+		if error_msg and not public_routes.get(request.path):
+			return JsonResponse({"message": error_msg}, status=401)
 		else:
-			print("Não validou")
+			self.set_user_data(request, token_data)
+		return self.get_response(request)
 
-		#print(data)
+	def get_token(self, request):
+		return request.COOKIES.get("jwt_token")
 
-		#setattr(request, "username", data.get("username"))
-		#setattr(request, "user_id", data.get("user_id"))
-		#setattr(request, "is_authenticated", True)
+	def validate_token(self, token):
+		error_msg = None
+		token_data = None
+		try:
+			token_data = jwt.decode(token, "your-256-bit-secret", algorithms="HS256")
+		except jwt.exceptions.ExpiredSignatureError:
+			error_msg = "Authentication token has expired"
+		except jwt.exceptions.InvalidSignatureError:
+			error_msg = "Authentication token has invalid signature"
+		except Exception as e:
+			error_msg = "Authentication token has invalid"
 
 
+		return token_data, error_msg
 
+	def set_user_data(self, request, token_data):
+		user_data = None
+		if token_data:
+			user_data = {
+				"id": token_data.get("user_id"),
+				"username": token_data.get("username"),
+				"is_authenticated": True
+			}
+		else:
+			user_data = {
+				"is_authenticated": False
+			}
+		setattr(request, "user_data", user_data)

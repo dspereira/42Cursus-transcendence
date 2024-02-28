@@ -32,7 +32,6 @@ class Cors:
 		return self.process_response(self.get_response(request))
 
 	def process_response(self, response):
-
 		self.add_new_header(response, origin_name, origin_data)
 		self.add_new_header(response, headers_name, headers_data)
 		self.add_new_header(response, methods_name, methods_data)
@@ -40,7 +39,6 @@ class Cors:
 		return response
 
 	def add_new_header(self, response, name, data):
-
 		response[name] = ""
 		list_len = len(data)
 		if (list_len != 0 and name):

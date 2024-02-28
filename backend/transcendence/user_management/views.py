@@ -116,10 +116,11 @@ def apiTest(request):
 	#print(request.user_id)
 	#print(request.username)
 
-	print(request.jwt_data)
+	print(request.user_data)
 
 	res_data = {
-		"user": request.user.username,
+		"user": request.user_data.get("username")
+		#"user": request.jwt_data["username"],
 	}
 	return JsonResponse(res_data)
 
