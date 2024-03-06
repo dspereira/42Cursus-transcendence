@@ -8,6 +8,11 @@ urlpatterns = [
     path("signin", views.userSignin, name="userSignin"),
     path("api/login", views.apiLogin, name="apiLogin"),
     path("api/signin", views.apiSignin, name="apiSignin"),
-     path("api/logout", views.apiLogout, name="apiLogout"),
+    path("api/logout", views.apiLogout, name="apiLogout"),
     path("api/test", views.apiTest, name="apiTest"),
+
+
+    path("api/token", views.token_obtain_view, name="token_obtain"),
+    path("api/token/refresh", views.token_refresh_view, name="token_refresh")
+
 ]

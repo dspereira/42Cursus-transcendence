@@ -1,10 +1,17 @@
 from django.http import JsonResponse
+
 import jwt
+
+
+# Issue here that needs to be addressed
+# "/user/api/login" or "/user/api/login/" yield different results, which is incorrect
 
 public_routes = {
 	"/user/api/login": True,
 	"/user/api/logout": True,
 	"/user/api/signin": True,
+	"/user/api/token": True,
+	"/user/api/token/refresh": True
 }
 
 class Jwt:
@@ -22,7 +29,7 @@ class Jwt:
 		return self.get_response(request)
 
 	def get_token(self, request):
-		return request.COOKIES.get("jwt_token")
+		return request.COOKIES.get("access")
 
 	def validate_token(self, token):
 		error_msg = None
@@ -35,16 +42,14 @@ class Jwt:
 			error_msg = "Authentication token has invalid signature"
 		except Exception as e:
 			error_msg = "Authentication token has invalid"
-
-
 		return token_data, error_msg
 
 	def set_user_data(self, request, token_data):
 		user_data = None
 		if token_data:
 			user_data = {
-				"id": token_data.get("user_id"),
-				"username": token_data.get("username"),
+				"id": token_data.get("sub"),
+				"username": token_data.get("name"),
 				"is_authenticated": True
 			}
 		else:

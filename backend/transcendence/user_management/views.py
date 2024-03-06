@@ -3,13 +3,17 @@ from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
 from django.http import JsonResponse
+
 import json
 import jwt
+import uuid
 from datetime import datetime, timedelta
 
 # Just for testing purposes, the key must be 256 bit and it has to be in a .env file.
 jwt_secret_key = "your-256-bit-secret"
 
+ACCESS_TOKEN = "access"
+REFRESH_TOKEN = "refresh"
 
 def index(request):
 	return render(request, "user_management/index.html", {})
@@ -124,13 +128,67 @@ def apiTest(request):
 	}
 	return JsonResponse(res_data)
 
+def token_obtain_view(request):
 
+	if request.method == "POST" and request.body:
+		req_data = json.loads(request.body)
+		user = authenticate(request, username=req_data["username"], password=req_data["password"])
+		if user:
+			login(request, user)
+			access_exp = datetime.utcnow() + timedelta(minutes=15)
+			refresh_exp = datetime.utcnow() + timedelta(days=1)
+			res_data = {
+				"access": generate_token(user_id=1, name=req_data["username"], token_type=ACCESS_TOKEN),
+				"refresh": generate_token(user_id=1, name=req_data["username"], token_type=REFRESH_TOKEN)
+			}
+			response = JsonResponse(res_data)
+			response.set_cookie(key="access", value=res_data["access"], httponly=True, expires=access_exp, samesite="Lax")
+			response.set_cookie(key="refresh", value=res_data["refresh"], httponly=True, expires=refresh_exp, samesite="Lax")
+			return response
+	return JsonResponse({"message": "Login Error", "success": "false"})
+
+
+def token_refresh_view(request):
+	access_exp = datetime.utcnow() + timedelta(minutes=15)
+	refresh_exp = datetime.utcnow() + timedelta(days=1)
+	res_data = {
+		"access": generate_token(user_id=1, username="none", token_type=ACCESS_TOKEN),
+		"refresh": generate_token(user_id=1, username="none", token_type=REFRESH_TOKEN)
+	}
+	response = JsonResponse(res_data)
+	response.set_cookie(key="access", value=res_data["access"], httponly=True, expires=access_exp, samesite="Lax")
+	response.set_cookie(key="refresh", value=res_data["refresh"], httponly=True, expires=refresh_exp, samesite="Lax")
+	return response
+
+
+# Utils functions
 def generate_jwt(username, id):
 	token = jwt.encode(
 		{
-			"user_id": id,
-			"username": username,
+			"token_type": "access",
+			"sub": id,
+			"iat": datetime.utcnow(),
 			"exp": datetime.utcnow() + timedelta(days=1)
+ 		},
+		jwt_secret_key,
+		algorithm='HS256'
+	)
+	return token
+
+def generate_token(user_id, name, token_type):
+	iat = datetime.utcnow()
+	if token_type == ACCESS_TOKEN:
+		exp = iat + timedelta(minutes=15)
+	else:
+		exp = iat + timedelta(days=1)
+	token = jwt.encode(
+		{
+			"token_type": token_type,
+			"sub": user_id,
+			"name": name,
+			"iat": iat,
+			"exp": exp,
+			"jti": str(uuid.uuid4())
  		},
 		jwt_secret_key,
 		algorithm='HS256'
