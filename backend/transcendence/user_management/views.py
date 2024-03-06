@@ -104,9 +104,8 @@ def apiLogout(request):
 
 def apiTest(request):
 
-
-	print(request.user.id)
-	print(request.user.username)
+	print(" User ID  -> ", request.user.id)
+	print(" Username -> ", request.user.username)
 
 	res_data = {
 		"user": request.user.username,

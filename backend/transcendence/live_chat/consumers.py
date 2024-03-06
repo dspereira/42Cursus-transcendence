@@ -7,54 +7,53 @@ from .models import ChatRoom, Message
 
 class ChatConsumer(WebsocketConsumer):
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(args, kwargs)
-        self.room_name = None
-        self.room_group_name = None
-        self.room = None
-        self.user = None
+	def __init__(self, *args, **kwargs):
+		super().__init__(args, kwargs)
+		self.room_name = None
+		self.room_group_name = None
+		self.room = None
+		self.user = None
 
-    def connect(self):
-        self.room_name = self.scope['url_route']['kwargs']['room_name']
-        self.room_group_name = f'chat_{self.room_name}'
-        self.room = ChatRoom.objects.get(name=self.room_name)
-        self.user = self.scope['user']
-        # self.messages = Message.objects.get(room=self.room_name)
+	def connect(self):
+		self.room_name = self.scope['url_route']['kwargs']['room_name']
+		self.room_group_name = f'chat_{self.room_name}'
+		self.room = ChatRoom.objects.get(name=self.room_name)
+		self.user = self.scope['user']
 
-        self.accept()
+		self.accept()
 
-        print("===================================================")
-        # print(Message.objects.get(room=self.room))
-        print("===================================================")
+		print("===================================================")
+		# print(Message.objects.get(room=self.room))
+		print("===================================================")
 
-        async_to_sync(self.channel_layer.group_add)(
-            self.room_group_name,
-            self.channel_name,
-            # self.messages
-        )
+		async_to_sync(self.channel_layer.group_add)(
+			self.room_group_name,
+			self.channel_name,
+			# self.messages
+		)
 
-    def disconnect(self, close_code):
-        async_to_sync(self.channel_layer.group_discard)(
-            self.room_group_name,
-            self.channel_name,
-        )
+	def disconnect(self, close_code):
+		async_to_sync(self.channel_layer.group_discard)(
+			self.room_group_name,
+			self.channel_name,
+		)
 
-    def receive(self, text_data=None, bytes_data=None):
-        text_data_json = json.loads(text_data)
-        message = text_data_json['message']
+	def receive(self, text_data=None, bytes_data=None):
+		text_data_json = json.loads(text_data)
+		message = text_data_json['message']
 
-        if not self.user.is_authenticated:
-            return
+		if not self.user.is_authenticated:
+			return
 
-        async_to_sync(self.channel_layer.group_send)(
-            self.room_group_name,
-            {
-                'type': 'chat_message',
-                'user': self.user.username,
-                'message': message,
-            }
-        )
-        Message.objects.create(user=self.user, room=self.room, content=message)
+		async_to_sync(self.channel_layer.group_send)(
+			self.room_group_name,
+			{
+				'type': 'chat_message',
+				'user': self.user.username,
+				'message': message,
+			}
+		)
+		Message.objects.create(user=self.user, room=self.room, content=message)
 
-    def chat_message(self, event):
-        self.send(text_data=json.dumps(event))
+	def chat_message(self, event):
+		self.send(text_data=json.dumps(event))
