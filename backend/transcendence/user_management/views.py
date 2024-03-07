@@ -72,7 +72,6 @@ def userSignin(request):
 
 # REST API test login
 def apiLogin(request):
-
 	if request.method == "POST" and request.body:
 		req_data = json.loads(request.body)
 		user = authenticate(request, username=req_data["username"], password=req_data["password"])
@@ -120,16 +119,15 @@ def apiTest(request):
 	#print(request.user_id)
 	#print(request.username)
 
-	print(request.user_data)
+	print(request.token_data)
 
 	res_data = {
-		"user": request.user_data.get("username")
+		"user": request.token_data.get("name")
 		#"user": request.jwt_data["username"],
 	}
 	return JsonResponse(res_data)
 
 def token_obtain_view(request):
-
 	if request.method == "POST" and request.body:
 		req_data = json.loads(request.body)
 		user = authenticate(request, username=req_data["username"], password=req_data["password"])
@@ -143,23 +141,24 @@ def token_obtain_view(request):
 			}
 			response = JsonResponse(res_data)
 			response.set_cookie(key="access", value=res_data["access"], httponly=True, expires=access_exp, samesite="Lax")
-			response.set_cookie(key="refresh", value=res_data["refresh"], httponly=True, expires=refresh_exp, samesite="Lax")
+			response.set_cookie(key="refresh", value=res_data["refresh"], httponly=True, expires=refresh_exp, samesite="Lax", path="/user/api/token/refresh")
 			return response
 	return JsonResponse({"message": "Login Error", "success": "false"})
 
-
 def token_refresh_view(request):
+
+	# tem de ser POST
+
+	# tem de ter token válido. Verificação no middleware
+
+	access_token = generate_token(user_id=1, name="none", token_type=ACCESS_TOKEN)
+	refresh_token = generate_token(user_id=1, name="none", token_type=REFRESH_TOKEN)
+	response = JsonResponse({"success": "true"})
 	access_exp = datetime.utcnow() + timedelta(minutes=15)
 	refresh_exp = datetime.utcnow() + timedelta(days=1)
-	res_data = {
-		"access": generate_token(user_id=1, username="none", token_type=ACCESS_TOKEN),
-		"refresh": generate_token(user_id=1, username="none", token_type=REFRESH_TOKEN)
-	}
-	response = JsonResponse(res_data)
-	response.set_cookie(key="access", value=res_data["access"], httponly=True, expires=access_exp, samesite="Lax")
-	response.set_cookie(key="refresh", value=res_data["refresh"], httponly=True, expires=refresh_exp, samesite="Lax")
+	response.set_cookie(key="access", value=access_token, httponly=True, expires=access_exp, samesite="Lax")
+	response.set_cookie(key="refresh", value=refresh_token, httponly=True, expires=refresh_exp, samesite="Lax", path="/user/api/token/refresh")
 	return response
-
 
 # Utils functions
 def generate_jwt(username, id):

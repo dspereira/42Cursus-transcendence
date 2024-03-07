@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<title>refresh</title>
+	</head>
+	<body>
+		<h1>Refresh</h1>
+
+		<div class="displayNone message"></div>
+
+		<br>
+		<form id="refresh">
+			<button type="submit">refresh</button>
+		</form>
+
+		<script>
+			document.getElementById("refresh").addEventListener("submit", function(event) {
+				event.preventDefault();
+
+				fetch("http://127.0.0.1:8000/user/api/token/refresh", {
+					credentials: 'include',
+					method: "POST",
+					headers: {
+						"Content-Type": "application/json"
+					},
+					body: JSON.stringify({"message": "test route refresh"})
+				})
+				.then(response => data = response.json())
+				.then (data => {
+					console.log("=========================");
+					console.log(`message	: ${data["message"]}`);
+
+                    const msgElm = document.querySelector(".message");
+					msgElm.classList.remove("displayNone");
+					msgElm.classList.remove("success");
+					msgElm.classList.remove("error");
+					msgElm.innerHTML = data["message"];
+					if (data["success"] == "true")
+						msgElm.classList.add("success");
+					else if (data["success"] == "false")
+						msgElm.classList.add("error");
+				})
+				.catch(error => {
+					console.log("Login fetch Error");
+				});
+			});
+		</script>
+	</body>
+</html>

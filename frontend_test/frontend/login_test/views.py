@@ -17,3 +17,6 @@ def userLogout(request):
 def info(request):
 	return render(request, "login_test/info.html")
 
+def refresh(request):
+	return render(request, "login_test/refresh.html")
+

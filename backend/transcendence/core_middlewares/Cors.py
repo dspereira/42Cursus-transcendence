@@ -1,3 +1,4 @@
+from django.http import HttpResponse
 
 # Configurations of cors headers
 
@@ -29,6 +30,11 @@ class Cors:
 		self.get_response = get_response
 
 	def __call__(self, request):
+		
+		if request.method == "OPTIONS":
+			response = HttpResponse()
+			self.process_response(response)
+			return response
 		return self.process_response(self.get_response(request))
 
 	def process_response(self, response):
@@ -39,11 +45,4 @@ class Cors:
 		return response
 
 	def add_new_header(self, response, name, data):
-		response[name] = ""
-		list_len = len(data)
-		if (list_len != 0 and name):
-			for idx, item in enumerate(data):
-				if (idx < list_len - 1):
-					item += ", "
-				response[name] += item
-
+		response[name] = ",".join(data)

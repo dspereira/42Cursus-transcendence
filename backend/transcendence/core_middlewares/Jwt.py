@@ -2,17 +2,19 @@ from django.http import JsonResponse
 
 import jwt
 
-
-# Issue here that needs to be addressed
-# "/user/api/login" or "/user/api/login/" yield different results, which is incorrect
-
 public_routes = {
 	"/user/api/login": True,
+	"/user/api/login/": True,
 	"/user/api/logout": True,
+	"/user/api/logout/": True,
 	"/user/api/signin": True,
+	"/user/api/signin/": True,
 	"/user/api/token": True,
-	"/user/api/token/refresh": True
+	"/user/api/token/": True,
 }
+
+ACCESS_TOKEN = "access"
+REFRESH_TOKEN = "refresh"
 
 class Jwt:
 
@@ -20,16 +22,19 @@ class Jwt:
 		self.get_response = get_response
 
 	def __call__(self, request):
-		token = self.get_token(request)
+		if request.path == "/user/api/token/refresh" or request.path == "/user/api/token/refresh/":
+			token = self.get_token(request, REFRESH_TOKEN)
+		else:
+			token = self.get_token(request, ACCESS_TOKEN)
 		token_data, error_msg = self.validate_token(token)
 		if error_msg and not public_routes.get(request.path):
 			return JsonResponse({"message": error_msg}, status=401)
 		else:
-			self.set_user_data(request, token_data)
+			self.set_token_data(request, token_data)
 		return self.get_response(request)
 
-	def get_token(self, request):
-		return request.COOKIES.get("access")
+	def get_token(self, request, token_type):
+		return request.COOKIES.get(token_type)
 
 	def validate_token(self, token):
 		error_msg = None
@@ -44,16 +49,5 @@ class Jwt:
 			error_msg = "Authentication token has invalid"
 		return token_data, error_msg
 
-	def set_user_data(self, request, token_data):
-		user_data = None
-		if token_data:
-			user_data = {
-				"id": token_data.get("sub"),
-				"username": token_data.get("name"),
-				"is_authenticated": True
-			}
-		else:
-			user_data = {
-				"is_authenticated": False
-			}
-		setattr(request, "user_data", user_data)
+	def set_token_data(self, request, token_data):
+		setattr(request, "token_data", token_data)
