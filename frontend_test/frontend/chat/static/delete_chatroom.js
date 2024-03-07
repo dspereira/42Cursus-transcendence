@@ -1,4 +1,4 @@
-console.log("index.js is %cActive", 'color: #90EE90')
+console.log("delete_chatroom.js is %cActive", 'color: #90EE90')
 
 document.addEventListener("DOMContentLoaded", function() {
 
@@ -14,6 +14,8 @@ document.addEventListener("DOMContentLoaded", function() {
 			jsonData[key] = value;
 		});
 
+		console.log("Delete Single Room")
+		
 		fetch("http://127.0.0.1:8000/chat/api/delete_room", {
 			credentials: 'include',
 			method: "DELETE",
@@ -32,12 +34,14 @@ document.addEventListener("DOMContentLoaded", function() {
 			document.querySelector(".room_deletion_status").innerHTML = "Status -> " +  data["message"];
 		})
 		.catch(error => {
-			throw new Error("Create Room Fetch Error");
+			throw new Error("Delete Room Fetch Error");
 		});
 	});
-
+	
 	document.getElementById("deleteAllRooms").addEventListener("click", function(event) {
 		event.preventDefault();
+		
+		console.log("Delete All Rooms")
 
 		const formData = new FormData(roomDeleteForm);
 		const jsonData = {};
@@ -63,7 +67,7 @@ document.addEventListener("DOMContentLoaded", function() {
 			document.querySelector(".room_deletion_status").innerHTML = "Status -> " +  data["message"];
 		})
 		.catch(error => {
-			throw new Error("Create Room Fetch Error");
+			throw new Error("Delete All Rooms Fetch Error");
 		});
 	});
 });

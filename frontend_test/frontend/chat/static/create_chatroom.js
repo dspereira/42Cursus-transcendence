@@ -1,4 +1,4 @@
-console.log("index.js is %cActive", 'color: #90EE90')
+console.log("create_chatroom.js is %cActive", 'color: #90EE90')
 
 document.addEventListener("DOMContentLoaded", function() {
 

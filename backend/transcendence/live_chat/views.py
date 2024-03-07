@@ -54,7 +54,7 @@ def apiDeleteRoom(request):
 
     return JsonResponse(response)
 
-def apiDeleteRoom(request):
+def apiDeleteAllRooms(request):
 
     if request.method == "DELETE":
 
@@ -66,6 +66,40 @@ def apiDeleteRoom(request):
 
         message = "All Chat Rooms have benn deleted successfully !"
         response = {"message": message}
+
+    else:
+        response = {"message": "Invalid Method or Without Body"}
+
+    return JsonResponse(response)
+
+import os
+
+def apiListRooms(request):
+
+    if request.method == "GET":
+
+        chat_rooms = ChatRoom.objects.all()
+        chat_rooms_count = ChatRoom.objects.count()
+
+        os.system('clear')
+        print("---------------------------------")
+        print(f"Chat Rooms -> {chat_rooms_count}\nID: Room Name | Online Count")
+        print("---------------------------------")
+        for room in chat_rooms:
+            print(f"{room.id}: {room.name} | {room.get_online_count()}")
+        print("---------------------------------")
+
+        list_chatrooms = []
+
+        for room in chat_rooms:
+            list_chatrooms.append({"id": room.id, "name": room.name, "online": room.get_online_count()})
+
+        if chat_rooms_count > 0:
+            message = "All Chat Rooms have benn listed successfully !"
+        else:
+            message = "There is no ChatRooms in DataBase !"
+
+        response = {"message": message, "ChatRooms": list_chatrooms}
 
     else:
         response = {"message": "Invalid Method or Without Body"}
