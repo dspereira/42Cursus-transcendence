@@ -3,6 +3,7 @@ from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
 from django.http import JsonResponse
+from django.views.decorators.http import require_http_methods
 
 import json
 import jwt
@@ -127,6 +128,7 @@ def apiTest(request):
 	}
 	return JsonResponse(res_data)
 
+@require_http_methods(["POST"])
 def token_obtain_view(request):
 	if request.method == "POST" and request.body:
 		req_data = json.loads(request.body)
@@ -145,14 +147,12 @@ def token_obtain_view(request):
 			return response
 	return JsonResponse({"message": "Login Error", "success": "false"})
 
+@require_http_methods(["POST"])
 def token_refresh_view(request):
-
-	# tem de ser POST
-
-	# tem de ter token válido. Verificação no middleware
-
-	access_token = generate_token(user_id=1, name="none", token_type=ACCESS_TOKEN)
-	refresh_token = generate_token(user_id=1, name="none", token_type=REFRESH_TOKEN)
+	user_id = request.token_data["sub"]
+	name = request.token_data["name"]
+	access_token = generate_token(user_id, name, token_type=ACCESS_TOKEN)
+	refresh_token = generate_token(user_id, name, token_type=REFRESH_TOKEN)
 	response = JsonResponse({"success": "true"})
 	access_exp = datetime.utcnow() + timedelta(minutes=15)
 	refresh_exp = datetime.utcnow() + timedelta(days=1)
@@ -177,7 +177,7 @@ def generate_jwt(username, id):
 def generate_token(user_id, name, token_type):
 	iat = datetime.utcnow()
 	if token_type == ACCESS_TOKEN:
-		exp = iat + timedelta(minutes=15)
+		exp = iat + timedelta(minutes=1)
 	else:
 		exp = iat + timedelta(days=1)
 	token = jwt.encode(

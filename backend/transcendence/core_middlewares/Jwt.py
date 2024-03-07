@@ -11,6 +11,9 @@ public_routes = {
 	"/user/api/signin/": True,
 	"/user/api/token": True,
 	"/user/api/token/": True,
+	#"/user/api/token/refresh": True,
+	#"/user/api/token/refresh/": True,
+
 }
 
 ACCESS_TOKEN = "access"
@@ -21,14 +24,17 @@ class Jwt:
 	def __init__(self, get_response):
 		self.get_response = get_response
 
-	def __call__(self, request):
+	def __call__(self, request): 
 		if request.path == "/user/api/token/refresh" or request.path == "/user/api/token/refresh/":
-			token = self.get_token(request, REFRESH_TOKEN)
+			token_type = REFRESH_TOKEN
 		else:
-			token = self.get_token(request, ACCESS_TOKEN)
+			token_type = ACCESS_TOKEN
+		token = self.get_token(request, token_type)
 		token_data, error_msg = self.validate_token(token)
 		if error_msg and not public_routes.get(request.path):
 			return JsonResponse({"message": error_msg}, status=401)
+		elif token_data and token_type != token_data.get("token_type"):
+			return JsonResponse({"message": "Invalid token type"}, status=401)
 		else:
 			self.set_token_data(request, token_data)
 		return self.get_response(request)
