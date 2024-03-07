@@ -18,14 +18,12 @@ document.addEventListener("DOMContentLoaded", function() {
 		})
 		.then(data => {
 
+			const select = document.getElementById('chatrooms_select');
 			rooms = data["ChatRooms"];
 			message = data["message"];
-			
-			const select = document.getElementById('chatrooms_select');
-			
-			
+
 			console.log(message);
-			
+
 			if (rooms.length > 0)
 			{
 				console.log("--------------------------")

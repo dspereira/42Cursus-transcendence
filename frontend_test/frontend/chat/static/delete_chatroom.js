@@ -13,8 +13,6 @@ document.addEventListener("DOMContentLoaded", function() {
 		formData.forEach((value, key) => {
 			jsonData[key] = value;
 		});
-
-		console.log("Delete Single Room")
 		
 		fetch("http://127.0.0.1:8000/chat/api/delete_room", {
 			credentials: 'include',
@@ -40,8 +38,6 @@ document.addEventListener("DOMContentLoaded", function() {
 	
 	document.getElementById("deleteAllRooms").addEventListener("click", function(event) {
 		event.preventDefault();
-		
-		console.log("Delete All Rooms")
 
 		const formData = new FormData(roomDeleteForm);
 		const jsonData = {};

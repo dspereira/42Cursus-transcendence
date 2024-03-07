@@ -60,9 +60,7 @@ def apiDeleteAllRooms(request):
 
         chat_rooms = ChatRoom.objects.all()
         
-        for room in chat_rooms:
-            print("Room Name: ", room.name)
-            room.delete()
+        chat_rooms.delete()
 
         message = "All Chat Rooms have benn deleted successfully !"
         response = {"message": message}
@@ -72,22 +70,12 @@ def apiDeleteAllRooms(request):
 
     return JsonResponse(response)
 
-import os
-
 def apiListRooms(request):
 
     if request.method == "GET":
 
         chat_rooms = ChatRoom.objects.all()
         chat_rooms_count = ChatRoom.objects.count()
-
-        os.system('clear')
-        print("---------------------------------")
-        print(f"Chat Rooms -> {chat_rooms_count}\nID: Room Name | Online Count")
-        print("---------------------------------")
-        for room in chat_rooms:
-            print(f"{room.id}: {room.name} | {room.get_online_count()}")
-        print("---------------------------------")
 
         list_chatrooms = []
 
