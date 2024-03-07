@@ -3,5 +3,13 @@ from django.shortcuts import render
 # Create your views here.
 
 def index(request):
-	print(" --- I am here ! --- ")
 	return render(request, "chat/index.html")
+
+def create_chatroom(request):
+	return render(request, "chat/create_chatroom.html")
+
+def delete_chatroom(request):
+	return render(request, "chat/delete_chatroom.html")
+
+def list_chatroom(request):
+	return render(request, "chat/list_chatroom.html")

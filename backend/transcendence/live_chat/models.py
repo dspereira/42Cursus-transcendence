@@ -8,10 +8,16 @@ class ChatRoom(models.Model):
     def get_online_count(self):
         return (self.online.count())
 
+    """
+        User joins the ChatRoom 
+    """
     def join(self, user):
         self.online.aadd(user)
         self.save()
 
+    """
+        User leaves the ChatRoom 
+    """
     def leave(self, user):
         self.online.remove(user)
         self.save()
