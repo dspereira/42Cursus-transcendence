@@ -61,13 +61,16 @@
 					console.log(`message	: ${data["message"]}`);
 
                     const msgElm = document.querySelector(".message");
+
 					msgElm.classList.remove("displayNone");
 					msgElm.classList.remove("success");
 					msgElm.classList.remove("error");
+
 					msgElm.innerHTML = data["message"];
-					if (data["success"] == "true")
+
+					if (data["message"] == "success")
 						msgElm.classList.add("success");
-					else if (data["success"] == "false")
+					else if (data["message"] == "error")
 						msgElm.classList.add("error");
 				})
 				.catch(error => {

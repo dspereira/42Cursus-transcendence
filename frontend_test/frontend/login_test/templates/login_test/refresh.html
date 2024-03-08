@@ -1,10 +1,29 @@
 <!DOCTYPE html>
 <html lang="en">
 	<head>
-		<title>refresh</title>
+		<title>Refresh Token</title>
+		<style>
+			div {
+  				font-size: 20px;
+			}
+            .message {
+  				font-size: 20px;
+			}
+			.success {
+				color: green;
+				display: block;
+			}
+			.error {
+				color: red;
+				display: block;
+			}
+			.displayNone {
+				display: none;
+			}
+		</style>
 	</head>
 	<body>
-		<h1>Refresh</h1>
+		<h1>Refresh Token</h1>
 
 		<div class="displayNone message"></div>
 
@@ -34,11 +53,18 @@
 					msgElm.classList.remove("displayNone");
 					msgElm.classList.remove("success");
 					msgElm.classList.remove("error");
-					msgElm.innerHTML = data["message"];
-					if (data["success"] == "true")
+
+					
+					if (data["message"] == "success")
+					{
+						msgElm.innerHTML = "New tokens were generated.";
 						msgElm.classList.add("success");
-					else if (data["success"] == "false")
+					}
+					else if (data["message"] == "error")
+					{
+						msgElm.innerHTML = "Error";
 						msgElm.classList.add("error");
+					}
 				})
 				.catch(error => {
 					console.log("Login fetch Error");
