@@ -15,7 +15,7 @@ def room_view(request, room_name):
         'room': chat_room,
     })
 
-@require_http_methods(["POST"])
+@require_http_methods(["POST", "OPTIONS"])
 def apiCreateRoom(request):
 
     if request.body:
@@ -36,7 +36,7 @@ def apiCreateRoom(request):
 
     return JsonResponse(response)
 
-@require_http_methods(["DELETE"])
+@require_http_methods(["DELETE", "OPTIONS"])
 def apiDeleteRoom(request):
 
     if request.body:
@@ -57,7 +57,7 @@ def apiDeleteRoom(request):
 
     return JsonResponse(response)
 
-@require_http_methods(["DELETE"])
+@require_http_methods(["DELETE", "OPTIONS"])
 def apiDeleteAllRooms(request):
 
     chat_rooms = ChatRoom.objects.all()
