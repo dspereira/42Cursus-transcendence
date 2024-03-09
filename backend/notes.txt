@@ -21,6 +21,7 @@ python3 manage.py runserver
 python manage.py startapp <app_name>
 
 => Applying migrations to database
+python manage.py makemigrations -> cria o ficheiro a partir do model que irá ser aplicado quando for feito migrate
 python manage.py migrate
 
 => Django admin

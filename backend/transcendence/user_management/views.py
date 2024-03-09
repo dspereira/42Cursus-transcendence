@@ -4,6 +4,7 @@ from django.contrib.auth import authenticate
 from django.contrib.auth.models import User
 from django.http import JsonResponse
 from django.views.decorators.http import require_http_methods
+from user_management.models import BlacklistedToken
 
 import json
 import jwt
@@ -34,6 +35,13 @@ def token_obtain_view(request):
 
 @require_http_methods(["POST"])
 def token_refresh_view(request):
+
+	black_listed = BlacklistedToken(jti = request.token_data["jti"], exp = request.token_data["exp"])
+	black_listed.save()
+
+	token = BlacklistedToken.objects.filter(jti="aca3393a-3828-4efe-88da-8e2d2876f58c")
+	print(token)
+
 	user_id = request.token_data["sub"]
 	name = request.token_data["name"]
 	access_token = generate_token(user_id, name, token_type=ACCESS_TOKEN)
@@ -114,3 +122,19 @@ def generate_token(user_id, name, token_type):
 		algorithm='HS256'
 	)
 	return token
+
+
+'''
+CREATE TABLE IF NOT EXISTS "auth_user" 
+("id" integer NOT NULL PRIMARY KEY AUTOINCREMENT, 
+ "password" varchar(128) NOT NULL, 
+ "last_login" datetime NULL, 
+ "is_superuser" bool NOT NULL, 
+ "username" varchar(150) NOT NULL UNIQUE, 
+ "last_name" varchar(150) NOT NULL, 
+ "email" varchar(254) NOT NULL, 
+ "is_staff" bool NOT NULL, 
+ "is_active" bool NOT NULL, 
+ "date_joined" datetime NOT NULL, 
+ "first_name" varchar(150) NOT NULL);
+'''
