@@ -35,8 +35,8 @@ document.addEventListener("DOMContentLoaded", function() {
 					console.log("Room Name: ", dataRoomName);
 					
 					if (dataExist)
-						document.querySelector(".chatroom_name_title").innerHTML = dataRoomName + " ChatRoom";
-						document.querySelector(".chatroom_name_header").innerHTML = dataRoomName + " ChatRoom";
+						document.querySelector(".chatroom_name_title").innerHTML = "ChatRoom -> " + dataRoomName;
+						document.querySelector(".chatroom_name_header").innerHTML = "ChatRoom -> " + dataRoomName;
 				}
 				else if (data.status === 401)
 					document.querySelector(".myBody").innerHTML = _401ErrorPage;

@@ -33,7 +33,7 @@ document.addEventListener("DOMContentLoaded", function() {
 					console.log(`${room.id} | ${room.name} | ${room.online}`);
 					const option = document.createElement('option');
 					option.value = room.id;
-					option.textContent = `${room.id} - ${room.name} -> ${room.online}`;
+					option.textContent = `${room.name} | ${room.online}`;
 					select.appendChild(option);
         		});
 				console.log("--------------------------")

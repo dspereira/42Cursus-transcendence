@@ -2,7 +2,8 @@ console.log("create_chatroom.js is %cActive", 'color: #90EE90')
 
 document.addEventListener("DOMContentLoaded", function() {
 
-	let selected_chatroom_option = "";
+	let selected_chatroom_id = "";
+	let selected_chatroom_name = "";
 	let chage_to_selected_chatroom_checkbox = false;
 
 	function getSelectedChatRoom()
@@ -15,7 +16,10 @@ document.addEventListener("DOMContentLoaded", function() {
 			if (selectedIndex !== -1)
 			{
 				const selectedOption = selectElement.options[selectedIndex];
-				selected_chatroom_option = selectedOption.value;
+				selected_chatroom_id = selectedOption.value;
+
+				let splitedString = selectedOption.textContent.split("|")
+				selected_chatroom_name = splitedString[0].trim();
 			}
 
 		});
@@ -28,15 +32,15 @@ document.addEventListener("DOMContentLoaded", function() {
 		selectElement.addEventListener('click', function() {
 
 			status_output = "";
-			if (selected_chatroom_option.length != 0)
-				status_output = "Selected Room: " + selected_chatroom_option;
+			if (selected_chatroom_id.length != 0)
+				status_output = "Selected Room: \'" + selected_chatroom_name + "\'";
 			else
 				status_output = "Selecione uma Sala";
 			console.log(status_output);
 			document.querySelector(".status_join_chatroom").innerHTML = status_output;
 
-			if (selected_chatroom_option.length != 0 && chage_to_selected_chatroom_checkbox)
-				window.location.pathname = "/chat/chatroom/" + selected_chatroom_option + "/"
+			if (selected_chatroom_id.length != 0 && chage_to_selected_chatroom_checkbox)
+				window.location.pathname = "/chat/chatroom/" + selected_chatroom_id + "/"
 		});
 	}
 
