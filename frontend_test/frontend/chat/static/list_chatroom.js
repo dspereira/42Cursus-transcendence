@@ -27,16 +27,16 @@ document.addEventListener("DOMContentLoaded", function() {
 			if (rooms.length > 0)
 			{
 				console.log("--------------------------")
+				console.log("ID | NAME | ONLINE")
+				console.log("--------------------------")
         		rooms.forEach(room => {
-					console.log("ID:", room.id);
-            		console.log("Nome:", room.name);
-            		console.log("Online:", room.online);
-					console.log("--------------------------")
+					console.log(`${room.id} | ${room.name} | ${room.online}`);
 					const option = document.createElement('option');
 					option.value = room.id;
-					option.textContent = room.name + " -> " + room.online;
+					option.textContent = `${room.id} - ${room.name} -> ${room.online}`;
 					select.appendChild(option);
         		});
+				console.log("--------------------------")
 			}
 		})
 		.catch(error => {

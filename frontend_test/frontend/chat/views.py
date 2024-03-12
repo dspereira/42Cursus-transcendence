@@ -14,6 +14,9 @@ def delete_chatroom(request):
 def list_chatroom(request):
 	return render(request, "chat/list_chatroom.html")
 
+def join_chatroom(request):
+	return render(request, "chat/join_chatroom.html")
+
 def chatroom(request, room_id):
 	print("Room ID: ", room_id)
 	return render(request, "chat/chatroom.html")

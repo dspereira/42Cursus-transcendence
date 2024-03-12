@@ -20,7 +20,7 @@ def apiCreateRoom(request):
 
     if request.body:
         req_data = json.loads(request.body)
-        room_name = req_data['chatroom_name']
+        room_name = str(req_data['chatroom_name']).strip()
 
         chatroom = ChatRoom.objects.filter(name=room_name).first()
         if chatroom:
@@ -41,7 +41,7 @@ def apiDeleteRoom(request):
 
     if request.body:
         req_data = json.loads(request.body)
-        room_name = req_data['chatroom_name']
+        room_name = str(req_data['chatroom_name']).strip()
 
         chatroom = ChatRoom.objects.filter(name=room_name).first()
         if chatroom:
