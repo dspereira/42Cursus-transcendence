@@ -22,17 +22,27 @@ def apiCreateRoom(request):
         req_data = json.loads(request.body)
         room_name = str(req_data['chatroom_name']).strip()
 
-        chatroom = ChatRoom.objects.filter(name=room_name).first()
-        if chatroom:
-            message = f"{room_name} already exists !"
-        else:
-            chatroom = ChatRoom.objects.create(name=room_name)
-            message = f"{room_name} was created with success !"
+        chatroom = ChatRoom.objects.create(name=room_name)
+        message = f"{chatroom.name} was created with success !"
 
         response = {"message": message}
 
     else:
         response = {"message": "Invalid Method or Without Body"}
+
+    return JsonResponse(response)
+
+@require_http_methods(["POST", "OPTIONS"])
+def apiCreateRoomUsers(request):
+
+    if request.body:
+        req_data = json.loads(request.body)
+        user_id = req_data['user_id']
+        room_id = req_data['room_id']
+
+        message = f'-------------------------\nUser ID: {user_id}\nRoom ID: {room_id}\n-------------------------'
+
+        response = {"message": message}
 
     return JsonResponse(response)
 

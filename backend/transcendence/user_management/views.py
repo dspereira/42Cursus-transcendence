@@ -112,6 +112,15 @@ def apiTest(request):
 	}
 	return JsonResponse(res_data)
 
+def apiGetUserInfo(request):
+
+	res_data = {
+		"id": request.user.id,
+		"user": request.user.username,
+	}
+
+	return JsonResponse(res_data)
+
 """ CREATE TABLE IF NOT EXISTS "auth_user"
 ("id" integer NOT NULL PRIMARY KEY AUTOINCREMENT,
  "password" varchar(128) NOT NULL,

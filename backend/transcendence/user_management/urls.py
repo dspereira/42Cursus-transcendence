@@ -10,4 +10,6 @@ urlpatterns = [
     path("api/signin", views.apiSignin, name="apiSignin"),
      path("api/logout", views.apiLogout, name="apiLogout"),
     path("api/test", views.apiTest, name="apiTest"),
+
+    path("api/user_info", views.apiGetUserInfo, name="apiUserInfo"),
 ]

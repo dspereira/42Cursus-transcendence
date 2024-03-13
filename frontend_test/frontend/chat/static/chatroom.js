@@ -48,4 +48,35 @@ document.addEventListener("DOMContentLoaded", function() {
 	}
 	getRoomName();
 
+	function getSessionId()
+	{
+		const cookies = document.cookie;
+		const cookieArray = cookies.split(';');
+		let sessionId = null;
+		for (let i = 0; i < cookieArray.length; i++) {
+			const cookie = cookieArray[i].trim();
+			if (cookie.startsWith('session_id=')) {
+				sessionId = cookie.substring('session_id='.length);
+				break;
+			}
+		}
+		return (sessionId)		
+	}
+	console.log(getSessionId());
+
+	async function logData() 
+	{
+		const response = await fetch("http://127.0.0.1:8000/user/api/test", {
+			credentials: 'include',
+			method: 'GET'
+		});
+		const data = await response.json();
+		console.log(data);
+		if (data && data["user"])
+			document.querySelector(".user_data").innerHTML = "User Loged: " +  data["user"];
+		else
+			document.querySelector(".user_data").innerHTML = "User Loged: Anonymous User";
+	}
+	logData();
+
 });

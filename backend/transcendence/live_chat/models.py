@@ -33,3 +33,10 @@ class Message(models.Model):
 
     def __str__(self):
         return f'{self.user.username}: {self.content} [{self.timestamp}]'
+
+class ChatRoomUsers(models.Model):
+    room_id = models.ForeignKey(to=ChatRoom, on_delete=models.CASCADE)
+    user_id = models.ForeignKey(to=User, on_delete=models.CASCADE)
+
+    def __str__(self) -> str:
+        return f'Room: {self.room_id} | User: {self.user_id}'

@@ -21,6 +21,7 @@
     <body>
         <div class="container mt-3 p-5 myBody">
             <h2 class="chatroom_name_header"></h2>
+            <p class="user_data"></p>
             <!-- <div class="row">
                 <div class="col-12 col-md-8">
                     <div class="mb-2">
@@ -42,3 +43,29 @@
         </div>
     </body>
 </html>
+
+<!-- 
+
+chat room
+id | name | online | type
+type -> DM ou Group
+
+chat room users
+id | room_id | user_id
+
+id -> id unico da linha
+room_id -> foreing key -> id da linha da tabela chat room
+user_id -> foreing key -> id da linha da tabela user
+
+chat room
+id | name | online | type
+...
+42 | test | 0      | dm
+
+chat room users
+id | room_id | user_id
+...
+21 | 42      | 12
+22 | 42      | 45
+
+-->

@@ -4,6 +4,8 @@ document.addEventListener("DOMContentLoaded", function() {
 
 	console.log("Pagina HTML totalmente carregada !")
 
+	user_id = -1
+
 	// Após apertar o botão para criar uma Chat Room
 	document.getElementById("roomCreateForm").addEventListener("submit", function(event) {
 		event.preventDefault();
@@ -35,4 +37,27 @@ document.addEventListener("DOMContentLoaded", function() {
 			throw new Error("Create Room Fetch Error");
 		});
 	});
+
+	async function logData() 
+	{
+		const response = await fetch("http://127.0.0.1:8000/user/api/user_info", {
+			credentials: 'include',
+			method: 'GET'
+		});
+		const data = await response.json();
+
+		console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>")
+		console.log(data);
+		console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>")
+
+		if (data)
+		{
+			console.log("ID: " + data['id']);
+			console.log("User: " + data['user']);
+		}
+		else
+			console.log("Nobody is with Login.");
+	}
+	logData();
+
 });
