@@ -1,8 +1,10 @@
 from django.shortcuts import render
-from live_chat.models import ChatRoom
+from live_chat.models import ChatRoom, ChatRoomUsers
+from django.contrib.auth.models import User
 from django.http import JsonResponse, HttpResponse
 import json
 from django.views.decorators.http import require_http_methods
+import os
 
 def index(request):
     return render(request, "live_chat/index.html", {
@@ -22,10 +24,23 @@ def apiCreateRoom(request):
         req_data = json.loads(request.body)
         room_name = str(req_data['chatroom_name']).strip()
 
-        chatroom = ChatRoom.objects.create(name=room_name)
-        message = f"{chatroom.name} was created with success !"
+        if room_name:
+            chatroom = ChatRoom.objects.create(name=room_name)
+            message_status = f"{chatroom.name} was created with success !"
+            message = {
+                'message': message_status,
+                "room_name": room_name,
+                "room_id": chatroom.id
+            }
 
-        response = {"message": message}
+            os.system("clear")
+            print("-------------------")
+            print(message)
+            print("-------------------")
+
+            response = {"message": message}
+        else:
+            response = {"message": "Room name is Empty"}
 
     else:
         response = {"message": "Invalid Method or Without Body"}
@@ -33,16 +48,39 @@ def apiCreateRoom(request):
     return JsonResponse(response)
 
 @require_http_methods(["POST", "OPTIONS"])
-def apiCreateRoomUsers(request):
+def apiAddUserToChatRoom(request):
 
     if request.body:
         req_data = json.loads(request.body)
+
         user_id = req_data['user_id']
         room_id = req_data['room_id']
 
-        message = f'-------------------------\nUser ID: {user_id}\nRoom ID: {room_id}\n-------------------------'
+        print("==========================================")
+        print(f"User ID {user_id} | Room ID {room_id}")
+        print("==========================================")
 
-        response = {"message": message}
+        if user_id is not None and room_id is not None:
+
+            user = User.objects.get(id=user_id)
+            room = ChatRoom.objects.get(id=room_id)
+
+            if user is None:
+                message = f"User {user_id} is not defined"
+            elif room is None:
+                message = f"User {room_id} is not defined"
+            else:
+                if not ChatRoomUsers.objects.filter(user=user, room=room).exists():
+                    ChatRoomUsers.objects.create(user=user, room=room)
+                    message = f"User {user_id} added successfully to chat room {room_id}"
+                else:
+                    message = f"User {user_id} is already registered in chat room {room_id}"
+
+            response = {"message": message}
+        else:
+            response = {"message": "Empty user_id or room_id"}
+    else:
+        response = {"message": "Empty request body"}
 
     return JsonResponse(response)
 

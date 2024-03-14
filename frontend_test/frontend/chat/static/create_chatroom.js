@@ -31,14 +31,53 @@ document.addEventListener("DOMContentLoaded", function() {
 			return response.json();
 		})
 		.then(data => {
-			document.querySelector(".room_creation_status").innerHTML = "Status -> " +  data["message"];
+			data_obj = data["message"]
+			data_message = data_obj["message"]
+			data_room_id = data_obj["room_id"]
+
+			document.querySelector(".room_creation_status").innerHTML = "Status -> " +  data_message;
+
+			console.log("====================================")
+			console.log("Room Id: ", data_room_id)
+			console.log("====================================")
+
+			const jsonJoinRoomData = {
+				"room_id": data_room_id,
+				"user_id": user_id
+			};
+
+			fetch("http://127.0.0.1:8000/chat/api/add_user_to_chat_room", {
+				credentials: 'include',
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json"
+				},
+				body: JSON.stringify(jsonJoinRoomData)
+			})
+				.then(response => {
+					if (!response.ok) {
+						throw new Error('Network response was not ok');
+					}
+					return response.json();
+				})
+				.then(data => {
+					if (data)
+					{
+						console.log(data)
+					}
+					else
+						console.log("Data is Empty")
+				})
+				.catch(error => {
+					throw new Error("Create Room Fetch Error");
+				});
 		})
 		.catch(error => {
 			throw new Error("Create Room Fetch Error");
 		});
 	});
 
-	async function logData() 
+	async function logData()
 	{
 		const response = await fetch("http://127.0.0.1:8000/user/api/user_info", {
 			credentials: 'include',
@@ -77,5 +116,4 @@ document.addEventListener("DOMContentLoaded", function() {
 			console.log("Data is empy.");
 	}
 	getAllUsersData();
-
 });
