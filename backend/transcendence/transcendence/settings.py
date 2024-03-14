@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'live_chat.apps.LiveChatConfig',
     'channels',
     'generate_users',
+    'generate_chatrooms',
 ]
 
 MIDDLEWARE = [
