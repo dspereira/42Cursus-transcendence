@@ -33,11 +33,6 @@ def apiCreateRoom(request):
                 "room_id": chatroom.id
             }
 
-            os.system("clear")
-            print("-------------------")
-            print(message)
-            print("-------------------")
-
             response = {"message": message}
         else:
             response = {"message": "Room name is Empty"}
@@ -55,10 +50,6 @@ def apiAddUserToChatRoom(request):
 
         user_id = req_data['user_id']
         room_id = req_data['room_id']
-
-        print("==========================================")
-        print(f"User ID {user_id} | Room ID {room_id}")
-        print("==========================================")
 
         if user_id is not None and room_id is not None:
 
