@@ -5,7 +5,6 @@ from django.contrib.auth.models import User
 from django.http import JsonResponse
 import json
 
-
 def index(request):
 	return render(request, "user_management/index.html", {})
 
@@ -120,6 +119,33 @@ def apiGetUserInfo(request):
 	}
 
 	return JsonResponse(res_data)
+
+import os
+
+def apiGetUsersList(request):
+
+	os.system("clear")
+
+	users_list = User.objects.all()
+	users_count = User.objects.count()
+
+	users_data = []
+	for user in users_list:
+		users_data.append({
+			'id': user.id,
+			'username': user.username,
+		})
+
+	result_print = "------------------------------------------\n"
+	for user in users_data:
+		result_print += f'{user["id"]} | {user["username"]}\n'
+	result_print += "------------------------------------------\n"
+
+	print(result_print)
+
+	response = {"message": result_print, "users_count": users_count, "users_list": users_data}
+
+	return JsonResponse(response)
 
 """ CREATE TABLE IF NOT EXISTS "auth_user"
 ("id" integer NOT NULL PRIMARY KEY AUTOINCREMENT,

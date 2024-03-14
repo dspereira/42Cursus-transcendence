@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'user_management',
     'live_chat.apps.LiveChatConfig',
     'channels',
+    'generate_users',
 ]
 
 MIDDLEWARE = [

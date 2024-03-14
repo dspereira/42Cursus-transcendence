@@ -46,18 +46,36 @@ document.addEventListener("DOMContentLoaded", function() {
 		});
 		const data = await response.json();
 
-		console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>")
-		console.log(data);
-		console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>")
-
 		if (data)
 		{
-			console.log("ID: " + data['id']);
-			console.log("User: " + data['user']);
+			user_id = data['id'];
+			user_indo_text = "ID: " + user_id + " | User: " + data['user']
+			console.log("-------------------------")
+			console.log("User With Active Login")
+			console.log(user_indo_text)
+			console.log("-------------------------")
 		}
 		else
 			console.log("Nobody is with Login.");
 	}
 	logData();
+
+	async function getAllUsersData()
+	{
+		const response = await fetch("http://127.0.0.1:8000/user/api/users_list", {
+			credentials: 'include',
+			method: 'GET'
+		});
+		const data = await response.json();
+
+		if (data)
+		{
+			users_list = data[""]
+			console.log(data["message"]);
+		}
+		else
+			console.log("Data is empy.");
+	}
+	getAllUsersData();
 
 });
