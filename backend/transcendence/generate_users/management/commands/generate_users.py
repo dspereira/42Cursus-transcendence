@@ -23,7 +23,7 @@ class Command(BaseCommand):
                 username = f'user_{self.get_new_random_number()}'
                 if not self.user_exists(username):
                     break
-            email = f'user_{i}@example.com'
+            email = f'{username}@bot_user.com'
             password = '123'
             User.objects.create_user(username=username, email=email, password=password)
             self.stdout.write(self.style.SUCCESS(f'User {username} created successfully'))
