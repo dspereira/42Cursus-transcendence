@@ -12,7 +12,9 @@ document.addEventListener("DOMContentLoaded", function() {
 		const parts = path.split('/');
 		const room_id = parts[parts.indexOf('chatroom') + 1];
 
-		fetch('http://127.0.0.1:8000/chat/api/get_room_name/' + room_id, {
+		api_request_url = 'http://127.0.0.1:8000/chat/api/get_room_name/' + '?room_id=' + room_id
+
+		fetch(api_request_url, {
 			credentials: 'include',
 			method: "GET",
 		})

@@ -20,3 +20,9 @@ def join_chatroom(request):
 def chatroom(request, room_id):
 	print("Room ID: ", room_id)
 	return render(request, "chat/chatroom.html")
+
+def add_user_to_chatroom(request):
+	return render(request, "chat/add_user_to_chatroom.html")
+
+def user_chatrooms_list(request):
+	return render(request, "chat/user_chatrooms_list.html")

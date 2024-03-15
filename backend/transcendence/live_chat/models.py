@@ -39,4 +39,4 @@ class ChatRoomUsers(models.Model):
     user = models.ForeignKey(to=User, on_delete=models.CASCADE)
 
     def __str__(self) -> str:
-        return f'Room: {self.room_id} | User: {self.user_id}'
+        return f'User: {self.user} | Room: {self.room}'

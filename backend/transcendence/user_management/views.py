@@ -136,11 +136,12 @@ def apiGetUsersList(request):
 		})
 
 	result_print = "------------------------------------------\n"
-	for user in users_data:
-		result_print += f'{user["id"]} | {user["username"]}\n'
+	if (users_count):
+		for user in users_data:
+			result_print += f'{user["id"]} | {user["username"]}\n'
+	else:
+		result_print += "There is no Users inside DataBase\n"
 	result_print += "------------------------------------------\n"
-
-	print(result_print)
 
 	response = {"message": result_print, "users_count": users_count, "users_list": users_data}
 

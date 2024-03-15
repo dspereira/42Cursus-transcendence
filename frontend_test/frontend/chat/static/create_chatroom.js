@@ -54,23 +54,23 @@ document.addEventListener("DOMContentLoaded", function() {
 				},
 				body: JSON.stringify(jsonJoinRoomData)
 			})
-				.then(response => {
-					if (!response.ok) {
-						throw new Error('Network response was not ok');
-					}
-					return response.json();
-				})
-				.then(data => {
-					if (data)
-					{
-						console.log(data)
-					}
-					else
-						console.log("Data is Empty")
-				})
-				.catch(error => {
-					throw new Error("Create Room Fetch Error");
-				});
+			.then(response => {
+				if (!response.ok) {
+					throw new Error('Network response was not ok');
+				}
+				return response.json();
+			})
+			.then(data => {
+				if (data)
+				{
+					console.log(data)
+				}
+				else
+					console.log("Data is Empty")
+			})
+			.catch(error => {
+				throw new Error("Create Room Fetch Error");
+			});
 		})
 		.catch(error => {
 			throw new Error("Create Room Fetch Error");
