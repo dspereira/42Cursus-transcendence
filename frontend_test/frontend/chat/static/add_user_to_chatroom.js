@@ -78,7 +78,7 @@ document.addEventListener("DOMContentLoaded", function() {
 				console.log("--------------------------");
 			}
 		})
-		.catch(error => {
+			.catch(error => {
 			console.error("Error fetching chat rooms:", error);
 		});
 	}

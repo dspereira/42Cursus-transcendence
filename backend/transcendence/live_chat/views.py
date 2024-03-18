@@ -128,7 +128,7 @@ def apiListRooms(request):
     return JsonResponse(response)
 
 @require_http_methods(["GET"])
-def apiGetRoomName(request):
+def apiGetChatRoom(request):
 
     query_params = request.GET
 
@@ -159,7 +159,6 @@ def apiGetRoomName(request):
 def apiGetUserChatRooms(request):
 
     query_params = request.GET
-    status = 200
     user_id = -1
 
     if 'user_id' in query_params and query_params.get('user_id'):
@@ -193,13 +192,29 @@ def apiGetUserChatRooms(request):
 
         else:
             response = {"message": "401 | Unauthorized", "status": 401}
-            status = 401
 
     else:
         response = {"message": "401 | Unauthorized", "status": 401}
-        status = 401
 
-    return JsonResponse(response, status=status)
+    return JsonResponse(response, status=response["status"])
+
+def apiCheckUserChatRoomAccess(request):
+    query_params = request.GET
+
+    if ('user_id' in query_params and query_params.get('user_id')) and ('room_id' in query_params and query_params.get('room_id')):
+        search_user = User.objects.get(id=query_params.get('user_id'))
+        search_room = ChatRoom.objects.get(id=query_params.get('room_id'))
+        if search_user and search_room:
+            if ChatRoomUsers.objects.filter(user=search_user, room=search_room).exists():
+                response = {"message": "200 | OK", "status": 200}
+            else:
+                response = {"message": "401 | Unauthorized", "status": 401}
+        else:
+            response = {"message": "401 | Unauthorized", "status": 401}
+    else:
+        response = {"message": "401 | Unauthorized", "status": 401}
+
+    return JsonResponse(response, status=response["status"])
 
 def apiTest(request):
     print("")
