@@ -26,8 +26,6 @@ def token_obtain_view(request):
 		if user:
 			access_token = generate_token(user_id=user.id, name=user.get_username(), token_type=ACCESS_TOKEN)
 			refresh_token = generate_token(user_id=user.id, name=user.get_username(), token_type=REFRESH_TOKEN)
-			print(access_token)
-			print(refresh_token)
 			response = JsonResponse({"message": "success"})
 			cookie_access_exp = datetime.utcnow() + timedelta(minutes=15)
 			cookie_refresh_exp = datetime.utcnow() + timedelta(days=1)
@@ -56,26 +54,6 @@ def token_refresh_view(request):
 	response.set_cookie(key="refresh", value=refresh_token, httponly=True, expires=cookie_refresh_exp, samesite="Lax", path="/user/api/token/refresh")
 	return response
 
-'''
-@require_http_methods(["POST"])
-def api_signin(request):
-	if request.body:
-		req_data = json.loads(request.body)
-		if req_data:
-			email = req_data['email']
-			username = req_data['username']
-			password = req_data['password']
-		if (not email or not username or not password):
-			return JsonResponse({"message": "error"})
-		if User.objects.filter(username=username).exists() or User.objects.filter(email=email).exists():
-			return JsonResponse({"message": "error"})
-		User.objects.create_user(username=username, email=email, password=password)
-		user = authenticate(request, username=username, password=password)
-		if not user:
-			return JsonResponse({"message": "error"})
-	return JsonResponse({"message": "success"})
-'''
-
 @require_http_methods(["POST"])
 def api_signin(request):
 	if request.body:
@@ -88,7 +66,7 @@ def api_signin(request):
 			return JsonResponse({"message": "error"})
 		if UserAccount.objects.filter(username=username).exists() or UserAccount.objects.filter(email=email).exists():
 			return JsonResponse({"message": "error"})
-		UserAccount.obejcts.create_user(username=username, email=email, password=password)
+		UserAccount.objects.create_user(username=username, email=email, password=password)
 		user = authenticate(request, username=username, password=password)
 		if not user:
 			return JsonResponse({"message": "error"})
