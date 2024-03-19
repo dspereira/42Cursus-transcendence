@@ -1,10 +1,11 @@
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
-from django.contrib.auth import authenticate
+from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
 from django.http import JsonResponse
 from django.views.decorators.http import require_http_methods
-from user_management.models import BlacklistedToken
+from user_management.models import BlacklistedToken, UserAccount
+
 
 import json
 import jwt
@@ -25,6 +26,8 @@ def token_obtain_view(request):
 		if user:
 			access_token = generate_token(user_id=user.id, name=user.get_username(), token_type=ACCESS_TOKEN)
 			refresh_token = generate_token(user_id=user.id, name=user.get_username(), token_type=REFRESH_TOKEN)
+			print(access_token)
+			print(refresh_token)
 			response = JsonResponse({"message": "success"})
 			cookie_access_exp = datetime.utcnow() + timedelta(minutes=15)
 			cookie_refresh_exp = datetime.utcnow() + timedelta(days=1)
@@ -53,7 +56,7 @@ def token_refresh_view(request):
 	response.set_cookie(key="refresh", value=refresh_token, httponly=True, expires=cookie_refresh_exp, samesite="Lax", path="/user/api/token/refresh")
 	return response
 
-
+'''
 @require_http_methods(["POST"])
 def api_signin(request):
 	if request.body:
@@ -67,6 +70,25 @@ def api_signin(request):
 		if User.objects.filter(username=username).exists() or User.objects.filter(email=email).exists():
 			return JsonResponse({"message": "error"})
 		User.objects.create_user(username=username, email=email, password=password)
+		user = authenticate(request, username=username, password=password)
+		if not user:
+			return JsonResponse({"message": "error"})
+	return JsonResponse({"message": "success"})
+'''
+
+@require_http_methods(["POST"])
+def api_signin(request):
+	if request.body:
+		req_data = json.loads(request.body)
+		if req_data:
+			email = req_data['email']
+			username = req_data['username']
+			password = req_data['password']
+		if (not email or not username or not password):
+			return JsonResponse({"message": "error"})
+		if UserAccount.objects.filter(username=username).exists() or UserAccount.objects.filter(email=email).exists():
+			return JsonResponse({"message": "error"})
+		UserAccount.obejcts.create_user(username=username, email=email, password=password)
 		user = authenticate(request, username=username, password=password)
 		if not user:
 			return JsonResponse({"message": "error"})
@@ -122,19 +144,3 @@ def generate_token(user_id, name, token_type):
 		algorithm='HS256'
 	)
 	return token
-
-
-'''
-CREATE TABLE IF NOT EXISTS "auth_user" 
-("id" integer NOT NULL PRIMARY KEY AUTOINCREMENT, 
- "password" varchar(128) NOT NULL, 
- "last_login" datetime NULL, 
- "is_superuser" bool NOT NULL, 
- "username" varchar(150) NOT NULL UNIQUE, 
- "last_name" varchar(150) NOT NULL, 
- "email" varchar(254) NOT NULL, 
- "is_staff" bool NOT NULL, 
- "is_active" bool NOT NULL, 
- "date_joined" datetime NOT NULL, 
- "first_name" varchar(150) NOT NULL);
-'''
