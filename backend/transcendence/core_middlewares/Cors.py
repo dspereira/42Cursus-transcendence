@@ -30,7 +30,7 @@ class Cors:
 		self.get_response = get_response
 
 	def __call__(self, request):
-		
+
 		if request.method == "OPTIONS":
 			response = HttpResponse()
 			self.process_response(response)

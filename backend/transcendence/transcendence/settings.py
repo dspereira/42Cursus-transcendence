@@ -37,7 +37,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'user_management',
-    'live_chat.apps.LiveChatConfig',
+    'live_chat',
     'channels',
     'generate_users',
     'generate_chatrooms',
@@ -72,8 +72,8 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'transcendence.wsgi.application'
 ASGI_APPLICATION = 'transcendence.asgi.application'
+WSGI_APPLICATION = 'transcendence.wsgi.application'
 
 # Channels
 # https://channels.readthedocs.io/en/stable/topics/channel_layers.html#in-memory-channel-layer

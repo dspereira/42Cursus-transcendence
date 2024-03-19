@@ -10,6 +10,67 @@ document.addEventListener("DOMContentLoaded", function() {
 	const parts = path.split('/');
 	const room_id = parts[parts.indexOf('chatroom') + 1];
 
+	const chat_form = document.querySelector(".myChatForm")
+
+	let logged_user_id = null
+	let logged_user_name = null
+	
+	function connect() {
+		
+		console.log("URL WebSocket")
+		result_str = "ws://127.0.0.1:8000/chat_connection/" + room_id + "/";
+		console.log(result_str);
+
+		chatSocket = new WebSocket(result_str);
+
+		chatSocket.onopen = function(e) {
+			console.log("Successfully connected to the WebSocket.");
+		}
+
+		chatSocket.onclose = function(e) {
+			console.log("WebSocket connection closed unexpectedly. Trying to reconnect in 2s...");
+			setTimeout(function() {
+				console.log("Reconnecting...");
+				connect();
+			}, 2000);
+		};
+
+		chat_form.addEventListener("submit", function(event) {
+			event.preventDefault();
+	
+			let messasge = event.target.message.value;
+			chatSocket.send(JSON.stringify({
+				"message": messasge,
+			}))
+			chat_form.reset()
+		});
+
+		chatSocket.onmessage = function(e) {
+			const data = JSON.parse(e.data);
+			console.log(data);
+	
+			switch (data.type) {
+				case "chat_message":
+					chat_log = data.user + ": " + data.message;
+					console.log(chat_log)
+					// chatLog.value += data.user + ": " + data.message + "\n";
+					break;
+				default:
+					console.error("Unknown message type!");
+					break;
+			}
+	
+			// scroll 'chatLog' to the bottom
+			// chatLog.scrollTop = chatLog.scrollHeight;
+		};
+
+		chatSocket.onerror = function(err) {
+			console.log("WebSocket encountered an error: " + err.message);
+			console.log("Closing the socket.");
+			chatSocket.close();
+		}
+	}
+
 	function getRoomName()
 	{
 		api_request_url = 'http://127.0.0.1:8000/chat/api/get_chat_room/' + '?room_id=' + room_id
@@ -42,6 +103,7 @@ document.addEventListener("DOMContentLoaded", function() {
 				}
 				else if (data.status === 401)
 					document.querySelector(".myBody").innerHTML = _401ErrorPage;
+				connect();
 			}
 		})
 		.catch(error => {
@@ -58,9 +120,10 @@ document.addEventListener("DOMContentLoaded", function() {
 		const data = await response.json();
 		if (data && data['id'] && data['user'])
 		{
-			user_id = data['id'];
-			console.log("User ID -> ", user_id);
-			console.log("User    -> ", data['user']);
+			logged_user_id = data['id'];
+			logged_user_name = data['user'];
+			console.log("User ID -> ", logged_user_id);
+			console.log("User    -> ", logged_user_name);
 
 			url = "http://127.0.0.1:8000/chat/api/check_user_chat_room_access/";
 			query_params = "?user_id=" + data['id'] + "&room_id=" + room_id;

@@ -2,59 +2,39 @@ import json
 
 from asgiref.sync import async_to_sync
 from channels.generic.websocket import WebsocketConsumer
+from channels.db import database_sync_to_async
+from django.contrib.auth.models import AnonymousUser
+from channels.middleware import BaseMiddleware
 
 from .models import ChatRoom, Message
 
 class ChatConsumer(WebsocketConsumer):
 
-	def __init__(self, *args, **kwargs):
-		super().__init__(args, kwargs)
-		self.room_name = None
-		self.room_group_name = None
-		self.room = None
-		self.user = None
-
 	def connect(self):
-		self.room_name = self.scope['url_route']['kwargs']['room_name']
-		self.room_group_name = f'chat_{self.room_name}'
-		self.room = ChatRoom.objects.get(name=self.room_name)
-		self.user = self.scope['user']
-
 		self.accept()
 
-		# print("===================================================")
-		# print(Message.objects.get(room=self.room))
-		# print("===================================================")
+		print("========================================")
+		for key, value in self.scope.items():
+			print(f"{key}: {value}")
+		print("========================================")
 
-		async_to_sync(self.channel_layer.group_add)(
-			self.room_group_name,
-			self.channel_name,
-			# self.messages
-		)
-		self.room.join()
+		session_id = self.scope["session"].session_key
+		user = self.scope["user"]
+		room_id = self.scope["url_route"]["kwargs"]["room_id"]
+		print(f"WebSocket connected")
+		print("Session ID  :", session_id)
+		print("Session User:", user)
+		print("Session User:", room_id)
 
 	def disconnect(self, close_code):
-		async_to_sync(self.channel_layer.group_discard)(
-			self.room_group_name,
-			self.channel_name,
-		)
+		print(f"WebSocket disconnected")
+		print("Close code -> ", close_code)
 
-	def receive(self, text_data=None, bytes_data=None):
-		text_data_json = json.loads(text_data)
-		message = text_data_json['message']
+	def receive(self, text_data):
+		# print(f"WebSocket received message")
 
-		if not self.user.is_authenticated:
-			return
+		data_json = json.loads(text_data)
+		user = self.scope["user"]
+		message = data_json['message']
 
-		async_to_sync(self.channel_layer.group_send)(
-			self.room_group_name,
-			{
-				'type': 'chat_message',
-				'user': self.user.username,
-				'message': message,
-			}
-		)
-		Message.objects.create(user=self.user, room=self.room, content=message)
-
-	def chat_message(self, event):
-		self.send(text_data=json.dumps(event))
+		print(f"{user}: {message}")
