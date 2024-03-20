@@ -1,0 +1,51 @@
+body {
+	--nav-width: 200px;
+	margin: 0 0 0 var(--nav-width);
+	font-family: 'Quicksand', sans-serif;
+	font-size: 18px;
+}
+
+.nav {
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: var(--nav-width);
+	height: 100vh;
+	background: #222222;
+}
+
+.nav__link {
+	display: block;
+	padding: 12px 18px;
+	text-decoration: none;
+	color: #eeeeee;
+	font-weight: 500;
+}
+.SelectRed{
+	text-decoration: none;
+}
+
+.SelectRed:hover {
+	animation: SelectRed 500ms forwards;
+}
+
+#app {
+	margin: 2em;
+	line-height: 1.5;
+	font-weight: 500;
+}
+
+a {
+	color: #b90000;
+}
+
+@keyframes SelectRed {
+	from{
+		/* color: white;
+		padding: 12px 18px; */
+	}
+	to{
+		color: red;
+		padding: 12px 25px;
+	}
+}
