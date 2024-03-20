@@ -11,20 +11,33 @@ document.addEventListener("DOMContentLoaded", function() {
 	const room_id = parts[parts.indexOf('chatroom') + 1];
 
 	const chat_form = document.querySelector(".myChatForm")
+	const chat_messages_txt_area = document.querySelector(".chat_messages_txt_area");
 
 	let logged_user_id = null
 	let logged_user_name = null
-	
+	chat_messages_txt_area.value = "";
+
 	function connect() {
 		
 		console.log("URL WebSocket")
 		result_str = "ws://127.0.0.1:8000/chat_connection/" + room_id + "/";
 		console.log(result_str);
-
+		
 		chatSocket = new WebSocket(result_str);
-
+		
 		chatSocket.onopen = function(e) {
 			console.log("Successfully connected to the WebSocket.");
+			
+			/* if (data.empty)
+			{
+				console.log(data.message);
+				chat_messages_txt_area.value += data.message + "\n";
+			}
+			else
+			{
+				chat_messages_txt_area.value = "";
+				console.error("Empty chatroom!");
+			} */
 		}
 
 		chatSocket.onclose = function(e) {
@@ -48,18 +61,28 @@ document.addEventListener("DOMContentLoaded", function() {
 		chatSocket.onmessage = function(e) {
 			const data = JSON.parse(e.data);
 			console.log(data);
-	
-			switch (data.type) {
-				case "chat_message":
-					chat_log = data.user + ": " + data.message;
-					console.log(chat_log)
-					// chatLog.value += data.user + ": " + data.message + "\n";
-					break;
-				default:
-					console.error("Unknown message type!");
-					break;
+
+			if (data.type === "chat_empty_status")
+			{
+				if (data.empty)
+				{
+					chat_messages_txt_area.value = "";
+					console.log("Chat Empty Status -> True");
+				}
+				else
+				{
+					chat_messages_txt_area.value = data.messages;
+					console.log("Chat Empty Status -> False");
+				}
 			}
-	
+			else if (data.type === "chat_message")
+			{
+				console.log(data.message);
+				chat_messages_txt_area.value += data.message + "\n";
+			}
+			else
+				console.error("Unknown message type!");
+
 			// scroll 'chatLog' to the bottom
 			// chatLog.scrollTop = chatLog.scrollHeight;
 		};
