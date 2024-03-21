@@ -12,6 +12,8 @@ import jwt
 import uuid
 from datetime import datetime, timedelta
 
+from custom_decorators import login_required
+
 # Just for testing purposes, the key must be 256 bit and it has to be in a .env file.
 jwt_secret_key = "your-256-bit-secret"
 
@@ -82,6 +84,8 @@ def api_logout(request):
 	response.delete_cookie("refresh", path="/user/api/token/refresh")
 	return response
 
+
+@login_required
 def api_info(request):
 	res_data = {
 		"user": request.token_data.get("name")

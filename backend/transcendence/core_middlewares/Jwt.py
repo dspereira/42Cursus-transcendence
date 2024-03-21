@@ -11,6 +11,8 @@ public_routes = {
 	"/user/api/signin/": True,
 	"/user/api/token": True,
 	"/user/api/token/": True,
+	"/user/api/info": True,
+	"/user/api/info/": True,
 	#"/user/api/token/refresh": True,
 	#"/user/api/token/refresh/": True,
 
