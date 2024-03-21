@@ -1,61 +1,43 @@
-from django.http import JsonResponse
-
 import jwt
-
-public_routes = {
-	"/user/api/login": True,
-	"/user/api/login/": True,
-	"/user/api/logout": True,
-	"/user/api/logout/": True,
-	"/user/api/signin": True,
-	"/user/api/signin/": True,
-	"/user/api/token": True,
-	"/user/api/token/": True,
-	"/user/api/info": True,
-	"/user/api/info/": True,
-	#"/user/api/token/refresh": True,
-	#"/user/api/token/refresh/": True,
-
-}
 
 ACCESS_TOKEN = "access"
 REFRESH_TOKEN = "refresh"
 
 class Jwt:
-
 	def __init__(self, get_response):
 		self.get_response = get_response
 
-	def __call__(self, request): 
-		if request.path == "/user/api/token/refresh" or request.path == "/user/api/token/refresh/":
-			token_type = REFRESH_TOKEN
-		else:
-			token_type = ACCESS_TOKEN
-		token = self.get_token(request, token_type)
-		token_data, error_msg = self.validate_token(token)
-		if error_msg and not public_routes.get(request.path):
-			return JsonResponse({"message": error_msg}, status=401)
-		elif token_data and token_type != token_data.get("token_type"):
-			return JsonResponse({"message": "Invalid token type"}, status=401)
-		else:
-			self.set_token_data(request, token_data)
+	def __call__(self, request):
+		access_token = self.__get_token(request, ACCESS_TOKEN)
+		refresh_token = self.__get_token(request, REFRESH_TOKEN)
+		setattr(request, "access_data", JwtData(access_token))
+		setattr(request, "refresh_data", JwtData(refresh_token))
 		return self.get_response(request)
 
-	def get_token(self, request, token_type):
+	def __get_token(self, request, token_type):
 		return request.COOKIES.get(token_type)
 
-	def validate_token(self, token):
-		error_msg = None
-		token_data = None
-		try:
-			token_data = jwt.decode(token, "your-256-bit-secret", algorithms="HS256")
-		except jwt.exceptions.ExpiredSignatureError:
-			error_msg = "Authentication token has expired"
-		except jwt.exceptions.InvalidSignatureError:
-			error_msg = "Authentication token has invalid signature"
-		except Exception as e:
-			error_msg = "Authentication token has invalid"
-		return token_data, error_msg
+class JwtData:
+	def __init__(self, _token):
+		self.token = _token
+		self.__decode_token()
 
-	def set_token_data(self, request, token_data):
-		setattr(request, "token_data", token_data)
+	def __str__(self):
+		return f"{self.__token_data}"
+
+	def __decode_token(self):
+		try:
+			self.__token_data = jwt.decode(self.token, "your-256-bit-secret", algorithms="HS256")
+		except Exception:
+			self.__token_data = None
+
+	def __getattr__(self, name):
+			if self.__token_data and name in self.__token_data:
+				return self.__token_data[name]
+			else:
+				return None
+				#raise AttributeError(f"{type(self)} object has no attribute '{name}'")
+	
+	def __bool__(self):
+		return bool(self.__token_data)
+

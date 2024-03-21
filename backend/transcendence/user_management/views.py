@@ -3,7 +3,6 @@ from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
 from django.http import JsonResponse
-from django.views.decorators.http import require_http_methods
 from user_management.models import BlacklistedToken, UserAccount
 
 
@@ -12,7 +11,10 @@ import jwt
 import uuid
 from datetime import datetime, timedelta
 
+from django.views.decorators.http import require_http_methods
 from custom_decorators import login_required
+
+
 
 # Just for testing purposes, the key must be 256 bit and it has to be in a .env file.
 jwt_secret_key = "your-256-bit-secret"
@@ -85,10 +87,17 @@ def api_logout(request):
 	return response
 
 
-@login_required
+#@login_required
 def api_info(request):
+	
+	if request.access_data:
+		print("existe dados")
+	else:
+		print("Não existe dados")
+
 	res_data = {
-		"user": request.token_data.get("name")
+		#"user": request.token_data.get("name")
+		"user": "hell yha"
 	}
 	return JsonResponse(res_data)
 
@@ -110,7 +119,7 @@ def generate_jwt(username, id):
 def generate_token(user_id, name, token_type):
 	iat = datetime.utcnow()
 	if token_type == ACCESS_TOKEN:
-		exp = iat + timedelta(minutes=1)
+		exp = iat + timedelta(minutes=100)
 	else:
 		exp = iat + timedelta(days=1)
 	token = jwt.encode(
