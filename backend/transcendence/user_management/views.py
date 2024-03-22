@@ -1,26 +1,28 @@
 from django.http import HttpResponse
-from django.shortcuts import render, redirect
-from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth import authenticate
 from django.contrib.auth.models import User
 from django.http import JsonResponse
 from user_management.models import BlacklistedToken, UserAccount
 
 
 import json
-import jwt
-import uuid
-from datetime import datetime, timedelta
+#import jwt
+#import uuid
+#from datetime import datetime, timedelta
 
 from django.views.decorators.http import require_http_methods
 from custom_decorators import login_required
 
+from datetime import datetime, timedelta
+
+
+#from custom_utils.jwt_utils.generate_token import generate_access_token, generate_refresh_token
+from custom_utils.jwt_utils import TokenGenerator
 
 
 # Just for testing purposes, the key must be 256 bit and it has to be in a .env file.
 jwt_secret_key = "your-256-bit-secret"
 
-ACCESS_TOKEN = "access"
-REFRESH_TOKEN = "refresh"
 
 @require_http_methods(["POST"])
 def token_obtain_view(request):
@@ -28,15 +30,27 @@ def token_obtain_view(request):
 		req_data = json.loads(request.body)
 		user = authenticate(request, username=req_data["username"], password=req_data["password"])
 		if user:
-			access_token = generate_token(user_id=user.id, name=user.get_username(), token_type=ACCESS_TOKEN)
-			refresh_token = generate_token(user_id=user.id, name=user.get_username(), token_type=REFRESH_TOKEN)
+			token_gen = TokenGenerator(user.id, user.get_username())
+			token_gen.generate_tokens()
 			response = JsonResponse({"message": "success"})
-			cookie_access_exp = datetime.utcnow() + timedelta(minutes=15)
-			cookie_refresh_exp = datetime.utcnow() + timedelta(days=1)
-			response.set_cookie(key="access", value=access_token, httponly=True, expires=cookie_access_exp, samesite="Lax")
-			response.set_cookie(key="refresh", value=refresh_token, httponly=True, expires=cookie_refresh_exp, samesite="Lax", path="/user/api/token/refresh")
+			response.set_cookie(
+				key="access", 
+				value=token_gen.get_access_token(), 
+				httponly=True, 
+				expires=token_gen.get_access_token_exp(), 
+				samesite="Lax", 
+				path="/"
+			)
+			response.set_cookie(
+				key="refresh", 
+				value=token_gen.get_refresh_token(), 
+				httponly=True, expires=token_gen.get_refresh_token_exp(), 
+				samesite="Lax", 
+				path="/user/api/token/refresh"
+			)
 			return response
 	return JsonResponse({"message": "error"})
+
 
 @require_http_methods(["POST"])
 def token_refresh_view(request):
@@ -49,13 +63,20 @@ def token_refresh_view(request):
 
 	user_id = request.token_data["sub"]
 	name = request.token_data["name"]
-	access_token = generate_token(user_id, name, token_type=ACCESS_TOKEN)
-	refresh_token = generate_token(user_id, name, token_type=REFRESH_TOKEN)
+	
+	token_gen = TokenGenerator(user_id, name)
+	token_gen.generate_tokens()
+	
+	#access_token = generate_token(user_id, name, token_type=ACCESS_TOKEN)
+	#refresh_token = generate_token(user_id, name, token_type=REFRESH_TOKEN)
+	#access_token = generate_access_token(user_id, name)
+	#refresh_token = generate_refresh_token(user_id, name)
+
 	response = JsonResponse({"message": "success"})
-	cookie_access_exp = datetime.utcnow() + timedelta(minutes=15)
-	cookie_refresh_exp = datetime.utcnow() + timedelta(days=1)
-	response.set_cookie(key="access", value=access_token, httponly=True, expires=cookie_access_exp, samesite="Lax")
-	response.set_cookie(key="refresh", value=refresh_token, httponly=True, expires=cookie_refresh_exp, samesite="Lax", path="/user/api/token/refresh")
+	#cookie_access_exp = datetime.utcnow() + timedelta(minutes=15)
+	#cookie_refresh_exp = datetime.utcnow() + timedelta(days=1)
+	response.set_cookie(key="access", value=token_gen.get_access_token(), httponly=True, expires=token_gen.get_access_token_exp(), samesite="Lax", path="/")
+	response.set_cookie(key="refresh", value=token_gen.get_refresh_token(), httponly=True, expires=token_gen.get_refresh_token_exp(), samesite="Lax", path="/user/api/token/refresh")
 	return response
 
 @require_http_methods(["POST"])
@@ -89,7 +110,7 @@ def api_logout(request):
 
 #@login_required
 def api_info(request):
-	
+
 	if request.access_data:
 		print("existe dados")
 	else:
@@ -102,20 +123,9 @@ def api_info(request):
 	return JsonResponse(res_data)
 
 
-# Utils functions
-def generate_jwt(username, id):
-	token = jwt.encode(
-		{
-			"token_type": "access",
-			"sub": id,
-			"iat": datetime.utcnow(),
-			"exp": datetime.utcnow() + timedelta(days=1)
- 		},
-		jwt_secret_key,
-		algorithm='HS256'
-	)
-	return token
 
+
+'''
 def generate_token(user_id, name, token_type):
 	iat = datetime.utcnow()
 	if token_type == ACCESS_TOKEN:
@@ -135,3 +145,4 @@ def generate_token(user_id, name, token_type):
 		algorithm='HS256'
 	)
 	return token
+'''

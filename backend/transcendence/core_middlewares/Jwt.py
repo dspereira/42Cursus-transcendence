@@ -1,4 +1,6 @@
-import jwt
+#import jwt
+
+from custom_utils.jwt_utils import JwtData
 
 ACCESS_TOKEN = "access"
 REFRESH_TOKEN = "refresh"
@@ -17,9 +19,12 @@ class Jwt:
 	def __get_token(self, request, token_type):
 		return request.COOKIES.get(token_type)
 
+
+
+'''
 class JwtData:
 	def __init__(self, _token):
-		self.token = _token
+		self.__token = _token
 		self.__decode_token()
 
 	def __str__(self):
@@ -27,7 +32,7 @@ class JwtData:
 
 	def __decode_token(self):
 		try:
-			self.__token_data = jwt.decode(self.token, "your-256-bit-secret", algorithms="HS256")
+			self.__token_data = jwt.decode(self.__token, "your-256-bit-secret", algorithms="HS256")
 		except Exception:
 			self.__token_data = None
 
@@ -41,3 +46,4 @@ class JwtData:
 	def __bool__(self):
 		return bool(self.__token_data)
 
+'''
