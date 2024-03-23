@@ -6,9 +6,8 @@ ACCESS_TOKEN = "access"
 REFRESH_TOKEN = "refresh"
 
 class TokenGenerator:
-	def __init__(self, user_id: int, username: str):
+	def __init__(self, user_id: int):
 		self.__user_id = user_id
-		self.__username = username
 		self.__access_token = None
 		self.__refresh_token = None
 		self.__access_exp = None
@@ -50,9 +49,8 @@ class TokenGenerator:
 			self.__refresh_exp = exp
 		token = jwt.encode(
 			{
-				"token_type": token_type,
+				"type": token_type,
 				"sub": self.__user_id,
-				"name": self.__username,
 				"iat": iat,
 				"exp": exp,
 				"jti": str(uuid.uuid4())

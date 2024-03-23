@@ -19,7 +19,6 @@ class JwtData:
 				return self.__token_data[name]
 			else:
 				return None
-				#raise AttributeError(f"{type(self)} object has no attribute '{name}'")
 	
 	def __bool__(self):
 		return bool(self.__token_data)
