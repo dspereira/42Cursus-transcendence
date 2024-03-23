@@ -15,7 +15,7 @@ class BlacklistedToken(models.Model):
 class UserAccountManager(BaseUserManager):
     def create_user(self, username, email, password):
         if not username:
-            raise ValueError("username field is required!")
+            raise ValueError("Username field is required!")
         if not email:
             raise ValueError("Email field is required!")
         if not password:

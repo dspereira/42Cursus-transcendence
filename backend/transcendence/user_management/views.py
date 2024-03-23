@@ -1,26 +1,15 @@
 from django.http import HttpResponse
 from django.contrib.auth import authenticate
-#from django.contrib.auth.models import User
 from django.http import JsonResponse
-from user_management.models import BlacklistedToken, UserAccount
+from user_management.models import UserAccount
 
-#django.contrib.auth.login
 
 import json
-#import jwt
-#import uuid
-#from datetime import datetime, timedelta
+
 
 from django.views.decorators.http import require_http_methods
 from custom_decorators import login_required
 
-from datetime import datetime, timedelta
-
-
-#from custom_utils.jwt_utils.generate_token import generate_access_token, generate_refresh_token
-from custom_utils.jwt_utils import TokenGenerator
-
-from django.contrib.auth import get_user_model
 
 from .auth_utils import login, logout, refresh_token, update_blacklist
 
@@ -36,47 +25,55 @@ from user_management.models import UserAccount
 def token_obtain_view(request):
 	if request.body:
 		req_data = json.loads(request.body)
-		user = authenticate(request, username=req_data["username"], password=req_data["password"])
-		if user:
-			response = JsonResponse({"message": "success"})
-			response = login(response, user)
+		username = req_data.get("username")
+		password = req_data.get("password")
+		if not username:
+			return JsonResponse({"message": "Username field cannot be empty"}, status=400)
+		if not password:
+			return JsonResponse({"message": "Password field cannot be empty"}, status=400)
+		user = authenticate(request, username=username, password=password)
+		if not user:
+			return JsonResponse({"message": "Invalid credentials. Please check your username or password."}, status=401)
+		response = login(JsonResponse({"message": "success"}), user)
+		return response
+	return JsonResponse({"message": "Empty request body"}, status=400)
 
-			print(response)
-
-			return response
-	#enviar codigo 401 UNAUTHORIZED 
-	return JsonResponse({"message": "error"})
 
 @require_http_methods(["POST"])
 def token_refresh_view(request):
-
-	#deve enviar tokens para a blackList
-
 	if request.refresh_data:
 		response = JsonResponse({"message": "success"})
-		refresh_token(response, request.refresh_data.sub)
+		response = refresh_token(response, request.refresh_data.sub)
 		update_blacklist(request.access_data, request.refresh_data)
-	#enviar codigo 401 UNAUTHORIZED 
-	return JsonResponse({"message": "error"})
+	return JsonResponse({"message": "error"}, status=401)
 
+# Verificar menssagem de erro e codigo
 @require_http_methods(["POST"])
 def api_signin(request):
 	if request.body:
 		req_data = json.loads(request.body)
 		if req_data:
-			email = req_data['email']
-			username = req_data['username']
-			password = req_data['password']
-		if (not email or not username or not password):
-			return JsonResponse({"message": "error"})
-		if UserAccount.objects.filter(username=username).exists() or UserAccount.objects.filter(email=email).exists():
-			return JsonResponse({"message": "error"})
-		UserAccount.objects.create_user(username=username, email=email, password=password)
-		user = authenticate(request, username=username, password=password)
-		if not user:
-			return JsonResponse({"message": "error"})
+			email = req_data.get('email')
+			username = req_data.get('username')
+			password = req_data.get('password')
+		if not email:
+			return JsonResponse({"message": "Email field cannot be empty"}, status=400)
+		if not username:
+			return JsonResponse({"message": "Username field cannot be empty"}, status=400)
+		if not password:
+			return JsonResponse({"message": "Password field cannot be empty"}, status=400)
+		if UserAccount.objects.filter(username=username).exists():
+			return JsonResponse({"message": "Username already exists"}, status=409)
+		if UserAccount.objects.filter(email=email).exists():
+			return JsonResponse({"message": "Email already exists"}, status=409)
+		try:
+			UserAccount.objects.create_user(username=username, email=email, password=password)
+			user = authenticate(request, username=username, password=password)
+			if not user:
+				return JsonResponse({"message": "Error creating user"}, status=500)
+		except Exception:
+			return JsonResponse({"message": "Internal server error"}, status=500)
 	return JsonResponse({"message": "success"})
-
 
 @require_http_methods(["POST"])
 def api_logout(request):
