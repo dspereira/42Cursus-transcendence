@@ -38,16 +38,14 @@ def token_obtain_view(request):
 		return response
 	return JsonResponse({"message": "Empty request body"}, status=400)
 
-
 @require_http_methods(["POST"])
 def token_refresh_view(request):
 	if request.refresh_data:
 		response = JsonResponse({"message": "success"})
 		response = refresh_token(response, request.refresh_data.sub)
 		update_blacklist(request.access_data, request.refresh_data)
-	return JsonResponse({"message": "error"}, status=401)
+	return JsonResponse({"message": "Invalid refresh token. Please authenticate again."}, status=401)
 
-# Verificar menssagem de erro e codigo
 @require_http_methods(["POST"])
 def api_signin(request):
 	if request.body:
@@ -77,17 +75,12 @@ def api_signin(request):
 
 @require_http_methods(["POST"])
 def api_logout(request):
-
-	# has to send tokens to blacklist
-
 	if request.access_data:
 		response = JsonResponse({"message": "success"})
 		response = logout(response)
 		update_blacklist(request.access_data, request.refresh_data)
 		return response
-
-	# enviar 401 UNAUTHORIZED
-	return JsonResponse({"message": "error"})
+	return JsonResponse({"message": "Unauthorized: Logout failed."}, status=401)
 
 
 #@login_required
