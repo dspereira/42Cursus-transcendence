@@ -9,14 +9,14 @@ class BlacklistTokenMiddleware:
 		if self.__get_blacklist_token(request.access_data):
 			request.access_data = None
 		if self.__get_blacklist_token(request.refresh_data):
-			request.access_data = None
+			request.refresh_data = None
 		return self.get_response(request)
-	
+
 	def __get_blacklist_token(self, token_data):
-		if token_data:
+		if not token_data:
 			return None
 		try:
-			blacklist_token = BlacklistToken.objects.get(jti=token_data.access_data.jti)
-		except:
+			blacklist_token = BlacklistToken.objects.get(jti=token_data.jti)
+		except Exception:
 			blacklist_token = None
 		return blacklist_token

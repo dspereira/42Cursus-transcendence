@@ -23,7 +23,6 @@ from user_management.models import UserAccount
 # Choose a path that covers the authentication routes.
 # Example: /api/auth/login, /api/auth/logout, /api/auth/refresh, /api/auth/register -> Cookie refresh path="/api/auth"
 
-
 @require_http_methods(["POST"])
 def register(request):
 	if request.body:

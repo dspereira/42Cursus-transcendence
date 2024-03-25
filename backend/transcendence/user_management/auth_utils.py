@@ -10,7 +10,7 @@ def login(response, user):
 
 def logout(response):
 	response.delete_cookie("access", path="/")
-	response.delete_cookie("refresh", path="/user/api/token/refresh")
+	response.delete_cookie("refresh", path="/api/auth")
 	return response
 
 def refresh_token(response, user_id):
@@ -23,13 +23,13 @@ def update_blacklist(access_token_data, refresh_token_data):
 			black_listed = BlacklistToken(jti = access_token_data.jti, exp = access_token_data.exp)
 			black_listed.save()
 		except Exception as e:
-			print(f"Error: {e}")
+			print(f"Error access token: {e}")
 	if refresh_token_data:
 		try:
 			black_listed = BlacklistToken(jti = refresh_token_data.jti, exp = refresh_token_data.exp)
 			black_listed.save()
 		except Exception as e:
-			print(f"Error: {e}")
+			print(f"Error refresh token: {e}")
 
 def _generate_tokens(user_id):
 	token_gen = TokenGenerator(user_id)

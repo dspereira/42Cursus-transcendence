@@ -1,5 +1,3 @@
-#import jwt
-
 from custom_utils.jwt_utils import JwtData
 
 ACCESS_TOKEN = "access"
