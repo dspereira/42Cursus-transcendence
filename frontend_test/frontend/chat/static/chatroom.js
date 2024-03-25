@@ -27,17 +27,6 @@ document.addEventListener("DOMContentLoaded", function() {
 		
 		chatSocket.onopen = function(e) {
 			console.log("Successfully connected to the WebSocket.");
-			
-			/* if (data.empty)
-			{
-				console.log(data.message);
-				chat_messages_txt_area.value += data.message + "\n";
-			}
-			else
-			{
-				chat_messages_txt_area.value = "";
-				console.error("Empty chatroom!");
-			} */
 		}
 
 		chatSocket.onclose = function(e) {
