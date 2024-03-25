@@ -47,7 +47,7 @@
 					jsonData[key] = value;
 				});
 
-				fetch("http://127.0.0.1:8000/user/api/token", {
+				fetch("http://127.0.0.1:8000/api/auth/login", {
 					credentials: 'include',
 					method: "POST",
 					headers: {

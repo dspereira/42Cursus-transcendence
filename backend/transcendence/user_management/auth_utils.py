@@ -17,8 +17,6 @@ def refresh_token(response, user_id):
 	_set_cookies(response, _generate_tokens(user_id))
 	return response
 
-
-# Verificar que o token ainda não foi inserido
 def update_blacklist(access_token_data, refresh_token_data):
 	if access_token_data:
 		try:
@@ -52,5 +50,5 @@ def _set_cookies(response, token_gen):
 		value=token_gen.get_refresh_token(),
 		httponly=True, expires=token_gen.get_refresh_token_exp(),
 		samesite="Lax",
-		path="/user/api/token/refresh"
+		path="/api/auth"
 	)
