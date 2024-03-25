@@ -5,7 +5,7 @@ from custom_utils.jwt_utils import JwtData
 ACCESS_TOKEN = "access"
 REFRESH_TOKEN = "refresh"
 
-class Jwt:
+class JwtMiddleware:
 	def __init__(self, get_response):
 		self.get_response = get_response
 
@@ -21,5 +21,6 @@ class Jwt:
 		setattr(request, "access_data", access_data)
 		setattr(request, "refresh_data", refresh_data)
 		return self.get_response(request)
+
 	def __get_token(self, request, token_type):
 		return request.COOKIES.get(token_type)

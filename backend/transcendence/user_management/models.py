@@ -1,7 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
 
-class BlacklistedToken(models.Model):
+class BlacklistToken(models.Model):
     jti = models.CharField(max_length=255, unique=True, db_index=True, null=False)
     exp = models.IntegerField (null=False)
 

@@ -40,10 +40,21 @@ def token_obtain_view(request):
 
 @require_http_methods(["POST"])
 def token_refresh_view(request):
+
+	print("------------------------Refresh view---------------------------")
+
+	print(request.refresh_data)
+	if request.refresh_data:
+		print("Tem dados refresh")
+	else:
+		print("nao tem dados refresh")
+
+
 	if request.refresh_data:
 		response = JsonResponse({"message": "success"})
 		response = refresh_token(response, request.refresh_data.sub)
 		update_blacklist(request.access_data, request.refresh_data)
+		return response
 	return JsonResponse({"message": "Invalid refresh token. Please authenticate again."}, status=401)
 
 @require_http_methods(["POST"])

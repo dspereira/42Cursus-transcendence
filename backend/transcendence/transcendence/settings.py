@@ -48,8 +48,9 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'core_middlewares.Cors.Cors',
-    'core_middlewares.Jwt.Jwt'
+    'custom_middlewares.CorsMiddleware',
+    'custom_middlewares.JwtMiddleware',
+    'custom_middlewares.BlacklistTokenMiddleware'
 ]
 
 ROOT_URLCONF = 'transcendence.urls'
