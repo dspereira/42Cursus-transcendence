@@ -1,4 +1,4 @@
-from user_management.models import UserAccount
+from user_management.models import User
 
 EMAIL_TYPE = "email"
 USERNAME_TYPE = "username"
@@ -14,16 +14,16 @@ class AuthBackend:
 
 	def get_user(self, user_id):
 		try:
-			return UserAccount.objects.get(pk=user_id)
-		except UserAccount.DoesNotExist:
+			return User.objects.get(pk=user_id)
+		except User.DoesNotExist:
 			return None		
 
 	def __try_get_user(self, email_username, type):
 		try:
 			if type == EMAIL_TYPE:
-				user = UserAccount.objects.get(email=email_username)
+				user = User.objects.get(email=email_username)
 			else:
-				user = UserAccount.objects.get(username=email_username)
+				user = User.objects.get(username=email_username)
 			return user
-		except UserAccount.DoesNotExist:
+		except User.DoesNotExist:
 			return None

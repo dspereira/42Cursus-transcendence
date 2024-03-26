@@ -11,7 +11,7 @@ class BlacklistToken(models.Model):
     class Meta:
         db_table = 'blacklisted_tokens'
 
-class UserAccountManager(BaseUserManager):
+class UserManager(BaseUserManager):
     def create_user(self, username, email, password):
         if not username:
             raise ValueError("Username field is required!")
@@ -30,14 +30,14 @@ class UserAccountManager(BaseUserManager):
         user.save()
         return user
 
-class UserAccount(AbstractBaseUser):
+class User(AbstractBaseUser):
     email = models.EmailField(("email address"), unique=True)
     username = models.CharField(max_length=50, blank=False, null=False, unique=True)
 
     USERNAME_FIELD = 'username'
     EMAIL_FIELD = 'email'
    
-    objects = UserAccountManager()
+    objects = UserManager()
 
     class Meta:
         db_table = 'auth_users'

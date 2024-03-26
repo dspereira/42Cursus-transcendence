@@ -1,6 +1,6 @@
 from django.contrib.auth import authenticate
 from django.http import JsonResponse
-from user_management.models import UserAccount
+from user_management.models import User
 import json
 from custom_decorators import login_required, accepted_methods
 
@@ -25,12 +25,12 @@ def register(request):
 			return JsonResponse({"message": "Username field cannot be empty"}, status=400)
 		if not password:
 			return JsonResponse({"message": "Password field cannot be empty"}, status=400)
-		if UserAccount.objects.filter(username=username).exists():
+		if User.objects.filter(username=username).exists():
 			return JsonResponse({"message": "Username already exists"}, status=409)
-		if UserAccount.objects.filter(email=email).exists():
+		if User.objects.filter(email=email).exists():
 			return JsonResponse({"message": "Email already exists"}, status=409)
 		try:
-			UserAccount.objects.create_user(username=username, email=email, password=password)
+			User.objects.create_user(username=username, email=email, password=password)
 			user = authenticate(request, email_username=username, password=password)
 			if not user:
 				return JsonResponse({"message": "Error creating user"}, status=500)
@@ -78,7 +78,7 @@ def refresh_token(request):
 @login_required
 def info(request):
 	if request.access_data:
-		user = UserAccount.objects.get(id=request.access_data.sub)
+		user = User.objects.get(id=request.access_data.sub)
 	else:
 		user = None
 

@@ -78,7 +78,7 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'transcendence.wsgi.application'
 
-AUTH_USER_MODEL = 'user_management.UserAccount'
+AUTH_USER_MODEL = 'user_management.User'
 
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
