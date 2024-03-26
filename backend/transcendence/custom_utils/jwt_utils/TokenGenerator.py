@@ -4,6 +4,8 @@ from datetime import datetime, timedelta
 
 ACCESS_TOKEN = "access"
 REFRESH_TOKEN = "refresh"
+ACCESS_TOKEN_EXP_MIN = 1
+REFRESH_TOKEN_EXP_DAY = 1
 
 class TokenGenerator:
 	def __init__(self, user_id: int):
@@ -42,10 +44,10 @@ class TokenGenerator:
 	def __generate_token(self, token_type):
 		iat = datetime.now()
 		if token_type == ACCESS_TOKEN:
-			exp = iat + timedelta(minutes=100)
+			exp = iat + timedelta(minutes=ACCESS_TOKEN_EXP_MIN)
 			self.__access_exp = exp
 		else:
-			exp = iat + timedelta(days=1)
+			exp = iat + timedelta(days=REFRESH_TOKEN_EXP_DAY)
 			self.__refresh_exp = exp
 		token = jwt.encode(
 			{

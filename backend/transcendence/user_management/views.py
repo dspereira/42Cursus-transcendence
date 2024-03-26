@@ -1,14 +1,9 @@
-from django.http import HttpResponse
+
 from django.contrib.auth import authenticate
 from django.http import JsonResponse
 from user_management.models import UserAccount
-
-
 import json
-
-
-from django.views.decorators.http import require_http_methods
-from custom_decorators import login_required
+from custom_decorators import login_required, accepted_methods
 
 
 from .auth_utils import login as user_login
@@ -16,14 +11,13 @@ from .auth_utils import logout as user_logout
 from .auth_utils import refresh_token as user_refresh_token
 from .auth_utils import update_blacklist
 
-from user_management.models import UserAccount
 
 
 # IMPORTANT: The refresh token should be sent to authentication routes, especially logout and refresh token routes, to be added to the blacklist.
 # Choose a path that covers the authentication routes.
 # Example: /api/auth/login, /api/auth/logout, /api/auth/refresh, /api/auth/register -> Cookie refresh path="/api/auth"
 
-@require_http_methods(["POST"])
+@accepted_methods(["POST"])
 def register(request):
 	if request.body:
 		req_data = json.loads(request.body)
@@ -50,7 +44,7 @@ def register(request):
 			return JsonResponse({"message": "Internal server error"}, status=500)
 	return JsonResponse({"message": "success"})
 
-@require_http_methods(["POST"])
+@accepted_methods(["POST"])
 def login(request):
 	if request.body:
 		req_data = json.loads(request.body)
@@ -67,7 +61,7 @@ def login(request):
 		return response
 	return JsonResponse({"message": "Empty request body"}, status=400)
 
-@require_http_methods(["POST"])
+@accepted_methods(["POST"])
 def logout(request):
 	if request.access_data:
 		response = JsonResponse({"message": "success"})
@@ -76,7 +70,7 @@ def logout(request):
 		return response
 	return JsonResponse({"message": "Unauthorized: Logout failed."}, status=401)
 
-@require_http_methods(["POST"])
+@accepted_methods(["POST"])
 def refresh_token(request):
 	if request.refresh_data:
 		response = JsonResponse({"message": "success"})
@@ -85,11 +79,10 @@ def refresh_token(request):
 		return response
 	return JsonResponse({"message": "Invalid refresh token. Please authenticate again."}, status=401)
 
-
 # Route test, remove in production
-#@login_required
+@accepted_methods(["GET"])
+@login_required
 def info(request):
-
 	if request.access_data:
 		user = UserAccount.objects.get(id=request.access_data.sub)
 	else:

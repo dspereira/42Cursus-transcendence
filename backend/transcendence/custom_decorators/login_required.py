@@ -2,8 +2,7 @@ from django.http import JsonResponse
 
 def login_required(func):
 	def wrapper(request, *args, **kwargs):
-		print(request.token_data)
-		if request.token_data:
+		if request.access_data:
 			return func(request, *args, **kwargs)
-		return JsonResponse({"message": "Unauthorized"}, status=401)
+		return JsonResponse({"message": "Unauthorized. Login_required"}, status=401)
 	return wrapper
