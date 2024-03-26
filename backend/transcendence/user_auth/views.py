@@ -1,6 +1,6 @@
 from django.contrib.auth import authenticate
 from django.http import JsonResponse
-from user_management.models import User
+from user_auth.models import User
 import json
 from custom_decorators import login_required, accepted_methods
 

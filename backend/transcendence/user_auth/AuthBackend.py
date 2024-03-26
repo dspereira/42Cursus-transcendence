@@ -1,4 +1,4 @@
-from user_management.models import User
+from user_auth.models import User
 
 EMAIL_TYPE = "email"
 USERNAME_TYPE = "username"

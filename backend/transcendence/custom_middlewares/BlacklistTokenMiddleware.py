@@ -1,4 +1,4 @@
-from user_management.models import BlacklistToken
+from user_auth.models import BlacklistToken
 
 class BlacklistTokenMiddleware:
 

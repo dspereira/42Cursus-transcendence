@@ -37,7 +37,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'user_management',
+    'user_auth',
 ]
 
 MIDDLEWARE = [
@@ -54,7 +54,7 @@ MIDDLEWARE = [
 ]
 
 AUTHENTICATION_BACKENDS = [
-    'user_management.AuthBackend.AuthBackend'
+    'user_auth.AuthBackend.AuthBackend'
 ]
 
 
@@ -78,7 +78,7 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'transcendence.wsgi.application'
 
-AUTH_USER_MODEL = 'user_management.User'
+AUTH_USER_MODEL = 'user_auth.User'
 
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases

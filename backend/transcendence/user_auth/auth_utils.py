@@ -1,6 +1,6 @@
 from django.utils import timezone
 from custom_utils.jwt_utils import TokenGenerator
-from user_management.models import BlacklistToken
+from user_auth.models import BlacklistToken
 
 def login(response, user):
 	user.last_login = timezone.now()
