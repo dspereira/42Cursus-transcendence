@@ -2,14 +2,14 @@ import json
 
 from asgiref.sync import async_to_sync
 from channels.generic.websocket import WebsocketConsumer
-from channels.db import database_sync_to_async
-from django.contrib.auth.models import AnonymousUser
-from channels.middleware import BaseMiddleware
-
 from django.contrib.auth.models import User
+
 from .models import ChatRoom, Message
 
 class ChatConsumer(WebsocketConsumer):
+
+	def __init__(self, *args, **kwargs):
+		super().__init__(args, kwargs)
 
 	def connect(self):
 		self.accept()
@@ -55,6 +55,7 @@ class ChatConsumer(WebsocketConsumer):
 			self.room_group_name,
 			{
 				'type': 'online_offline_messages',
+				'status': 'online',
 				'message': f"{self.username} is now online",
 			}
 		)
@@ -63,29 +64,39 @@ class ChatConsumer(WebsocketConsumer):
 		print(f"WebSocket disconnected")
 		print("Close code -> ", close_code)
 
+		self.close()
 		async_to_sync(self.channel_layer.group_send)(
 			self.room_group_name,
 			{
 				'type': 'online_offline_messages',
+				'status': 'offline',
 				'message': f"{self.username} is now offline",
 			}
 		)
 
+		async_to_sync(self.channel_layer.group_discard)(
+			self.room_group_name,
+			self.channel_name
+		)
+
 	def receive(self, text_data):
 		data_json = json.loads(text_data)
-		message = data_json['message']
+		message = data_json['message'].strip()
 
-		result_message = f"{self.username}: {message}"
+		if message:
+			result_message = f"{self.username}: {message}"
 
-		Message.objects.create(user=self.user, room=self.room, content=message)
+			Message.objects.create(user=self.user, room=self.room, content=message)
 
-		async_to_sync(self.channel_layer.group_send)(
-			self.room_group_name,
-			{
-				'type': 'chat_message',
-				'message': result_message,
-			}
-		)
+			print(result_message)
+
+			async_to_sync(self.channel_layer.group_send)(
+				self.room_group_name,
+				{
+					'type': 'chat_message',
+					'message': result_message,
+				}
+			)
 
 	def chat_message(self, event):
 		message = event['message']
@@ -93,7 +104,6 @@ class ChatConsumer(WebsocketConsumer):
 			'type': 'chat_message',
 			'message': message,
 		}))
-		print(message)
 
 	def chat_empty_status(self, event):
 		self.send(text_data=json.dumps({
@@ -104,8 +114,10 @@ class ChatConsumer(WebsocketConsumer):
 
 	def online_offline_messages(self, event):
 		message = event['message']
+		status = event['status']
 		self.send(text_data=json.dumps({
-			'type': 'chat_message',
+			'type': 'online_offline_messages',
+			'status': status,
 			'message': message,
 		}))
 		print(message)

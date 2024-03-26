@@ -16,15 +16,16 @@ document.addEventListener("DOMContentLoaded", function() {
 	let logged_user_id = null
 	let logged_user_name = null
 	chat_messages_txt_area.value = "";
-
+	
 	function connect() {
-		
-		console.log("URL WebSocket")
+
+		let chatSocket = null;
+
 		result_str = "ws://127.0.0.1:8000/chat_connection/" + room_id + "/";
-		console.log(result_str);
-		
+		console.log("URL WebSocket\n" + result_str);
+
 		chatSocket = new WebSocket(result_str);
-		
+
 		chatSocket.onopen = function(e) {
 			console.log("Successfully connected to the WebSocket.");
 		}
@@ -33,6 +34,7 @@ document.addEventListener("DOMContentLoaded", function() {
 			console.log("WebSocket connection closed unexpectedly. Trying to reconnect in 2s...");
 			setTimeout(function() {
 				console.log("Reconnecting...");
+				chatSocket = null;
 				connect();
 			}, 2000);
 		};
@@ -40,10 +42,13 @@ document.addEventListener("DOMContentLoaded", function() {
 		chat_form.addEventListener("submit", function(event) {
 			event.preventDefault();
 	
-			let messasge = event.target.message.value;
-			chatSocket.send(JSON.stringify({
-				"message": messasge,
-			}))
+			let message = event.target.message.value;
+			if (message)
+			{
+				chatSocket.send(JSON.stringify({
+					"message": message,
+				}))
+			}
 			chat_form.reset()
 		});
 
@@ -69,11 +74,21 @@ document.addEventListener("DOMContentLoaded", function() {
 				console.log(data.message);
 				chat_messages_txt_area.value += data.message + "\n";
 			}
+			else if (data.type === "online_offline_messages")
+			{
+				console.log(data.message);
+				chat_messages_txt_area.value += data.message + "\n";
+
+				if (data.status === "offline")
+				{
+					chatSocket.close()
+					console.log("Esta merda foi fechada crlh --- ;)")
+				}
+			}
 			else
 				console.error("Unknown message type!");
 
-			// scroll 'chatLog' to the bottom
-			// chatLog.scrollTop = chatLog.scrollHeight;
+			chat_messages_txt_area.scrollTop = chat_messages_txt_area.scrollHeight;
 		};
 
 		chatSocket.onerror = function(err) {
