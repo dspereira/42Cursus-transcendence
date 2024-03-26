@@ -16,7 +16,7 @@ document.addEventListener("DOMContentLoaded", function() {
 			jsonData[key] = value;
 		});
 
-		fetch("http://127.0.0.1:8000/chat/api/create_room", {
+		fetch("http://127.0.0.1:8000/api/chat/create_room", {
 			credentials: 'include',
 			method: "POST",
 			headers: {
@@ -46,7 +46,7 @@ document.addEventListener("DOMContentLoaded", function() {
 				"user_id": user_id
 			};
 
-			fetch("http://127.0.0.1:8000/chat/api/add_user_to_chat_room", {
+			fetch("http://127.0.0.1:8000/api/chat/add_user_to_chat_room", {
 				credentials: 'include',
 				method: "POST",
 				headers: {

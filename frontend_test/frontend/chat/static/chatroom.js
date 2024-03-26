@@ -100,7 +100,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
 	function getRoomName()
 	{
-		api_request_url = 'http://127.0.0.1:8000/chat/api/get_chat_room/' + '?room_id=' + room_id
+		api_request_url = 'http://127.0.0.1:8000/api/chat/get_chat_room/' + '?room_id=' + room_id
 
 		fetch(api_request_url, {
 			credentials: 'include',
@@ -152,7 +152,7 @@ document.addEventListener("DOMContentLoaded", function() {
 			console.log("User ID -> ", logged_user_id);
 			console.log("User    -> ", logged_user_name);
 
-			url = "http://127.0.0.1:8000/chat/api/check_user_chat_room_access/";
+			url = "http://127.0.0.1:8000/api/chat/check_user_chat_room_access/";
 			query_params = "?user_id=" + data['id'] + "&room_id=" + room_id;
 			request_url= url + query_params;
 

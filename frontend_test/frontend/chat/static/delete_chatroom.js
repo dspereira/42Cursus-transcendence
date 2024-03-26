@@ -14,7 +14,7 @@ document.addEventListener("DOMContentLoaded", function() {
 			jsonData[key] = value;
 		});
 		
-		fetch("http://127.0.0.1:8000/chat/api/delete_room", {
+		fetch("http://127.0.0.1:8000/api/chat/delete_room", {
 			credentials: 'include',
 			method: "DELETE",
 			headers: {
@@ -45,7 +45,7 @@ document.addEventListener("DOMContentLoaded", function() {
 			jsonData[key] = value;
 		});
 
-		fetch("http://127.0.0.1:8000/chat/api/delete_all_rooms", {
+		fetch("http://127.0.0.1:8000/api/chat/delete_all_rooms", {
 			credentials: 'include',
 			method: "DELETE",
 			headers: {

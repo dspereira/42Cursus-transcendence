@@ -5,7 +5,7 @@ document.addEventListener("DOMContentLoaded", function() {
 	let selected_user_id = "";
 
     function listChatRooms() {
-		fetch("http://127.0.0.1:8000/chat/api/list_rooms", {
+		fetch("http://127.0.0.1:8000/api/chat/list_rooms", {
 			credentials: 'include',
 			method: "GET",
 		})
@@ -120,7 +120,7 @@ document.addEventListener("DOMContentLoaded", function() {
 			"user_id": selected_user_id
 		};
 
-		const response = await fetch("http://127.0.0.1:8000/chat/api/add_user_to_chat_room", {
+		const response = await fetch("http://127.0.0.1:8000/api/chat/add_user_to_chat_room", {
 			credentials: 'include',
 			method: 'POST',
 			headers: {

@@ -6,7 +6,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
 	function listChatRooms()
 	{
-		fetch("http://127.0.0.1:8000/chat/api/list_rooms", {
+		fetch("http://127.0.0.1:8000/api/chat/list_rooms", {
 			credentials: 'include',
 			method: "GET",
 		})

@@ -53,7 +53,7 @@ document.addEventListener("DOMContentLoaded", function() {
 	}
 
 	function listChatRooms() {
-		fetch("http://127.0.0.1:8000/chat/api/list_rooms", {
+		fetch("http://127.0.0.1:8000/api/chat/list_rooms", {
 			credentials: 'include',
 			method: "GET",
 		})
@@ -109,7 +109,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
 	async function getUserChatRooms()
 	{
-		const request_url = "http://127.0.0.1:8000/chat/api/get_user_chat_rooms/"
+		const request_url = "http://127.0.0.1:8000/api/chat/get_user_chat_rooms/"
 		let query_params = {
 			"user_id": selected_user_id,
 		};
