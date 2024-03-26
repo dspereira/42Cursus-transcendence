@@ -53,6 +53,11 @@ MIDDLEWARE = [
     'custom_middlewares.BlacklistTokenMiddleware'
 ]
 
+AUTHENTICATION_BACKENDS = [
+    'user_management.AuthBackend.AuthBackend'
+]
+
+
 ROOT_URLCONF = 'transcendence.urls'
 
 TEMPLATES = [

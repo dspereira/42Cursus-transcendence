@@ -1,4 +1,3 @@
-
 from django.contrib.auth import authenticate
 from django.http import JsonResponse
 from user_management.models import UserAccount
@@ -11,11 +10,6 @@ from .auth_utils import logout as user_logout
 from .auth_utils import refresh_token as user_refresh_token
 from .auth_utils import update_blacklist
 
-
-
-# IMPORTANT: The refresh token should be sent to authentication routes, especially logout and refresh token routes, to be added to the blacklist.
-# Choose a path that covers the authentication routes.
-# Example: /api/auth/login, /api/auth/logout, /api/auth/refresh, /api/auth/register -> Cookie refresh path="/api/auth"
 
 @accepted_methods(["POST"])
 def register(request):
@@ -37,7 +31,7 @@ def register(request):
 			return JsonResponse({"message": "Email already exists"}, status=409)
 		try:
 			UserAccount.objects.create_user(username=username, email=email, password=password)
-			user = authenticate(request, username=username, password=password)
+			user = authenticate(request, email_username=username, password=password)
 			if not user:
 				return JsonResponse({"message": "Error creating user"}, status=500)
 		except Exception:
@@ -54,7 +48,7 @@ def login(request):
 			return JsonResponse({"message": "Username field cannot be empty"}, status=400)
 		if not password:
 			return JsonResponse({"message": "Password field cannot be empty"}, status=400)
-		user = authenticate(request, username=username, password=password)
+		user = authenticate(request, email_username=username, password=password)
 		if not user:
 			return JsonResponse({"message": "Invalid credentials. Please check your username or password."}, status=401)
 		response = user_login(JsonResponse({"message": "success"}), user)
