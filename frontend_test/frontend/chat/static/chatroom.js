@@ -140,7 +140,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
 	async function user_have_chatroom_access()
 	{
-		const response = await fetch("http://127.0.0.1:8000/user/api/user_info", {
+		const response = await fetch("http://127.0.0.1:8000/api/auth/user_info", {
 			credentials: 'include',
 			method: 'GET'
 		});

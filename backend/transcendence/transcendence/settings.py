@@ -36,11 +36,11 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'user_management',
+    'user_auth',
     'live_chat',
     'channels',
-    'generate_users',
-    'generate_chatrooms',
+    'generate_users', # test app
+    'generate_chatrooms', # test app
 ]
 
 MIDDLEWARE = [
@@ -51,7 +51,13 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'core_middlewares.Cors.Cors',
+    'custom_middlewares.CorsMiddleware',
+    'custom_middlewares.JwtMiddleware',
+    'custom_middlewares.BlacklistTokenMiddleware'
+]
+
+AUTHENTICATION_BACKENDS = [
+    'user_auth.AuthBackend.AuthBackend'
 ]
 
 ROOT_URLCONF = 'transcendence.urls'
@@ -84,6 +90,8 @@ CHANNEL_LAYERS = {
     }
 }
 
+AUTH_USER_MODEL = 'user_auth.User'
+
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
@@ -112,7 +120,6 @@ AUTH_PASSWORD_VALIDATORS = [
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
 ]
-
 
 # Internationalization
 # https://docs.djangoproject.com/en/4.2/topics/i18n/

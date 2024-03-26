@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 	<head>
-		<title>Login</title>
+		<title>Signup</title>
 		<style>
 			.message {
   				font-size: 20px;
@@ -20,7 +20,7 @@
 		</style>
 	</head>
 	<body>
-		<h1>Signin</h1>
+		<h1>Signup</h1>
 
 		<div class="displayNone message"></div>
 		<br>
@@ -34,7 +34,7 @@
 			<label for="password">Password:</label><br>
 			<input type="password" id="password" name="password"><br>
 			<br>
-			<button type="submit">Signin</button>
+			<button type="submit">Signup</button>
 		</form>
 
 		<script>
@@ -47,7 +47,7 @@
 					jsonData[key] = value;
 				});
 
-				fetch("http://127.0.0.1:8000/user/api/signin", {
+				fetch("http://127.0.0.1:8000/api/auth/register", {
 					method: "POST",
 					headers: {
 						"Content-Type": "application/json"
@@ -58,16 +58,15 @@
 				.then (data => {
 					console.log("=========================");
 					console.log(`message: ${data["message"]}`);
-					console.log(`success: ${data["success"]}`);
 
 					const msgElm = document.querySelector(".message");
 					msgElm.classList.remove("displayNone");
 					msgElm.classList.remove("success");
 					msgElm.classList.remove("error");
 					msgElm.innerHTML = data["message"];
-					if (data["success"] == "true")
+					if (data["message"] == "success")
 						msgElm.classList.add("success");
-					else if (data["success"] == "false")
+					else
 						msgElm.classList.add("error");
 				})
 				.catch(error => {

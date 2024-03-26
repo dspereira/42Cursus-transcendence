@@ -1,0 +1,9 @@
+CONFLICT (content): Merge conflict in backend/requirements.txt
+CONFLICT (content): Merge conflict in backend/transcendence/custom_middlewares/CorsMiddleware.py
+CONFLICT (content): Merge conflict in backend/transcendence/transcendence/settings.py
+CONFLICT (content): Merge conflict in backend/transcendence/transcendence/urls.py
+CONFLICT (modify/delete): backend/transcendence/user_management/urls.py deleted in main and modified in HEAD.  Version HEAD of backend/transcendence/user_management/urls.py left in tree.
+CONFLICT (modify/delete): backend/transcendence/user_management/views.py deleted in main and modified in HEAD.  Version HEAD of backend/transcendence/user_management/views.py left in tree.
+CONFLICT (content): Merge conflict in frontend_test/frontend/login_test/templates/login_test/index.html
+CONFLICT (content): Merge conflict in frontend_test/frontend/login_test/urls.py
+CONFLICT (content): Merge conflict in frontend_test/frontend/login_test/views.py

@@ -8,8 +8,8 @@ def index(request):
 def userLogin(request):
 	return render(request, "login_test/login.html")
 
-def userSignin(request):
-	return render(request, "login_test/signin.html")
+def userSignup(request):
+	return render(request, "login_test/signup.html")
 
 def userLogout(request):
 	return render(request, "login_test/logout.html")
@@ -19,3 +19,6 @@ def info(request):
 
 def chat(request):
 	return render(request, "login_test/chat.html")
+
+def refresh(request):
+	return render(request, "login_test/refresh.html")

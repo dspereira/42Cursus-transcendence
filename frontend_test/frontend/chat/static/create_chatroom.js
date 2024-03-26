@@ -79,7 +79,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
 	async function logData()
 	{
-		const response = await fetch("http://127.0.0.1:8000/user/api/user_info", {
+		const response = await fetch("http://127.0.0.1:8000/api/auth/user_info", {
 			credentials: 'include',
 			method: 'GET'
 		});
@@ -101,7 +101,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
 	async function getAllUsersData()
 	{
-		const response = await fetch("http://127.0.0.1:8000/user/api/users_list", {
+		const response = await fetch("http://127.0.0.1:8000/api/auth/users_list", {
 			credentials: 'include',
 			method: 'GET'
 		});

@@ -1,5 +1,5 @@
 from django.core.management.base import BaseCommand
-from django.contrib.auth.models import User
+from user_auth.models import User
 import random
 
 class Command(BaseCommand):

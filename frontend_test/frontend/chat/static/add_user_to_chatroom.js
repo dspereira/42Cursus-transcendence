@@ -44,7 +44,7 @@ document.addEventListener("DOMContentLoaded", function() {
 	}
 
 	function listAllUsers() {
-		fetch("http://127.0.0.1:8000/user/api/users_list", {
+		fetch("http://127.0.0.1:8000/api/auth/users_list", {
 			credentials: 'include',
 			method: "GET",
 		})

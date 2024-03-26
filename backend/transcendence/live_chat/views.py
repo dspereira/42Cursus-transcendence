@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from live_chat.models import ChatRoom, ChatRoomUsers
-from django.contrib.auth.models import User
+from user_auth.models import User
 from django.http import JsonResponse, HttpResponse
 import json
 from django.views.decorators.http import require_http_methods
@@ -201,17 +201,21 @@ def apiGetUserChatRooms(request):
 def apiCheckUserChatRoomAccess(request):
     query_params = request.GET
 
-    if ('user_id' in query_params and query_params.get('user_id')) and ('room_id' in query_params and query_params.get('room_id')):
-        search_user = User.objects.get(id=query_params.get('user_id'))
-        search_room = ChatRoom.objects.get(id=query_params.get('room_id'))
-        if search_user and search_room:
-            if ChatRoomUsers.objects.filter(user=search_user, room=search_room).exists():
-                response = {"message": "200 | OK", "status": 200}
+    try:
+        if ('user_id' in query_params and query_params.get('user_id')) and ('room_id' in query_params and query_params.get('room_id')):
+            search_user = User.objects.get(id=query_params.get('user_id'))
+            search_room = ChatRoom.objects.get(id=query_params.get('room_id'))
+            if search_user and search_room:
+                if ChatRoomUsers.objects.filter(user=search_user, room=search_room).exists():
+                    response = {"message": "200 | OK", "status": 200}
+                else:
+                    response = {"message": "401 | Unauthorized", "status": 401}
             else:
                 response = {"message": "401 | Unauthorized", "status": 401}
         else:
             response = {"message": "401 | Unauthorized", "status": 401}
-    else:
+    except Exception as e:
+        print(f"Error: {e}")
         response = {"message": "401 | Unauthorized", "status": 401}
 
     return JsonResponse(response, status=response["status"])

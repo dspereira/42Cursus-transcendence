@@ -38,7 +38,7 @@
 
             async function logData()
             {
-                const response = await fetch("http://127.0.0.1:8000/user/api/test", {
+                const response = await fetch("http://127.0.0.1:8000/api/auth/info", {
                     credentials: 'include',
                     method: 'GET'
                 });
@@ -53,7 +53,7 @@
 
 			document.getElementById("logout").addEventListener("submit", function(event) {
 				event.preventDefault();
-                fetch("http://127.0.0.1:8000/user/api/logout", {credentials: 'include', method: "POST"})
+                fetch("http://127.0.0.1:8000/api/auth/logout", {credentials: 'include', method: "POST"})
                 .then(response => data = response.json())
                 .then (data => {
                     console.log("=========================");
@@ -65,12 +65,12 @@
 					msgElm.classList.remove("success");
 					msgElm.classList.remove("error");
 					msgElm.innerHTML = data["message"];
-					if (data["success"] == "true")
+					if (data["message"] == "success")
                     {
                         userElm.classList.add("displayNone");
 						msgElm.classList.add("success");
                     }
-					else if (data["success"] == "false")
+					else if (data["message"] == "error")
 						msgElm.classList.add("error");
                 })
                 .catch(error => {

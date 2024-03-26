@@ -2,7 +2,9 @@ import json
 
 from asgiref.sync import async_to_sync
 from channels.generic.websocket import WebsocketConsumer
-from django.contrib.auth.models import User
+from user_auth.models import User
+
+from custom_utils.jwt_utils import JwtData
 
 from .models import ChatRoom, Message
 
@@ -15,12 +17,24 @@ class ChatConsumer(WebsocketConsumer):
 		self.accept()
 
 		self.session_id = self.scope["session"].session_key
-		self.user = User.objects.get(username=self.scope["user"])
+
+		access_cookie = None
+		for header_name, header_value in self.scope['headers']:
+			if header_name == b'cookie':
+				cookies = header_value.decode('utf-8').split('; ')
+				for cookie in cookies:
+					cookie_name, cookie_value = cookie.split('=')
+					if cookie_name == 'access':
+						access_cookie = cookie_value
+						break
+
+		access_data = JwtData(access_cookie)
+
+		self.user = User.objects.get(id=access_data.sub)
 		self.username = self.user.username
 		self.room_id = self.scope["url_route"]["kwargs"]["room_id"]
 		self.room = ChatRoom.objects.get(id=self.room_id)
 		print(f"WebSocket connected")
-		print("Session ID  :", self.session_id)
 		print("Session User:", self.user)
 		print("Session User:", self.room_id)
 

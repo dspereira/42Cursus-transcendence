@@ -1,7 +1,6 @@
 from django.http import HttpResponse
 
 # Configurations of cors headers
-
 origin_name = "Access-Control-Allow-Origin"
 origin_data = [
 	"http://127.0.0.1:8080",
@@ -24,13 +23,12 @@ credentials_data = [
 	"true"
 ]
 
-class Cors:
+class CorsMiddleware:
 
 	def __init__(self, get_response):
 		self.get_response = get_response
 
 	def __call__(self, request):
-
 		if request.method == "OPTIONS":
 			response = HttpResponse()
 			self.process_response(response)
