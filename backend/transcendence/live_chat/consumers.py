@@ -8,6 +8,8 @@ from custom_utils.jwt_utils import JwtData
 
 from .models import ChatRoom, Message
 
+from channels.exceptions import StopConsumer
+
 class ChatConsumer(WebsocketConsumer):
 
 	def __init__(self, *args, **kwargs):
@@ -16,21 +18,10 @@ class ChatConsumer(WebsocketConsumer):
 	def connect(self):
 		self.accept()
 
-		self.session_id = self.scope["session"].session_key
+		self.user = self.__getUser()
+		if not self.user:
+			self.close()
 
-		access_cookie = None
-		for header_name, header_value in self.scope['headers']:
-			if header_name == b'cookie':
-				cookies = header_value.decode('utf-8').split('; ')
-				for cookie in cookies:
-					cookie_name, cookie_value = cookie.split('=')
-					if cookie_name == 'access':
-						access_cookie = cookie_value
-						break
-
-		access_data = JwtData(access_cookie)
-
-		self.user = User.objects.get(id=access_data.sub)
 		self.username = self.user.username
 		self.room_id = self.scope["url_route"]["kwargs"]["room_id"]
 		self.room = ChatRoom.objects.get(id=self.room_id)
@@ -78,7 +69,7 @@ class ChatConsumer(WebsocketConsumer):
 		print(f"WebSocket disconnected")
 		print("Close code -> ", close_code)
 
-		self.close()
+		# self.close()
 		async_to_sync(self.channel_layer.group_send)(
 			self.room_group_name,
 			{
@@ -92,6 +83,7 @@ class ChatConsumer(WebsocketConsumer):
 			self.room_group_name,
 			self.channel_name
 		)
+		raise StopConsumer()
 
 	def receive(self, text_data):
 		data_json = json.loads(text_data)
@@ -135,3 +127,28 @@ class ChatConsumer(WebsocketConsumer):
 			'message': message,
 		}))
 		print(message)
+
+	def __getUser(self):
+
+		user = None
+		access_cookie = None
+
+		for header_name, header_value in self.scope['headers']:
+			if header_name == b'cookie':
+				cookies = header_value.decode('utf-8').split('; ')
+				for cookie in cookies:
+					cookie_name, cookie_value = cookie.split('=')
+					if cookie_name == 'access':
+						access_cookie = cookie_value
+						break
+
+		access_data = JwtData(access_cookie)
+
+		try:
+			user = User.objects.get(id=access_data.sub)
+			if user:
+				return user
+			return None
+		except Exception as e:
+			print(f"WebSocket Error: {e}")
+			return None
