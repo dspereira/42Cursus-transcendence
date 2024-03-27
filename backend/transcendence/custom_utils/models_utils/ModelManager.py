@@ -31,3 +31,17 @@ class ModelManager:
 		except Exception as e:
 			print(f"ModelManager Error create: \n{e}")
 			return None
+
+	def all(self):
+		try:
+			return self.model.objects.all()
+		except Exception as e:
+			print(f"ModelManager Error all: \n{e}")
+			return None
+
+	def count(self):
+		try:
+			return self.model.objects.count()
+		except Exception as e:
+			print(f"ModelManager Error count: \n{e}")
+			return None
