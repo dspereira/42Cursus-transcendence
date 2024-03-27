@@ -10,14 +10,7 @@ class AuthBackend:
 			user = self.__try_get_user(email_username, USERNAME_TYPE)
 		if user and user.check_password(password):
 			return user
-		return None
-
-	def get_user(self, user_id):
-		print("Entrei aqui")
-		try:
-			return User.objects.get(pk=user_id)
-		except User.DoesNotExist:
-			return None		
+		return None	
 
 	def __try_get_user(self, email_username, type):
 		try:

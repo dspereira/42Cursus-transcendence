@@ -1,7 +1,6 @@
-# from django.contrib.auth import authenticate
-from user_auth.AuthBackend import AuthBackend as auth
+from django.contrib.auth import authenticate
 from django.http import JsonResponse
-from user_auth.models import User
+from user_auth.models import User, BlacklistToken
 import json
 from custom_decorators import login_required, accepted_methods
 
@@ -10,9 +9,12 @@ from .auth_utils import logout as user_logout
 from .auth_utils import refresh_token as user_refresh_token
 from .auth_utils import update_blacklist
 
+from custom_utils.models_utils import ModelManager
+
 @accepted_methods(["POST"])
 def register(request):
 	if request.body:
+		user_model = ModelManager(User)
 		req_data = json.loads(request.body)
 		if req_data:
 			email = req_data.get('email')
@@ -24,17 +26,14 @@ def register(request):
 			return JsonResponse({"message": "Username field cannot be empty"}, status=400)
 		if not password:
 			return JsonResponse({"message": "Password field cannot be empty"}, status=400)
-		if User.objects.filter(username=username).exists():
+		if user_model.filter(username=username):
 			return JsonResponse({"message": "Username already exists"}, status=409)
-		if User.objects.filter(email=email).exists():
+		if user_model.filter(email=email):
 			return JsonResponse({"message": "Email already exists"}, status=409)
-		try:
-			User.objects.create_user(username=username, email=email, password=password)
-			user = auth().authenticate(request, email_username=username, password=password)
-			if not user:
-				return JsonResponse({"message": "Error creating user"}, status=500)
-		except Exception:
-			return JsonResponse({"message": "Internal server error"}, status=500)
+		user = user_model.create(username=username, email=email, password=password)
+		if not user:
+			return JsonResponse({"message": "Error creating user"}, status=500)
+
 	return JsonResponse({"message": "success"})
 
 @accepted_methods(["POST"])
@@ -47,7 +46,7 @@ def login(request):
 			return JsonResponse({"message": "Username field cannot be empty"}, status=400)
 		if not password:
 			return JsonResponse({"message": "Password field cannot be empty"}, status=400)
-		user = auth().authenticate(request, email_username=username, password=password)
+		user = authenticate(request, email_username=username, password=password)
 		if not user:
 			return JsonResponse({"message": "Invalid credentials. Please check your username or password."}, status=401)
 		response = user_login(JsonResponse({"message": "success"}), user)
@@ -76,8 +75,9 @@ def refresh_token(request):
 @accepted_methods(["GET"])
 @login_required
 def info(request):
+	user_model = ModelManager(User)
 	if request.access_data:
-		user = User.objects.get(id=request.access_data.sub)
+		user = user_model.get(id=request.access_data.sub)
 	else:
 		user = None
 
@@ -90,19 +90,21 @@ def info(request):
 	}
 	return JsonResponse(res_data)
 
+
+# Just for test, needs to be removed
 @accepted_methods(["GET"])
 @login_required
 def apiGetUserInfo(request):
 
-	user = auth().get_user(user_id=request.access_data.sub)
-
+	user_model = ModelManager(User)
+	user = user_model.get(id=request.access_data.sub)
 	res_data = {
 		"id": user.id,
 		"user": user.username,
 	}
-
 	return JsonResponse(res_data)
 
+# Just for test, needs to be removed
 @accepted_methods(["GET"])
 @login_required
 def apiGetUsersList(request):
