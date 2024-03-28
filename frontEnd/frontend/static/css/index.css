@@ -1,5 +1,5 @@
 body {
-	--nav-width: 200px;
+	--nav-width: 0px;
 	margin: 0 0 0 var(--nav-width);
 	font-family: 'Quicksand', sans-serif;
 	font-size: 18px;
@@ -10,11 +10,11 @@ body {
 	top: 0;
 	left: 0;
 	width: var(--nav-width);
-	height: 100vh;
+	height: 50vh;
 	background: #222222;
 }
 
-.nav__link {
+.navLink {
 	display: block;
 	padding: 12px 18px;
 	text-decoration: none;
@@ -30,7 +30,7 @@ body {
 }
 
 #app {
-	margin: 2em;
+	/* margin: 2em; */
 	line-height: 1.5;
 	font-weight: 500;
 }
