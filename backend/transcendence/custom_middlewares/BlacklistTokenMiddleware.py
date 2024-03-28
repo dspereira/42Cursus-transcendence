@@ -1,3 +1,4 @@
+from custom_utils.models_utils import ModelManager
 from user_auth.models import BlacklistToken
 
 class BlacklistTokenMiddleware:
@@ -6,17 +7,10 @@ class BlacklistTokenMiddleware:
 		self.get_response = get_response
 
 	def __call__(self, request):
-		if self.__get_blacklist_token(request.access_data):
+		blacklist_model = ModelManager(BlacklistToken)
+
+		if request.access_data and blacklist_model.get(jti=request.access_data.jti):
 			request.access_data = None
-		if self.__get_blacklist_token(request.refresh_data):
+		if request.refresh_data and blacklist_model.get(jti=request.refresh_data.jti):
 			request.refresh_data = None
 		return self.get_response(request)
-
-	def __get_blacklist_token(self, token_data):
-		if not token_data:
-			return None
-		try:
-			blacklist_token = BlacklistToken.objects.get(jti=token_data.jti)
-		except Exception:
-			blacklist_token = None
-		return blacklist_token
