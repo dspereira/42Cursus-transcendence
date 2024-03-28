@@ -3,6 +3,8 @@ import Posts from "./views/Posts.js";
 import postView from "./views/PostView.js";
 import Settings from "./views/Settings.js";
 import Game from "./views/Game.js";
+import pageNotFound from "./views/pageNotFound.js";
+
 
 const	pathToRegex = path => new RegExp("^" + path.replace(/\//g, "\\/").replace(/:\w+/g, "(.+)") + "$");
 // returns the value at index one from the pathToRegex function e.g: posts/_2_
@@ -27,7 +29,8 @@ const router = async () => {
 		{ path: "/posts", view: Posts },
 		{ path: "/posts/:id", view: postView },
 		{ path: "/settings", view: Settings },
-		{ path: "/game", view: Game}
+		{ path: "/game", view: Game},
+		{ path: "/pageNotFound", view: pageNotFound}
 	];
 
 	//test each route for pontential match
@@ -43,7 +46,7 @@ const router = async () => {
 	if (!match) 
 	{
 		match = {
-			route: routes[0], //This sets the error (in() => console.log("Viewing DashBoard")  case no path is found) to the dashboard, which can be also customized to a personalized 404 page
+			route: routes[5], //This sets the error (in() => console.log("Viewing DashBoard")  case no path is found) to the dashboard, which can be also customized to a personalized 404 page
 			result: [location.pathname]
 		};
 	}
