@@ -14,8 +14,6 @@ export default class extends Aview {
 
 			<h1 class="fw-bold">Under construction!</h1>
 			<p><b><a href="/" data-link>Home.</a></b></p>
-			<img src="/images/bobTheBuilder.png" alt="YourPhoto" width="500" height="600"> 
-
 			`;
 	}
 }
