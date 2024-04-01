@@ -8,6 +8,8 @@ import LogIn from "./views/LogIn.js";
 import Profile from "./views/Profile.js";
 
 
+var $USERLOGIN = false;
+
 const	pathToRegex = path => new RegExp("^" + path.replace(/\//g, "\\/").replace(/:\w+/g, "(.+)") + "$");
 // returns the value at index one from the pathToRegex function e.g: posts/_2_
 const getParams = match => {
@@ -18,6 +20,8 @@ const getParams = match => {
 		return [key, values[i]];
 	}));
 };
+
+handleLogInButton();
 
 const navigateTo = url => 
 {
@@ -75,3 +79,32 @@ document.addEventListener("DOMContentLoaded", () =>
 	});
 	router();
 });
+
+function handleLogInButton() {
+	var logInbutton = document.getElementById('loginButton');
+
+	logInbutton.removeEventListener("click", testFunctLogOut);
+	logInbutton.removeEventListener("click", testFunctLogin);
+	if ($USERLOGIN) {
+		
+		console.log("adeus");
+
+		logInbutton.innerHTML = "LogOut!";
+		loginButton.addEventListener('click', testFunctLogOut);
+	}
+	else {
+		console.log("hello");
+		loginButton.innerText = "Login";
+        loginButton.addEventListener('click', testFunctLogin);
+	}
+}
+
+function testFunctLogOut() {
+	$USERLOGIN = false;
+	handleLogInButton();
+}
+
+function testFunctLogin() {
+	$USERLOGIN = true;
+	handleLogInButton();
+}
