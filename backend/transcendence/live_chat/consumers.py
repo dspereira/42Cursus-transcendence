@@ -89,6 +89,8 @@ class ChatConsumer(WebsocketConsumer):
 		data_json = json.loads(text_data)
 		message = data_json['message'].strip()
 
+		self.__getAccessToken()
+
 		if message:
 			result_message = f"{self.username}: {message}"
 
@@ -131,7 +133,18 @@ class ChatConsumer(WebsocketConsumer):
 	def __getUser(self):
 
 		user = None
-		access_cookie = None
+		access_token = self.__getAccessToken()
+
+		try:
+			user = User.objects.get(id=access_token.sub)
+			if user:
+				return user
+			return None
+		except Exception as e:
+			print(f"WebSocket Error: {e}")
+			return None
+
+	def __getAccessToken(self):
 
 		for header_name, header_value in self.scope['headers']:
 			if header_name == b'cookie':
@@ -142,13 +155,16 @@ class ChatConsumer(WebsocketConsumer):
 						access_cookie = cookie_value
 						break
 
-		access_data = JwtData(access_cookie)
+		print("=======================================================")
+		print(f"Access Token:\n{access_cookie}")
+		print("=======================================================")
 
-		try:
-			user = User.objects.get(id=access_data.sub)
-			if user:
-				return user
-			return None
-		except Exception as e:
-			print(f"WebSocket Error: {e}")
-			return None
+		return JwtData(access_cookie)
+
+
+""" 
+Message:
+
+Refresh::
+eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0eXBlIjoiYWNjZXNzIiwic3ViIjoyLCJpYXQiOjE3MTE2MzgxMzYsImV4cCI6MTcxMTYzOTkzNiwianRpIjoiODlhNTY4NjItOGZhNC00ZTc3LThiZTYtMzdhYjRkOTBkYzIzIn0.phtMnS0di0qiXd89ijK48MAooanKU3OK47iT01TS9Zo
+"""
