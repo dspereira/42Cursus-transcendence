@@ -10,6 +10,9 @@ from .models import ChatRoom, Message
 
 from channels.exceptions import StopConsumer
 
+from .auth_utils import is_authenticated
+
+
 class ChatConsumer(WebsocketConsumer):
 
 	def __init__(self, *args, **kwargs):
@@ -107,6 +110,9 @@ class ChatConsumer(WebsocketConsumer):
 			)
 
 	def chat_message(self, event):
+
+		is_authenticated(self.__getAccessTokenTest())
+
 		message = event['message']
 		self.send(text_data=json.dumps({
 			'type': 'chat_message',
@@ -155,16 +161,17 @@ class ChatConsumer(WebsocketConsumer):
 						access_cookie = cookie_value
 						break
 
-		print("=======================================================")
-		print(f"Access Token:\n{access_cookie}")
-		print("=======================================================")
+		#print("=======================================================")
+		#print(f"Access Token:\n{access_cookie}")
+		#print("=======================================================")
 
 		return JwtData(access_cookie)
 
-
-""" 
-Message:
-
-Refresh::
-eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0eXBlIjoiYWNjZXNzIiwic3ViIjoyLCJpYXQiOjE3MTE2MzgxMzYsImV4cCI6MTcxMTYzOTkzNiwianRpIjoiODlhNTY4NjItOGZhNC00ZTc3LThiZTYtMzdhYjRkOTBkYzIzIn0.phtMnS0di0qiXd89ijK48MAooanKU3OK47iT01TS9Zo
-"""
+	def __getAccessTokenTest(self):
+		for header_name, header_value in self.scope['headers']:
+			if header_name == b'cookie':
+				cookies = header_value.decode('utf-8').split('; ')
+				for cookie in cookies:
+					cookie_name, cookie_value = cookie.split('=')
+					if cookie_name == 'access':
+						return cookie_value
