@@ -15,7 +15,6 @@ export default class extends Aview {
 				This is the Game!
 			</p>
 			<p>
-			<b><a href="/" data-link>Home.</a></b>
 			</p>
 		`;
 	}

@@ -14,7 +14,6 @@ export default class extends Aview {
 			<p>
 				They are very good for your health!
 			</p>
-			<p><b><a href="/" data-link>Home.</a></b></p>
 			<p><b><a href="/posts" data-link>Posts.</a></b></p>
 		`;
 	}

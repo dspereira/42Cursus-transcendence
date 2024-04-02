@@ -20,7 +20,6 @@ export default class extends Aview {
  ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
  			</pre> -->
 			</p>
-			<p><b><a href="/" data-link>Home.</a></b></p>
 			`;
 	}
 }
