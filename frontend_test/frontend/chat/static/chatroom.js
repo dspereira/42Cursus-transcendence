@@ -22,29 +22,32 @@ document.addEventListener("DOMContentLoaded", function() {
 		let chatSocket = null;
 
 		result_str = "ws://127.0.0.1:8000/chat_connection/" + room_id + "/";
-		console.log("URL WebSocket\n" + result_str);
-
 		chatSocket = new WebSocket(result_str);
 
-		chatSocket.onopen = function(e) {
+		chatSocket.onopen = function(event) {
 			console.log("Successfully connected to the WebSocket.");
 		}
 
-		chatSocket.onclose = function(e) {
+		chatSocket.onclose = function(event) {
+
+			chatSocket = null;
+
+			const code = event.code;
+			console.log("Exit Code: " + code);
 			console.log("WebSocket connection closed unexpectedly. Trying to reconnect in 2s...");
 			setTimeout(function() {
 				console.log("Reconnecting...");
-				chatSocket = null;
 				connect();
 			}, 2000);
 		};
 
 		chat_form.addEventListener("submit", function(event) {
 			event.preventDefault();
-	
+
 			let message = event.target.message.value;
 			if (message)
 			{
+				
 				chatSocket.send(JSON.stringify({
 					"message": message,
 				}))
@@ -52,8 +55,8 @@ document.addEventListener("DOMContentLoaded", function() {
 			chat_form.reset()
 		});
 
-		chatSocket.onmessage = function(e) {
-			const data = JSON.parse(e.data);
+		chatSocket.onmessage = function(event) {
+			const data = JSON.parse(event.data);
 			console.log(data);
 
 			if (data.type === "chat_empty_status")
@@ -112,11 +115,7 @@ document.addEventListener("DOMContentLoaded", function() {
 			if (data)
 			{
 				if (data.status != 401)
-				{
-					// console.log("----------------------");
-					// console.log(data);
-					// console.log("----------------------");
-					
+				{	
 					dataMessage = data["message"];
 					dataExist = data["exist"];
 					dataRoomName = data["room_name"];

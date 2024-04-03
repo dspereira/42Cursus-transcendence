@@ -72,7 +72,7 @@ class ChatConsumer(WebsocketConsumer):
 		print(f"WebSocket disconnected")
 		print("Close code -> ", close_code)
 
-		# self.close()
+		self.close(code=close_code)
 		async_to_sync(self.channel_layer.group_send)(
 			self.room_group_name,
 			{
@@ -111,7 +111,8 @@ class ChatConsumer(WebsocketConsumer):
 
 	def chat_message(self, event):
 
-		is_authenticated(self.__getAccessTokenTest())
+		if not is_authenticated(self.__getAccessTokenTest()):
+			self.disconnect(4000)
 
 		message = event['message']
 		self.send(text_data=json.dumps({
