@@ -32,6 +32,18 @@ document.addEventListener("DOMContentLoaded", function() {
 
 			chatSocket = null;
 
+			/*
+			if (event.code === 403) {
+				console.log('Acesso negado. Verifique suas permissões.');
+				// Exiba uma mensagem de erro para o usuário
+				alert('Acesso negado. Verifique suas permissões.');
+				// Ou tente reconectar automaticamente
+				// reconectar();
+			} else {
+				console.log('Conexão fechada inesperadamente. Código: ' + event.code);
+			}
+			*/			
+
 			const code = event.code;
 			console.log("Exit Code: " + code);
 			console.log("WebSocket connection closed unexpectedly. Trying to reconnect in 2s...");
@@ -104,7 +116,7 @@ document.addEventListener("DOMContentLoaded", function() {
 	function getRoomName()
 	{
 		api_request_url = 'http://127.0.0.1:8000/api/chat/get_chat_room/' + '?room_id=' + room_id
-
+		
 		fetch(api_request_url, {
 			credentials: 'include',
 			method: "GET",
@@ -135,7 +147,10 @@ document.addEventListener("DOMContentLoaded", function() {
 		.catch(error => {
 			console.error(error)
 		});
+
+		
 	}
+
 
 	async function user_have_chatroom_access()
 	{
@@ -144,6 +159,7 @@ document.addEventListener("DOMContentLoaded", function() {
 			method: 'GET'
 		});
 		const data = await response.json();
+		
 		if (data && data['id'] && data['user'])
 		{
 			logged_user_id = data['id'];
@@ -169,5 +185,7 @@ document.addEventListener("DOMContentLoaded", function() {
 			document.querySelector(".myBody").innerHTML = _401ErrorPage;;
 	}
 
-	user_have_chatroom_access()
+	//user_have_chatroom_access()
+	getRoomName();
 });
+

@@ -19,6 +19,12 @@ class ChatConsumer(WebsocketConsumer):
 		super().__init__(args, kwargs)
 
 	def connect(self):
+		if not self.scope['access_data']:
+			#self.close(1006)
+			self.accept()
+			self.close(4000)
+			return
+
 		self.accept()
 
 		self.user = self.__getUser()
@@ -72,6 +78,7 @@ class ChatConsumer(WebsocketConsumer):
 		print(f"WebSocket disconnected")
 		print("Close code -> ", close_code)
 
+		'''
 		self.close(code=close_code)
 		async_to_sync(self.channel_layer.group_send)(
 			self.room_group_name,
@@ -86,6 +93,7 @@ class ChatConsumer(WebsocketConsumer):
 			self.room_group_name,
 			self.channel_name
 		)
+		'''
 		raise StopConsumer()
 
 	def receive(self, text_data):
@@ -110,6 +118,10 @@ class ChatConsumer(WebsocketConsumer):
 			)
 
 	def chat_message(self, event):
+
+		print("-------chat_message----------")
+		print(self.scope['access_data'])
+
 
 		if not is_authenticated(self.__getAccessTokenTest()):
 			self.disconnect(4000)

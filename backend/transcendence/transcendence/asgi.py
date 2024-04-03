@@ -14,6 +14,8 @@ from channels.auth import AuthMiddlewareStack
 from channels.security.websocket import AllowedHostsOriginValidator
 import live_chat.routing
 
+from custom_middlewares import ChannelsAuthMiddleware
+
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'transcendence.settings')
 
 application = ProtocolTypeRouter({
@@ -26,3 +28,5 @@ application = ProtocolTypeRouter({
         ),
     ),
 })
+
+application = ChannelsAuthMiddleware(application)
