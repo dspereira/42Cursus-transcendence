@@ -19,13 +19,11 @@ class ChatConsumer(WebsocketConsumer):
 		super().__init__(args, kwargs)
 
 	def connect(self):
-		if not self.scope['access_data']:
-			#self.close(1006)
-			self.accept()
-			self.close(4000)
-			return
 
 		self.accept()
+		if not self.__is_user_authenticated():
+			self.close(4000)
+			return
 
 		self.user = self.__getUser()
 		if not self.user:
@@ -119,12 +117,12 @@ class ChatConsumer(WebsocketConsumer):
 
 	def chat_message(self, event):
 
-		print("-------chat_message----------")
-		print(self.scope['access_data'])
+		#print("-------chat_message----------")
+		#print(self.scope['access_data'])
 
 
-		if not is_authenticated(self.__getAccessTokenTest()):
-			self.disconnect(4000)
+		#if not is_authenticated(self.__getAccessTokenTest()):
+		#	self.disconnect(4000)
 
 		message = event['message']
 		self.send(text_data=json.dumps({
@@ -180,11 +178,7 @@ class ChatConsumer(WebsocketConsumer):
 
 		return JwtData(access_cookie)
 
-	def __getAccessTokenTest(self):
-		for header_name, header_value in self.scope['headers']:
-			if header_name == b'cookie':
-				cookies = header_value.decode('utf-8').split('; ')
-				for cookie in cookies:
-					cookie_name, cookie_value = cookie.split('=')
-					if cookie_name == 'access':
-						return cookie_value
+	def __is_user_authenticated(self):
+		if self.scope['access_data']:
+			return True
+		return False
