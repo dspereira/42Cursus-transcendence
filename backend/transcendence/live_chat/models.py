@@ -23,7 +23,7 @@ class ChatRoom(models.Model):
         self.save()
 
     def __str__(self):
-        return f'{self.name} ({self.get_online_count()})'
+        return f'{self.id} {self.name} ({self.get_online_count()})'
 
 class Message(models.Model):
     user = models.ForeignKey(to=User, on_delete=models.CASCADE)

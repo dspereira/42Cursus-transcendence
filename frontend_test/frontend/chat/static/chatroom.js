@@ -16,12 +16,12 @@ document.addEventListener("DOMContentLoaded", function() {
 	let logged_user_id = null
 	let logged_user_name = null
 	chat_messages_txt_area.value = "";
-	
+
 	function connect() {
 
 		let chatSocket = null;
 
-		result_str = "ws://127.0.0.1:8000/chat_connection/" + room_id + "/";
+		result_str = "ws://127.0.0.1:8000/chat_connection/?room_id=" + room_id;
 		chatSocket = new WebSocket(result_str);
 
 		chatSocket.onopen = function(event) {
@@ -73,16 +73,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
 			if (data.type === "chat_empty_status")
 			{
-				if (data.empty)
-				{
-					chat_messages_txt_area.value = "";
-					console.log("Chat Empty Status -> True");
-				}
-				else
-				{
-					chat_messages_txt_area.value = data.messages;
-					console.log("Chat Empty Status -> False");
-				}
+				chat_messages_txt_area.value = data.messages;
 			}
 			else if (data.type === "chat_message")
 			{
@@ -116,7 +107,7 @@ document.addEventListener("DOMContentLoaded", function() {
 	function getRoomName()
 	{
 		api_request_url = 'http://127.0.0.1:8000/api/chat/get_chat_room/' + '?room_id=' + room_id
-		
+
 		fetch(api_request_url, {
 			credentials: 'include',
 			method: "GET",
@@ -134,7 +125,7 @@ document.addEventListener("DOMContentLoaded", function() {
 					console.log("Message:\n", dataMessage);
 					console.log("Exist: ", dataExist);
 					console.log("Room Name: ", dataRoomName);
-					
+
 					if (dataExist)
 						document.querySelector(".chatroom_name_title").innerHTML = "ChatRoom -> " + dataRoomName;
 						document.querySelector(".chatroom_name_header").innerHTML = "ChatRoom -> " + dataRoomName;
@@ -147,10 +138,7 @@ document.addEventListener("DOMContentLoaded", function() {
 		.catch(error => {
 			console.error(error)
 		});
-
-		
 	}
-
 
 	async function user_have_chatroom_access()
 	{
@@ -188,4 +176,3 @@ document.addEventListener("DOMContentLoaded", function() {
 	//user_have_chatroom_access()
 	getRoomName();
 });
-

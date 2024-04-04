@@ -163,6 +163,8 @@ def apiGetUserChatRooms(request):
 		response = {"message": "401 | Unauthorized", "status": 401}
 	return JsonResponse(response, status=response["status"])
 
+# DEprecated
+# This Check is made in the Channels Midlewere
 def apiCheckUserChatRoomAccess(request):
 
 	query_params = request.GET
