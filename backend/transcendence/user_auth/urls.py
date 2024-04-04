@@ -7,4 +7,6 @@ urlpatterns = [
     path("logout", views.logout, name="logout"),
     path("refresh_token", views.refresh_token, name="refresh_token"),
     path("info", views.info, name="info"),
+    path("user_info", views.apiGetUserInfo, name="apiUserInfo"),
+    path("users_list", views.apiGetUsersList, name="apiUsersList"),
 ]

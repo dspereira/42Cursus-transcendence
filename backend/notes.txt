@@ -27,6 +27,8 @@ python manage.py migrate
 => Django admin
 python manage.py createsuperuser
 
+>> Create random users (All users passwords are "123")
+python3 manage.py generate_users <Number_of_users>
 
 -------------------------------------------------------------------------------------------------------------------
 => To initialize the virtual environment, activate it, and run the server, follow the steps below.

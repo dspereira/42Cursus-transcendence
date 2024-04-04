@@ -17,6 +17,8 @@ def userLogout(request):
 def info(request):
 	return render(request, "login_test/info.html")
 
+def chat(request):
+	return render(request, "login_test/chat.html")
+
 def refresh(request):
 	return render(request, "login_test/refresh.html")
-

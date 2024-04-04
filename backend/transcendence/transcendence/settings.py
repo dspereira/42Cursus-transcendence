@@ -27,7 +27,6 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
-
 # Application definition
 
 INSTALLED_APPS = [
@@ -38,6 +37,10 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'user_auth',
+    'live_chat',
+    'channels',
+    'generate_users', # test app
+    'generate_chatrooms', # test app
 ]
 
 MIDDLEWARE = [
@@ -57,7 +60,6 @@ AUTHENTICATION_BACKENDS = [
     'user_auth.AuthBackend.AuthBackend'
 ]
 
-
 ROOT_URLCONF = 'transcendence.urls'
 
 TEMPLATES = [
@@ -76,7 +78,17 @@ TEMPLATES = [
     },
 ]
 
+ASGI_APPLICATION = 'transcendence.asgi.application'
 WSGI_APPLICATION = 'transcendence.wsgi.application'
+
+# Channels
+# https://channels.readthedocs.io/en/stable/topics/channel_layers.html#in-memory-channel-layer
+
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels.layers.InMemoryChannelLayer"
+    }
+}
 
 AUTH_USER_MODEL = 'user_auth.User'
 
@@ -109,7 +121,6 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
 # Internationalization
 # https://docs.djangoproject.com/en/4.2/topics/i18n/
 
@@ -131,4 +142,3 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-
