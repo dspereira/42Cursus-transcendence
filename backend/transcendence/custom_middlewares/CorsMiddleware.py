@@ -4,6 +4,7 @@ from django.http import HttpResponse
 origin_name = "Access-Control-Allow-Origin"
 origin_data = [
 	"http://127.0.0.1:8080",
+	"http://localhost:8080",
 ]
 
 headers_name = "Access-Control-Allow-Headers"
@@ -31,16 +32,18 @@ class CorsMiddleware:
 	def __call__(self, request):
 		if request.method == "OPTIONS":
 			response = HttpResponse()
-			self.process_response(response)
+			self.process_response(response, request)
 			return response
-		return self.process_response(self.get_response(request))
+		return self.process_response(self.get_response(request), request)
 
-	def process_response(self, response):
-		self.add_new_header(response, origin_name, origin_data)
-		self.add_new_header(response, headers_name, headers_data)
-		self.add_new_header(response, methods_name, methods_data)
-		self.add_new_header(response, credentials_name, credentials_data)
+	def process_response(self, response, request):
+		origin = request.headers.get("Origin")
+		if origin in origin_data:
+			self.add_new_header(response, origin_name, [origin])
+			self.add_new_header(response, headers_name, headers_data)
+			self.add_new_header(response, methods_name, methods_data)
+			self.add_new_header(response, credentials_name, credentials_data)
 		return response
 
 	def add_new_header(self, response, name, data):
-		response[name] = ",".join(data)
+		response[name] = ", ".join(data)
