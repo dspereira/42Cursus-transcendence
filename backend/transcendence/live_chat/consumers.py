@@ -73,6 +73,9 @@ class ChatConsumer(AsyncWebsocketConsumer):
 			)
 
 	async def chat_message(self, event):
+		if not await sync_to_async(is_authenticated)(self.access_data):
+			await self.close(4000)
+			return
 		await self.send(text_data=json.dumps({
 			'type': 'chat_message',
 			'message': event['message'],
