@@ -1,16 +1,47 @@
-version: '3.9'
-
 services:
-  postgres:
-    image: postgres:14-alpine
-    ports:
-      - 5432:5432
-    volumes:
-      - postgres_data:/var/lib/postgresql/data/
-    environment:
-      - POSTGRES_PASSWORD=${DB_PASS}
-      - POSTGRES_USER=${DB_USER}
-      - POSTGRES_DB=${DB_NAME}
+
+    db:
+        image: postgres
+        container_name: postgres
+        ports:
+            - 5432:5432
+        volumes:
+            - db-data:${DB_VOLUME_DATA}
+        environment:
+            - POSTGRES_PASSWORD=${DB_PASS}
+            - POSTGRES_USER=${DB_USER}
+            - POSTGRES_DB=${DB_NAME}
+        networks:
+            - pong-network
+        restart: on-failure
+
+    #adminer:
+    #    image: adminer
+    #    restart: on-failure
+    #    ports:
+    #      - 8800:8080
+
+    admin:
+        image: dpage/pgadmin4
+        container_name: pgadmin4
+        ports:
+            - 5050:80
+        environment:
+            - PGADMIN_DEFAULT_EMAIL=teste@teste.pt
+            - PGADMIN_DEFAULT_PASSWORD=asd123
+        networks:
+            - pong-network
+        restart: on-failure
+
+networks:
+    pong-network:
+        name: pong-network
+
 
 volumes:
-  postgres_data:
+  db-data:
+    name: db-data
+    driver_opts:
+      type: none
+      device: ${DB_VOLUME_DATA}
+      o: bind

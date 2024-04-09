@@ -1,0 +1,50 @@
+# Containers Names
+DB		= mariadb-database
+ADMIN	= dpage/pgadmin4
+
+
+# Docker Compose
+COMPOSE		= sudo docker compose -f backend/docker-compose.yml
+DOCKER		= sudo docker
+
+include backend/.env
+
+.SILENT:
+
+all:
+	sudo mkdir -p $(DB_VOLUME_DATA)
+	$(COMPOSE) up -d
+
+start:
+	$(COMPOSE) up -d
+
+stop:
+	$(COMPOSE) stop
+
+clean:
+	$(COMPOSE) down --rmi all --volumes
+
+clean-data: clean
+	cd $(DB_VOLUME_DATA) && rm -rf *
+
+re: clean all
+
+logs:
+	$(COMPOSE) logs
+
+info:
+	echo "-------------------------------------------------------------------------------------------------"
+	$(COMPOSE) ps -a
+	echo "-------------------------------------------------------------------------------------------------"
+	$(DOCKER) images
+	echo "-------------------------------------------------------------------------------------------------"
+	$(DOCKER) network ls
+	echo "-------------------------------------------------------------------------------------------------"
+	$(DOCKER) volume ls
+	echo "-------------------------------------------------------------------------------------------------"
+
+db-it:
+	$(DOCKER) exec -it $(DB) /bin/bash
+
+admin-it:
+	$(DOCKER) exec -it $(ADMIN) /bin/bash
