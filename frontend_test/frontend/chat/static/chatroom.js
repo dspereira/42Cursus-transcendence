@@ -1,0 +1,178 @@
+console.log("chatroom.js is %cActive", 'color: #90EE90')
+
+_401ErrorPage = "<h1>Error 401</h1><p>Sorry, an error occurred. Please try again later.</p>";
+
+document.addEventListener("DOMContentLoaded", function() {
+
+	console.log("Pagina HTML totalmente carregada !")
+
+	const path = window.location.pathname;
+	const parts = path.split('/');
+	const room_id = parts[parts.indexOf('chatroom') + 1];
+
+	const chat_form = document.querySelector(".myChatForm")
+	const chat_messages_txt_area = document.querySelector(".chat_messages_txt_area");
+
+	let logged_user_id = null
+	let logged_user_name = null
+	chat_messages_txt_area.value = "";
+
+	function connect() {
+
+		let chatSocket = null;
+
+		result_str = "ws://127.0.0.1:8000/chat_connection/?room_id=" + room_id;
+		chatSocket = new WebSocket(result_str);
+
+		chatSocket.onopen = function(event) {
+			console.log("Successfully connected to the WebSocket.");
+		}
+
+		chatSocket.onclose = function(event) {
+
+			chatSocket = null;
+
+			/*
+			if (event.code === 403) {
+				console.log('Acesso negado. Verifique suas permissões.');
+				// Exiba uma mensagem de erro para o usuário
+				alert('Acesso negado. Verifique suas permissões.');
+				// Ou tente reconectar automaticamente
+				// reconectar();
+			} else {
+				console.log('Conexão fechada inesperadamente. Código: ' + event.code);
+			}
+			*/			
+
+			const code = event.code;
+			console.log("Exit Code: " + code);
+			console.log("WebSocket connection closed unexpectedly. Trying to reconnect in 2s...");
+			setTimeout(function() {
+				console.log("Reconnecting...");
+				connect();
+			}, 2000);
+		};
+
+		chat_form.addEventListener("submit", function(event) {
+			event.preventDefault();
+
+			let message = event.target.message.value;
+			if (message)
+			{
+				
+				chatSocket.send(JSON.stringify({
+					"message": message,
+				}))
+			}
+			chat_form.reset()
+		});
+
+		chatSocket.onmessage = function(event) {
+			const data = JSON.parse(event.data);
+			console.log(data);
+
+			if (data.type === "chat_empty_status")
+			{
+				chat_messages_txt_area.value = data.messages;
+			}
+			else if (data.type === "chat_message")
+			{
+				console.log(data.message);
+				chat_messages_txt_area.value += data.message + "\n";
+			}
+			else if (data.type === "online_offline_messages")
+			{
+				console.log(data.message);
+				chat_messages_txt_area.value += data.message + "\n";
+
+				if (data.status === "offline")
+				{
+					chatSocket.close()
+					console.log("Esta merda foi fechada crlh --- ;)")
+				}
+			}
+			else
+				console.error("Unknown message type!");
+
+			chat_messages_txt_area.scrollTop = chat_messages_txt_area.scrollHeight;
+		};
+
+		chatSocket.onerror = function(err) {
+			console.log("WebSocket encountered an error: " + err.message);
+			console.log("Closing the socket.");
+			chatSocket.close();
+		}
+	}
+
+	function getRoomName()
+	{
+		api_request_url = 'http://127.0.0.1:8000/api/chat/get_chat_room/' + '?room_id=' + room_id
+
+		fetch(api_request_url, {
+			credentials: 'include',
+			method: "GET",
+		})
+		.then(response => data = response.json())
+		.then(data => {
+
+			if (data)
+			{
+				if (data.status != 401)
+				{	
+					dataMessage = data["message"];
+					dataExist = data["exist"];
+					dataRoomName = data["room_name"];
+					console.log("Message:\n", dataMessage);
+					console.log("Exist: ", dataExist);
+					console.log("Room Name: ", dataRoomName);
+
+					if (dataExist)
+						document.querySelector(".chatroom_name_title").innerHTML = "ChatRoom -> " + dataRoomName;
+						document.querySelector(".chatroom_name_header").innerHTML = "ChatRoom -> " + dataRoomName;
+				}
+				else if (data.status === 401)
+					document.querySelector(".myBody").innerHTML = _401ErrorPage;
+				connect();
+			}
+		})
+		.catch(error => {
+			console.error(error)
+		});
+	}
+
+	async function user_have_chatroom_access()
+	{
+		const response = await fetch("http://127.0.0.1:8000/api/auth/user_info", {
+			credentials: 'include',
+			method: 'GET'
+		});
+		const data = await response.json();
+		
+		if (data && data['id'] && data['user'])
+		{
+			logged_user_id = data['id'];
+			logged_user_name = data['user'];
+			console.log("User ID -> ", logged_user_id);
+			console.log("User    -> ", logged_user_name);
+
+			url = "http://127.0.0.1:8000/api/chat/check_user_chat_room_access/";
+			query_params = "?user_id=" + data['id'] + "&room_id=" + room_id;
+			request_url= url + query_params;
+
+			const response = await fetch(request_url, {
+				credentials: 'include',
+				method: 'GET'
+			});
+			const data_room = await response.json();
+			if (data_room && data_room["status"] === 200)
+				getRoomName();
+			else
+				document.querySelector(".myBody").innerHTML = _401ErrorPage;;
+		}
+		else
+			document.querySelector(".myBody").innerHTML = _401ErrorPage;;
+	}
+
+	//user_have_chatroom_access()
+	getRoomName();
+});

@@ -21,11 +21,14 @@ python3 manage.py runserver
 python manage.py startapp <app_name>
 
 => Applying migrations to database
+python manage.py makemigrations -> cria o ficheiro a partir do model que irá ser aplicado quando for feito migrate
 python manage.py migrate
 
 => Django admin
 python manage.py createsuperuser
 
+>> Create random users (All users passwords are "123")
+python3 manage.py generate_users <Number_of_users>
 
 -------------------------------------------------------------------------------------------------------------------
 => To initialize the virtual environment, activate it, and run the server, follow the steps below.

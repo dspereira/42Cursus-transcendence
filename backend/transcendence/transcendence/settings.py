@@ -39,7 +39,6 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
-
 # Application definition
 
 INSTALLED_APPS = [
@@ -49,16 +48,28 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'user_auth',
+    'live_chat',
+    'channels',
+    'generate_users', # test app
+    'generate_chatrooms', # test app
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
+    #'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'custom_middlewares.CorsMiddleware',
+    'custom_middlewares.JwtMiddleware',
+    'custom_middlewares.BlacklistTokenMiddleware'
+]
+
+AUTHENTICATION_BACKENDS = [
+    'user_auth.AuthBackend.AuthBackend'
 ]
 
 ROOT_URLCONF = 'transcendence.urls'
@@ -79,8 +90,19 @@ TEMPLATES = [
     },
 ]
 
+ASGI_APPLICATION = 'transcendence.asgi.application'
 WSGI_APPLICATION = 'transcendence.wsgi.application'
 
+# Channels
+# https://channels.readthedocs.io/en/stable/topics/channel_layers.html#in-memory-channel-layer
+
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels.layers.InMemoryChannelLayer"
+    }
+}
+
+AUTH_USER_MODEL = 'user_auth.User'
 
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
@@ -114,7 +136,6 @@ AUTH_PASSWORD_VALIDATORS = [
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
 ]
-
 
 # Internationalization
 # https://docs.djangoproject.com/en/4.2/topics/i18n/

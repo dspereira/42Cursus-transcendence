@@ -1,5 +1,11 @@
 #!/bin/bash
 
+VENV_DIR="venv"
+
+if [ -d $VENV_DIR ]; then
+    rm -rf $VENV_DIR
+fi
+
 # create and activate venv (virtual environment)
 python3 -m venv venv
 
