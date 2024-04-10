@@ -1,13 +1,13 @@
 # Containers Names
-DB		= mariadb-database
-ADMIN	= dpage/pgadmin4
+DB		= postgres
+ADMIN	= pgadmin4
 
 
 # Docker Compose
-COMPOSE		= sudo docker compose -f backend/docker-compose.yml
+COMPOSE		= sudo docker compose -f srcs/docker-compose.yml
 DOCKER		= sudo docker
 
-include backend/.env
+include srcs/.env
 
 .SILENT:
 
@@ -24,6 +24,7 @@ stop:
 clean:
 	$(COMPOSE) down --rmi all --volumes
 
+# Careful! This command can remove data you don't want.
 clean-data: clean
 	cd $(DB_VOLUME_DATA) && rm -rf *
 

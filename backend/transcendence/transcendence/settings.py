@@ -14,9 +14,12 @@ import os
 from pathlib import Path
 from dotenv import load_dotenv, find_dotenv
 
-load_dotenv(find_dotenv())
 
-print("Path of .env file:", find_dotenv())
+from pathlib import Path
+
+dotenv_path = Path.cwd() / '..' / '..' / 'srcs' / '.env'
+load_dotenv(dotenv_path)
+
 print("Name:", os.getenv('DB_NAME'))
 print("User:", os.getenv('DB_USER'))
 print("Pass:", os.getenv('DB_PASS'))
