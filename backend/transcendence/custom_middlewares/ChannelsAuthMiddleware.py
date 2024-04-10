@@ -23,9 +23,10 @@ class ChannelsAuthMiddleware(BaseMiddleware):
 			if header_name == b'cookie':
 				cookies = header_value.decode('utf-8').split('; ')
 				for cookie in cookies:
-					cookie_name, cookie_value = cookie.split('=')
-					if cookie_name == 'access':
-						return cookie_value
+					if not cookie.find("access="):
+						token = cookie.replace("access=", "")
+						print(f"Cookie: {token}")
+						return token
 
 	async def __isUserAllowedInChatRoom(self, user_id, room_id):
 		if user_id and room_id:
