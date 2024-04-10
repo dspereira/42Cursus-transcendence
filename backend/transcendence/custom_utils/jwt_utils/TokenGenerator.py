@@ -4,7 +4,7 @@ from datetime import datetime, timedelta
 
 ACCESS_TOKEN = "access"
 REFRESH_TOKEN = "refresh"
-ACCESS_TOKEN_EXP_MIN = 1
+ACCESS_TOKEN_EXP_MIN = 30
 REFRESH_TOKEN_EXP_DAY = 1
 
 class TokenGenerator:
