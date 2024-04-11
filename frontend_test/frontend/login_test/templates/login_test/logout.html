@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<title>Authentication test</title>
+		<style>
+			div {
+  				font-size: 20px;
+			}
+            .message {
+  				font-size: 20px;
+			}
+			.success {
+				color: green;
+				display: block;
+			}
+			.error {
+				color: red;
+				display: block;
+			}
+			.displayNone {
+				display: none;
+			}
+		</style>
+	</head>
+	<body>
+		<h1>Logout</h1>
+
+        <div class="displayNone message"></div>
+
+        <div class="user"></div>
+
+		<br>
+		<form id="logout">
+			<button type="submit">Logout</button>
+		</form>       
+
+        <script>
+
+            async function logData()
+            {
+                const response = await fetch("http://127.0.0.1:8000/api/auth/info", {
+                    credentials: 'include',
+                    method: 'GET'
+                });
+                const data = await response.json();
+                console.log(data);
+                if (data["user"])
+                    document.querySelector(".user").innerHTML = "User Loged: " +  data["user"];
+                else
+                    document.querySelector(".user").innerHTML = "User Loged: Anonymous User";
+            }
+            logData();
+
+			document.getElementById("logout").addEventListener("submit", function(event) {
+				event.preventDefault();
+                fetch("http://127.0.0.1:8000/api/auth/logout", {credentials: 'include', method: "POST"})
+                .then(response => data = response.json())
+                .then (data => {
+                    console.log("=========================");
+                    console.log(`message: ${data["message"]}`);
+                
+                    const msgElm = document.querySelector(".message");
+                    const userElm = document.querySelector(".user");
+					msgElm.classList.remove("displayNone");
+					msgElm.classList.remove("success");
+					msgElm.classList.remove("error");
+					msgElm.innerHTML = data["message"];
+					if (data["message"] == "success")
+                    {
+                        userElm.classList.add("displayNone");
+						msgElm.classList.add("success");
+                    }
+					else if (data["message"] == "error")
+						msgElm.classList.add("error");
+                })
+                .catch(error => {
+                    console.log("Login fetch Error");
+                });
+            });
+
+        </script>
+	</body>
+</html>

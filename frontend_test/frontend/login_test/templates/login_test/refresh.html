@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<title>Refresh Token</title>
+		<style>
+			div {
+  				font-size: 20px;
+			}
+            .message {
+  				font-size: 20px;
+			}
+			.success {
+				color: green;
+				display: block;
+			}
+			.error {
+				color: red;
+				display: block;
+			}
+			.displayNone {
+				display: none;
+			}
+		</style>
+	</head>
+	<body>
+		<h1>Refresh Token</h1>
+
+		<div class="displayNone message"></div>
+
+		<br>
+		<form id="refresh">
+			<button type="submit">refresh</button>
+		</form>
+
+		<script>
+			document.getElementById("refresh").addEventListener("submit", function(event) {
+				event.preventDefault();
+
+				fetch("http://127.0.0.1:8000/api/auth/refresh_token", {
+					credentials: 'include',
+					method: "POST",
+					headers: {
+						"Content-Type": "application/json"
+					},
+					body: JSON.stringify({"message": "test route refresh"})
+				})
+				.then(response => data = response.json())
+				.then (data => {
+					console.log("=========================");
+					console.log(`message	: ${data["message"]}`);
+
+                    const msgElm = document.querySelector(".message");
+					msgElm.classList.remove("displayNone");
+					msgElm.classList.remove("success");
+					msgElm.classList.remove("error");
+
+					
+					if (data["message"] == "success")
+					{
+						msgElm.innerHTML = "New tokens were generated.";
+						msgElm.classList.add("success");
+					}
+					else
+					{
+						msgElm.innerHTML = "Error";
+						msgElm.classList.add("error");
+					}
+				})
+				.catch(error => {
+					console.log("Login fetch Error");
+				});
+			});
+		</script>
+	</body>
+</html>

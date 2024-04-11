@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<title>Authentication test</title>
+		<style>
+			div {
+  				font-size: 20px;
+			}
+		</style>
+	</head>
+	<body>
+		<h1>Info Page</h1>
+
+		<div class="user"></div>
+
+		<script>
+
+			function getSessionId()
+			{
+				const cookies = document.cookie;
+				const cookieArray = cookies.split(';');
+				let sessionId = null;
+				for (let i = 0; i < cookieArray.length; i++) {
+					const cookie = cookieArray[i].trim();
+					if (cookie.startsWith('session_id=')) {
+						sessionId = cookie.substring('session_id='.length);
+						break;
+					}
+				}
+				return (sessionId)		
+			}
+
+			console.log(getSessionId());
+			async function logData() 
+			{
+				const response = await fetch("http://127.0.0.1:8000/api/auth/info", {
+					credentials: 'include',
+					method: 'GET'
+				});
+				const data = await response.json();
+				console.log(data);
+				if (data["user"])
+					document.querySelector(".user").innerHTML = "User Loged: " +  data["user"];
+				else
+					document.querySelector(".user").innerHTML = "User Loged: Anonymous User";
+			}
+			logData();
+
+		</script>
+	</body>
+</html>
