@@ -1,6 +1,7 @@
 # Containers Names
 DB		= postgres
 ADMIN	= pgadmin4
+NGINX	= nginx-server
 
 
 # Docker Compose
@@ -49,3 +50,6 @@ db-it:
 
 admin-it:
 	$(DOCKER) exec -it $(ADMIN) /bin/bash
+
+nginx-it:
+	$(DOCKER) exec -it $(NGINX) /bin/bash
