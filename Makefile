@@ -26,11 +26,9 @@ clean:
 	$(COMPOSE) down -v
 	$(DOCKER) image rm $(NGINX)
 
-
-#$(COMPOSE) down --rmi all --volumes
-
 # Careful! This command can remove data you don't want.
-clean-data: clean
+clean-data: 
+	$(COMPOSE) down --rmi all --volumes
 	sudo rm -rf $(DB_VOLUME_DATA)
 
 re: clean all
