@@ -23,7 +23,11 @@ stop:
 	$(COMPOSE) stop
 
 clean:
-	$(COMPOSE) down --rmi all --volumes
+	$(COMPOSE) down -v
+	$(DOCKER) image rm $(NGINX)
+
+
+#$(COMPOSE) down --rmi all --volumes
 
 # Careful! This command can remove data you don't want.
 clean-data: clean
