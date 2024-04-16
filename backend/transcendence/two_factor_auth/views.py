@@ -5,8 +5,6 @@ import json
 from custom_decorators import accepted_methods
 import os
 
-from custom_utils.models_utils import ModelManager
-
 @accepted_methods(["POST"])
 def generateOTP(request):
 	print("---------------------------------------")
@@ -31,7 +29,7 @@ def validateOTP(request):
 				if is_valid_otp(otp_input_code):
 					message = "Validated with Success"
 				else:
-					message = "The code is expired"
+					message = "Invalid Code"
 		else:
 			message = "Empty Input"
 	else:
@@ -40,3 +38,6 @@ def validateOTP(request):
 	print(message)
 	response_msg = {"message": message}
 	return JsonResponse(response_msg)
+
+@accepted_methods(["GET"])
+def get_all_
