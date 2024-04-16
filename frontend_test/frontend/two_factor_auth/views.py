@@ -5,3 +5,6 @@ def index(request):
 
 def setUp2FA(request):
 	return render(request, "setup2fa.html")
+
+def authWithCodeGeneration(request):
+	return render(request, "authWithCodeGeneration.html")
