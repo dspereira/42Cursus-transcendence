@@ -1,17 +1,22 @@
 from django.db import models
 from datetime import datetime, timedelta
+
+import pyotp.utils
 from two_factor_auth.models import OneTimePasswords
 from custom_utils.models_utils import ModelManager
 import pyotp
+import qrcode
 
 # Expiration time in seconds
 OTP_EXP_TIME_SEC = 1 * 60
 
 otp_model = ModelManager(OneTimePasswords)
+secret_key = pyotp.random_base32()
+provisioning_uri = pyotp.utils.build_uri(secret=secret_key, issuer="42T", name="diogo")
+qrcode.make(provisioning_uri).save("qr_auth.png")
+totp = pyotp.TOTP(secret_key)
 
 def generate_otp_code():
-	secret_key = pyotp.random_base32()
-	totp = pyotp.TOTP(secret_key)
 	otp_value = totp.now()
 	return otp_value
 
@@ -26,11 +31,18 @@ def exist_otp(otp_value: int):
 		return otp
 	return None
 
-def is_valid_otp(otp: models.Model):
+""" def is_valid_otp(otp: models.Model):
 	if otp:
 		otp_expiration_ts = otp.expiration_date
 		current_timestamp = int(datetime.now().timestamp())
 		if current_timestamp <= otp_expiration_ts:
+			return True
+	return False """
+
+def is_valid_otp(otp: str):
+	totp = pyotp.TOTP(secret_key)
+	if otp:
+		if totp.verify(otp):
 			return True
 	return False
 
@@ -69,7 +81,7 @@ def show_valid_opts():
 		if current_timestamp <= otp_expiration_ts:
 			result += str(otp) + "\n"
 	if result:
-		print(result)
+		print(result, end="")
 	else:
 		print("There is no valid OTPS")
 
