@@ -26,7 +26,7 @@ clean:
 
 # Careful! This command can remove data you don't want.
 clean-data: clean
-	cd $(DB_VOLUME_DATA) && rm -rf *
+	sudo rm -rf $(DB_VOLUME_DATA)
 
 re: clean all
 
