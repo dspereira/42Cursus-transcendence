@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'login_test',
 	'chat',
+	'two_factor_auth',
 ]
 
 MIDDLEWARE = [
