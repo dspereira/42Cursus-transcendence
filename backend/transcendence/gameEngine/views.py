@@ -6,11 +6,12 @@ from django.http import JsonResponse
 import json
 import jwt
 from datetime import datetime, timedelta
-from models	import Paddle
+from .	import models
+from models import Paddle
 
 
 def	playerControls(request) :
-	Paddle.x = xPos + 10
+	Paddle.x += 10
 	return JsonResponse(Paddle)
 
 	
