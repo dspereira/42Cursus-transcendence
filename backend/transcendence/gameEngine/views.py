@@ -11,8 +11,10 @@ from models import Paddle
 
 
 def	playerControls(request) :
+	
+	
 	Paddle.x += 10
-	return JsonResponse(Paddle)
+	return JsonResponse({'y': Paddle.x})
 
 	
 

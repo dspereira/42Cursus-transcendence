@@ -51,6 +51,7 @@ INSTALLED_APPS = [
     'user_auth',
     'live_chat',
     'channels',
+	'gameEngine',
     'generate_users', # test app
     'generate_chatrooms', # test app
 ]
