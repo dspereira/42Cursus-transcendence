@@ -1,6 +1,4 @@
-console.log("geerate_code.js is %cActive", 'color: #90EE90')
-
-_401ErrorPage = "<h1>Error 401</h1><p>Sorry, an error occurred. Please try again later.</p>";
+console.log("configure_2fa.js is %cActive", 'color: #90EE90')
 
 document.addEventListener("DOMContentLoaded", function() {
 
