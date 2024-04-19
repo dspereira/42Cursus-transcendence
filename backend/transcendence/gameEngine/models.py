@@ -138,6 +138,4 @@ class GameEngine:
 		# self.rightPaddle.update(rightInput)
 		self.ball.update(self.leftPaddle, self.rightPaddle)
 
-
 # Create your models here. // DATABASE (tabelas linhas de c0c@ etc)z
-rn [self.x, self.y]
