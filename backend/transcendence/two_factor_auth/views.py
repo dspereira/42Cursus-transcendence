@@ -52,10 +52,49 @@ def get_all_used_otps(request):
 def is_already_configured(request):
 
 	if request.access_data:
-		user = user_model.get(id=request.access_data.sub)
+		user = getUser(request.access_data.sub)
 
-	otp_user_options = otp_user_opt_model.get(user=user)
-	if otp_user_options:
+	if is_configuration_in_db(user):
 		return JsonResponse({"message": "Already Configured", "already_configured": True})
 	else:
 		return JsonResponse({"message": "Need to be Configured", "already_configured": False})
+
+@accepted_methods(["POST"])
+@login_required
+def configuration(request):
+
+	message = "Empty Body Content"
+	valid_input = False
+
+	if request.access_data:
+		user = getUser(request.access_data.sub)
+
+	if request.body:
+		message = "Body with Content"
+		
+		body_unicode = request.body.decode('utf-8')
+		body_data = json.loads(body_unicode)
+
+		qr_code = body_data.get("qr_code")
+		email = body_data.get("email")
+		phone = body_data.get("phone")
+
+		print("--------------------------------------")
+		print(body_data)
+		print("--------------------------------------")
+		print("QR Code: " + str(qr_code))
+		print("  Email: " + str(email))
+		print("  Phone: " + str(phone))
+		print("--------------------------------------")
+
+		if qr_code or email or phone:
+			create_user_options(user=user, qr_code=qr_code, email=email, phone=phone)
+			print("Passei por Aqui!")
+			if is_configuration_in_db(user):
+				message = "2FA Configured with SUCESS !"
+				valid_input = True
+		else:
+			message = "Need atleast one option of 2FA"
+			valid_input = False
+
+	return JsonResponse({"message": message, "valid_input": valid_input})

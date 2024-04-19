@@ -2,6 +2,8 @@ from custom_utils.models_utils import ModelManager
 from .models import BlacklistOtp, OtpUserOptions
 from user_auth.models import User
 
+from .cryptography_utils import Cryptographer
+
 import pyotp
 import qrcode
 import pyotp.utils
@@ -9,17 +11,15 @@ import pyotp.utils
 # Expiration time in seconds
 OTP_EXP_TIME_SEC = 1 * 60
 
-secret_key = pyotp.random_base32()
-
-provisioning_uri = pyotp.utils.build_uri(
+""" provisioning_uri = pyotp.utils.build_uri(
 	secret=secret_key,
 	issuer="42T",
 	name="diogo",
-)
+) """
 
-qrcode.make(provisioning_uri).save("qr_auth.png")
+# qrcode.make(provisioning_uri).save("qr_auth.png")
 
-totp = pyotp.TOTP(secret_key)
+# totp = pyotp.TOTP(secret_key)
 
 blacklist_otp_model = ModelManager(BlacklistOtp)
 otp_user_opt_model = ModelManager(OtpUserOptions)
@@ -50,3 +50,41 @@ def get_all_otps_used_utils():
 		src += "Database is Empty\n"
 	src += ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\n"
 	return src
+
+def getUser(user_id):
+	return user_model.get(id=user_id)
+
+def is_configuration_in_db(user):
+	return otp_user_opt_model.get(user_id=user)
+
+def generate_encrypted_user_secret_key():
+	secret_key = pyotp.random_base32()
+	encrypted_secret_key = Cryptographer().encrypt_message(message=secret_key)
+	return encrypted_secret_key
+
+def get_user_secret_key(user):
+	otp_user = otp_user_opt_model.get(user_id=user)
+	if otp_user:
+		encrypted_secret_key = otp_user.secret_key
+		decrypted_secret_jey = Cryptographer().decrypt_message(encrypted_message=encrypted_secret_key)
+		return decrypted_secret_jey
+	return None
+
+def create_user_options(user, qr_code, email, phone):
+	secret_key = generate_encrypted_user_secret_key()
+
+	user_email = None
+	if email:
+		user_email = user.email
+
+	user_phone_number = None
+	if phone:
+		user_phone_number = phone
+
+	otp_user_opt_model.create(
+		user_id=user,
+		secret_key=secret_key,
+		qr_code=qr_code,
+		email=user_email,
+		phone_number=user_phone_number
+	)

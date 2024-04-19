@@ -8,3 +8,9 @@ def configure_2fa(request):
 
 def authWithCodeGeneration(request):
 	return render(request, "authWithCodeGeneration.html")
+
+def configuration(request):
+	return render(request, "configuration.html")
+
+def update_configuration(request):
+	return render(request, "update_configuration.html")

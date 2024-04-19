@@ -5,4 +5,6 @@ urlpatterns = [
 	path("", views.index, name="index"),
 	path("generate_otp/", views.authWithCodeGeneration, name="authWithCodeGeneration"),
 	path("configure_2fa/", views.configure_2fa, name="configure_2fa"),
+	path("configuration/", views.configuration, name="configuration"),
+	path("update_configuration/", views.update_configuration, name="update_configuration"),
 ]

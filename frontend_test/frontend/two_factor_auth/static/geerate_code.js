@@ -66,11 +66,13 @@ document.addEventListener("DOMContentLoaded", function() {
 		{
 			event.preventDefault();
 
-			const formData = new FormData(check_code_form);
+			const formData = new FormData(selectElement);
 			const jsonData = {};
 			formData.forEach((value, key) => {
 				jsonData[key] = value;
 			});
+
+			console.log("PASSOU AQUI PORRAAAAAAAAAAAAAAAAAA")
 
 			if (jsonData["code"])
 				validate_otp(jsonData["code"])
