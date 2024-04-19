@@ -2,6 +2,7 @@ from django.core.management.base import BaseCommand
 from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives.asymmetric import rsa
 from cryptography.hazmat.primitives import serialization
+import os
 
 def generate_private_key():
 	private_key = rsa.generate_private_key(
@@ -32,6 +33,10 @@ class Command(BaseCommand):
 			encoding=serialization.Encoding.PEM,
 			format=serialization.PublicFormat.SubjectPublicKeyInfo
 		)
+
+		with open('two_factor_auth/.env', 'a') as env_file:
+			env_file.write(f"CRYPTOGRAPHER_PRIVATE_KEY=\"{private_key_pem.decode('utf-8')}\"\n")
+			env_file.write(f"CRYPTOGRAPHER_PUBLIC_KEY=\"{public_key_pem.decode('utf-8')}\"\n")
 
 		print("--------------------------------------------")
 		print(f"Private Key: {private_key_pem}")
