@@ -1,43 +1,54 @@
 import PageLogin from "../page-components/page-login.js";
 import PageSignup from "../page-components/page-signup.js";
 
+let routeEvents = [];
+
 const routes = {
-	"/index.html"	: PageLogin.componentName, // test route for develop in liveserver vscode
+	"/"				: PageLogin.componentName,
+	"/index.html"	: PageLogin.componentName,
 	"/login"		: PageLogin.componentName,
 	"/signup"		: PageSignup.componentName
 }
+
+const removeRouteEvents = function(){
+	routeEvents.forEach(function(elm) {
+		elm.removeEventListener("click", routeLinkEventHandeler);
+	});
+	routeEvents = [];
+}
+
 
 const getPage = function (url) {
 	return routes[url];
 }
 
 const render = function(page) {
-	const app = document.querySelector("#app");
-	app.innerHTML = `<${page}></${page}>`;
+	document.querySelector("#app").innerHTML = `<${page}></${page}>`;
 }
 
 const router = function(newRoute) {
 	const route = newRoute || location.pathname;
 
+	console.log("Page routed");
 	history.pushState({route: route}, null, route);
 	render(getPage(route));
+	removeRouteEvents();
 	setAllRouteEvents();
 }
 
+const routeLinkEventHandeler = function(event) {
+	event.preventDefault();
+	router(this.getAttribute('href'));
+}
 
 // adicionar e remover os eventos para não causar problemas de eventos repetidos
 const setAllRouteEvents = function(){
 	const link = document.querySelector('a[href]');
-	const newRoute =  link.getAttribute('href');
 
-	//link.removeEventListener('click');
+	link.addEventListener('click', routeLinkEventHandeler);
+	routeEvents.push(link)
 
-	link.addEventListener('click', function(event) {
-		event.preventDefault();
-		router(newRoute);
-		console.log(`new event link ${newRoute}`);
-	});
-
+	console.log(routeEvents);
 	window.onpopstate = function(event)
 	{
 		console.log(`onpopstate: ${event.state.route}`);
@@ -66,34 +77,3 @@ const setAllRouteEvents = function(){
 document.addEventListener('DOMContentLoaded', () => {
 	router(location.pathname)
 });
-
-
-//router
-//const router1 = function()
-//{
-//}
-
-//render("/login");
-//render("/signup");
-
-
-/*
-document.addEventListener('DOMContentLoaded', function() {
-
-	let link = document.querySelector('a[href]');
-
-	link.addEventListener('click', function(event) {
-		event.preventDefault();
-		history.pushState({route: `/sadsfsdfdfg`}, null, `/sadsfsdfdfg`);
-		console.log(`Location: ${location.pathname}`);
-		
-	});
-
-	window.onpopstate = function(event)
-	{
-		console.log(event.state.route);
-		console.log(`Location onpop: ${location.pathname}`);
-	}
-
-});
-*/
