@@ -7,13 +7,7 @@ import os
 
 @accepted_methods(["POST"])
 def generateOTP(request):
-	print("---------------------------------------")
-	print(request.headers)
-	print(request.body)
-	print("---------------------------------------")
 	otp_code = generate_otp_code()
-	print(f"code: {otp_code}")
-	print("---------------------------------------")
 	message = {"message": "Code created with success.", "code": otp_code}
 	return JsonResponse(message)
 
@@ -83,14 +77,6 @@ def configuration(request):
 			qr_code = body_data.get("qr_code")
 			email = body_data.get("email")
 			phone = body_data.get("phone")
-
-			print("--------------------------------------")
-			print(body_data)
-			print("--------------------------------------")
-			print("QR Code: " + str(qr_code))
-			print("  Email: " + str(email))
-			print("  Phone: " + str(phone))
-			print("--------------------------------------")
 
 			if qr_code or email or phone:
 				create_user_options(user=user, qr_code=qr_code, email=email, phone=phone)
@@ -172,3 +158,51 @@ def update_configurations(request):
 			status = "OK"
 
 	return JsonResponse({"message": message, "status": status})
+
+@accepted_methods(["GET"])
+@login_required
+def is_qr_code_configured(request):
+
+	message = "QR Code is not Configured"
+	config_status = False
+
+	if request.access_data:
+		user = getUser(request.access_data.sub)
+
+	if exist_qr_code(user):
+		message = "QR Code is Configured"
+		config_status = True
+
+	return JsonResponse({"message": message, "config_status": config_status})
+
+@accepted_methods(["GET"])
+@login_required
+def is_email_configured(request):
+
+	message = "Email is not Configured"
+	config_status = False
+
+	if request.access_data:
+		user = getUser(request.access_data.sub)
+
+	if exist_email(user):
+		message = "Email is Configured"
+		config_status = True
+
+	return JsonResponse({"message": message, "config_status": config_status})
+
+@accepted_methods(["GET"])
+@login_required
+def is_phone_configured(request):
+
+	message = "Phone Number is not Configured"
+	config_status = False
+
+	if request.access_data:
+		user = getUser(request.access_data.sub)
+
+	if exist_phone_number(user):
+		message = "Phone Number is Configured"
+		config_status = True
+
+	return JsonResponse({"message": message, "config_status": config_status})

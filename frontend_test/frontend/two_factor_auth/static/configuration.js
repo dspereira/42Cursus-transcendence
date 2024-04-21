@@ -56,7 +56,7 @@ document.addEventListener("DOMContentLoaded", function() {
 		{
 			const data = await response.json();
 
-			if (data && data["message"] && data["valid_input"])
+			if (data)
 			{
 				if (data["message"] != "Already Configured")
 				{
@@ -102,7 +102,7 @@ document.addEventListener("DOMContentLoaded", function() {
 			}
 		});
 
-		const selectElement = document.getElementById('update_configuration_form');
+		const selectElement = document.getElementById('configuration_form');
 		selectElement.addEventListener('submit', function(event)
 		{
 			event.preventDefault();

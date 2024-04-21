@@ -112,3 +112,24 @@ def update_user_2fa_options(user, qr_code_status, email_status, phone_status, ph
 			otp_user_opt.phone_number = None
 
 		otp_user_opt.save()
+
+def exist_qr_code(user):
+	otp_user_opt = otp_user_opt_model.get(user_id=user)
+	if otp_user_opt:
+		if otp_user_opt.qr_code:
+			return True
+	return False
+
+def exist_email(user):
+	otp_user_opt = otp_user_opt_model.get(user_id=user)
+	if otp_user_opt:
+		if otp_user_opt.email:
+			return True
+	return False
+
+def exist_phone_number(user):
+	otp_user_opt = otp_user_opt_model.get(user_id=user)
+	if otp_user_opt:
+		if otp_user_opt.phone_number:
+			return True
+	return False
