@@ -16,6 +16,8 @@ document.addEventListener("DOMContentLoaded", function() {
 
 	const body_class = ".two_factor_auth_with_qrcode";
 
+	const qr_code_image_element = document.getElementById('qrCodeImg')
+
 	async function generate_user_qr_code()
 	{
 		const response = await fetch("http://127.0.0.1:8000/api/two_factor_auth/generate_qr_code", {
@@ -32,6 +34,8 @@ document.addEventListener("DOMContentLoaded", function() {
 			if (data)
 			{
 				console.log(data)
+				if (data['qr_code'])
+					qr_code_image_element.src = 'data:image/png;base64,' + data['qr_code']
 			}
 			else
 				document.querySelector(body_class).innerHTML = _data_is_empty_html_body;
