@@ -3,6 +3,7 @@ from . import views
 
 urlpatterns = [
 	path('generate_otp', views.generateOTP, name='generateOTP'),
+	path('generate_qr_code', views.generate_qr_code, name='generate_qr_code'),
 	path('validate_otp', views.validateOTP, name='validateOTP'),
 	path('is_already_configured', views.is_already_configured, name='is_already_configured'),
 	path('configuration', views.configuration, name='configuration'),

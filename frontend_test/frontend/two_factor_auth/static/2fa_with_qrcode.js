@@ -14,7 +14,29 @@ document.addEventListener("DOMContentLoaded", function() {
 
 	console.log("Pagina HTML totalmente carregada !")
 
-	const body_class = ".two_factor_auth_with_qrcode"
+	const body_class = ".two_factor_auth_with_qrcode";
+
+	async function generate_user_qr_code()
+	{
+		const response = await fetch("http://127.0.0.1:8000/api/two_factor_auth/generate_qr_code", {
+			credentials: 'include',
+			method: 'GET'
+		});
+
+		if (response.status === 401)
+			document.querySelector(body_class).innerHTML = _401_html_body;
+		else
+		{
+			const data = await response.json();
+
+			if (data)
+			{
+				console.log(data)
+			}
+			else
+				document.querySelector(body_class).innerHTML = _data_is_empty_html_body;
+		}
+	}
 
 	async function is_qr_code_configured()
 	{
@@ -33,6 +55,7 @@ document.addEventListener("DOMContentLoaded", function() {
 			{
 				if (data["config_status"] != true)
 					document.querySelector(body_class).innerHTML = _need_specific_configuration_html_body;
+				generate_user_qr_code();
 			}
 			else
 				document.querySelector(body_class).innerHTML = _data_is_empty_html_body;

@@ -11,6 +11,22 @@ def generateOTP(request):
 	message = {"message": "Code created with success.", "code": otp_code}
 	return JsonResponse(message)
 
+@accepted_methods(["GET"])
+@login_required
+def generate_qr_code(request):
+
+	message = "Error generating QR Code"
+	qr_code = None
+
+	if request.access_data:
+		user = getUser(request.access_data.sub)
+
+	qr_code = generate_qr_code_img_base64(user)
+	if qr_code:
+		message = "QR Code generated with Success"
+
+	return JsonResponse({"message": message, "qr_code": qr_code})
+
 @accepted_methods(["POST"])
 def validateOTP(request):
 
@@ -206,3 +222,4 @@ def is_phone_configured(request):
 		config_status = True
 
 	return JsonResponse({"message": message, "config_status": config_status})
+
