@@ -27,6 +27,21 @@ def generate_qr_code(request):
 
 	return JsonResponse({"message": message, "qr_code": qr_code})
 
+@accepted_methods(["GET"])
+@login_required
+def generate_user_phone_code(request):
+
+	message = None
+
+	if request.access_data:
+		user = getUser(request.access_data.sub)
+
+	message = send_smsto_user(user)
+	if not message:
+		message = "Error sending SMS"
+
+	return JsonResponse({"message": message})
+
 @accepted_methods(["POST"])
 @login_required
 def validateOTP(request):
@@ -46,6 +61,36 @@ def validateOTP(request):
 	
 		if otp_input_code:
 				if is_valid_otp(otp_input_code, user):
+					message = "Validated with Success"
+					is_valid = True
+				else:
+					message = "Invalid Code"
+		else:
+			message = "Empty Input"
+	else:
+		message = "Empty request Body"
+
+	return JsonResponse({"message": message, "valid": is_valid})
+
+@accepted_methods(["POST"])
+@login_required
+def validateOTP_QR_Code(request):
+
+	message = "Invalid Code"
+	is_valid = False
+
+	if request.access_data:
+		user = getUser(request.access_data.sub)
+
+	if request.body:
+		body_unicode = request.body.decode('utf-8')
+		req_data = json.loads(body_unicode)
+
+		otp_input_code = str(req_data['code']).strip()
+		print(f"Input Code: {otp_input_code}")
+	
+		if otp_input_code:
+				if is_valid_otp_qr_code(otp_input_code, user):
 					message = "Validated with Success"
 					is_valid = True
 				else:
@@ -230,4 +275,3 @@ def is_phone_configured(request):
 		config_status = True
 
 	return JsonResponse({"message": message, "config_status": config_status})
-

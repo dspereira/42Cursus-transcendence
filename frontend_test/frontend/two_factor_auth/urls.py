@@ -8,4 +8,5 @@ urlpatterns = [
 	path("configuration/", views.configuration, name="configuration"),
 	path("update_configuration/", views.update_configuration, name="update_configuration"),
 	path("auth_with_qrcode/", views.auth_with_qrcode, name="auth_with_qrcode"),
+	path("auth_with_phone/", views.auth_with_phone, name="auth_with_phone"),
 ]

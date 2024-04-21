@@ -1,37 +1,31 @@
 from custom_utils.models_utils import ModelManager
 from .models import BlacklistOtp, OtpUserOptions
 from user_auth.models import User
-
+from dotenv import load_dotenv
 from .cryptography_utils import Cryptographer
-
 import pyotp
 import qrcode
 import pyotp.utils
 import base64
 import io
+import os
+import re
+from twilio.rest import Client
 
-# Expiration time in seconds
-OTP_EXP_TIME_SEC = 1 * 60
-
-""" provisioning_uri = pyotp.utils.build_uri(
-	secret=secret_key,
-	issuer="42T",
-	name="diogo",
-) """
-
-# qrcode.make(provisioning_uri).save("qr_auth.png")
-
-# totp = pyotp.TOTP(secret_key)
+load_dotenv()
 
 blacklist_otp_model = ModelManager(BlacklistOtp)
 otp_user_opt_model = ModelManager(OtpUserOptions)
 user_model = ModelManager(User)
 
+OTP_EXP_TIME_SEC = 120
+
 def generate_otp_code(user):
 	otp_value = None
 	secret_key = get_user_secret_key(user)
 	if secret_key:
-		totp = pyotp.TOTP(secret_key)
+		totp = pyotp.TOTP(secret_key, interval=OTP_EXP_TIME_SEC)
+		print("Valor do Intervalo: " + str(totp.interval))
 		otp_value = totp.now()
 	return otp_value
 
@@ -52,6 +46,18 @@ def generate_qr_code_img_base64(user):
 	return None
 
 def is_valid_otp(otp: str, user):
+	secret_key = get_user_secret_key(user)
+	print("Secret: key: " + secret_key)
+	if secret_key:
+		totp = pyotp.TOTP(secret_key, interval=OTP_EXP_TIME_SEC)
+		if otp:
+			if not blacklist_otp_model.get(code=otp):
+				blacklist_otp_model.create(code=otp)
+				if totp.verify(otp):
+					return True
+	return False
+
+def is_valid_otp_qr_code(otp: str, user):
 	secret_key = get_user_secret_key(user)
 	print("Secret: key: " + secret_key)
 	if secret_key:
@@ -157,3 +163,23 @@ def exist_phone_number(user):
 		if otp_user_opt.phone_number:
 			return True
 	return False
+
+def send_smsto_user(user):
+	account_sid = os.environ['TWILIO_ACCOUNT_SID']
+	auth_token = os.environ['TWILIO_AUTH_TOKEN']
+	phone_number = os.environ['TWILIO_PHONE_NUMBER']
+
+	otp_code = generate_otp_code(user)
+	message_body = f"Authnetication Code: " + otp_code
+
+	otp_user_opt = otp_user_opt_model.get(user_id=user)
+	user_phone_number = re.sub(r'\s+', '', otp_user_opt.phone_number)
+
+	client = Client(account_sid, auth_token)
+	message = client.messages.create(
+		body=message_body,
+		from_=phone_number,
+		to=user_phone_number
+	)
+
+	return otp_code

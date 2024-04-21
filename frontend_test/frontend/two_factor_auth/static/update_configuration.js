@@ -147,7 +147,7 @@ document.addEventListener("DOMContentLoaded", function() {
 	{
 		let phone_number = null;
 		if (country_code && phone)
-			phone_number = country_code +  " " + phone.replace(/\s/g, "");
+			phone_number = country_code + phone.replace(/\s/g, "");
 		return phone_number
 	}
 

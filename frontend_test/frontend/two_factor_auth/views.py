@@ -17,3 +17,6 @@ def update_configuration(request):
 
 def auth_with_qrcode(request):
 	return render(request, "2fa_with_qrcode.html")
+
+def auth_with_phone(request):
+	return render(request, "2fa_with_phone.html")

@@ -75,7 +75,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
 	function get_phone_number(country_code, phone)
 	{
-		let phone_number = country_code +  " " + phone.replace(/\s/g, "");
+		let phone_number = country_code + phone.replace(/\s/g, "");
 		return phone_number
 	}
 
