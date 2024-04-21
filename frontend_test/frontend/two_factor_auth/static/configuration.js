@@ -4,7 +4,7 @@ _401_html_body = '<div class="container text-center"><h1 class="display-1 text-d
 
 _data_is_empty_html_body = '<div class="container text-center"><h1 class="display-4 text-danger">Data is Empty</h1><p class="lead">Oops! Não há dados disponíveis no momento.</p><a href="#" class="btn btn-primary">Voltar</a></div>'
 
-_already_configured_html_body = '<div class="container text-center"><h1 class="display-4 text-success">Already Configured</h1><p class="lead">Great! Your settings are already configured.</p><p class="lead">Would you like to update your configurations?</p><button type="button" class="btn btn-primary" id="update_config_btn">Update Configurations</button></div>'
+_already_configured_html_body = '<div class="container text-center"><h1 class="display-4 text-success">Already Configured</h1><p class="lead">Great! Your settings are already configured.</p><p class="lead">Would you like to update your configurations?</p><a href="/2fa/update_configuration" class="btn btn-primary">Update Configurations</a></div>'
 
 document.addEventListener("DOMContentLoaded", function() {
 
@@ -56,10 +56,17 @@ document.addEventListener("DOMContentLoaded", function() {
 		{
 			const data = await response.json();
 
-			if (data)
-			{				
-				document.querySelector(".configuration_message_info").innerHTML = "Message -> " + data["message"];
-				document.querySelector(".configuration_valid_info").innerHTML = "Valid   -> " + data["valid_input"];
+			if (data && data["message"] && data["valid_input"])
+			{
+				if (data["message"] != "Already Configured")
+				{
+					if (document.querySelector(".configuration_message_info") && data["message"])
+						document.querySelector(".configuration_message_info").innerHTML = "Message -> " + data["message"];
+					if (document.querySelector(".configuration_valid_info") && data["valid_input"])
+						document.querySelector(".configuration_valid_info").innerHTML = "Valid   -> " + data["valid_input"];
+				}
+				else
+					document.querySelector(".configuration_2fa_body").innerHTML = _already_configured_html_body;
 			}
 			else
 				document.querySelector(".configuration_2fa_body").innerHTML = _data_is_empty_html_body;
@@ -72,16 +79,18 @@ document.addEventListener("DOMContentLoaded", function() {
 		return phone_number
 	}
 
-	let qr_code_switch = document.getElementById('switch_1');
-	let email_switch = document.getElementById('switch_2');
-	let phone_switch = document.getElementById('switch_3');
-	let phoneInput = document.getElementById('phone');
+	const qr_code_switch = document.getElementById('switch_1');
+	const email_switch = document.getElementById('switch_2');
+	const phone_switch = document.getElementById('switch_3');
+	const phoneInput = document.getElementById('phone');
+	const countryCodeSelect = document.getElementById("countryCode");
 
 	qr_code_switch.checked = false
 	email_switch.checked = false
 	phone_switch.checked = false
 	phoneInput.disabled = true;
 	phoneInput.value = '';
+	countryCodeSelect.value = '+351'
 
 	function configuration_form()
 	{
@@ -93,11 +102,10 @@ document.addEventListener("DOMContentLoaded", function() {
 			}
 		});
 
-		const selectElement = document.getElementById('configuration_form');
+		const selectElement = document.getElementById('update_configuration_form');
 		selectElement.addEventListener('submit', function(event)
 		{
 			event.preventDefault();
-			is_already_configured();
 
 			const formData = new FormData(selectElement);
 			const jsonData = {};

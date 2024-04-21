@@ -55,7 +55,9 @@ def getUser(user_id):
 	return user_model.get(id=user_id)
 
 def is_configuration_in_db(user):
-	return otp_user_opt_model.get(user_id=user)
+	if otp_user_opt_model.get(user_id=user):
+		return True
+	return False
 
 def generate_encrypted_user_secret_key():
 	secret_key = pyotp.random_base32()
@@ -88,3 +90,25 @@ def create_user_options(user, qr_code, email, phone):
 		email=user_email,
 		phone_number=user_phone_number
 	)
+
+def get_user_otp_options(user):
+	return otp_user_opt_model.get(user_id=user)
+
+def update_user_2fa_options(user, qr_code_status, email_status, phone_status, phone_value):
+	otp_user_opt = otp_user_opt_model.get(user_id=user)
+	if otp_user_opt:
+
+		if qr_code_status != otp_user_opt.qr_code:
+			otp_user_opt.qr_code = qr_code_status
+
+		if not otp_user_opt.email and email_status:
+			otp_user_opt.email = user.email
+		elif otp_user_opt.email and not email_status:
+			otp_user_opt.email = None
+
+		if not otp_user_opt.phone_number and phone_status:
+			otp_user_opt.phone_number = phone_value
+		elif otp_user_opt.phone_number and not phone_status:
+			otp_user_opt.phone_number = None
+
+		otp_user_opt.save()

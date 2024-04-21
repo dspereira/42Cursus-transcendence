@@ -69,32 +69,106 @@ def configuration(request):
 	if request.access_data:
 		user = getUser(request.access_data.sub)
 
+	if is_configuration_in_db(user):
+		message = "Already Configured"
+		valid_input = False
+	else:
+
+		if request.body:
+			message = "Body with Content"
+
+			body_unicode = request.body.decode('utf-8')
+			body_data = json.loads(body_unicode)
+
+			qr_code = body_data.get("qr_code")
+			email = body_data.get("email")
+			phone = body_data.get("phone")
+
+			print("--------------------------------------")
+			print(body_data)
+			print("--------------------------------------")
+			print("QR Code: " + str(qr_code))
+			print("  Email: " + str(email))
+			print("  Phone: " + str(phone))
+			print("--------------------------------------")
+
+			if qr_code or email or phone:
+				create_user_options(user=user, qr_code=qr_code, email=email, phone=phone)
+				print("Passei por Aqui!")
+				if is_configuration_in_db(user):
+					message = "2FA Configured with SUCESS !"
+					valid_input = True
+			else:
+				message = "Need atleast one option of 2FA"
+				valid_input = False
+
+	return JsonResponse({"message": message, "valid_input": valid_input})
+
+@accepted_methods(["GET"])
+@login_required
+def get_current_settings(request):
+
+	message = None
+	user_settings = None
+
+	qr_code = False
+	email = False
+	country_code = None
+	phone = None
+
+	if request.access_data:
+		user = getUser(request.access_data.sub)
+
+	if not is_configuration_in_db(user):
+		message = "Need Configuration"
+	else:
+		user_configurations = get_user_otp_options(user)
+
+		if user_configurations.qr_code:
+			qr_code = True
+		if user_configurations.email:
+			email = True
+		if user_configurations.phone_number:
+			phone_number_parts = user_configurations.phone_number.split()
+			country_code = phone_number_parts[0]
+			phone = phone_number_parts[1]
+
+		user_settings = {
+			"qr_code": qr_code,
+			"email": email,
+			"country_code": country_code,
+			"phone": phone
+		}
+
+		message = "All configurations sended!"
+
+	return JsonResponse({"message": message, "user_settings": user_settings})
+
+@accepted_methods(["POST"])
+@login_required
+def update_configurations(request):
+
+	message = None
+	status = None
+
+	if request.access_data:
+		user = getUser(request.access_data.sub)
+	
 	if request.body:
-		message = "Body with Content"
-		
 		body_unicode = request.body.decode('utf-8')
 		body_data = json.loads(body_unicode)
 
-		qr_code = body_data.get("qr_code")
-		email = body_data.get("email")
-		phone = body_data.get("phone")
+		qr_code_status = body_data['qr_code']
+		email_status = body_data['email']
+		phone_status = body_data['phone_status']
+		phone_value = body_data['phone_value']
 
-		print("--------------------------------------")
-		print(body_data)
-		print("--------------------------------------")
-		print("QR Code: " + str(qr_code))
-		print("  Email: " + str(email))
-		print("  Phone: " + str(phone))
-		print("--------------------------------------")
-
-		if qr_code or email or phone:
-			create_user_options(user=user, qr_code=qr_code, email=email, phone=phone)
-			print("Passei por Aqui!")
-			if is_configuration_in_db(user):
-				message = "2FA Configured with SUCESS !"
-				valid_input = True
-		else:
+		if not qr_code_status and not email_status and not phone_status:
 			message = "Need atleast one option of 2FA"
-			valid_input = False
+			status = "KO"
+		else:
+			update_user_2fa_options(user, qr_code_status, email_status, phone_status, phone_value)
+			message = "Updated with Success"
+			status = "OK"
 
-	return JsonResponse({"message": message, "valid_input": valid_input})
+	return JsonResponse({"message": message, "status": status})
