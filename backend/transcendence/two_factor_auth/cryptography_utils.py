@@ -4,6 +4,7 @@ from cryptography.hazmat.primitives import serialization
 from cryptography.hazmat.backends import default_backend
 from dotenv import load_dotenv
 import os
+import base64
 
 load_dotenv()
 
@@ -25,25 +26,30 @@ class Cryptographer:
 		)
 
 	def encrypt_message(self, message):
-		encrypted_message = self.public_key.encrypt(
-			message.encode(),
+		message_bytes = message.encode('utf-8')
+		ciphertext = self.public_key.encrypt(
+			message_bytes,
 			padding.OAEP(
 				mgf=padding.MGF1(algorithm=hashes.SHA256()),
 				algorithm=hashes.SHA256(),
 				label=None
 			)
 		)
+		encrypted_message = base64.b64encode(ciphertext).decode('utf-8')
 		return encrypted_message
 
 	def decrypt_message(self, encrypted_message):
-		decrypted_message = self.private_key.decrypt(
-			encrypted_message,
+		encrypted_message += '=' * ((4 - len(encrypted_message) % 4) % 4)
+		ciphertext = base64.b64decode(encrypted_message)
+		decrypted_message_bytes = self.private_key.decrypt(
+			ciphertext,
 			padding.OAEP(
 				mgf=padding.MGF1(algorithm=hashes.SHA256()),
 				algorithm=hashes.SHA256(),
 				label=None
 			)
-		).decode()
+		)
+		decrypted_message = decrypted_message_bytes.decode('utf-8')
 		return decrypted_message
 
 	def _load_private_key(self, private_key_pem):
