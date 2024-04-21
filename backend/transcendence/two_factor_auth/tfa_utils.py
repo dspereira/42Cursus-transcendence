@@ -53,6 +53,7 @@ def generate_qr_code_img_base64(user):
 
 def is_valid_otp(otp: str, user):
 	secret_key = get_user_secret_key(user)
+	print("Secret: key: " + secret_key)
 	if secret_key:
 		totp = pyotp.TOTP(secret_key)
 		if otp:

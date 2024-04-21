@@ -28,16 +28,26 @@ def generate_qr_code(request):
 	return JsonResponse({"message": message, "qr_code": qr_code})
 
 @accepted_methods(["POST"])
+@login_required
 def validateOTP(request):
 
+	message = "Invalid Code"
+	is_valid = False
+
+	if request.access_data:
+		user = getUser(request.access_data.sub)
+
 	if request.body:
-		req_data = json.loads(request.body)
+		body_unicode = request.body.decode('utf-8')
+		req_data = json.loads(body_unicode)
+
 		otp_input_code = str(req_data['code']).strip()
 		print(f"Input Code: {otp_input_code}")
-
+	
 		if otp_input_code:
-				if is_valid_otp(otp_input_code):
+				if is_valid_otp(otp_input_code, user):
 					message = "Validated with Success"
+					is_valid = True
 				else:
 					message = "Invalid Code"
 		else:
@@ -45,9 +55,7 @@ def validateOTP(request):
 	else:
 		message = "Empty request Body"
 
-	print(message)
-	response_msg = {"message": message}
-	return JsonResponse(response_msg)
+	return JsonResponse({"message": message, "valid": is_valid})
 
 # Apenas para Testes
 @accepted_methods(["GET"])

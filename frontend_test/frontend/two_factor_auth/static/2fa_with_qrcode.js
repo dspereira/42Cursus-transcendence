@@ -15,8 +15,8 @@ document.addEventListener("DOMContentLoaded", function() {
 	console.log("Pagina HTML totalmente carregada !")
 
 	const body_class = ".two_factor_auth_with_qrcode";
-
 	const qr_code_image_element = document.getElementById('qrCodeImg')
+	const check_code_form = document.getElementById('check_code_form');
 
 	async function generate_user_qr_code()
 	{
@@ -35,7 +35,9 @@ document.addEventListener("DOMContentLoaded", function() {
 			{
 				console.log(data)
 				if (data['qr_code'])
+				{
 					qr_code_image_element.src = 'data:image/png;base64,' + data['qr_code']
+				}
 			}
 			else
 				document.querySelector(body_class).innerHTML = _data_is_empty_html_body;
@@ -97,6 +99,49 @@ document.addEventListener("DOMContentLoaded", function() {
 		}
 	}
 
-	is_already_configured()
+	async function validate_otp(otp)
+	{
+		console.log("OTP Value > " + otp)
+		let jsonData = {
+			"code": otp
+		};
 
+		const response = await fetch("http://127.0.0.1:8000/api/two_factor_auth/validate_otp", {
+			credentials: 'include',
+			method: 'POST',
+			headers: {
+				"Content-Type": "application/json"
+			},
+			body: JSON.stringify(jsonData)
+		});
+		const data = await response.json();
+
+		if (data && data['message'])
+		{
+			if (data['valid'] === false || data['valid'] === true)
+				document.querySelector(".validation_message").innerHTML = "Is Valid -> " + data['valid'];
+		}
+		else
+			document.querySelector(".validation_message").innerHTML = "Empty Data";
+	}
+
+	function verification_form()
+	{
+		check_code_form.addEventListener('submit', function(event)
+		{
+			event.preventDefault();
+
+			const formData = new FormData(check_code_form);
+			const jsonData = {};
+			formData.forEach((value, key) => {
+				jsonData[key] = value;
+			});
+
+			if (jsonData["code"])
+				validate_otp(jsonData["code"])
+		});
+	}
+
+	is_already_configured()
+	verification_form()
 });
