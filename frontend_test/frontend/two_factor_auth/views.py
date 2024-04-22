@@ -20,3 +20,6 @@ def auth_with_qrcode(request):
 
 def auth_with_phone(request):
 	return render(request, "2fa_with_phone.html")
+
+def auth_with_email(request):
+	return render(request, "2fa_with_email.html")

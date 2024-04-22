@@ -42,6 +42,21 @@ def generate_user_phone_code(request):
 
 	return JsonResponse({"message": message})
 
+@accepted_methods(["GET"])
+@login_required
+def generate_user_email_code(request):
+
+	message = "Email sended with Success!"
+
+	if request.access_data:
+		user = getUser(request.access_data.sub)
+
+	status = send_email_to_user(user)
+	if not status:
+		message = "Error sending Email"
+
+	return JsonResponse({"message": message})
+
 @accepted_methods(["POST"])
 @login_required
 def validateOTP(request):

@@ -11,6 +11,7 @@ import io
 import os
 import re
 from twilio.rest import Client
+from custom_utils.email_utils import EmailSender
 
 load_dotenv()
 
@@ -18,7 +19,8 @@ blacklist_otp_model = ModelManager(BlacklistOtp)
 otp_user_opt_model = ModelManager(OtpUserOptions)
 user_model = ModelManager(User)
 
-OTP_EXP_TIME_SEC = 120
+OTP_EXP_TIME_MIN = 5
+OTP_EXP_TIME_SEC = OTP_EXP_TIME_MIN * 60
 
 def generate_otp_code(user):
 	otp_value = None
@@ -51,10 +53,8 @@ def is_valid_otp(otp: str, user):
 	if secret_key:
 		totp = pyotp.TOTP(secret_key, interval=OTP_EXP_TIME_SEC)
 		if otp:
-			if not blacklist_otp_model.get(code=otp):
-				blacklist_otp_model.create(code=otp)
-				if totp.verify(otp):
-					return True
+			if totp.verify(otp):
+				return True
 	return False
 
 def is_valid_otp_qr_code(otp: str, user):
@@ -63,10 +63,8 @@ def is_valid_otp_qr_code(otp: str, user):
 	if secret_key:
 		totp = pyotp.TOTP(secret_key)
 		if otp:
-			if not blacklist_otp_model.get(code=otp):
-				blacklist_otp_model.create(code=otp)
-				if totp.verify(otp):
-					return True
+			if totp.verify(otp):
+				return True
 	return False
 
 # Apenas para usar em Testes
@@ -183,3 +181,10 @@ def send_smsto_user(user):
 	)
 
 	return otp_code
+
+def send_email_to_user(user):
+	otp_user_opt = otp_user_opt_model.get(user_id=user)
+	otp_code = generate_otp_code(user)
+	if EmailSender().send_verification_code(code=otp_code, receiver_email=otp_user_opt.email):
+		return True
+	return False
