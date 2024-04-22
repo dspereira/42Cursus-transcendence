@@ -1,0 +1,37 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>JavaScript Pong</title>
+	<link rel= "stylesheet" href="{% static 'style.css' %}">
+</head>
+<body>
+	<canvas id ="canvas1" width="800" height="500"></canvas>
+	<script type="module" src="{% static 'main.js' %}"></script>
+	<script>
+
+			const jsonData = {
+					"key": "a"
+				}
+			async function logData() 
+			{
+				const response = await fetch("http://127.0.0.1:8000/user/api/test", {
+					credentials: 'include',
+					method: 'POST',
+					headers: {
+						"Content-Type": "application/json"
+					},
+					body: JSON.stringify(jsonData)
+
+				});
+				const data = await response.json();
+				console.log(data);
+			}
+			logData();
+
+	</script>
+</body>
+</html>

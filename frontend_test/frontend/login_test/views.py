@@ -22,3 +22,6 @@ def chat(request):
 
 def refresh(request):
 	return render(request, "login_test/refresh.html")
+
+def game(request):
+	return render(request, "login_test/game.html")
