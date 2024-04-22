@@ -1,6 +1,6 @@
 const page = 
 `
-<a href="/login">login</a>
+<a href="/login/">login</a>
 <h1>Page Signup</h1>
 `;
 
