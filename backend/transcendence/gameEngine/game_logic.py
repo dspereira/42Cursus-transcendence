@@ -1,16 +1,18 @@
 # game logic goes in here!
+from models import Ball, Paddle, GameEngine, GameData
 
-def initialize_game():
-    # -Initialize game state
-    # -Set up game environment
-    # -Initialize player, paddle, ball, etc.
-    pass
+gData = GameData(800, 500, 10,\
+				 10, 20, 5, 20, 0, 15,\
+				 785, 20, 5, 20, 0 , 15,\
+				 400, 250, 1, 0.75, 4, 4, 4)
 
-def update_game():
-    # -Update game state 
-    # -Update player position, paddle position, ball position, etc.
-    pass
+def update_game(data):
+	game = GameEngine(gData)
+	game.update(data.keys)
+	gData.update(game)
 
-def	getGame() :
+
+
+def	getGame():
 	#called to refresh user page, only returns the values needed to update the page
 	pass
