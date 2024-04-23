@@ -8,13 +8,15 @@ import jwt
 from datetime import datetime, timedelta
 from .	import models
 from models import Paddle
+from .game_logic import initialize_game, update_game 
 
 
 def	playerControls(request) :
-	
-	
-	Paddle.x += 10
-	return JsonResponse({'y': Paddle.x})
+
+	data = json.loads(request.body.decode('utf-8'))  # Parse JSON data from request body
+	print(data)
+	Paddle.x += 10 #gotta change to instanced objected instead of class of object
+	return JsonResponse({'x': Paddle.x})
 
 	
 

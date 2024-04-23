@@ -22,7 +22,7 @@ export class InputHandler {
 		this.keys = newInput;
 	}
 	async sendKey(keys) {
-		fetch("http://127.0.0.1:8000/user/api/game", {
+		fetch("http://127.0.0.1:8000/user/api/gameEngine/playerControls", {
 			credentials: 'include',
 			method: "POST",
 			headers: {

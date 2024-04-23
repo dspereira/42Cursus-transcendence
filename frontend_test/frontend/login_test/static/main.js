@@ -11,7 +11,7 @@ import {Ball} from "./ball.js"
 // 	}
 // }
 async function sendKeys(keys) {
-	fetch("http://127.0.0.1:8000/api/gameApp/playerControls", {
+	fetch("http://127.0.0.1:8000/api/GameEngine/playerControls", {
 		credentials: 'include',
 		method: "POST",
 		headers: {
