@@ -1,3 +1,4 @@
+import PageHome from "../page-components/page-home.js";
 import PageLogin from "../page-components/page-login.js";
 import PageSignup from "../page-components/page-signup.js";
 import Page404 from "../page-components/page-404.js";
@@ -5,8 +6,8 @@ import Page404 from "../page-components/page-404.js";
 
 //  /user/:id devo poder configurar neste formato
 const routes = {
-	"/"				: PageLogin.componentName,
-	"/index.html"	: PageLogin.componentName,
+	"/"				: PageHome.componentName,
+	"/index.html"	: PageHome.componentName,
 	"/login"		: PageLogin.componentName,
 	"/signup"		: PageSignup.componentName,
 }
