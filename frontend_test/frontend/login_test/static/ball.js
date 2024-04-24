@@ -1,14 +1,14 @@
 export class Ball {
-	constructor(game, x, y, radius, xDir, yDir, speed, maxSpeed) {
+	constructor(game,) {
 		this.game = game;
-		this.x = x;
-		this.y = y;
-		this.radius = radius;
-		this.speed = speed;
-		this.maxSpeed = maxSpeed;
+		this.x = 400;
+		this.y = 250;
+		this.radius = 4;
+		this.speed = 4;
+		this.maxSpeed = 4;
 		this.cSpeed = this.maxSpeed;
-		this.xDir = xDir;
-		this.yDir = yDir;
+		this.xDir = 1;
+		this.yDir = 0.75;
 	}
 	update(coords)
 	{

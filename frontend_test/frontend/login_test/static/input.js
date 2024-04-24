@@ -1,6 +1,7 @@
 export class InputHandler {
-	constructor(down, up, left, right) {
+	constructor(down, up, left, right, id) {
 		this.keys = [];
+		this.id = id;
 		window.addEventListener('keydown', e => {this.keyDown(e)});
 		window.addEventListener('keyup', e => {this.keyUp(e)});
 		this.key = [down, up, left, right];
@@ -10,32 +11,34 @@ export class InputHandler {
 		if ((this.key.includes(e.key))
 				&& this.keys.indexOf(e.key) === -1) {
 					this.keys.push(e.key);
+					// this.send(this.keys);
 			}
 	}
 
 	keyUp(e) {
 		if ((this.key.includes(e.key))) {
 			this.keys.splice(this.keys.indexOf(e.key), 1);
+			// this.send('a');
 		}
 	}
 	recieve(newInput) {
 		this.keys = newInput;
 	}
 	async sendKey(keys) {
-		fetch("http://127.0.0.1:8000/user/api/gameEngine/playerControls", {
+		fetch("http://127.0.0.1:8000/api/game/player-input", {
 			credentials: 'include',
 			method: "POST",
 			headers: {
 				"Content-Type": "application/json"
 			},
 			body: JSON.stringify({
-				player_id: 1,
+				player_id: this.id,
 				keys: keys
 			})
 		})
 		.then(response => response.json())
 		.then (data => {
-			console.log(data);
+			console.log(data["message"] + "<-- on input");
 		})
 		.catch(error => {
 			console.log(error);

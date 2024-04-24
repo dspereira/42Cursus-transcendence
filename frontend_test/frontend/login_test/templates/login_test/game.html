@@ -14,11 +14,13 @@
 	<script>
 
 			const jsonData = {
-					"key": "a"
+					"key": "s"
 				}
+			console.log("hey!");
 			async function logData() 
 			{
-				const response = await fetch("http://127.0.0.1:8000/user/api/test", {
+				console.log("hey!!");
+				const response = await fetch("http://127.0.0.1:8000/api/game/player-input", {
 					credentials: 'include',
 					method: 'POST',
 					headers: {
@@ -27,8 +29,11 @@
 					body: JSON.stringify(jsonData)
 
 				});
+				console.log("hey!!!");
+
 				const data = await response.json();
-				console.log(data);
+				console.log("hey!!!!");
+				// console.log(data);
 			}
 			logData();
 

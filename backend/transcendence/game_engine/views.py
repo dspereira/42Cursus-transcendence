@@ -1,21 +1,22 @@
-from django.shortcuts import render, redirect
-from django.http import HttpResponse
-from django.contrib.auth import authenticate, login, logout
-from django.contrib.auth.models import User
-from django.http import JsonResponse
+from django.http import HttpResponse, JsonResponse
 import json
-import jwt
-from datetime import datetime, timedelta
-from .	import models
-from models import Paddle
-from game_logic import initialize_game, update_game
+from .game_logic.game_logic import update_game
 
-def	playerControls(request) :
+def	player_controls(request) :
+	print("hello world inside django")
 	data = json.loads(request.body.decode('utf-8')) # Parse JSON data from request body
-	print(data)
-	response = update_game(data.keys)
-	return JsonResponse({response})
+	response = update_game(data)
+	print("good bye django")
 
+
+	
+
+	response_data = {"message": "response has been sent",
+					"left_coords" :  response.leftPaddle.y,
+					"right_coords" : response.rightPaddle.y,
+				}
+
+	return JsonResponse(response_data)
 	
 
 # Create your views here. // routing

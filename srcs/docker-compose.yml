@@ -20,7 +20,7 @@ services:
         image: nginx-server
         container_name: nginx-server
         ports:
-            - 8080:80
+            - 8081:80
         environment:
             - NGINX_HOST=localhost
             - NGINX_PORT=80

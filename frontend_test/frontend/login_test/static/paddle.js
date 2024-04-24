@@ -10,6 +10,7 @@ export class Paddle {
 	}
 	update(coords)
 	{
+		console.log("coords:" + coords.x + " " + coords.y);
 		this.x = coords.x;
 		this.y = coords.y;
 	}
