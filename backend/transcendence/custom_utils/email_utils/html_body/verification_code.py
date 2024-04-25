@@ -1,5 +1,4 @@
-verification_code_html = """
-<!DOCTYPE html>
+verification_code_html = """<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
