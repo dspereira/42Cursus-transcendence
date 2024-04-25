@@ -75,7 +75,7 @@ class Game {
 	constructor(width, height) {
 		this.width = width;
 		this.height = height;
-		this.ball = new Ball(this);
+		this.ball = new Ball();
 		this.leftPaddle = new Paddle(this, gData.leftPaddle.x, gData.leftPaddle.y, gData.leftPaddle.width, gData.leftPaddle.height);
 		this.rightPaddle = new Paddle(this, gData.rightPaddle.x, gData.rightPaddle.y, gData.rightPaddle.width, gData.rightPaddle.height);
 		this.leftInput = new InputHandler("w", "s", "a", "d", 0);
@@ -104,6 +104,7 @@ class Game {
 			this.rightPaddle.y = rightPaddle_y;
 			console.log(this.leftPaddle.y + " Y BEFORE DRAW");
 		}
+		if (!(this.rightInput.keys.length > 0) && !(this.leftInput.keys.length > 0))
 		getBall();
 		this.ball.x = ball_x;
 		this.ball.y = ball_y;
@@ -115,7 +116,7 @@ const gData = {
 	height: 500,
 	paddlePadding: 10,
 	leftPaddle: {
-		x: 20,
+		x: 10,
 		y: 20,
 		width: 10,
 		height: 50,

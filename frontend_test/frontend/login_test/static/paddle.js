@@ -16,5 +16,7 @@ export class Paddle {
 	{
 		console.log(this.y);
 		context.fillRect(this.x, this.y, this.width, this.height);
+		context.fillRect(400, 250, 100, 100);
+
 	}
 }

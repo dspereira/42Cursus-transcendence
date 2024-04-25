@@ -1,3 +1,5 @@
+import math
+
 class Ball:
 	def __init__(self, game, data): #
 		self.game = game #data.game
@@ -19,14 +21,8 @@ class Ball:
 			self.speed = self.maxSpeed
 		if (self.y + self.dirY + self.radius >= self.game.height or self.y + self.dirY - self.radius <= 0):
 			self.dirY *= -1
-		# if ((self.x >= leftPaddle.x &&
-		# 	 self.x <= leftPaddle.x + leftPaddle.width)
-		# 	&& (self.y + self.dirY >= leftPaddle.y && 
-		# 	self.y + self.dirY <= leftPaddle.y - leftPaddle.height))
-		# 	self.dirY *= -1
-
-		# if (self.x <= leftPaddle.x && self.x)
-
+		# self.PaddleCollision(leftPaddle)
+		# self.PaddleCollision(rightPaddle)
 		if (((self.y + self.radius >= leftPaddle.y and self.y - self.radius <= leftPaddle.y + leftPaddle.height)
 			and self.x + self.dirX - self.radius <= leftPaddle.x + leftPaddle.width) or
 			((self.y + self.radius >= rightPaddle.y and self.y - self.radius <= rightPaddle.y + rightPaddle.height)
@@ -35,6 +31,30 @@ class Ball:
 				self.speed += 1
 		self.x += self.dirX * self.speed
 		self.y += self.dirY * self.speed
+
+	# def PaddleCollision(self, paddle):
+	# 	colTestX = self.x
+	# 	colTestY = self.y
+	# 	print("paddleCoords", paddle.x, paddle.y, " Width ", paddle.width, " Height", paddle.height)
+	# 	if (colTestX < self.x):
+	# 		colTestX = paddle.x
+	# 	elif (colTestX > paddle.x + paddle.width):
+	# 		colTestX = paddle.x + paddle.width
+	# 	else:
+	# 		return
+	# 	if (colTestY < paddle.y):
+	# 		colTestY = paddle.y
+	# 	elif (colTestY > paddle.y + paddle.height):
+	# 		colTestY = paddle.y + paddle.height
+	# 	else:
+	# 		return
+	# 	distX = self.x - colTestX
+	# 	distY = self.y - colTestY
+	# 	if (math.sqrt((distX * distX)+ (distY * distY)) <= self.radius):
+	# 		if ((self.y <= paddle.y and self.dirY > 0) or (self.y >= paddle.y + paddle.height and self.dirY < 0)):
+	# 			self.dirY *= -1
+	# 		else:
+	# 			self.dirX *= -1
 
 
 class BallData:

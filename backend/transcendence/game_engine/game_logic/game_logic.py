@@ -2,7 +2,7 @@
 from .game_data import GameEngine, GameData
 
 gData = GameData(width=800, height=500, paddlePadding=10,\
-				 leftPaddleX=20, leftPaddleY=20, leftPaddleWidth=10, leftPaddleHeight=50, leftPaddleSpeed=0, leftPaddleMaxSpeed=15,\
+				 leftPaddleX=10, leftPaddleY=20, leftPaddleWidth=10, leftPaddleHeight=50, leftPaddleSpeed=0, leftPaddleMaxSpeed=15,\
 				 rightPaddleX=780, rightPaddleY=20, rightPaddleWidth=10, rightPaddleHeight=50, rightPaddleSpeed=0 , rightPaddleMaxSpeed=15,\
 				 ballX=400, ballY=250, ballDirX=1, ballDirY=0.75, ballRadius=4, ballSpeed=4, ballMaxSpeed=4)
 
@@ -11,17 +11,17 @@ def update_game(data):
 	# print(data)
 	# print("-----------------")
 	game = GameEngine(gData)
-	print("-----update_game-----")
-	print(data)
+	# print("-----update_game-----")
+	# print(data)
 	key_value = data.get("keys")  # Use .get() method to retrieve the value
 	player_id = data.get("player_id")
 	if key_value:
 		print("Key value sent by frontend:", key_value, player_id)
 	
 	
-	print("-----------------")
+	# print("-----------------")
 	game.update(key_value, player_id)
-	print("player id =", player_id)
+	# print("player id =", player_id)
 	gData.update(game)
 	# print(gData.leftPaddle.y, "left Paddle y")
 	return gData

@@ -1,6 +1,5 @@
 export class Ball {
-	constructor(game) {
-		this.game = game;
+	constructor() {
 		this.x = 400;
 		this.y = 250;
 		this.radius = 4;
