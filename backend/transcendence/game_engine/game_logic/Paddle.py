@@ -13,16 +13,17 @@ class Paddle:
 		# self.ySpeed = 0
 		# self.maxSpeed = 15
 	def update(self, keys):
+		print("vertical =", vertical(keys))
 		self.speed = vertical(keys) * self.maxSpeed
-		# print("+++++++++")
-		# print(self.speed)
-		# print("+++++++++")
+		print("+++++++++")
+		print(self.speed)
+		print("+++++++++")
 		self.y += self.speed
 		if (self.y < 0):
 			self.y = 0
 		elif (self.y > self.game.height - self.height):
 			self.y = self.game.height - self.height
-		# print(self.y)
+		print(self.y)
 	def getPos(self):
 		return [self.x, self.y]
 	
@@ -45,7 +46,7 @@ class PaddleData:
 def vertical(keys) :
 	if keys[0]:
 		if (leftInput[0] == keys[0] or rightInput[0] == keys[0]):
-			return 1
-		if leftInput[1] == keys[0] or rightInput[1] == keys[0] :
 			return -1
+		if leftInput[1] == keys[0] or rightInput[1] == keys[0] :
+			return 1
 	return 0

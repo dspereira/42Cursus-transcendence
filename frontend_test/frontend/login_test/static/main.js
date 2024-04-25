@@ -2,16 +2,37 @@ import {Paddle} from "./paddle.js"
 import {InputHandler} from "./input.js"
 import {Ball} from "./ball.js"
 
-// class toFront {
-// 	contructor(game)
-// 	{
-// 		this.ball.x = game.ball.x;
-// 		this.ball.y = game.ball.y;
-// 		this.ball.radius = game.ball.radius;
-// 	}
-// }
+var rightPaddle_y = 0;
+var leftPaddle_y = 0;
+var ball_x = 0;
+var ball_y = 0;
 
-async function sendKeys(keys, id) {
+function getBall() {
+	fetch("http://127.0.0.1:8000/api/game/player-input", {
+		credentials: 'include',
+		method: "POST",
+		headers: {
+			"Content-Type": "application/json"
+		},
+		body: JSON.stringify({
+			player_id: -1,
+			ball: 1
+		})
+	})
+	.then(response => response.json())
+	.then ((data) => {
+			var ret = data["ball_y"];
+			console.log(data["ball_x"] + "<-on [BALL]");
+			ball_x = data["ball_x"];
+			ball_y = data["ball_y"];
+			return ret;
+	})
+	.catch(error => {
+		console.log(error);
+	});
+}
+
+function sendKeys(keys, id, ball) {
 	fetch("http://127.0.0.1:8000/api/game/player-input", {
 		credentials: 'include',
 		method: "POST",
@@ -20,20 +41,29 @@ async function sendKeys(keys, id) {
 		},
 		body: JSON.stringify({
 			player_id: id,
+			ball: 0,
 			keys: keys
 		})
 	})
 	.then(response => response.json())
-	.then (data => {
+	.then ((data) => {
 		// console.log(data["left_coords"] + "<-on main");
-		if (id == 0)
-		{
+		// if (id == 0)
+		// {
+			
 			var ret = data["left_coords"];
 			console.log(ret + "<-on");
+			leftPaddle_y = ret;
+			console.log("TEST = ", leftPaddle_y);
+			leftPaddle_y = data["left_coords"];
+			rightPaddle_y = data["right_coords"];
+			console.log(data["right_coords"])
+			ball_x = data["ball_x"];
+			ball_y = data["ball_y"];
 			return ret;
-		}	
-		if (id == 1)
-			return data["right_coords"];
+		// }	
+		// if (id == 1)
+		// 	return data["right_coords"];
 	})
 	.catch(error => {
 		console.log(error);
@@ -42,47 +72,41 @@ async function sendKeys(keys, id) {
 
 
 class Game {
-	constructor(input) {
-		this.width = input.width;
-		this.height = input.height;
+	constructor(width, height) {
+		this.width = width;
+		this.height = height;
 		this.ball = new Ball(this);
-		this.leftPaddle = new Paddle(this, gData.leftPaddle.x, gData.leftPaddle.y, gData.leftPaddle.width, gData.leftPaddle.height, gData.leftPaddle.speed, gData.leftPaddle.maxSpeed);
-		this.rightPaddle = new Paddle(this, gData.rightPaddle.x, gData.rightPaddle.y, gData.rightPaddle.width, gData.rightPaddle.height, gData.rightPaddle.speed, gData.rightPaddle.maxSpeed);
+		this.leftPaddle = new Paddle(this, gData.leftPaddle.x, gData.leftPaddle.y, gData.leftPaddle.width, gData.leftPaddle.height);
+		this.rightPaddle = new Paddle(this, gData.rightPaddle.x, gData.rightPaddle.y, gData.rightPaddle.width, gData.rightPaddle.height);
 		this.leftInput = new InputHandler("w", "s", "a", "d", 0);
 		this.rightInput = new InputHandler("ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight", 1);
-		// his.width = input.width;
-		// this.height = input.height;
-		// this.ball = new Ball(this, input.ball.x, input.ball.y, input.ball.radius, input.ball.dirX, input.ball.dirY, input.ball.speed, input.ball.maxSpeed);
-		// this.leftPaddle = new Paddle(this, input.leftPaddle.x, input.leftPaddle.y, input.leftPaddle.width, input.leftPaddle.height, input.leftPaddle.speed, input.leftPaddle.maxSpeed);
-		// this.rightPaddle = new Paddle(this, input.rightPaddle.x, input.rightPaddle.y, input.rightPaddle.width, input.rightPaddle.height, input.rightPaddle.speed, input.rightPaddle.maxSpeed);
-		// this.leftInput = new InputHandler("w", "s", "a", "d");
-		// this.rightInput = new InputHandler("ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight");
 	}
-	// update(input){
-	// // 	//this needs to be pushed to the backend
-	// 	this.leftPaddle.update(coords.leftPaddle);
-	// 	this.rightPaddle.update(coords.rightPaddle);
-	// 	this.ball.update(coords.ball);
-	// }
 	draw(context){
+		console.log("[PRINTING] BALLX = ", this.ball.x);
 		this.ball.draw(context);
 		this.leftPaddle.draw(context);
 		this.rightPaddle.draw(context);
 	}
 	async checkKeyInputs() { // Mark the method as async
+
+
 		if (this.rightInput.keys.length > 0) {
-			const coords = await sendKeys(this.rightInput.keys, this.rightInput.id);
-			if (coords != 0){
+			const coords = sendKeys(this.rightInput.keys, this.rightInput.id);
 				this.rightInput.y = coords;
-			}
+				this.leftPaddle.y = leftPaddle_y;
+				this.rightPaddle.y = rightPaddle_y;
 		}
 		if (this.leftInput.keys.length > 0) {
-			var coords = await sendKeys(this.leftInput.keys, this.leftInput.id);
-			console.log(coords + "IN RETURNED")
-			if (coords != 0)
-				this.leftInput.y = coords;
-			// console.log(this.leftPaddle.y + " Y BEFORE DRAW");
+			var coords = sendKeys(this.leftInput.keys, this.leftInput.id);
+			console.log(coords + " IN RETURNED")
+			console.log(leftPaddle_y + " TEST IN RETURNED")
+			this.leftPaddle.y = leftPaddle_y;
+			this.rightPaddle.y = rightPaddle_y;
+			console.log(this.leftPaddle.y + " Y BEFORE DRAW");
 		}
+		getBall();
+		this.ball.x = ball_x;
+		this.ball.y = ball_y;
 	}
 }
 
@@ -91,18 +115,18 @@ const gData = {
 	height: 500,
 	paddlePadding: 10,
 	leftPaddle: {
-		x: 10,
+		x: 20,
 		y: 20,
-		width: 5,
-		height: 20,
+		width: 10,
+		height: 50,
 		speed: 0,
 		maxSpeed: 15
 	},
 	rightPaddle: {
-		x: 785,
+		x: 780,
 		y: 20,
-		width: 5,
-		height: 20,
+		width: 10,
+		height: 50,
 		speed: 0,
 		maxSpeed: 15
 	}
@@ -122,48 +146,6 @@ window.addEventListener('load', function(){
 		game.checkKeyInputs(); // Check for key inputs and send them
 		// console.log(game.leftPaddle.y + " X BEFORE DRAW");
 		game.draw(ctx);
-    }
+	}
 	animate(0);
 });
-
-	// class Game {
-	// 	constructor(width, height) {
-	// 		this.width = width;
-	// 		this.height = height;
-	// 		this.paddleHeight = 100;
-	// 		this.paddleWidth = 20;
-	// 		this.paddlePadding = 5;
-	// 		this.ballRadius = 10;
-	// 		this.ball = new Ball(this, this.width/2, this.height/2, this.ballRadius, 1, 0.75, 0, 4);
-	// 		this.leftPaddle = new Paddle(this, this.paddlePadding, this.height/2 - this.paddleHeight/2, this.paddleWidth, this.paddleHeight);
-	// 		this.rightPaddle = new Paddle(this, this.width - this.paddleWidth - this.paddlePadding, this.height/2 - this.paddleHeight/2, this.paddleWidth, this.paddleHeight);
-	// 		this.leftInput = new InputHandler("w", "s", "a", "d");
-	// 		this.rightInput = new InputHandler("ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight");
-	// 	}
-	// 	update(coords){
-	// 	// 	//this needs to be pushed to the backend
-	// 		this.leftPaddle.update(coords.leftPaddle);
-	// 		this.rightPaddle.update(coords.rightPaddle);
-	// 		this.ball.update(coords.ball);
-	// 	}
-	// 	draw(context){
-	// 		this.ball.draw(context);
-	// 		this.leftPaddle.draw(context);
-	// 		this.rightPaddle.draw(context);
-	// 	}
-	// }
-	
-	
-	// const toFront = {
-	// 	ballRadius: game.ball.radius,
-	// 	ballX: game.ball.x,
-	// 	ballY: game.ball.y
-	// }
-	// const toBackRight
-	// const front = new toFront(game);
-	// const frontJSON = JSON.stringify(toFront);
-	
-	// const keysLeftJSON =
-	// const keysRightJSON =
-	// console.log("front json file ->", frontJSON);
-	

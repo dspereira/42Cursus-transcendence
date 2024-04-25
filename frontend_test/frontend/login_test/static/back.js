@@ -24,10 +24,6 @@ window.addEventListener('load', function(){
 			this.leftPaddle = new Paddle(this, this.paddlePadding, canvas.height/2 - this.paddleHeight/2, this.paddleWidth, this.paddleHeight);
 			this.rightPaddle = new Paddle(this, canvas.width - this.paddleWidth - this.paddlePadding, canvas.height/2 - this.paddleHeight/2, this.paddleWidth, this.paddleHeight);
 		}
-		// recieveKeys(leftInput, rightInput) {
-		// 	lKeys = 
-		// 	rKeys = 
-		// }
 		update(lKeys, rKeys){
 			this.leftPaddle.update(lKeys);
 			this.rightPaddle.update(rKeys);
@@ -47,20 +43,5 @@ window.addEventListener('load', function(){
 		}
 	}
 	const gameBackEnd = new GameBack(canvas.width, canvas.height);
-	
-	
-	
-	// const toFront = {
-		// 	ballRadius: game.ball.radius,
-		// 	ballX: game.ball.x,
-		// 	ballY: game.ball.y
-		// }
-	// const toBackRight
-	// const front = new toFront(game);
-	// const frontJSON = JSON.stringify(toFront);
-	
-	// const keysLeftJSON =
-	// const keysRightJSON =
-	// console.log("front json file ->", frontJSON);
 	console.log(game);
 });
