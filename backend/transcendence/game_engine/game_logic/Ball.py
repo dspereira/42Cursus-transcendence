@@ -13,8 +13,15 @@ class Ball:
 		# self.maxSpeed = 4
 		self.speed = data.speed
 		self.maxSpeed = data.maxSpeed
-	def update(self, leftPaddle, rightPaddle):
-		if ((self.x + self.dirX + self.radius >= self.game.width) or (self.x + self.dirX - self.radius <= 0)):
+	def update(self, leftPaddle, rightPaddle, game):
+		if ((self.x + self.dirX + self.radius >= self.game.width)):
+			self.dirX *= -1
+			self.x = self.game.width/2
+			self.y = self.game.height/2
+			self.speed = self.maxSpeed
+			game.player1Score +=1
+		if (self.x + self.dirX - self.radius <= 0) :
+			game.player2Score +=1
 			self.dirX *= -1
 			self.x = self.game.width/2
 			self.y = self.game.height/2

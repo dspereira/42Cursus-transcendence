@@ -3,34 +3,19 @@ import json
 from .game_logic.game_logic import update_game
 
 def	player_controls(request) :
-	print("hello world inside django")
 	data = json.loads(request.body.decode('utf-8')) # Parse JSON data from request body
 	response = update_game(data)
-	print("good bye django")
-	if (data.get("ball") == 1):
-		response_data = {"message": "response has been sent",
+	# if (data.get("ball") == 1):
+	response_data = {"message": "response has been sent",
 					"ball_x": response.ball.x,
 					"ball_y": response.ball.y,
-				}
-	else:
-		response_data = {"message": "response has been sent",
-						"left_coords" :  response.leftPaddle.y,
-						"right_coords" : response.rightPaddle.y,
-						"ball_x": response.ball.x,
-						"ball_y": response.ball.y,
-					}
-	return JsonResponse(response_data)
+					"left_coords" :  response.leftPaddle.y,
+					"right_coords" : response.rightPaddle.y,
+					"player1_score" : response.player1Score,
+					"player2_score" : response.player2Score,
+		}
 	
-# def	send_ball(request) :
-# 	print("hello world inside django")
-# 	data = json.loads(request.body.decode('utf-8')) # Parse JSON data from request body
-# 	response = update_game(data)
-# 	print("good bye django")
-# 	response_data = {"message": "response has been sent",
-# 					"ball_x": response.ball.x,
-# 					"ball_y": response.ball.y,
-# 				}
-# 	return JsonResponse(response_data)
+	return JsonResponse(response_data)
 
 # Create your views here. // routing
 
