@@ -97,6 +97,7 @@ export default class PageHome extends HTMLElement {
 		this.innerHTML = page;
 		document.querySelector("head title").innerHTML = title;
 
+
 		const eyeIcon = {
 			open: "bi-eye",
 			close: "bi-eye-slash"
