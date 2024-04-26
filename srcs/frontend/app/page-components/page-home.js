@@ -1,59 +1,56 @@
 import AppHeader from "../components/app-header.js";
 
-const page = 
-`
-<style>
+const styles = `
+form {
+	position: relative;
+}
 
-	form {
-		position: relative;
-	}
+div {
+	//border: 1px solid black;
+}
 
-	div {
-		//border: 1px solid black;
-	}
+.login-input {
+	margin-bottom: 15px;
+}
 
-	.login-input {
-		margin-bottom: 15px;
-	}
+.login-submit {
+	margin-top: 50px;
+}
 
-	.login-submit {
-		margin-top: 50px;
-	}
+.login-submit .btn {
+	width: 100%;
+}
 
-	.login-submit .btn {
-		width: 100%;
-	}
+.login-recover-pass span {
+	text-decoration: underline;
+	float: right;
+}
 
-	.login-recover-pass span {
-		text-decoration: underline;
-		float: right;
-	}
+.icon {
+	position: absolute;
+	margin-left: 10px;
+	margin-top: 3px;
+	font-size: 28px;
+}
 
-	.icon {
-		position: absolute;
-		margin-left: 10px;
-		margin-top: 3px;
-		font-size: 28px;
-	}
+.icon-eye {
+	right: 0;
+	margin-right: 10px;
+}
 
-	.icon-eye {
-		right: 0;
-		margin-right: 10px;
-	}
+.login-input input {
+	padding-left: 55px;
+}
 
-	.login-input input {
-		padding-left: 55px;
-	}
+.login-header {
+	text-align: center;
+	margin-bottom: 30px;
+	font-size: 40px; 
+}
 
-	.login-header {
-		text-align: center;
-		margin-bottom: 30px;
-		font-size: 40px; 
-	}
+`;
 
-</style>
-
-
+const html = `
 <app-header></app-header>
 
 <a href="/login/">login</a>
@@ -86,18 +83,39 @@ const page =
 
 `;
 
+
 const title = "Home Page";
 
 export default class PageHome extends HTMLElement {
-
 	static #componentName = "page-home";
 
 	constructor() {
 		super()
-		this.innerHTML = page;
 		document.querySelector("head title").innerHTML = title;
+		this.elmtId = `elmtId_${Math.floor(Math.random() * 100000000000)}`;
+		const elmBody = document.createElement("div");
+		elmBody.classList.add(`${this.elmtId}`);
+		const styles = document.createElement("style");
+		styles.textContent = this.#styles();
+		elmBody.innerHTML = this.#html();
+		this.appendChild(styles);
+		this.appendChild(elmBody);
+		this.#script();
+	}
 
+	static get componentName() {
+		return this.#componentName;
+	}
 
+	#styles() {
+		return `@scope (.${this.elmtId}) {${styles}}`;
+	}
+
+	#html(){
+		return html;
+	}
+
+	#script(){
 		const eyeIcon = {
 			open: "bi-eye",
 			close: "bi-eye-slash"
@@ -112,11 +130,6 @@ export default class PageHome extends HTMLElement {
 			else
 				input.type = "password";
 		});
-
-	}
-
-	static get componentName() {
-		return this.#componentName;
 	}
 }
 

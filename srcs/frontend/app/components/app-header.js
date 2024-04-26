@@ -6,34 +6,31 @@ const colors = {
 	c4: "#DDE6ED",
 }
 
-const styles = `	
-	<style>
-		body {
-			margin: 0;
-			padding: 0;
-			background-color: ${colors.c1};
-		}
+const styles = `
+body {
+	margin: 0;
+	padding: 0;
+	background-color: ${colors.c1};
+}
 
-		.avatar {
-			width: 50px;
-			clip-path:circle();
-		}
-		
-		.logo {
-			width: 115px;
-		}
+.avatar {
+	width: 50px;
+	clip-path:circle();
+}
 
-		.header {
-			background-color: ${colors.c3};
-			display: flex;
-			justify-content: space-between;
-			align-items: center;
-			/* top | right | bottom | left */
-			padding: 15px 30px 15px 30px;
-		}
+.logo {
+	width: 115px;
+}
 
-	</style>
-`
+.header {
+	background-color: ${colors.c3};
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	/* top | right | bottom | left */
+	padding: 15px 30px 15px 30px;
+}
+`;
 
 const html = `
 	<div class="app-header">
@@ -46,7 +43,7 @@ const html = `
 				</div>
 		</div>
 	</div>
-`
+`;
 
 export default class AppHeader extends HTMLElement {
 
@@ -63,11 +60,7 @@ export default class AppHeader extends HTMLElement {
 	}
 
 	#styles() {
-		return `
-			@scope (.${this.elmtId}) {
-				${styles}
-			}
-		` 
+		return `@scope (.${this.elmtId}) {${styles}}`;
 	}
 
 	#html(){
