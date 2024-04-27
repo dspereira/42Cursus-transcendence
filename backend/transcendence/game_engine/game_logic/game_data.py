@@ -22,12 +22,12 @@ class GameData:
 			self.height = game.height
 			self.player2Score = game.player2Score
 			self.player1Score = game.player1Score
-			self.ball_update(game.ball, self.ball)
+			self.__ball_update(game.ball, self.ball)
 			self.leftPaddle.update(game.leftPaddle)
 			self.rightPaddle.update(game.rightPaddle)
 
 
-		def	ball_update(self, game, ballDict):
+		def	__ball_update(self, game, ballDict):
 			ballDict["x_cord"] = game.x
 			ballDict["y_cord"] = game.y
 			ballDict["radius"] = game.radius
