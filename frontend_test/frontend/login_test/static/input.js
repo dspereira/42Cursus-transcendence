@@ -19,41 +19,4 @@ export class InputHandler {
 			this.keys.splice(this.keys.indexOf(e.key), 1);
 		}
 	}
-	recieve(newInput) {
-		this.keys = newInput;
-	}
-	async sendKey(keys) {
-		fetch("http://127.0.0.1:8000/api/game/player-input", {
-			credentials: 'include',
-			method: "POST",
-			headers: {
-				"Content-Type": "application/json"
-			},
-			body: JSON.stringify({
-				player_id: this.id,
-				keys: keys
-			})
-		})
-		.then(response => response.json())
-		.then (data => {
-			console.log(data["message"] + "<-- on input");
-		})
-		.catch(error => {
-			console.log(error);
-		});
-	}
-
-	send() {
-		if (this.keys.includes(this.key[1]) - this.keys.includes(this.key[0]) == 1)
-		{
-			console.log("key -> S")
-			this.sendKey("s")
-		}
-		else if (this.keys.includes(this.key[1]) - this.keys.includes(this.key[0]) == -1)
-		{
-			console.log("key -> W")
-			this.sendKey("w")
-		}
-		return (this.keys.includes(this.key[1]) - this.keys.includes(this.key[0]));
-	}
 }

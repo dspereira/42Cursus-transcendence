@@ -84,6 +84,15 @@ class Game {
 		this.ball.draw(context);
 		this.leftPaddle.draw(context);
 		this.rightPaddle.draw(context);
+		this.scoreBoard(context);
+	}
+	scoreBoard(context){
+		context.font = "22px Arial"
+		context.fillStyle = "rgb(0 0 0 / 15%)"
+		context.fillText(Number(player1_Score), this.width/2 - 30, 30)
+		context.fillRect(this.width/2 - 5, 22, 5, 4);
+		context.fillText(Number(player2_Score), this.width/2 + 10, 30)
+		context.fillStyle = "black"
 	}
 	async checkKeyInputs() {
 		if (this.rightInput.keys.length > 0 )

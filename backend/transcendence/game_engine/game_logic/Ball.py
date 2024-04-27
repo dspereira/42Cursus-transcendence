@@ -34,6 +34,10 @@ class Ball:
 			and self.x + self.dirX - self.radius <= leftPaddle.x + leftPaddle.width) or
 			((self.y + self.radius >= rightPaddle.y and self.y - self.radius <= rightPaddle.y + rightPaddle.height)
 			and self.x + self.dirX + self.radius >= rightPaddle.x)):
+				if (self.x < game.width/2):
+					self.x = leftPaddle.x + leftPaddle.width + self.radius
+				else:
+					self.x = rightPaddle.x - self.radius
 				self.dirX *= -1
 				self.speed += 1
 		self.x += self.dirX * self.speed
