@@ -1,5 +1,5 @@
 from .Paddle import Paddle, PaddleData
-from .Ball	import	Ball, BallData
+from .Ball	import	Ball, ballDict
 
 class GameData:
 		def __init__(self, width, height, paddlePadding, \
@@ -11,7 +11,8 @@ class GameData:
 			self.player1Score = player1S
 			self.player2Score = player2S
 			self.paddlePadding = paddlePadding
-			self.ball = BallData(ballX, ballY, ballDirX, ballDirY, ballRadius, ballSpeed, ballMaxSpeed)
+			self.ball = ballDict
+			# self.ball = BallData(ballX, ballY, ballDirX, ballDirY, ballRadius, ballSpeed, ballMaxSpeed)
 			self.rightPaddle = PaddleData(rightPaddleX, rightPaddleY, rightPaddleWidth, rightPaddleHeight, rightPaddleSpeed, rightPaddleMaxSpeed)
 			self.leftPaddle = PaddleData(leftPaddleX, leftPaddleY, leftPaddleWidth, leftPaddleHeight, leftPaddleSpeed, leftPaddleMaxSpeed)
 
@@ -21,10 +22,19 @@ class GameData:
 			self.height = game.height
 			self.player2Score = game.player2Score
 			self.player1Score = game.player1Score
-			self.ball.update(game.ball)
+			self.ball_update(game.ball, self.ball)
 			self.leftPaddle.update(game.leftPaddle)
 			self.rightPaddle.update(game.rightPaddle)
 
+
+		def	ball_update(self, game, ballDict):
+			ballDict["x_cord"] = game.x
+			ballDict["y_cord"] = game.y
+			ballDict["radius"] = game.radius
+			ballDict["speed"] = game.speed
+			ballDict["max_speed"] = game.maxSpeed
+			ballDict["x_dir"] = game.dirX
+			ballDict["y_dir"] = game.dirY			
 
 gData = GameData(width=800, height=500, paddlePadding=10,\
 				 leftPaddleX=10, leftPaddleY=20, leftPaddleWidth=10, leftPaddleHeight=50, leftPaddleSpeed=0, leftPaddleMaxSpeed=15,\

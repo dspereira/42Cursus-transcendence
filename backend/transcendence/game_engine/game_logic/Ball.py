@@ -1,18 +1,25 @@
 import math
 
+ballDict = {
+	"x_cord" : 400,
+	"y_cord" : 250,
+	"x_dir" : 1,
+	"y_dir" : 0.75,
+	"radius" : 4,
+	"speed" : 4,
+	"max_speed" : 4,
+}
+
 class Ball:
 	def __init__(self, game, data): #
 		self.game = game #data.game
-		self.x = data.x
-		self.y = data.y
-		self.dirX = data.dirX
-		self.dirY = data.dirY
-		self.radius = data.radius
-		# self.cSpeed = self.maxSpeed
-		# self.speed = 0
-		# self.maxSpeed = 4
-		self.speed = data.speed
-		self.maxSpeed = data.maxSpeed
+		self.x = data["x_cord"]
+		self.y = data["y_cord"]
+		self.dirX = data["x_dir"]
+		self.dirY = data["y_dir"]
+		self.radius = data["radius"]
+		self.speed = data["speed"]
+		self.maxSpeed = data["max_speed"]
 	def update(self, leftPaddle, rightPaddle, game):
 		if ((self.x + self.dirX + self.radius >= self.game.width)):
 			self.dirX *= -1
@@ -68,21 +75,27 @@ class Ball:
 	# 			self.dirX *= -1
 
 
-class BallData:
-	def __init__(self, x, y, dirX, dirY, radius, speed, maxSpeed):
-		self.x = x
-		self.y = y
-		self.dirX = dirX
-		self.dirY = dirY
-		self.radius = radius
-		self.speed = speed
-		self.maxSpeed = maxSpeed
-	def update(self, game):
-		self.x = game.x
-		self.y = game.y
-		self.radius = game.radius
-		self.speed = game.speed
-		self.maxSpeed = game.maxSpeed
-		self.dirX = game.dirX
-		self.dirY = game.dirY
+# class BallData:
+# 	def __init__(self, x, y, dirX, dirY, radius, speed, maxSpeed):
+# 		self.x = x
+# 		self.y = y
+# 		self.dirX = dirX
+# 		self.dirY = dirY
+# 		self.radius = radius
+# 		self.speed = speed
+# 		self.maxSpeed = maxSpeed
+# 	def update(self, game):
+# 		self.x = game.x
+# 		self.y = game.y
+# 		self.radius = game.radius
+# 		self.speed = game.speed
+# 		self.maxSpeed = game.maxSpeed
+# 		self.dirX = game.dirX
+# 		self.dirY = game.dirY
+
+
+# gData = GameData(width=800, height=500, paddlePadding=10,\
+# 				#  leftPaddleX=10, leftPaddleY=20, leftPaddleWidth=10, leftPaddleHeight=50, leftPaddleSpeed=0, leftPaddleMaxSpeed=15,\
+# 				#  rightPaddleX=780, rightPaddleY=20, rightPaddleWidth=10, rightPaddleHeight=50, rightPaddleSpeed=0 , rightPaddleMaxSpeed=15,\
+# 				#  ballX=400, ballY=250, ballDirX=1, ballDirY=0.75, ballRadius=4, ballSpeed=4, ballMaxSpeed=4, player1S=0, player2S=0)
 

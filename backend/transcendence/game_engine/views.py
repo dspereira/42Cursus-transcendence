@@ -1,14 +1,15 @@
 from django.http import HttpResponse, JsonResponse
 import json
 from .game_logic.game_logic import update_game
+# from .game_logic.Ball import ballDict
 
 def	player_controls(request) :
 	data = json.loads(request.body.decode('utf-8')) # Parse JSON data from request body
 	response = update_game(data)
 	# if (data.get("ball") == 1):
 	response_data = {"message": "response has been sent",
-					"ball_x": response.ball.x,
-					"ball_y": response.ball.y,
+					"ball_x": response.ball["x_cord"],
+					"ball_y": response.ball["y_cord"],
 					"left_coords" :  response.leftPaddle.y,
 					"right_coords" : response.rightPaddle.y,
 					"player1_score" : response.player1Score,
