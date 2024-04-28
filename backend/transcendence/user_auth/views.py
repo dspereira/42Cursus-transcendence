@@ -8,6 +8,7 @@ from .auth_utils import login as user_login
 from .auth_utils import logout as user_logout
 from .auth_utils import refresh_token as user_refresh_token
 from .auth_utils import update_blacklist
+from .auth_utils import send_email_verification
 
 from custom_utils.models_utils import ModelManager
 
@@ -33,6 +34,7 @@ def register(request):
 		user = user_model.create(username=username, email=email, password=password)
 		if not user:
 			return JsonResponse({"message": "Error creating user"}, status=500)
+		send_email_verification(user)
 
 	return JsonResponse({"message": "success"})
 
@@ -132,3 +134,7 @@ def apiGetUsersList(request):
 	response = {"message": result_print, "users_count": users_count, "users_list": users_data}
 
 	return JsonResponse(response)
+
+@accepted_methods(["POST"])
+def generate_new_email(request):
+	pass
