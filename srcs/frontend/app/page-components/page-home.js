@@ -60,7 +60,7 @@ const html = `
 
 	<h1 class="login-header">Login</h1>
 
-	<form>
+	<form id="loginform">
 		<div class="login-input login-email form-group">
 			<i class="icon bi-person"></i>
 			<input type="email" class="form-control form-control-lg" id="email" aria-describedby="emailHelp" placeholder="Email Address">
@@ -91,6 +91,7 @@ export default class PageHome extends HTMLElement {
 
 	constructor() {
 		super()
+		console.log("start component");
 		document.querySelector("head title").innerHTML = title;
 		this.elmtId = `elmtId_${Math.floor(Math.random() * 100000000000)}`;
 		const elmBody = document.createElement("div");
@@ -101,6 +102,7 @@ export default class PageHome extends HTMLElement {
 		this.appendChild(styles);
 		this.appendChild(elmBody);
 		this.#script();
+		//this.#submit();
 	}
 
 	static get componentName() {
@@ -130,6 +132,31 @@ export default class PageHome extends HTMLElement {
 			else
 				input.type = "password";
 		});
+
+		let loginForm = document.querySelector("#loginform");
+		loginForm.addEventListener("submit", (event) => {
+			event.preventDefault();
+			this.#submit();
+		});
+
+	}
+
+	async #submit(){
+	
+		const dataForm = {
+			email: document.getElementById('email').value,
+			password: document.getElementById('password').value
+		}
+
+		const res = await fetch("http://127.0.0.1:8000/api/auth/login", {
+			credentials: 'include',
+			method: "POST",
+			headers: {
+				"Content-Type": "application/json"
+			},
+			body: JSON.stringify(dataForm)
+		});
+		const data = await res.json();
 	}
 }
 
