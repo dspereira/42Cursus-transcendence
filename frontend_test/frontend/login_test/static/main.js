@@ -32,7 +32,7 @@ var player1_Score
 var player2_Score
 
 
-function sendKeys(keys, id) {
+function sendKeys(keys, id, time) {
 	fetch("http://127.0.0.1:8000/api/game/player-input", {
 		credentials: 'include',
 		method: "POST",
@@ -47,8 +47,8 @@ function sendKeys(keys, id) {
 	})
 	.then(response => response.json())
 	.then ((data) => {
-		if (id == -1)
-			console.log("SCORE : " + player1_Score + " | " + player2_Score);
+		// if (id == -1)
+		// 	console.log("SCORE : " + player1_Score + " | " + player2_Score);
 
 		// console.log("TEST = ", leftPaddle_y);
 		leftPaddle_y = data["left_coords"];

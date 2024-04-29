@@ -10,8 +10,8 @@ def	player_controls(request) :
 	response_data = {"message": "response has been sent",
 					"ball_x": response.ball["x_cord"],
 					"ball_y": response.ball["y_cord"],
-					"left_coords" :  response.leftPaddle.y,
-					"right_coords" : response.rightPaddle.y,
+					"left_coords" :  response.leftPaddle["y_cord"],
+					"right_coords" : response.rightPaddle["y_cord"],
 					"player1_score" : response.player1Score,
 					"player2_score" : response.player2Score,
 		}

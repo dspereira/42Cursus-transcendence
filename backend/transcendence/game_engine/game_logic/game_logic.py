@@ -2,10 +2,7 @@
 from .game_data import GameEngine, GameData
 
 gData = GameData(width=800, height=500, paddlePadding=10,\
-				 leftPaddleX=10, leftPaddleY=20, leftPaddleWidth=10, leftPaddleHeight=50, leftPaddleSpeed=0, leftPaddleMaxSpeed=15,\
-				 rightPaddleX=780, rightPaddleY=20, rightPaddleWidth=10, rightPaddleHeight=50, rightPaddleSpeed=0 , rightPaddleMaxSpeed=15,\
-				 ballX=400, ballY=250, ballDirX=1, ballDirY=0.75, ballRadius=4, ballSpeed=4, ballMaxSpeed=4, \
-				 player1S=0, player2S=0)
+					player1S=0, player2S=0)
 
 def update_game(data):
 	game = GameEngine(gData)
@@ -24,11 +21,6 @@ def update_game(data):
 	# print(gData.leftPaddle.y, "left Paddle y")
 	return gData
 
-
-
-def	getGame():
-	#called to refresh user page, only returns the values needed to update the page
-	pass
 
 
 """

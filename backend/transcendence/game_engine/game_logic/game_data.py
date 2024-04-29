@@ -1,20 +1,18 @@
-from .Paddle import Paddle, PaddleData
+from .Paddle import Paddle, paddleDict
 from .Ball	import	Ball, ballDict
 
 class GameData:
-		def __init__(self, width, height, paddlePadding, \
-			leftPaddleX, leftPaddleY, leftPaddleWidth, leftPaddleHeight, leftPaddleSpeed, leftPaddleMaxSpeed,\
-			rightPaddleX, rightPaddleY, rightPaddleWidth, rightPaddleHeight, rightPaddleSpeed, rightPaddleMaxSpeed,\
-			ballX, ballY, ballDirX, ballDirY, ballRadius, ballSpeed, ballMaxSpeed, player1S, player2S):
+		def __init__(self, width, height, paddlePadding, player1S, player2S):
 			self.width = width
 			self.height = height
 			self.player1Score = player1S
 			self.player2Score = player2S
 			self.paddlePadding = paddlePadding
-			self.ball = ballDict
+			self.ball = {**ballDict}
 			# self.ball = BallData(ballX, ballY, ballDirX, ballDirY, ballRadius, ballSpeed, ballMaxSpeed)
-			self.rightPaddle = PaddleData(rightPaddleX, rightPaddleY, rightPaddleWidth, rightPaddleHeight, rightPaddleSpeed, rightPaddleMaxSpeed)
-			self.leftPaddle = PaddleData(leftPaddleX, leftPaddleY, leftPaddleWidth, leftPaddleHeight, leftPaddleSpeed, leftPaddleMaxSpeed)
+			self.rightPaddle = {**paddleDict}
+			self.rightPaddle["x_cord"] = 780
+			self.leftPaddle = {**paddleDict}
 
 
 		def update(self, game):
@@ -23,8 +21,16 @@ class GameData:
 			self.player2Score = game.player2Score
 			self.player1Score = game.player1Score
 			self.__ball_update(game.ball, self.ball)
-			self.leftPaddle.update(game.leftPaddle)
-			self.rightPaddle.update(game.rightPaddle)
+			self.__paddle_update(game.leftPaddle, self.leftPaddle)
+			self.__paddle_update(game.rightPaddle, self.rightPaddle)
+
+		def __paddle_update(self, game, paddleDict):
+			paddleDict["x_cord"] = game.x
+			paddleDict["y_cord"] = game.y
+			paddleDict["width"] = game.width
+			paddleDict["height"] = game.height
+			paddleDict["max_speed"] = game.maxSpeed
+			paddleDict["speed"] = game.speed
 
 
 		def	__ball_update(self, game, ballDict):
@@ -32,14 +38,12 @@ class GameData:
 			ballDict["y_cord"] = game.y
 			ballDict["radius"] = game.radius
 			ballDict["speed"] = game.speed
-			ballDict["max_speed"] = game.maxSpeed
+			ballDict["start_speed"] = game.start_speed
 			ballDict["x_dir"] = game.dirX
-			ballDict["y_dir"] = game.dirY			
+			ballDict["y_dir"] = game.dirY
 
 gData = GameData(width=800, height=500, paddlePadding=10,\
-				 leftPaddleX=10, leftPaddleY=20, leftPaddleWidth=10, leftPaddleHeight=50, leftPaddleSpeed=0, leftPaddleMaxSpeed=15,\
-				 rightPaddleX=780, rightPaddleY=20, rightPaddleWidth=10, rightPaddleHeight=50, rightPaddleSpeed=0 , rightPaddleMaxSpeed=15,\
-				 ballX=400, ballY=250, ballDirX=1, ballDirY=0.75, ballRadius=4, ballSpeed=4, ballMaxSpeed=4, player1S=0, player2S=0)
+					player1S=0, player2S=0)
 
 
 class GameEngine:

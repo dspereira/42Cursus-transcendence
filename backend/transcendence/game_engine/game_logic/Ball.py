@@ -1,4 +1,5 @@
 import math
+import random
 
 ballDict = {
 	"x_cord" : 400,
@@ -7,7 +8,7 @@ ballDict = {
 	"y_dir" : 0.75,
 	"radius" : 4,
 	"speed" : 4,
-	"max_speed" : 4,
+	"start_speed" : 4,
 }
 
 class Ball:
@@ -19,20 +20,20 @@ class Ball:
 		self.dirY = data["y_dir"]
 		self.radius = data["radius"]
 		self.speed = data["speed"]
-		self.maxSpeed = data["max_speed"]
+		self.start_speed = data["start_speed"]
 	def update(self, leftPaddle, rightPaddle, game):
 		if ((self.x + self.dirX + self.radius >= self.game.width)):
 			self.dirX *= -1
 			self.x = self.game.width/2
 			self.y = self.game.height/2
-			self.speed = self.maxSpeed
+			self.speed = self.start_speed
 			game.player1Score +=1
 		if (self.x + self.dirX - self.radius <= 0) :
 			game.player2Score +=1
 			self.dirX *= -1
 			self.x = self.game.width/2
 			self.y = self.game.height/2
-			self.speed = self.maxSpeed
+			self.speed = self.start_speed
 		if (self.y + self.dirY + self.radius >= self.game.height or self.y + self.dirY - self.radius <= 0):
 			self.dirY *= -1
 		# self.PaddleCollision(leftPaddle)
@@ -46,9 +47,12 @@ class Ball:
 				else:
 					self.x = rightPaddle.x - self.radius
 				self.dirX *= -1
-				self.speed += 1
+				if (self.speed < 9) :
+					self.speed += 1
+				self.dirY =  random.uniform(-1,1)
 		self.x += self.dirX * self.speed
 		self.y += self.dirY * self.speed
+		# algoritmo q calcula a bola
 
 	# def PaddleCollision(self, paddle):
 	# 	colTestX = self.x
@@ -76,26 +80,26 @@ class Ball:
 
 
 # class BallData:
-# 	def __init__(self, x, y, dirX, dirY, radius, speed, maxSpeed):
+# 	def __init__(self, x, y, dirX, dirY, radius, speed, start_speed):
 # 		self.x = x
 # 		self.y = y
 # 		self.dirX = dirX
 # 		self.dirY = dirY
 # 		self.radius = radius
 # 		self.speed = speed
-# 		self.maxSpeed = maxSpeed
+# 		self.start_speed = start_speed
 # 	def update(self, game):
 # 		self.x = game.x
 # 		self.y = game.y
 # 		self.radius = game.radius
 # 		self.speed = game.speed
-# 		self.maxSpeed = game.maxSpeed
+# 		self.start_speed = game.start_speed
 # 		self.dirX = game.dirX
 # 		self.dirY = game.dirY
 
 
 # gData = GameData(width=800, height=500, paddlePadding=10,\
-# 				#  leftPaddleX=10, leftPaddleY=20, leftPaddleWidth=10, leftPaddleHeight=50, leftPaddleSpeed=0, leftPaddleMaxSpeed=15,\
-# 				#  rightPaddleX=780, rightPaddleY=20, rightPaddleWidth=10, rightPaddleHeight=50, rightPaddleSpeed=0 , rightPaddleMaxSpeed=15,\
-# 				#  ballX=400, ballY=250, ballDirX=1, ballDirY=0.75, ballRadius=4, ballSpeed=4, ballMaxSpeed=4, player1S=0, player2S=0)
+# 				#  leftPaddleX=10, leftPaddleY=20, leftPaddleWidth=10, leftPaddleHeight=50, leftPaddleSpeed=0, leftPaddlestart_speed=15,\
+# 				#  rightPaddleX=780, rightPaddleY=20, rightPaddleWidth=10, rightPaddleHeight=50, rightPaddleSpeed=0 , rightPaddlestart_speed=15,\
+# 				#  ballX=400, ballY=250, ballDirX=1, ballDirY=0.75, ballRadius=4, ballSpeed=4, ballstart_speed=4, player1S=0, player2S=0)
 
