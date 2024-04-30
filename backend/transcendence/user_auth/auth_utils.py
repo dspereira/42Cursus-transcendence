@@ -34,7 +34,7 @@ def update_blacklist(access_token_data, refresh_token_data):
 
 def send_email_verification(user):
 	# token_gen = _generate_email_verification_token(user_id=user_id)
-	EmailSender().send_email_verification(receiver_email=user.email, url="https://www.google.com/")
+	EmailSender().send_email_verification(receiver_email=user.email)
 
 def _generate_tokens(user_id):
 	token_gen = TokenGenerator(user_id)

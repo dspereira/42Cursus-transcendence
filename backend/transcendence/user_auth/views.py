@@ -136,5 +136,16 @@ def apiGetUsersList(request):
 	return JsonResponse(response)
 
 @accepted_methods(["POST"])
-def generate_new_email(request):
-	pass
+def validate_email(request):
+	
+	message = "Empty Body!"
+	validation_status = False
+	
+	email = request.POST.get('email')
+	email_token = request.POST.get('email_token')
+
+	if email and email_token:
+		message = f"Body with content !"
+		validation_status = True
+
+	return JsonResponse({"message": message,"email": email, "email_token": email_token, "validation_status": validation_status})
