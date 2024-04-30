@@ -55,3 +55,16 @@ document.addEventListener('DOMContentLoaded', () => {
 	router();
 	setHistoryEvents();
 });
+
+const redirect = function(route)
+{
+	if (!route)
+		console.log(`Error: Redirection Failed`);
+	else {
+		console.log(`redirection: ${route}`);
+		history.pushState({route: route}, null, route);
+		router();
+	}
+}
+
+export default redirect;
