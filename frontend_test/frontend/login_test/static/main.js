@@ -8,7 +8,7 @@ const gData = {
 	paddlePadding: 10,
 	leftPaddle: {
 		x: 10,
-		y: 20,
+		y: 250,
 		width: 10,
 		height: 50,
 		speed: 0,
@@ -16,7 +16,7 @@ const gData = {
 	},
 	rightPaddle: {
 		x: 780,
-		y: 20,
+		y: 250,
 		width: 10,
 		height: 50,
 		speed: 0,

@@ -6,18 +6,21 @@ gData = GameData(width=800, height=500, paddlePadding=10,\
 
 def update_game(data):
 	game = GameEngine(gData)
+
+	
 	# print("-----update_game-----")
 	# print(data)
 	key_value = data.get("keys")  # Use .get() method to retrieve the value
 	player_id = data.get("player_id")
-	if key_value:
-		print("Key value sent by frontend:", key_value, player_id)
+	# if key_value:
+	# 	print("Key value sent by frontend:", key_value, player_id)
 	
-	
+	# print("this is game_logic:", gData.ball["x_cord"])
+	# print("This is game_logic:", game.ball.x)
 	# print("-----------------")
 	game.update(key_value, player_id)
-	# print("player id =", player_id)
 	gData.update(game)
+	# print("player id =", player_id)
 	# print(gData.leftPaddle.y, "left Paddle y")
 	return gData
 

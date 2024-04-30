@@ -1,5 +1,5 @@
-import math
 import random
+import time
 
 ballDict = {
 	"x_cord" : 400,
@@ -9,10 +9,12 @@ ballDict = {
 	"radius" : 4,
 	"speed" : 4,
 	"start_speed" : 4,
+	"last_call" : 0,
 }
 
 class Ball:
 	def __init__(self, game, data): #
+
 		self.game = game #data.game
 		self.x = data["x_cord"]
 		self.y = data["y_cord"]
@@ -21,85 +23,96 @@ class Ball:
 		self.radius = data["radius"]
 		self.speed = data["speed"]
 		self.start_speed = data["start_speed"]
+		self.last_call = data["last_call"]
+
+
 	def update(self, leftPaddle, rightPaddle, game):
-		if ((self.x + self.dirX + self.radius >= self.game.width)):
-			self.dirX *= -1
-			self.x = self.game.width/2
-			self.y = self.game.height/2
-			self.speed = self.start_speed
-			game.player1Score +=1
-		if (self.x + self.dirX - self.radius <= 0) :
-			game.player2Score +=1
+
+		self.leftPaddle = leftPaddle
+		self.rightPaddle = rightPaddle
+		self.time_now = int(round(time.time() * 1000))
+
+		self.__check_paddle_collision()
+		self.__check_border_collision(game)
+		self.__calculate_position(game)
+
+		self.last_call = self.time_now
+  
+
+	def __check_paddle_collision(self):
+
+		if (((self.y + self.radius >= self.leftPaddle.y and self.y - self.radius <= self.leftPaddle.y + self.leftPaddle.height)
+			and self.x + self.dirX - self.radius <= self.leftPaddle.x + self.leftPaddle.width) or
+			((self.y + self.radius >= self.rightPaddle.y and self.y - self.radius <= self.rightPaddle.y + self.rightPaddle.height)
+			and self.x + self.dirX + self.radius >= self.rightPaddle.x)):
+				if (self.x < self.game.width/2):
+					targetPaddle = self.leftPaddle
+					self.x = targetPaddle.x + targetPaddle.width + self.radius
+				else:
+					targetPaddle = self.rightPaddle
+					self.x = self.rightPaddle.x - self.radius
+				self.dirX *= -1
+				if self.speed < 9:
+					self.speed += 1
+				if self.y >= (targetPaddle.y +25):
+					self.dirY = random.uniform(0.1,1)
+				elif self.y < (targetPaddle.y + 25):
+					self.dirY = random.uniform(-0.1, -1)
+
+
+	def __check_border_collision(self, game):
+
+		if ((self.x + self.dirX + self.radius >= self.game.width) or (self.x + self.dirX - self.radius <= 0)):
+			if self.x + self.dirX - self.radius <= 0:
+				game.player2Score +=1
+			if self.x + self.dirX + self.radius >= self.game.width:
+				game.player1Score +=1
 			self.dirX *= -1
 			self.x = self.game.width/2
 			self.y = self.game.height/2
 			self.speed = self.start_speed
 		if (self.y + self.dirY + self.radius >= self.game.height or self.y + self.dirY - self.radius <= 0):
 			self.dirY *= -1
-		# self.PaddleCollision(leftPaddle)
-		# self.PaddleCollision(rightPaddle)
-		if (((self.y + self.radius >= leftPaddle.y and self.y - self.radius <= leftPaddle.y + leftPaddle.height)
-			and self.x + self.dirX - self.radius <= leftPaddle.x + leftPaddle.width) or
-			((self.y + self.radius >= rightPaddle.y and self.y - self.radius <= rightPaddle.y + rightPaddle.height)
-			and self.x + self.dirX + self.radius >= rightPaddle.x)):
-				if (self.x < game.width/2):
-					self.x = leftPaddle.x + leftPaddle.width + self.radius
-				else:
-					self.x = rightPaddle.x - self.radius
-				self.dirX *= -1
-				if (self.speed < 9) :
-					self.speed += 1
-				self.dirY =  random.uniform(-1,1)
-		self.x += self.dirX * self.speed
-		self.y += self.dirY * self.speed
-		# algoritmo q calcula a bola
 
-	# def PaddleCollision(self, paddle):
-	# 	colTestX = self.x
-	# 	colTestY = self.y
-	# 	print("paddleCoords", paddle.x, paddle.y, " Width ", paddle.width, " Height", paddle.height)
-	# 	if (colTestX < self.x):
-	# 		colTestX = paddle.x
-	# 	elif (colTestX > paddle.x + paddle.width):
-	# 		colTestX = paddle.x + paddle.width
-	# 	else:
-	# 		return
-	# 	if (colTestY < paddle.y):
-	# 		colTestY = paddle.y
-	# 	elif (colTestY > paddle.y + paddle.height):
-	# 		colTestY = paddle.y + paddle.height
-	# 	else:
-	# 		return
-	# 	distX = self.x - colTestX
-	# 	distY = self.y - colTestY
-	# 	if (math.sqrt((distX * distX)+ (distY * distY)) <= self.radius):
-	# 		if ((self.y <= paddle.y and self.dirY > 0) or (self.y >= paddle.y + paddle.height and self.dirY < 0)):
-	# 			self.dirY *= -1
-	# 		else:
-	# 			self.dirX *= -1
+	def __calculate_position(self, game):
+		future_x = self.x
+		future_y = self.y
+		future_x += self.dirX * (self.speed * ((self.time_now - self.last_call) / 20))
+		future_y += self.dirY * (self.speed * ((self.time_now - self.last_call) / 20))
+		if future_y >= self.game.height or future_y <=0 :
+			self.__correct_position_y()
+		else:
+			self.y = future_y
+		if future_x >= 780 or future_x <= 10:
+			self.__correct_position_x(game)
+		else:
+			self.x = future_x
 
-
-# class BallData:
-# 	def __init__(self, x, y, dirX, dirY, radius, speed, start_speed):
-# 		self.x = x
-# 		self.y = y
-# 		self.dirX = dirX
-# 		self.dirY = dirY
-# 		self.radius = radius
-# 		self.speed = speed
-# 		self.start_speed = start_speed
-# 	def update(self, game):
-# 		self.x = game.x
-# 		self.y = game.y
-# 		self.radius = game.radius
-# 		self.speed = game.speed
-# 		self.start_speed = game.start_speed
-# 		self.dirX = game.dirX
-# 		self.dirY = game.dirY
-
-
-# gData = GameData(width=800, height=500, paddlePadding=10,\
-# 				#  leftPaddleX=10, leftPaddleY=20, leftPaddleWidth=10, leftPaddleHeight=50, leftPaddleSpeed=0, leftPaddlestart_speed=15,\
-# 				#  rightPaddleX=780, rightPaddleY=20, rightPaddleWidth=10, rightPaddleHeight=50, rightPaddleSpeed=0 , rightPaddlestart_speed=15,\
-# 				#  ballX=400, ballY=250, ballDirX=1, ballDirY=0.75, ballRadius=4, ballSpeed=4, ballstart_speed=4, player1S=0, player2S=0)
-
+	def __correct_position_y(self) :
+		time_divided = ((self.time_now - self.last_call))
+		print("===========================================")
+		print("future Y:", self.dirY * (self.speed/20) * time_divided)
+		while (time_divided > 0):
+			self.y += self.dirY * (self.speed / 20)
+			time_divided -= 1
+			if (self.y > self.game.height or self.y < 0):
+				self.dirY *= -1
+				break
+		self.y += self.dirY * (self.speed/20) * time_divided
+		print("after changing:", self.y)
+		print("===========================================")
+	
+	def __correct_position_x(self, game) :
+		time_divided = ((self.time_now - self.last_call))
+		print("===========================================")
+		print("X:", self.x)
+		while (time_divided > 0):
+			self.x += self.dirX * (self.speed / 20)
+			time_divided -= 1
+			if (self.x <= 10 or self.x >= 780):
+				self.__check_paddle_collision()
+				break
+		self.x += self.dirX * (self.speed/20) * time_divided
+		print("after changing:", self.x)
+		print("===========================================")
+		self.__check_border_collision(game)
