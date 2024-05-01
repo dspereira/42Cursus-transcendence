@@ -1,7 +1,8 @@
 from django.utils import timezone
-from custom_utils.jwt_utils import TokenGenerator
+from custom_utils.jwt_utils import TokenGenerator, JwtData
 from custom_utils.email_utils import EmailSender
 from user_auth.models import BlacklistToken
+from datetime import datetime
 
 def login(response, user):
 	user.last_login = timezone.now()
@@ -33,8 +34,15 @@ def update_blacklist(access_token_data, refresh_token_data):
 			print(f"Error refresh token: {e}")
 
 def send_email_verification(user):
-	# token_gen = _generate_email_verification_token(user_id=user_id)
-	EmailSender().send_email_verification(receiver_email=user.email)
+	token_gen = _generate_email_verification_token(user_id=user.id)
+	token = token_gen.get_email_verification_token()
+	EmailSender().send_email_verification(receiver_email=user.email, token=token)
+
+def is_jwt_token_valid(token: str):
+	jwt_data = JwtData(token=token)
+	if jwt_data:
+		return True
+	return False
 
 def _generate_tokens(user_id):
 	token_gen = TokenGenerator(user_id)

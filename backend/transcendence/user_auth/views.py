@@ -9,6 +9,7 @@ from .auth_utils import logout as user_logout
 from .auth_utils import refresh_token as user_refresh_token
 from .auth_utils import update_blacklist
 from .auth_utils import send_email_verification
+from .auth_utils import is_jwt_token_valid
 
 from custom_utils.models_utils import ModelManager
 
@@ -140,12 +141,17 @@ def validate_email(request):
 	
 	message = "Empty Body!"
 	validation_status = False
-	
-	email = request.POST.get('email')
-	email_token = request.POST.get('email_token')
+	email_token = None
 
-	if email and email_token:
+	if request.body:
+		req_data = json.loads(request.body);
+		email_token = req_data["email_token"]
+
+	if email_token:
 		message = f"Body with content !"
-		validation_status = True
 
-	return JsonResponse({"message": message,"email": email, "email_token": email_token, "validation_status": validation_status})
+		if is_jwt_token_valid(email_token):
+			validation_status = True
+
+	return JsonResponse({"message": message, "email_token": email_token, "validation_status": validation_status})
+	# return JsonResponse({"message": "Try better next Time!"})
