@@ -12,11 +12,7 @@ email_verification_html = """<!DOCTYPE html>
 			<td style="text-align: center;">
 				<h1>Email Verification</h1>
 				<p>Please click the button below to verify your email address.</p>
-				<form id="verificationForm" method="POST" action="http://127.0.0.1:8000/api/auth/validate_email">
-					<input type="hidden" name="email" value="{user_email}">
-					<input type="hidden" name="email_token" value="{email_token}">
-					<button type="submit" style="background-color: #4CAF50; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; text-decoration: none;">Verify Email</button>
-				</form>
+				<a href="{email_verify_url}" style="display: inline-block; background-color: #4CAF50; color: white; padding: 10px 20px; border-radius: 5px; text-decoration: none;">Verify Email</a>
 			</td>
 		</tr>
 	</table>

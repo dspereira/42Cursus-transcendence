@@ -18,8 +18,8 @@ class EmailSender:
 			html_content=content
 		)
 
-	def send_email_verification(self, receiver_email: str):
-		content = self._body_generator.get_email_verication(user_email=receiver_email)
+	def send_email_verification(self, receiver_email: str, token):
+		content = self._body_generator.get_email_verication(token=token)
 		return self._sender(
 			type=TYPE_EMAIL_VERIFICATION,
 			receiver_email=receiver_email,
