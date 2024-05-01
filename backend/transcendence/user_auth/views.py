@@ -10,6 +10,8 @@ from .auth_utils import refresh_token as user_refresh_token
 from .auth_utils import update_blacklist
 from .auth_utils import send_email_verification
 from .auth_utils import is_jwt_token_valid
+from .auth_utils import get_jwt_data
+from .auth_utils import add_email_token_to_blacklist
 
 from custom_utils.models_utils import ModelManager
 
@@ -149,9 +151,18 @@ def validate_email(request):
 
 	if email_token:
 		message = f"Body with content !"
+		email_token_data = get_jwt_data(email_token)
 
-		if is_jwt_token_valid(email_token):
-			validation_status = True
+		if email_token_data:
+			if email_token_data.type == "email_verification":
+				user_model = ModelManager(User)
+				user = user_model.get(id=email_token_data.sub)
+				if user and user.email_validation == False:
+					user.email_validation = True
+					user.save()
+					validation_status = True
+				elif user and user.email_validation == True:
+					validation_status = True
+			add_email_token_to_blacklist(email_token_data)
 
-	return JsonResponse({"message": message, "email_token": email_token, "validation_status": validation_status})
-	# return JsonResponse({"message": "Try better next Time!"})
+	return JsonResponse({"message": message, "validation_status": validation_status})
