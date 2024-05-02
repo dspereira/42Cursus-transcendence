@@ -53,6 +53,9 @@ def login(request):
 		user = authenticate(request, email_username=username, password=password)
 		if not user:
 			return JsonResponse({"message": "Invalid credentials. Please check your username or password."}, status=401)
+		if not user.active:
+			send_email_verification(user=user)
+			return JsonResponse({"message": "Check your mail box to verify your email."}, status=401)
 		response = user_login(JsonResponse({"message": "success"}), user)
 		return response
 	return JsonResponse({"message": "Empty request body"}, status=400)
