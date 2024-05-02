@@ -9,4 +9,8 @@ urlpatterns = [
     path("info", views.info, name="info"),
     path("user_info", views.apiGetUserInfo, name="apiUserInfo"),
     path("users_list", views.apiGetUsersList, name="apiUsersList"),
+    
+    path("id", views.get_user_id, name="id"),
+    path("username", views.get_username, name="username"),
+    path("email", views.get_user_email, name="email"),
 ]

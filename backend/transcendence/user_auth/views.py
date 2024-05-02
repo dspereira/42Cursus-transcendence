@@ -132,3 +132,60 @@ def apiGetUsersList(request):
 	response = {"message": result_print, "users_count": users_count, "users_list": users_data}
 
 	return JsonResponse(response)
+
+
+# Test views
+@login_required
+def get_user_id(request):
+	user_model = ModelManager(User)
+	if request.access_data:
+		user = user_model.get(id=request.access_data.sub)
+	else:
+		user = None
+
+	if user:
+		id = user.id
+	else:
+		return JsonResponse({"message": "No data, some errors occurred"})
+		
+	res_data = {
+		"user_id": id
+	}
+	return JsonResponse(res_data)
+
+@login_required
+def get_username(request):
+	user_model = ModelManager(User)
+	if request.access_data:
+		user = user_model.get(id=request.access_data.sub)
+	else:
+		user = None
+
+	if user:
+		username = user.username
+	else:
+		return JsonResponse({"message": "No data, some errors occurred"})
+		
+	res_data = {
+		"username": username
+	}
+	return JsonResponse(res_data)
+
+
+@login_required
+def get_user_email(request):
+	user_model = ModelManager(User)
+	if request.access_data:
+		user = user_model.get(id=request.access_data.sub)
+	else:
+		user = None
+
+	if user:
+		email = user.email
+	else:
+		return JsonResponse({"message": "No data, some errors occurred"})
+		
+	res_data = {
+		"email": email
+	}
+	return JsonResponse(res_data)
