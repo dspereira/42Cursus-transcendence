@@ -2,23 +2,23 @@ import random
 import time
 
 class ballEngine:
-	def __init__(self, Gamewidth, Gameheight):
+	def __init__(self, Game_width, Game_height):
 
 		self.x = 400
 		self.y = 250
-		self.dirX = 1
-		self.dirY = 0.75
+		self.x_dir = 1
+		self.y_dir = 0.75
 		self.radius = 4
 		self.speed = 4
 		self.start_speed = 4
-		self.gameWidth = Gamewidth
-		self.gameHeight = Gameheight
+		self.game_width = Game_width
+		self.game_height = Game_height
 		self.last_call = int(round(time.time() * 1000))
 
-	def update(self, leftPaddle, rightPaddle, score):
+	def update(self, Left_paddle, Right_paddle, score):
 
-		self.leftPaddle = leftPaddle
-		self.rightPaddle = rightPaddle
+		self.left_paddle = Left_paddle
+		self.right_paddle = Right_paddle
 		self.time_now = int(round(time.time() * 1000))
 
 		self._check_paddle_collision()
@@ -30,48 +30,48 @@ class ballEngine:
 
 	def _check_paddle_collision(self):
 
-		if (((self.y + self.radius >= self.leftPaddle.y and self.y - self.radius <= self.leftPaddle.y + self.leftPaddle.height)
-			and self.x + self.dirX - self.radius <= self.leftPaddle.x + self.leftPaddle.width) or
-			((self.y + self.radius >= self.rightPaddle.y and self.y - self.radius <= self.rightPaddle.y + self.rightPaddle.height)
-			and self.x + self.dirX + self.radius >= self.rightPaddle.x)):
-				if (self.x < self.gameWidth / 2):
-					targetPaddle = self.leftPaddle
-					self.x = targetPaddle.x + targetPaddle.width + self.radius
+		if (((self.y + self.radius >= self.left_paddle.y and self.y - self.radius <= self.left_paddle.y + self.left_paddle.height)
+			and self.x + self.x_dir - self.radius <= self.left_paddle.x + self.left_paddle.width) or
+			((self.y + self.radius >= self.right_paddle.y and self.y - self.radius <= self.right_paddle.y + self.right_paddle.height)
+			and self.x + self.x_dir + self.radius >= self.right_paddle.x)):
+				if (self.x < self.game_width / 2):
+					target_paddle = self.left_paddle
+					self.x = target_paddle.x + target_paddle.width + self.radius
 				else:
-					targetPaddle = self.rightPaddle
-					self.x = self.rightPaddle.x - self.radius
-				self.dirX *= -1
+					target_paddle = self.right_paddle
+					self.x = self.right_paddle.x - self.radius
+				self.x_dir *= -1
 				if self.speed < 9:
 					self.speed += 1
-				if self.y >= (targetPaddle.y + (targetPaddle.height / 2)):
-					self.dirY = random.uniform(0.01,1)
-				elif self.y < (targetPaddle.y + (targetPaddle.height / 2)):
-					self.dirY = random.uniform(-0.01, -1)
+				if self.y >= (target_paddle.y + (target_paddle.height / 2)):
+					self.y_dir = random.uniform(0.01,1)
+				elif self.y < (target_paddle.y + (target_paddle.height / 2)):
+					self.y_dir = random.uniform(-0.01, -1)
 
 
 	def _check_border_collision(self, score):
 
-		if ((self.x + self.dirX + self.radius >= self.gameWidth) or (self.x + self.dirX - self.radius <= 0)):
-			if self.x + self.dirX - self.radius <= 0:
+		if ((self.x + self.x_dir + self.radius >= self.game_width) or (self.x + self.x_dir - self.radius <= 0)):
+			if self.x + self.x_dir - self.radius <= 0:
 				score[1] +=1
-			if self.x + self.dirX + self.radius >= self.gameWidth:
+			if self.x + self.x_dir + self.radius >= self.game_width:
 				score[0] +=1
-			self.dirX *= -1
-			self.x = self.gameWidth / 2
-			self.y = self.gameHeight / 2
+			self.x_dir *= -1
+			self.x = self.game_width / 2
+			self.y = self.game_height / 2
 			self.speed = self.start_speed
-		if (self.y + self.dirY + self.radius >= self.gameHeight or self.y + self.dirY - self.radius <= 0):
-			self.dirY *= -1
+		if (self.y + self.y_dir + self.radius >= self.game_height or self.y + self.y_dir - self.radius <= 0):
+			self.y_dir *= -1
 
 
 	def _calculate_position(self, score):
 
 		future_x = self.x
 		future_y = self.y
-		future_x += self.dirX * (self.speed * ((self.time_now - self.last_call) / 20))
-		future_y += self.dirY * (self.speed * ((self.time_now - self.last_call) / 20))
+		future_x += self.x_dir * (self.speed * ((self.time_now - self.last_call) / 20))
+		future_y += self.y_dir * (self.speed * ((self.time_now - self.last_call) / 20))
 
-		if future_y >= self.gameHeight or future_y <=0 :
+		if future_y >= self.game_height or future_y <=0 :
 			self._correct_position_y()
 		else:
 			self.y = future_y
@@ -86,12 +86,12 @@ class ballEngine:
 		time_divided = ((self.time_now - self.last_call))
 
 		while (time_divided > 0):
-			self.y += self.dirY * (self.speed / 20)
+			self.y += self.y_dir * (self.speed / 20)
 			time_divided -= 1
-			if (self.y > self.gameHeight or self.y < 0):
-				self.dirY *= -1
+			if (self.y > self.game_height or self.y < 0):
+				self.y_dir *= -1
 				break
-		self.y += self.dirY * (self.speed/20) * time_divided
+		self.y += self.y_dir * (self.speed/20) * time_divided
 	
 
 	def _correct_position_x(self, score):
@@ -99,10 +99,10 @@ class ballEngine:
 		time_divided = ((self.time_now - self.last_call))
 
 		while (time_divided > 0):
-			self.x += self.dirX * (self.speed / 20)
+			self.x += self.x_dir * (self.speed / 20)
 			time_divided -= 1
 			if (self.x <= 10 or self.x >= 780):
 				self._check_paddle_collision()
 				break
-		self.x += self.dirX * (self.speed/20) * time_divided
+		self.x += self.x_dir * (self.speed/20) * time_divided
 		self._check_border_collision(score)

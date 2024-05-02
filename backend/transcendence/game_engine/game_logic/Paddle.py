@@ -1,21 +1,21 @@
 class Paddle:
-	def __init__(self, Gameheight, X):
-		self.gameHeight = Gameheight
+	def __init__(self, Game_height, X):
+		self.game_height = Game_height
 		self.x = X
 		self.y = 250
 		self.width = 10
 		self.height = 50
 		self.speed = 0
-		self.maxSpeed = 7
+		self.max_speed = 7
 
 	def update(self, keys):
 
-		self.speed = vertical(keys) * self.maxSpeed
+		self.speed = vertical(keys) * self.max_speed
 		self.y += self.speed
 		if self.y < 0:
 			self.y = 0
-		elif (self.y > self.gameHeight - self.height):
-			self.y = self.gameHeight - self.height
+		elif (self.y > self.game_height - self.height):
+			self.y = self.game_height - self.height
 
 
 def vertical(keys) :
