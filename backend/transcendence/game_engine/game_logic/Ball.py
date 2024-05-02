@@ -11,9 +11,11 @@ class ballEngine:
 		self.radius = 4
 		self.speed = 4
 		self.start_speed = 4
+		self.max_speed = 14
 		self.game_width = Game_width
 		self.game_height = Game_height
 		self.last_call = int(round(time.time() * 1000))
+
 
 	def update(self, Left_paddle, Right_paddle, score):
 
@@ -41,7 +43,7 @@ class ballEngine:
 					target_paddle = self.right_paddle
 					self.x = self.right_paddle.x - self.radius
 				self.x_dir *= -1
-				if self.speed < 9:
+				if self.speed < self.max_speed:
 					self.speed += 1
 				if self.y >= (target_paddle.y + (target_paddle.height / 2)):
 					self.y_dir = random.uniform(0.01,1)

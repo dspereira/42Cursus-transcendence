@@ -47,13 +47,8 @@ function sendKeys(keys, id, time) {
 	})
 	.then(response => response.json())
 	.then ((data) => {
-		// if (id == -1)
-		// 	console.log("SCORE : " + player1_Score + " | " + player2_Score);
-
-		// console.log("TEST = ", leftPaddle_y);
 		leftPaddle_y = data["left_coords"];
 		rightPaddle_y = data["right_coords"];
-		// console.log(data["right_coords"])
 		ball_x = data["ball_x"];
 		ball_y = data["ball_y"];
 		player1_Score = data["player1_score"];
@@ -75,31 +70,49 @@ class Game {
 		this.leftInput = new InputHandler("w", "s", "a", "d", 0);
 		this.rightInput = new InputHandler("ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight", 1);
 	}
-	draw(context){
-		// console.log("[PRINTING] BALLX = ", this.ball.x);
-		this.leftPaddle.y = leftPaddle_y;
-		this.rightPaddle.y = rightPaddle_y;
-		this.ball.x = ball_x;
-		this.ball.y = ball_y;
+	draw(context)
+	{
+		context.fillStyle = "black";
+		context.fillRect(0,0, this.width, this.height);
+		context.fillStyle = "white";
+
+		for (let y = 5; y < this.height; y += 25) {
+			context.fillRect(this.width / 2 - 1, y, 2, 12.5); // by this order: (center of the screen, I = position(y), 2 = width, 12.5 = height)
+		}
+
 		this.ball.draw(context);
 		this.leftPaddle.draw(context);
 		this.rightPaddle.draw(context);
+		
 		this.scoreBoard(context);
 	}
-	scoreBoard(context){
-		context.font = "22px Arial"
-		context.fillStyle = "rgb(0 0 0 / 75%)"
-		context.fillText(Number(player1_Score), this.width/2 - 30, 30)
-		context.fillRect(this.width/2 - 5, 22, 5, 4);
-		context.fillText(Number(player2_Score), this.width/2 + 10, 30)
-		context.fillStyle = "black"
+
+	scoreBoard(context)
+	{
+		const scoreMargin = 60; // Margin between scoreboard and top edge of the player's field
+		const scoreSpacing_x = 20; // Spacing between the score text and the vertical line
+
+		const player1ScoreText = Number(player1_Score).toString();
+		const player1ScoreX = this.width / 4 - context.measureText(player1ScoreText).width / 2 - scoreSpacing_x;
+		context.font = '30px Consolas'
+		context.fillText(player1ScoreText, player1ScoreX, scoreMargin);
+
+		const player2ScoreText = Number(player2_Score).toString();
+		const player2ScoreX = (this.width * 3 / 4) - context.measureText(player2ScoreText).width / 2 + scoreSpacing_x;
+		context.fillText(player2ScoreText, player2ScoreX, scoreMargin);
+
 	}
+
 	async checkKeyInputs() {
 		if (this.rightInput.keys.length > 0 )
 			sendKeys(this.rightInput.keys, this.rightInput.id);
 		if (this.leftInput.keys.length > 0)
 			sendKeys(this.leftInput.keys, this.leftInput.id);
 		sendKeys(null, -1);
+		this.leftPaddle.y = leftPaddle_y;
+		this.rightPaddle.y = rightPaddle_y;
+		this.ball.x = ball_x;
+		this.ball.y = ball_y;
 	}
 }
 

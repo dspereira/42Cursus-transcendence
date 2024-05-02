@@ -8,8 +8,8 @@ class Game:
 			self.height = 500
 			self.score = [0,0]
 			self.ball = ballEngine(self.width, self.height)
-			self.right_Paddle = Paddle(self.height, 780)
-			self.left_Paddle = Paddle(self.height, 10)
+			self.right_Paddle = Paddle(self.height, X=780)
+			self.left_Paddle = Paddle(self.height, X=10)
 
 
 		def update(self, keys, player_id):
