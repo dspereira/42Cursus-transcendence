@@ -25,3 +25,12 @@ def refresh(request):
 
 def email_verification(request):
 	return render(request, "login_test/email_verify.html")
+
+def email_sended(request):
+	return render(request, "login_test/email_sended.html")
+
+def email_already_verified(request):
+	return render(request, "login_test/email_already_verified.html")
+
+def resend_email_verification(request):
+	return render(request, "login_test/resend_email_verification.html")

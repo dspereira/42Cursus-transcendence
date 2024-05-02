@@ -9,7 +9,6 @@ from .auth_utils import logout as user_logout
 from .auth_utils import refresh_token as user_refresh_token
 from .auth_utils import update_blacklist
 from .auth_utils import send_email_verification
-from .auth_utils import is_jwt_token_valid
 from .auth_utils import get_jwt_data
 from .auth_utils import add_email_token_to_blacklist
 
@@ -142,7 +141,7 @@ def apiGetUsersList(request):
 def validate_email(request):
 	
 	message = "Empty Body!"
-	validation_status = False
+	validation_status = "fail"
 	email_token = None
 
 	if request.body:
@@ -157,12 +156,41 @@ def validate_email(request):
 			if email_token_data.type == "email_verification":
 				user_model = ModelManager(User)
 				user = user_model.get(id=email_token_data.sub)
-				if user and user.email_validation == False:
-					user.email_validation = True
+				if user and user.active == False:
+					user.active = True
 					user.save()
-					validation_status = True
-				elif user and user.email_validation == True:
-					validation_status = True
+					validation_status = "validated"
+				elif user and user.active == True:
+					validation_status = "active"
 			add_email_token_to_blacklist(email_token_data)
 
 	return JsonResponse({"message": message, "validation_status": validation_status})
+
+@accepted_methods(["POST"])
+def send_verification_email(request):
+	message = "Empty Body!"
+	email = None
+	status = None
+
+	if request.body:
+		req_data = json.loads(request.body);
+		email = req_data["email"]
+
+	if email:
+		user_model = ModelManager(User)
+		user = user_model.get(email=email)
+		if user and user.active == False:
+			send_email_verification(user=user)
+			status = "sended"
+			message = "Verification email was sended."
+		elif user and user.active == True:
+			status = "verified"
+			message = "User email is already verified."
+		else:
+			status = "invalid_email"
+			message = "User email does not exist."
+
+	else:
+		message = "Invalid Email Data"
+
+	return JsonResponse({"message": message, "status": status})

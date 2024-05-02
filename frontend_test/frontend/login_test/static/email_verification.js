@@ -6,34 +6,41 @@ document.addEventListener("DOMContentLoaded", function() {
 
 	console.log("Pagina HTML totalmente carregada !")
 
-	let result = true;
-
 	const urlParams = new URLSearchParams(window.location.search);
 	const token = urlParams.get('email_token');
+	let type = null
 
-	function updatePage(result) {
-		var container = document.getElementById("container");
-		var header = document.getElementById("header_1");
-		var paragraph = document.getElementById("paragraph");
-		var link = document.getElementById("link");
-		var emailIcon = document.getElementById("email_icon");
+	let container = document.getElementById("container");
+	let header = document.getElementById("header_1");
+	let paragraph = document.getElementById("paragraph");
+	let link = document.getElementById("link");
+	let emailIcon = document.getElementById("email_icon");
 
-		if (result) {
+	function updatePage(type)
+	{
+		if (type == "success")
+		{
 			container.classList.add("success-container");
 			container.classList.remove("error-container");
+			container.classList.remove("resended-container");
 			header.textContent = "Email Verification Success";
 			paragraph.textContent = "Your email has been successfully verified.";
 			link.textContent = "Continue";
-			link.href = "/"; // URL para redirecionar em caso de sucesso
-			emailIcon.src = "/static/images/email_success.png"; // Troca a imagem de sucesso
-		} else {
-			container.classList.add("error-container");
+			link.href = "/";
+			link.style.display = "block";
+			emailIcon.src = "/static/images/email_success.png";
+		}
+		else
+		{
 			container.classList.remove("success-container");
+			container.classList.add("error-container");
+			container.classList.remove("resended-container");
 			header.textContent = "Email Verification Failure";
 			paragraph.textContent = "Sorry, we couldn't verify your email.";
 			link.textContent = "Retry";
-			link.href = "/"; // URL para redirecionar em caso de falha
-			emailIcon.src = "/static/images/email_fail.png"; // Troca a imagem de falha
+			link.href = "/resend_email_verification";
+			link.style.display = "block";
+			emailIcon.src = "/static/images/email_fail.png";
 		}
 	}
 
@@ -56,12 +63,15 @@ document.addEventListener("DOMContentLoaded", function() {
 		{
 			console.log(data)
 
-			if (data["validation_status"] === true)
-				result = true
+			if (data["validation_status"] === "validated")
+				type = "success"
+			else if (data["validation_status"] === "active")
+				window.location.href = "/email_already_verified"
 			else
-				result = false
+				type = "fail"
 
-				updatePage(result);
+			if (type)
+				updatePage(type);
 		}
 		else
 			console.log("Data is Empty")

@@ -11,4 +11,5 @@ urlpatterns = [
     path("users_list", views.apiGetUsersList, name="apiUsersList"),
 
     path("validate_email", views.validate_email, name="validate_email"),
+    path("send_verification_email", views.send_verification_email, name="send_verification_email"),
 ]

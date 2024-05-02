@@ -1,9 +1,9 @@
 body {
 	background-color: #f0f2f5;
 	font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  }
-  
-  .container {
+}
+
+.container {
 	max-width: 400px;
 	padding: 30px;
 	background-color: #fff;
@@ -11,53 +11,56 @@ body {
 	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 	text-align: center;
 	margin: 50px auto;
-  }
-  
-  .container img {
+}
+
+.container img {
 	width: 80px;
 	margin-bottom: 20px;
-  }
-  
-  h1 {
+}
+
+h1 {
 	font-size: 32px;
 	font-weight: bold;
 	margin-bottom: 20px;
-  }
-  
-  h1 span {
+}
+
+h1 span {
 	display: block;
-  }
-  
-  h1 span.success {
+}
+
+h1 span.success {
 	color: #43b581;
-  }
-  
-  h1 span.failure {
+}
+
+h1 span.failure {
 	color: #f04747;
-  }
-  
-  p {
+}
+
+p {
 	color: #333;
 	margin-bottom: 20px;
-  }
-  
-  .btn-primary {
+}
+
+.btn-primary {
 	background-color: #7289da;
 	border-color: #7289da;
 	color: #fff;
 	text-decoration: none;
-  }
-  
-  .btn-primary:hover {
+}
+
+.btn-primary:hover {
 	background-color: #677bc4;
 	border-color: #677bc4;
-  }
-  
-  .error-container {
+}
+
+.error-container {
 	background-color: #f04747;
-  }
-  
-  .success-container {
+}
+
+.success-container {
 	background-color: #43b581;
-  }
-  
+}
+
+.resended-container {
+	background-color: #ca9400;
+}

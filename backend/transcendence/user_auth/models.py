@@ -35,7 +35,7 @@ class User(AbstractBaseUser):
 	email = models.EmailField(("email address"), unique=True)
 	username = models.CharField(max_length=50, blank=False, null=False, unique=True)
 	objects = UserManager()
-	email_validation = models.BooleanField(default=False)
+	active = models.BooleanField(default=False)
 
 	class Meta:
 		db_table = 'auth_user'
