@@ -9,6 +9,7 @@ const styles = `
 `;
 
 const html = `
+
 <app-header></app-header>
 <a href="/login/">Login</a>
 <h1>Home Page</h1>
@@ -19,6 +20,7 @@ const html = `
 <h2 class="username"></h1>
 <h2 class="email"></h1>
 <span class="user">user: teste</span>
+
 `;
 
 
@@ -29,44 +31,17 @@ export default class PageHome extends HTMLElement {
 
 	constructor() {
 		super()
-
-		this.data = {};
-
 		this.#loadData();
-		
-		
+		this.#initComponent();
+	}
 
-		console.log(`start component: ${PageHome.#componentName}`);
-		document.querySelector("head title").textContent = title;
+	#initComponent() {
 		this.elmtId = `elmtId_${Math.floor(Math.random() * 100000000000)}`;
-		const elmBody = document.createElement("div");
-		elmBody.classList.add(`${this.elmtId}`);
-		const styles = document.createElement("style");
-		styles.textContent = this.#styles();
-		elmBody.innerHTML = this.#html();
-
-
-		this.html = elmBody;
-		this.styles = styles;
-		//this.appendChild(styles);
-		//this.appendChild(elmBody);
-		
-
-		/*
-		console.log("start component");
-		document.querySelector("head title").textContent = title;
-		this.elmtId = `elmtId_${Math.floor(Math.random() * 100000000000)}`;
-		const elmBody = document.createElement("div");
-		elmBody.classList.add(`${this.elmtId}`);
-		const styles = document.createElement("style");
-		styles.textContent = this.#styles();
-		elmBody.innerHTML = this.#html();
-		this.appendChild(styles);
-		this.appendChild(elmBody);
-		this.#script();
-		*/
-
-	
+		this.html = document.createElement("div");
+		this.html.classList.add(`${this.elmtId}`);
+		this.styles = document.createElement("style");
+		this.styles.textContent = this.#styles();
+		this.html.innerHTML = this.#html();
 	}
 
 	#styles() {
@@ -77,17 +52,7 @@ export default class PageHome extends HTMLElement {
 		return html;
 	}
 
-	#script() {
-
-	}
-
-	#updateData() {
-
-	}
-
 	#render() {
-		console.log("Render Page");
-
 		this.appendChild(this.styles);
 		this.appendChild(this.html);
 	}
@@ -99,6 +64,14 @@ export default class PageHome extends HTMLElement {
 		this.html.querySelector(".test").setAttribute("message", this.data['username']);
 	}
 
+	#handleApiData(data) {
+		this.data = {
+			"id": data[1].user_id,
+			"username": data[2].username,
+			"email": data[3].email
+		}
+	}
+
 	async #callAPI(method, url) {
 		try {
 			const res = await fetch(url, {
@@ -106,27 +79,23 @@ export default class PageHome extends HTMLElement {
 				method: method
 			});
 			const data = await res.json();
-			//console.log(data);
 			return data;
 		}
 		catch {
-			console.log("Error: Failed to fetch");
+			// very what is the best way to handle this errors
+			console.log("Error: Call API");
+			return null;
 		}
 	}
 
 	async #loadData() {
-		const [info, id, username, email] = await Promise.all([
+		const data = await Promise.all([
 			this.#callAPI("GET", "http://127.0.0.1:8000/api/auth/info"),
 			this.#callAPI("GET", "http://127.0.0.1:8000/api/auth/id"),
 			this.#callAPI("GET", "http://127.0.0.1:8000/api/auth/username"),
 			this.#callAPI("GET", "http://127.0.0.1:8000/api/auth/email")
 		]);
-
-		this.data = {
-			"id": id.user_id,
-			"username": username.username,
-			"email": email.email
-		}
+		this.#handleApiData(data);
 		this.#updateHtml();
 		this.#render();
 	}

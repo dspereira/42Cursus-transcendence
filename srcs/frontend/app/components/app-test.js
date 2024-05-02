@@ -40,7 +40,6 @@ export default class AppTest extends HTMLElement {
 	}
 
 	attributeChangedCallback(name, oldValue, newValue) {
-		console.log(`Old Value: ${oldValue}. New Value: ${newValue}.`);
 		this.querySelector("h1").textContent = newValue;
 	}
 
