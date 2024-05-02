@@ -31,6 +31,3 @@ def email_sended(request):
 
 def email_already_verified(request):
 	return render(request, "login_test/email_already_verified.html")
-
-def resend_email_verification(request):
-	return render(request, "login_test/resend_email_verification.html")

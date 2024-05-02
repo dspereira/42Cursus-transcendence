@@ -69,6 +69,11 @@
 
 					if (data["message"] == "success")
 						msgElm.classList.add("success");
+					else if (data["message"] == "check_mail_box")
+					{
+						window.location.href = "/email_sended"
+						msgElm.classList.add("error");
+					}
 					else
 						msgElm.classList.add("error");
 				})

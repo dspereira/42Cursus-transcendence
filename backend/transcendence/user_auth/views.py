@@ -55,7 +55,7 @@ def login(request):
 			return JsonResponse({"message": "Invalid credentials. Please check your username or password."}, status=401)
 		if not user.active:
 			send_email_verification(user=user)
-			return JsonResponse({"message": "Check your mail box to verify your email."}, status=401)
+			return JsonResponse({"message": "check_mail_box"}, status=401)
 		response = user_login(JsonResponse({"message": "success"}), user)
 		return response
 	return JsonResponse({"message": "Empty request body"}, status=400)
@@ -168,32 +168,3 @@ def validate_email(request):
 			add_email_token_to_blacklist(email_token_data)
 
 	return JsonResponse({"message": message, "validation_status": validation_status})
-
-@accepted_methods(["POST"])
-def send_verification_email(request):
-	message = "Empty Body!"
-	email = None
-	status = None
-
-	if request.body:
-		req_data = json.loads(request.body);
-		email = req_data["email"]
-
-	if email:
-		user_model = ModelManager(User)
-		user = user_model.get(email=email)
-		if user and user.active == False:
-			send_email_verification(user=user)
-			status = "sended"
-			message = "Verification email was sended."
-		elif user and user.active == True:
-			status = "verified"
-			message = "User email is already verified."
-		else:
-			status = "invalid_email"
-			message = "User email does not exist."
-
-	else:
-		message = "Invalid Email Data"
-
-	return JsonResponse({"message": message, "status": status})

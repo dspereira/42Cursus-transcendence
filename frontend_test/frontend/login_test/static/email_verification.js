@@ -38,7 +38,7 @@ document.addEventListener("DOMContentLoaded", function() {
 			header.textContent = "Email Verification Failure";
 			paragraph.textContent = "Sorry, we couldn't verify your email.";
 			link.textContent = "Retry";
-			link.href = "/resend_email_verification";
+			link.href = "/login";
 			link.style.display = "block";
 			emailIcon.src = "/static/images/email_fail.png";
 		}
