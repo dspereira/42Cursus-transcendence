@@ -11,6 +11,21 @@
 <body>
 	<canvas id ="canvas1" width="800" height="500"></canvas>
 	<script type="module" src="{% static 'main.js' %}"></script>
+	<style>
+		#canvas1 {
+			/* width: 1500px; */
+			border: 5px solid white;
+			position: absolute;
+			top: 50%;
+			left: 50%;
+			transform: translate(-50%, -50%);
+			max-width: 100%;
+			max-height: 100%;
+		}
+		body {
+			font-family: 'Silkscreen', sans-serif;
+		}
+	</style>
 	<script>
 
 			const jsonData = {

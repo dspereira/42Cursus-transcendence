@@ -1,5 +1,14 @@
 from django.db import models
 
+
+# id player 1
+# id player 2
+# score player 1
+# score player 2
+# game status (paused, ongoing)
+# winner
+
+
 # Create your models here.
 
 """
