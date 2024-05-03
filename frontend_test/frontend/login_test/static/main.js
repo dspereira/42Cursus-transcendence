@@ -41,7 +41,6 @@ function sendKeys(keys, id, time) {
 		},
 		body: JSON.stringify({
 			player_id: id,
-			// ball: ball,
 			keys: keys
 		})
 	})
@@ -118,7 +117,6 @@ class Game {
 
 
 window.addEventListener('load', function(){
-	console.log("I am here");
 	const canvas = document.getElementById('canvas1')
 	const ctx = canvas.getContext("2d");
 	
