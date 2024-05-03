@@ -19,10 +19,8 @@ const html = `
 <h2 class="id"></h1>
 <h2 class="username"></h1>
 <h2 class="email"></h1>
-<span class="user">user: teste</span>
 
 `;
-
 
 const title = "Home Page";
 
@@ -61,15 +59,18 @@ export default class PageHome extends HTMLElement {
 		this.html.querySelector(".id").textContent = this.data['id'];
 		this.html.querySelector(".username").textContent = this.data['username'];
 		this.html.querySelector(".email").textContent = this.data['email'];
-		this.html.querySelector(".test").setAttribute("message", this.data['username']);
 	}
 
 	#handleApiData(data) {
 		this.data = {
-			"id": data[1].user_id,
-			"username": data[2].username,
-			"email": data[3].email
+			"id": data[0] ? data[0].user_id : null,
+			"username": data[1] ? data[1].username : null,
+			"email": data[2] ? data[2].email : null
 		}
+	}
+
+	#handleApiStatusCodeErrors(res, data) {
+		console.log(`Error: ${res.status} ${data["message"]}`);
 	}
 
 	async #callAPI(method, url) {
@@ -79,7 +80,13 @@ export default class PageHome extends HTMLElement {
 				method: method
 			});
 			const data = await res.json();
-			return data;
+			if (res.ok) {
+				return data;
+			}
+			else {
+				this.#handleApiStatusCodeErrors(res, data);
+				return null;
+			}
 		}
 		catch {
 			// very what is the best way to handle this errors
@@ -89,8 +96,10 @@ export default class PageHome extends HTMLElement {
 	}
 
 	async #loadData() {
+
+		// Arranjar maneira de configurar os pedidos à api numa estrutura e passar aqui
+
 		const data = await Promise.all([
-			this.#callAPI("GET", "http://127.0.0.1:8000/api/auth/info"),
 			this.#callAPI("GET", "http://127.0.0.1:8000/api/auth/id"),
 			this.#callAPI("GET", "http://127.0.0.1:8000/api/auth/username"),
 			this.#callAPI("GET", "http://127.0.0.1:8000/api/auth/email")
