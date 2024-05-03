@@ -1,7 +1,3 @@
-import AppHeader from "../components/app-header.js";
-import AppTest from "../components/app-test.js";
-
-
 const styles = `
 	.user {
 		font-size: 24px;

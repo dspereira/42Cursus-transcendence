@@ -1,5 +1,3 @@
-import AppHeader from "../components/app-header.js";
-
 const styles = `
 form {
 	position: relative;

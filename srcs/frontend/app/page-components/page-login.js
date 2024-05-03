@@ -1,5 +1,4 @@
-import AppHeader from "../components/app-header.js";
-import redirect from "../js/index.js";
+import {redirect} from "../js/router.js";
 
 const styles = `
 form {
