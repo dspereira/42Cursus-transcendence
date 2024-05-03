@@ -1,5 +1,4 @@
-from .Game import CANVAS_HEIGHT
-from .constantes import	CANVAS_HEIGHT, PADDLE_MAX_SPEED, PADDLE_WIDTH
+from .constantes import	CANVAS_HEIGHT, PADDLE_MAX_SPEED, PADDLE_HEIGHT
 
 class Paddle:
 
@@ -16,8 +15,8 @@ class Paddle:
 		self.y += self.speed
 		if self.y < 0:
 			self.y = 0
-		elif (self.y > CANVAS_HEIGHT - PADDLE_WIDTH):
-			self.y = CANVAS_HEIGHT - PADDLE_WIDTH
+		elif (self.y > CANVAS_HEIGHT - PADDLE_HEIGHT):
+			self.y = CANVAS_HEIGHT - PADDLE_HEIGHT
 
 
 	def _direction(self, key) :
