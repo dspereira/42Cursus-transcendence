@@ -20,17 +20,25 @@ user_db = ModelManager(User)
 
 
 def	update_DB(request):
+	
 	if request.body:
+		print("hello friendo")
 		req_data = json.loads(request.body)
 		player1 = user_db.get(id=req_data["player1_id"])
 		player2 = user_db.get(id=req_data["player2_id"])
 		if req_data["score_player1"] == 7:
-			match_db.create(user1=player1, user2=player2, user1_score=req_data["score_player1"], user2_score=req_data["score_player2"], winner=req_data["player1_id"])
+			match_db.create(user1=player1, user2=player2, user1_score=req_data["score_player1"], user2_score=req_data["score_player2"], winner=player1)
 		else:
-			match_db.create(user1=player1, user2=player2, user1_score=req_data["score_player1"], user2_score=req_data["score_player2"], winner=req_data["player2_id"])
-		match_db.save()
+			match_db.create(user1=player1, user2=player2, user1_score=req_data["score_player1"], user2_score=req_data["score_player2"], winner=player2)
+		response = {
+			"message":"successefully added"
+		}
 	else:
-		pass
+		response = {
+			"message":"failed to add"
+		}
+
+	return JsonResponse(response)
 
 
 def	player_controls(request) :
