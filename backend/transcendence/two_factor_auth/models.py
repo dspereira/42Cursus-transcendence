@@ -8,8 +8,11 @@ class BlacklistOtp(models.Model):
 		return f"Code: {self.code}"
 
 class OtpUserOptions(models.Model):
-	user_id = models.ForeignKey(to=User, db_index=True, on_delete=models.CASCADE)
+	user = models.ForeignKey(User, on_delete=models.CASCADE, db_index=True)
 	secret_key = models.CharField()
 	qr_code = models.BooleanField(default=False)
 	email = models.CharField(unique=True, null=True)
-	phone_number = models.CharField(max_length=255, unique=True, null=True)
+	phone_number = models.CharField(max_length=255, unique=True, null=True, default=None)
+
+	class Meta:
+		db_table = 'two_factor_user_config'

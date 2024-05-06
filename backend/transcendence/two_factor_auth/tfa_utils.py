@@ -83,7 +83,7 @@ def getUser(user_id):
 	return user_model.get(id=user_id)
 
 def is_configuration_in_db(user):
-	if otp_user_opt_model.get(user_id=user):
+	if otp_user_opt_model.get(user=user):
 		return True
 	return False
 
@@ -93,7 +93,7 @@ def generate_encrypted_user_secret_key():
 	return encrypted_secret_key
 
 def get_user_secret_key(user):
-	otp_user = otp_user_opt_model.get(user_id=user)
+	otp_user = otp_user_opt_model.get(user=user)
 	if otp_user:
 		encrypted_secret_key = otp_user.secret_key
 		decrypted_secret_jey = Cryptographer().decrypt_message(encrypted_message=encrypted_secret_key)
@@ -103,27 +103,32 @@ def get_user_secret_key(user):
 def create_user_options(user, qr_code, email, phone):
 	secret_key = generate_encrypted_user_secret_key()
 
-	user_email = None
 	if email:
 		user_email = user.email
+	else:
+		user_email = None
 
-	user_phone_number = None
 	if phone:
 		user_phone_number = phone
+	else:
+		user_phone_number = None
 
 	otp_user_opt_model.create(
-		user_id=user,
+		user=user,
 		secret_key=secret_key,
 		qr_code=qr_code,
 		email=user_email,
 		phone_number=user_phone_number
 	)
 
+def default_user_options(user):
+	create_user_options(user=user, qr_code=False, email=user.email, phone=False)
+
 def get_user_otp_options(user):
-	return otp_user_opt_model.get(user_id=user)
+	return otp_user_opt_model.get(user=user)
 
 def update_user_2fa_options(user, qr_code_status, email_status, phone_status, phone_value):
-	otp_user_opt = otp_user_opt_model.get(user_id=user)
+	otp_user_opt = otp_user_opt_model.get(user=user)
 	if otp_user_opt:
 
 		if qr_code_status != otp_user_opt.qr_code:
@@ -142,21 +147,21 @@ def update_user_2fa_options(user, qr_code_status, email_status, phone_status, ph
 		otp_user_opt.save()
 
 def exist_qr_code(user):
-	otp_user_opt = otp_user_opt_model.get(user_id=user)
+	otp_user_opt = otp_user_opt_model.get(user=user)
 	if otp_user_opt:
 		if otp_user_opt.qr_code:
 			return True
 	return False
 
 def exist_email(user):
-	otp_user_opt = otp_user_opt_model.get(user_id=user)
+	otp_user_opt = otp_user_opt_model.get(user=user)
 	if otp_user_opt:
 		if otp_user_opt.email:
 			return True
 	return False
 
 def exist_phone_number(user):
-	otp_user_opt = otp_user_opt_model.get(user_id=user)
+	otp_user_opt = otp_user_opt_model.get(user=user)
 	if otp_user_opt:
 		if otp_user_opt.phone_number:
 			return True
@@ -170,7 +175,7 @@ def send_smsto_user(user):
 	otp_code = generate_otp_code(user)
 	message_body = f"Authnetication Code: " + otp_code
 
-	otp_user_opt = otp_user_opt_model.get(user_id=user)
+	otp_user_opt = otp_user_opt_model.get(user=user)
 	user_phone_number = re.sub(r'\s+', '', otp_user_opt.phone_number)
 
 	client = Client(account_sid, auth_token)
@@ -183,7 +188,7 @@ def send_smsto_user(user):
 	return otp_code
 
 def send_email_to_user(user):
-	otp_user_opt = otp_user_opt_model.get(user_id=user)
+	otp_user_opt = otp_user_opt_model.get(user=user)
 	otp_code = generate_otp_code(user)
 	if EmailSender().send_verification_code(code=otp_code, receiver_email=otp_user_opt.email):
 		return True

@@ -12,7 +12,6 @@ def generateOTP(request):
 	return JsonResponse(message)
 
 @accepted_methods(["GET"])
-@login_required
 def generate_qr_code(request):
 
 	message = "Error generating QR Code"
@@ -28,7 +27,6 @@ def generate_qr_code(request):
 	return JsonResponse({"message": message, "qr_code": qr_code})
 
 @accepted_methods(["GET"])
-@login_required
 def generate_user_phone_code(request):
 
 	message = None
@@ -43,7 +41,6 @@ def generate_user_phone_code(request):
 	return JsonResponse({"message": message})
 
 @accepted_methods(["GET"])
-@login_required
 def generate_user_email_code(request):
 
 	message = "Email sended with Success!"
@@ -58,7 +55,6 @@ def generate_user_email_code(request):
 	return JsonResponse({"message": message})
 
 @accepted_methods(["POST"])
-@login_required
 def validateOTP(request):
 
 	message = "Invalid Code"
@@ -88,7 +84,6 @@ def validateOTP(request):
 	return JsonResponse({"message": message, "valid": is_valid})
 
 @accepted_methods(["POST"])
-@login_required
 def validateOTP_QR_Code(request):
 
 	message = "Invalid Code"
@@ -126,7 +121,6 @@ def get_all_used_otps(request):
 	return JsonResponse(response_msg)
 
 @accepted_methods(["GET"])
-@login_required
 def is_already_configured(request):
 
 	if request.access_data:
@@ -138,7 +132,6 @@ def is_already_configured(request):
 		return JsonResponse({"message": "Need to be Configured", "already_configured": False})
 
 @accepted_methods(["POST"])
-@login_required
 def configuration(request):
 
 	message = "Empty Body Content"
@@ -175,7 +168,6 @@ def configuration(request):
 	return JsonResponse({"message": message, "valid_input": valid_input})
 
 @accepted_methods(["GET"])
-@login_required
 def get_current_settings(request):
 
 	message = None
@@ -215,7 +207,6 @@ def get_current_settings(request):
 	return JsonResponse({"message": message, "user_settings": user_settings})
 
 @accepted_methods(["POST"])
-@login_required
 def update_configurations(request):
 
 	message = None
@@ -244,7 +235,6 @@ def update_configurations(request):
 	return JsonResponse({"message": message, "status": status})
 
 @accepted_methods(["GET"])
-@login_required
 def is_qr_code_configured(request):
 
 	message = "QR Code is not Configured"
@@ -260,7 +250,6 @@ def is_qr_code_configured(request):
 	return JsonResponse({"message": message, "config_status": config_status})
 
 @accepted_methods(["GET"])
-@login_required
 def is_email_configured(request):
 
 	message = "Email is not Configured"
@@ -276,7 +265,6 @@ def is_email_configured(request):
 	return JsonResponse({"message": message, "config_status": config_status})
 
 @accepted_methods(["GET"])
-@login_required
 def is_phone_configured(request):
 
 	message = "Phone Number is not Configured"

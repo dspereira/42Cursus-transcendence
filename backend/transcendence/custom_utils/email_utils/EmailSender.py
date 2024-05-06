@@ -10,7 +10,7 @@ class EmailSender:
 		self._body_generator = EmailBodyGenerator()
 
 	def send_verification_code(self, receiver_email: str, code: str):
-		content = self._body_generator.get_verication_code(code=code),
+		content = self._body_generator.get_verication_code(code=code)
 		return self._sender(
 			type=TYPE_VERIFICATION_CODE,
 			receiver_email=receiver_email,

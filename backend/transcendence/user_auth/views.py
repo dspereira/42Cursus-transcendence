@@ -12,6 +12,9 @@ from .auth_utils import send_email_verification
 from .auth_utils import get_jwt_data
 from .auth_utils import add_email_token_to_blacklist
 
+from two_factor_auth.two_factor import setup_default_tfa_configs
+from two_factor_auth.two_factor import initiate_two_factor_authentication
+
 from custom_utils.models_utils import ModelManager
 
 @accepted_methods(["POST"])
@@ -56,7 +59,13 @@ def login(request):
 		if not user.active:
 			send_email_verification(user=user)
 			return JsonResponse({"message": "check_mail_box"}, status=401)
-		response = user_login(JsonResponse({"message": "success"}), user)
+		if not user.last_login:
+			setup_default_tfa_configs(user)
+		tfa_option = initiate_two_factor_authentication(user)
+		if tfa_option:
+			response = user_login(JsonResponse({"message": "success", "tfa_option": tfa_option}), user)
+		else:
+			return JsonResponse({"message": "Error in Two Factor Auth"}, status=401)
 		return response
 	return JsonResponse({"message": "Empty request body"}, status=400)
 
