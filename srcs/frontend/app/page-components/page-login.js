@@ -1,6 +1,9 @@
 import {redirect} from "../js/router.js";
 
 const styles = `
+
+/*
+
 form {
 	position: relative;
 }
@@ -47,37 +50,19 @@ div {
 	margin-bottom: 30px;
 	font-size: 40px; 
 }
+*/
 
 `;
 
 const html = `
-<app-header></app-header>
 
+<app-header></app-header>
 <a href="/signup/">signup</a>
 
 <div class="row">
   <div class="col-md-4 offset-md-4">
-
 	<h1 class="login-header">Login</h1>
-
-	<form id="loginform">
-		<div class="login-input login-email form-group">
-			<i class="icon bi-person"></i>
-			<input type="text" class="form-control form-control-lg" id="email" aria-describedby="emailHelp" placeholder="Email / Username">
-		</div>
-		<div class="login-input login-password form-group">
-			<i class="icon bi bi-key"></i>
-			<i class="icon icon-eye bi bi-eye-slash"></i>
-			<input type="password" class="form-control form-control-lg" id="password" placeholder="Password">
-		</div>
-		<div class="login-recover-pass">
-			<a><span>Forgot your password ?</span></a>
-		</div>
-		<div class="login-submit">
-			<button type="submit" class="btn btn-primary btn-block">Submit</button>
-		</div>
-	</form>
-
+	<login-form></login-form>
   </div>
 </div>
 

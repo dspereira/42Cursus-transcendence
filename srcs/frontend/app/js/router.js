@@ -7,6 +7,7 @@ import Page404 from "../page-components/page-404.js";
 // Components
 import AppTest from "../components/app-test.js";
 import AppHeader from "../components/app-header.js";
+import LoginForm from "../components/login-form.js";
 
 //  /user/:id devo poder configurar neste formato
 const routes = {
