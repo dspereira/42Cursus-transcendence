@@ -22,3 +22,12 @@ def chat(request):
 
 def refresh(request):
 	return render(request, "login_test/refresh.html")
+
+def email_verification(request):
+	return render(request, "login_test/email_verify.html")
+
+def email_sended(request):
+	return render(request, "login_test/email_sended.html")
+
+def email_already_verified(request):
+	return render(request, "login_test/email_already_verified.html")
