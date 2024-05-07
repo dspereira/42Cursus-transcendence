@@ -1,0 +1,2 @@
+from .verification_code import verification_code_html
+from .email_verification import email_verification_html

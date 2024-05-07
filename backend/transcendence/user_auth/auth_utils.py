@@ -1,6 +1,9 @@
 from django.utils import timezone
-from custom_utils.jwt_utils import TokenGenerator
+from custom_utils.jwt_utils import TokenGenerator, JwtData
+from custom_utils.email_utils import EmailSender
+from custom_utils.models_utils import ModelManager
 from user_auth.models import BlacklistToken
+from datetime import datetime
 
 def login(response, user):
 	user.last_login = timezone.now()
@@ -31,9 +34,37 @@ def update_blacklist(access_token_data, refresh_token_data):
 		except Exception as e:
 			print(f"Error refresh token: {e}")
 
+def add_email_token_to_blacklist(email_validation_token):
+	if email_validation_token:
+		blacklist_token_model = ModelManager(BlacklistToken)
+		blacklist_token_model.create(jti=email_validation_token.jti, exp=email_validation_token.exp)
+
+def send_email_verification(user):
+	token_gen = _generate_email_verification_token(user_id=user.id)
+	token = token_gen.get_email_verification_token()
+	EmailSender().send_email_verification(receiver_email=user.email, token=token)
+
+def is_jwt_token_valid(token: str):
+	jwt_data = JwtData(token=token)
+	if jwt_data:
+		blacklist_token_model = ModelManager(BlacklistToken)
+		if not blacklist_token_model.get(jti=jwt_data.jti):
+			return True
+	return False
+
+def get_jwt_data(token: str):
+	if is_jwt_token_valid(token=token):
+		return JwtData(token=token)
+	return None
+
 def _generate_tokens(user_id):
 	token_gen = TokenGenerator(user_id)
 	token_gen.generate_tokens()
+	return token_gen
+
+def _generate_email_verification_token(user_id):
+	token_gen = TokenGenerator(user_id)
+	token_gen.generate_email_verification_token()
 	return token_gen
 
 def _set_cookies(response, token_gen):

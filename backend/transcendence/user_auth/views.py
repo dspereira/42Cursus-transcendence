@@ -8,6 +8,12 @@ from .auth_utils import login as user_login
 from .auth_utils import logout as user_logout
 from .auth_utils import refresh_token as user_refresh_token
 from .auth_utils import update_blacklist
+from .auth_utils import send_email_verification
+from .auth_utils import get_jwt_data
+from .auth_utils import add_email_token_to_blacklist
+
+from two_factor_auth.two_factor import setup_default_tfa_configs
+from two_factor_auth.two_factor import initiate_two_factor_authentication
 
 from custom_utils.models_utils import ModelManager
 
@@ -33,6 +39,7 @@ def register(request):
 		user = user_model.create(username=username, email=email, password=password)
 		if not user:
 			return JsonResponse({"message": "Error creating user"}, status=500)
+		send_email_verification(user)
 
 	return JsonResponse({"message": "success"})
 
@@ -49,7 +56,16 @@ def login(request):
 		user = authenticate(request, email_username=username, password=password)
 		if not user:
 			return JsonResponse({"message": "Invalid credentials. Please check your username or password."}, status=401)
-		response = user_login(JsonResponse({"message": "success"}), user)
+		if not user.active:
+			send_email_verification(user=user)
+			return JsonResponse({"message": "check_mail_box"}, status=401)
+		if not user.last_login:
+			setup_default_tfa_configs(user)
+		tfa_option = initiate_two_factor_authentication(user)
+		if tfa_option:
+			response = user_login(JsonResponse({"message": "success", "tfa_option": tfa_option}), user)
+		else:
+			return JsonResponse({"message": "Error in Two Factor Auth"}, status=401)
 		return response
 	return JsonResponse({"message": "Empty request body"}, status=400)
 
@@ -132,3 +148,32 @@ def apiGetUsersList(request):
 	response = {"message": result_print, "users_count": users_count, "users_list": users_data}
 
 	return JsonResponse(response)
+
+@accepted_methods(["POST"])
+def validate_email(request):
+	
+	message = "Empty Body!"
+	validation_status = "fail"
+	email_token = None
+
+	if request.body:
+		req_data = json.loads(request.body);
+		email_token = req_data["email_token"]
+
+	if email_token:
+		message = f"Body with content !"
+		email_token_data = get_jwt_data(email_token)
+
+		if email_token_data:
+			if email_token_data.type == "email_verification":
+				user_model = ModelManager(User)
+				user = user_model.get(id=email_token_data.sub)
+				if user and user.active == False:
+					user.active = True
+					user.save()
+					validation_status = "validated"
+				elif user and user.active == True:
+					validation_status = "active"
+			add_email_token_to_blacklist(email_token_data)
+
+	return JsonResponse({"message": message, "validation_status": validation_status})
