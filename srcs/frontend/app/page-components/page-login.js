@@ -1,12 +1,53 @@
 import {redirect} from "../js/router.js";
 
-const styles = ``;
+const styles = `
+/*a {
+	text-decoration: none;
+	color: inherit;
+	font-size: 24px;
+	display: block;
+}
+
+.section-signin {
+	border-right: 1px solid black;
+	border-bottom: 1px solid black;
+}
+
+.section-signup {
+	border-left: 1px solid black;
+	border-bottom: 1px solid black;	
+}
+
+.signin {
+    text-align: right;
+	margin-right: 60px;
+}
+
+.signup {
+    text-align: left;
+	margin-left: 60px;
+}*/
+
+`;
 
 const getHtml = function(data) {
 	const html = `
 	<app-header></app-header>
 	<div class="row">
 	  <div class="col-md-4 offset-md-4">
+
+		<!--
+		<div class="header row">
+			<div class="col-md section-signin">
+				<a class="signin">Sign in</a>
+			</div>
+			<div class="col-md section-signup">
+				<a class="signup">Sign up</a>
+			</div>
+		
+		</div>
+		-->
+
 		<login-form></login-form>
 	  </div>
 	</div>

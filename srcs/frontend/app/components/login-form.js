@@ -26,11 +26,6 @@ form {
 	padding-left: 55px;
 }
 
-.btn {
-	width: 100%;
-	margin-top: 30px;
-}
-
 div {
 	margin-top: 15px;
 }
@@ -53,6 +48,15 @@ h1 {
 	margin-bottom: 30px;
 }
 
+.btn-submit {
+	width: 100%;
+	margin-top: 30px;
+}
+
+.btn-signup {
+	width: 100%;
+}
+
 `;
 
 const getHtml = function(data) {
@@ -71,8 +75,11 @@ const getHtml = function(data) {
 				<i class="icon right-icon bi bi-eye-slash eye-icon"></i>
 				<input type="password" class="input-padding form-control form-control-lg" id="password" placeholder="Password">
 			</div>
-			<div class="login-submit">
-				<button type="submit" class="btn btn-primary btn-block">Submit</button>
+			<div>
+				<button type="submit" class="btn btn-primary btn-submit">Submit</button>
+			</div>
+			<div>
+				<button type="button" class="btn btn-outline-primary btn-signup">Without an account? Create one here.</button>
 			</div>
 		</form>
 	`;
@@ -123,6 +130,7 @@ export default class LoginForm extends HTMLElement {
 	#scripts() {
 		this.#showHidePassword();
 		this.#submit();
+		this.#changeToSignUpForm();
 	}
 
 	#showHidePassword() {
@@ -135,6 +143,13 @@ export default class LoginForm extends HTMLElement {
 			eye.classList.toggle(openEye);
 			eye.classList.toggle(closeEye);
 			input.type = input.type === "password" ? "text" : "password";
+		});
+	}
+
+	#changeToSignUpForm() {
+		const btn = this.html.querySelector(".btn-signup");
+		btn.addEventListener("click", (event) => {
+			redirect("/signup");
 		});
 	}
 
