@@ -47,10 +47,17 @@ div {
 	background-image: none;
 }
 
+h1 {
+	text-align: center;
+	margin-top: 30px;
+	margin-bottom: 30px;
+}
+
 `;
 
 const getHtml = function(data) {
 	const html = `
+		<h1>Sign in</h1>
 		<form id="loginform">
 			<div class="alert alert-danger hide" role="alert">
 				Invalid authentication credentials.
@@ -121,13 +128,13 @@ export default class LoginForm extends HTMLElement {
 	#showHidePassword() {
 		let input = this.html.querySelector("#password");
 		let eye = this.html.querySelector(".eye-icon");
+		
 		eye.addEventListener("click", () => {
 			const openEye = "bi-eye";
 			const closeEye = "bi-eye-slash";
 			eye.classList.toggle(openEye);
 			eye.classList.toggle(closeEye);
 			input.type = input.type === "password" ? "text" : "password";
-
 		});
 	}
 

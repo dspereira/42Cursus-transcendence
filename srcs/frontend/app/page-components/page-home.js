@@ -28,6 +28,7 @@ export default class PageHome extends HTMLElement {
 		super()
 		this.#loadData();
 		this.#initComponent();
+		this.#render();
 	}
 
 	#initComponent() {
@@ -103,7 +104,7 @@ export default class PageHome extends HTMLElement {
 		]);
 		this.#handleApiData(data);
 		this.#updateHtml();
-		this.#render();
+		//this.#render();
 	}
 
 	static get componentName() {

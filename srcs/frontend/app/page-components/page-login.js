@@ -1,72 +1,19 @@
 import {redirect} from "../js/router.js";
 
-const styles = `
+const styles = ``;
 
-/*
-
-form {
-	position: relative;
+const getHtml = function(data) {
+	const html = `
+	<app-header></app-header>
+	<div class="row">
+	  <div class="col-md-4 offset-md-4">
+		<login-form></login-form>
+	  </div>
+	</div>
+	`;
+	return html;
 }
 
-div {
-	//border: 1px solid black;
-}
-
-.login-input {
-	margin-bottom: 15px;
-}
-
-.login-submit {
-	margin-top: 50px;
-}
-
-.login-submit .btn {
-	width: 100%;
-}
-
-.login-recover-pass span {
-	text-decoration: underline;
-	float: right;
-}
-
-.icon {
-	position: absolute;
-	margin-left: 10px;
-	margin-top: 3px;
-	font-size: 28px;
-}
-
-.icon-eye {
-	right: 0;
-	margin-right: 10px;
-}
-
-.login-input input {
-	padding-left: 55px;
-}
-
-.login-header {
-	text-align: center;
-	margin-bottom: 30px;
-	font-size: 40px; 
-}
-*/
-
-`;
-
-const html = `
-
-<app-header></app-header>
-<a href="/signup/">signup</a>
-
-<div class="row">
-  <div class="col-md-4 offset-md-4">
-	<h1 class="login-header">Login</h1>
-	<login-form></login-form>
-  </div>
-</div>
-
-`;
 
 const title = "Login Page";
 
@@ -75,79 +22,40 @@ export default class PageLogin extends HTMLElement {
 
 	constructor() {
 		super()
-		console.log("start component");
-		document.querySelector("head title").innerHTML = title;
-		this.elmtId = `elmtId_${Math.floor(Math.random() * 100000000000)}`;
-		const elmBody = document.createElement("div");
-		elmBody.classList.add(`${this.elmtId}`);
-		const styles = document.createElement("style");
-		styles.textContent = this.#styles();
-		elmBody.innerHTML = this.#html();
-		this.appendChild(styles);
-		this.appendChild(elmBody);
-		this.#script();
-		//this.#submit();
+		this.#initComponent();
+		this.#render();
+
 	}
 
 	static get componentName() {
 		return this.#componentName;
 	}
 
+	#initComponent() {
+		this.html = document.createElement("div");
+		this.html.innerHTML = this.#html();
+		if (styles) {
+			this.elmtId = `elmtId_${Math.floor(Math.random() * 100000000000)}`;
+			this.styles = document.createElement("style");
+			this.styles.textContent = this.#styles();
+			this.html.classList.add(`${this.elmtId}`);
+		}
+	}
+
 	#styles() {
-		return `@scope (.${this.elmtId}) {${styles}}`;
+		if (styles)
+			return `@scope (.${this.elmtId}) {${styles}}`;
+		return null;
 	}
 
-	#html(){
-		return html;
+	#html(data){
+		return getHtml(data);
 	}
 
-	#script(){
-		const eyeIcon = {
-			open: "bi-eye",
-			close: "bi-eye-slash"
-		}
-		let input = document.querySelector(".login-password input");
-		let eye = document.querySelector(".icon-eye");
-		eye.addEventListener("click", event => {
-			eye.classList.toggle(eyeIcon.open);
-			eye.classList.toggle(eyeIcon.close);
-			if (input.type === "password")
-				input.type = "text";
-			else
-				input.type = "password";
-		});
-
-		let loginForm = document.querySelector("#loginform");
-		loginForm.addEventListener("submit", (event) => {
-			event.preventDefault();
-			this.#submit();
-		});
-
-
-	}
-
-	async #submit(){
-	
-		const dataForm = {
-			username: document.getElementById('email').value,
-			password: document.getElementById('password').value
-		}
-		try {
-			const res = await fetch("http://127.0.0.1:8000/api/auth/login", {
-				credentials: 'include',
-				method: "POST",
-				headers: {
-					"Content-Type": "application/json"
-				},
-				body: JSON.stringify(dataForm)
-			});
-			const data = await res.json();
-			console.log(data);
-			redirect("/");
-		}
-		catch {
-			console.log("Error: Failed to fetch");
-		}
+	#render() {
+		if (styles)
+			this.appendChild(this.styles);
+		this.appendChild(this.html);
 	}
 }
 
