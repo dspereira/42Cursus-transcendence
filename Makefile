@@ -1,6 +1,7 @@
 # Containers Names
 DB		= postgres
 ADMIN	= pgadmin4
+NGINX	= nginx-server
 
 
 # Docker Compose
@@ -22,10 +23,12 @@ stop:
 	$(COMPOSE) stop
 
 clean:
-	$(COMPOSE) down --rmi all --volumes
+	$(COMPOSE) down -v
+	$(DOCKER) image rm $(NGINX)
 
 # Careful! This command can remove data you don't want.
-clean-data: clean
+clean-data: 
+	$(COMPOSE) down --rmi all --volumes
 	sudo rm -rf $(DB_VOLUME_DATA)
 
 re: clean all
@@ -49,3 +52,6 @@ db-it:
 
 admin-it:
 	$(DOCKER) exec -it $(ADMIN) /bin/bash
+
+nginx-it:
+	$(DOCKER) exec -it $(NGINX) /bin/bash
