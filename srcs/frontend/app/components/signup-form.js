@@ -53,7 +53,7 @@ h1 {
 	margin-top: 30px;
 }
 
-.btn-signup {
+.btn-signin {
 	width: 100%;
 }
 
@@ -61,32 +61,41 @@ h1 {
 
 const getHtml = function(data) {
 	const html = `
-		<h1>Sign in</h1>
-		<form id="login-form">
+		<h1>Sign up</h1>
+		<form id="signup-form">
 			<div class="alert alert-danger hide" role="alert">
 				Invalid authentication credentials.
 			</div>
 			<div class="form-group">
+				<i class="icon left-icon bi-envelope"></i>
+				<input type="text" class="input-padding form-control form-control-lg" id="email" placeholder="Email">
+			</div>
+			<div class="form-group">
 				<i class="icon left-icon bi-person"></i>
-				<input type="text" class="input-padding form-control form-control-lg" id="email" placeholder="Email / Username">
+				<input type="text" class="input-padding form-control form-control-lg" id="username" placeholder="Username">
 			</div>
 			<div class="form-group">
 				<i class="icon left-icon bi bi-key"></i>
 				<i class="icon right-icon bi bi-eye-slash eye-icon"></i>
 				<input type="password" class="input-padding form-control form-control-lg" id="password" placeholder="Password">
 			</div>
-			<div>
-				<button type="submit" class="btn btn-primary btn-submit">Sign In</button>
+			<div class="form-group">
+				<i class="icon left-icon bi bi-key"></i>
+				<i class="icon right-icon bi bi-eye-slash eye-icon"></i>
+				<input type="password" class="input-padding form-control form-control-lg" id="confirm-password" placeholder="Confirm Password">
 			</div>
 			<div>
-				<button type="button" class="btn btn-outline-primary btn-signup">Without an account? Create one here</button>
+				<button type="submit" class="btn btn-primary btn-submit">Sign Up</button>
+			</div>
+			<div>
+				<button type="button" class="btn btn-outline-primary btn-signin">Already has an account? Sign in here</button>
 			</div>
 		</form>
 	`;
 	return html;
 }
 
-export default class LoginForm extends HTMLElement {
+export default class SignupForm extends HTMLElement {
 	static observedAttributes = [];
 
 	constructor() {
@@ -134,16 +143,17 @@ export default class LoginForm extends HTMLElement {
 	}
 
 	#showHidePassword() {
-		let input = this.html.querySelector("#password");
-		let eye = this.html.querySelector(".eye-icon");
-		
-		eye.addEventListener("click", () => {
-			const openEye = "bi-eye";
-			const closeEye = "bi-eye-slash";
-			eye.classList.toggle(openEye);
-			eye.classList.toggle(closeEye);
-			input.type = input.type === "password" ? "text" : "password";
-		});
+		let eyes = this.html.querySelectorAll(".eye-icon");
+        eyes.forEach(eye => {			
+            eye.addEventListener("click", () => {
+                const openEye = "bi-eye";
+                const closeEye = "bi-eye-slash";
+                eye.classList.toggle(openEye);
+                eye.classList.toggle(closeEye);
+                const input = eye.parentElement.querySelector("input");
+                input.type = input.type === "password" ? "text" : "password";
+            });
+		})
 	}
 
 	#changeToSignUpForm() {
@@ -154,7 +164,7 @@ export default class LoginForm extends HTMLElement {
 	}
 
 	#submit() {
-		const loginForm = this.html.querySelector("#login-form");
+		const loginForm = this.html.querySelector("#loginform");
 		loginForm.addEventListener("submit", (event) => {
 			event.preventDefault();
 			const dataForm = {
@@ -189,4 +199,4 @@ export default class LoginForm extends HTMLElement {
 	}
 }
 
-customElements.define("login-form", LoginForm);
+customElements.define("signup-form", SignupForm);
