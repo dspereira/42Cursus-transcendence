@@ -2,7 +2,6 @@ from django.urls import path
 from . import views
 
 urlpatterns = [
-	path('generate_otp', views.generateOTP, name='generateOTP'),
 	path('generate_qr_code', views.generate_qr_code, name='generate_qr_code'),
 	path('generate_user_phone_code', views.generate_user_phone_code, name='generate_user_phone_code'),
 	path('generate_user_email_code', views.generate_user_email_code, name='generate_user_email_code'),
@@ -15,5 +14,4 @@ urlpatterns = [
 	path('is_qr_code_configured', views.is_qr_code_configured, name='is_qr_code_configured'),
 	path('is_email_configured', views.is_email_configured, name='is_email_configured'),
 	path('is_phone_configured', views.is_phone_configured, name='is_phone_configured'),
-	path('get_all_used_otps', views.get_all_used_otps, name='get_all_used_otps'), # Apenas para teste
 ]
