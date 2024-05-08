@@ -11,14 +11,14 @@ class Game:
 			self._left_Paddle = Paddle(X=10)
 
 
-		def update(self, key: str, player_id: int):
+		def update(self, key: str, player_id: int, game_paused: int):
 
-			if player_id == 0:
+			if player_id == 0 and game_paused != 1:
 				self._left_Paddle.update(key)
-			elif player_id == 1:
+			elif player_id == 1 and game_paused != 1:
 				self._right_Paddle.update(key)
 			elif player_id == -1:
-				self._ball.update(self._left_Paddle, self._right_Paddle, self._score)
+				self._ball.update(self._left_Paddle, self._right_Paddle, self._score, game_paused)
 		
 
 		def get_state(self):

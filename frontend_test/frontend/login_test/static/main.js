@@ -33,6 +33,22 @@ var player2_Score = 0;
 
 const	point_limit = 3;
 
+function pause_game(pause_status){
+	fetch("http://127.0.0.1:8000/api/game/pause-game", {
+		credentials: 'include',
+		method: "POST",
+		headers: {
+			"Content-Type": "application/json"
+		},
+		body: JSON.stringify({
+			pause: pause_status
+		})
+	})
+	.catch(error => {
+		console.log(error);
+	});
+}
+
 
 function sendKeys(keys, id) {
 	fetch("http://127.0.0.1:8000/api/game/player-input", {
@@ -127,7 +143,14 @@ window.addEventListener('load', () => {
 	
 	const game = new Game(canvas.width, canvas.height);
 
-
+	let pause_status = -1;
+	
+	
+	document.querySelector(".btn").addEventListener('click', () =>{
+		pause_status *= -1;
+		console.log(pause_status);
+		pause_game(pause_status);
+	})
 	animate(0);
 	
 	
@@ -138,8 +161,9 @@ window.addEventListener('load', () => {
 			return;
 		requestAnimationFrame(animate);
 		
-		game.checkKeyInputs();
 		game.draw(ctx);
+		game.checkKeyInputs();
 	}
+
 
 });

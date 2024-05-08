@@ -14,15 +14,16 @@ class Ball:
 		self.last_call = int(round(time.time() * 1000))
 
 
-	def update(self, Left_paddle, Right_paddle, score: int):
+	def update(self, Left_paddle, Right_paddle, score: int, game_paused: int):
 
 		self.left_paddle = Left_paddle
 		self.right_paddle = Right_paddle
 		self.time_now = int(round(time.time() * 1000))
 
-		self._check_paddle_collision()
-		self._check_border_collision(score)
-		self._calculate_position(score)
+		if game_paused == -1:
+			self._check_paddle_collision()
+			self._check_border_collision(score)
+			self._calculate_position(score)
 
 		self.last_call = self.time_now
   
