@@ -26,6 +26,7 @@ def delete_matches_if_both_users_deleted(sender, instance, **kwargs):
 	for match in matches_to_delete:
 		match.delete_if_both_users_deleted()
 
+
 # id player 1
 # id player 2
 # score player 1
