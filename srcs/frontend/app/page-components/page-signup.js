@@ -54,7 +54,7 @@ export default class PageSignup extends HTMLElement {
 
 	async #submit(){
 	
-		const dataForm = {
+		/*const dataForm = {
 			email: document.getElementById('email').value,
 			username: document.getElementById('username').value,
 			password: document.getElementById('password').value
@@ -74,7 +74,7 @@ export default class PageSignup extends HTMLElement {
 		}
 		catch {
 			console.log("Error: Failed to fetch");
-		}
+		}*/
 	}
 
 	static get componentName() {

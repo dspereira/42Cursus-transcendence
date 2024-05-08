@@ -139,7 +139,7 @@ export default class SignupForm extends HTMLElement {
 	#scripts() {
 		this.#showHidePassword();
 		this.#submit();
-		this.#changeToSignUpForm();
+		this.#redirectToSignUpForm();
 	}
 
 	#showHidePassword() {
@@ -156,7 +156,50 @@ export default class SignupForm extends HTMLElement {
 		})
 	}
 
-	#changeToSignUpForm() {
+	#getdInputData() {
+		const data = {
+			email: document.querySelector('#email').value,
+			username: document.querySelector('#username').value,
+			password: document.querySelector('#password').value,
+			confirmPassword: document.querySelector("#confirm-password").value
+		}
+		return data;
+	}
+
+	#isValidEmail(email) {
+		const idxLastDot = email.lastIndexOf('.');
+		const idxLastAtSign = email.lastIndexOf('@');
+		const idxFisrtAtSign = email.indexOf('@');
+
+		if (idxFisrtAtSign < 0 || idxLastAtSign < 0 || idxLastDot < 0)
+			return false;
+		if (idxLastAtSign != idxFisrtAtSign)
+			return false;
+		if (idxLastAtSign > idxLastDot)
+			return false;
+		return true;
+	}
+
+	#getInvalidFields(data) {
+		const invalidFilds = {};
+
+		for (const [key, value] of Object.entries(data)) {
+
+			if (!value)
+				invalidFilds[key] = "empty";
+			else if (key === "email" && !this.#isValidEmail(value))
+				invalidFilds.email = "invalid"
+		}
+		if (!invalidFilds.password && !invalidFilds.confirmPassword) {
+			if (data.password !== data.confirmPassword) {
+				invalidFilds.password = "unmatch";
+				invalidFilds.confirmPassword = "unmatch";
+			}	
+		}
+		console.log(invalidFilds);
+	}
+
+	#redirectToSignUpForm() {
 		const btn = this.html.querySelector(".btn-signup");
 		btn.addEventListener("click", (event) => {
 			redirect("/signup");
@@ -164,17 +207,18 @@ export default class SignupForm extends HTMLElement {
 	}
 
 	#submit() {
-		const loginForm = this.html.querySelector("#loginform");
+		const loginForm = this.html.querySelector("#signup-form");
 		loginForm.addEventListener("submit", (event) => {
 			event.preventDefault();
-			const dataForm = {
-				username: document.querySelector('#email').value,
-				password: document.querySelector('#password').value
-			}
-			if (!dataForm.username || !dataForm.password)
-				this.#setInvalidCredentialsStyle();
+			const data = this.#getdInputData();
+			this.#getInvalidFields(data);
+
+
+			/*if (!dataForm.username || !dataForm.password)
+				this.#setInvalidForm();
 			else
 				callAPI("POST", "http://127.0.0.1:8000/api/auth/login", dataForm, this.#apiResHandlerCalback);
+			*/
 		});
 	}
 
@@ -182,10 +226,10 @@ export default class SignupForm extends HTMLElement {
 		if (res.ok)
 			redirect("/");
 		else
-			this.#setInvalidCredentialsStyle();
+			this.#setInvalidForm();
 	}
 
-	#setInvalidCredentialsStyle() {
+	#setInvalidForm() {
 		const inputs = document.querySelectorAll('input');
 		inputs.forEach(input => {
 			input.classList.add("is-invalid");
