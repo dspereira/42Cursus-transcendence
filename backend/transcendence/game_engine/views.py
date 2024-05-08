@@ -68,10 +68,14 @@ def	finish_match(request):
 
 def	player_controls(request) :
 
-	if (requestTesting["game_id"] == -1):
-		requestTesting["game_id"] = create_match(requestTesting)["game_id"]
-
 	data = json.loads(request.body.decode('utf-8')) # Parse JSON data from request body
+	
+	if (requestTesting["game_id"] == -1 and data.get("id") != "html"):
+		requestTesting["game_id"] = create_match(requestTesting)["game_id"]
+		print("")
+		print("key:", data.get("key"))
+		print("")
+
 
 	game.update(data.get("keys"), data.get("player_id"))
 

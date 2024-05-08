@@ -28,27 +28,28 @@
 	</style>
 	<script>
 
-			const jsonData = {
-					"key": "s"
-				}
-			console.log("hey!");
-			async function logData() 
-			{
-				console.log("hey!!");
-				const response = await fetch("http://127.0.0.1:8000/api/game/player-input", {
-					credentials: 'include',
-					method: 'POST',
-					headers: {
-						"Content-Type": "application/json"
-					},
-					body: JSON.stringify(jsonData)
+			// const jsonData = {
+			// 		key: "s",
+			// 		id: "hmtl"
+			// 	}
+			// console.log("hey!");
+			// async function logData() 
+			// {
+			// 	console.log("hey!!");
+			// 	const response = await fetch("http://127.0.0.1:8000/api/game/player-input", {
+			// 		credentials: 'include',
+			// 		method: 'POST',
+			// 		headers: {
+			// 			"Content-Type": "application/json"
+			// 		},
+			// 		body: JSON.stringify(jsonData)
 
-				});
-				console.log("hey!!!");
+			// 	});
+			// 	console.log("hey!!!");
 
-				const data = await response.json();
-				console.log("hey!!!!");
-			}
+			// 	const data = await response.json();
+			// 	console.log("hey!!!!");
+			// }
 			logData();
 	</script>
 </body>
