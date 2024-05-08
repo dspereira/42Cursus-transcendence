@@ -8,7 +8,7 @@ const gData = {
 	paddlePadding: 10,
 	leftPaddle: {
 		x: 10,
-		y: 250,
+		y: 70,
 		width: 10,
 		height: 50,
 		speed: 0,
@@ -16,7 +16,7 @@ const gData = {
 	},
 	rightPaddle: {
 		x: 780,
-		y: 250,
+		y: 70,
 		width: 10,
 		height: 50,
 		speed: 0,
@@ -30,6 +30,8 @@ var ball_x = 0;
 var ball_y = 0;
 var player1_Score = 0;
 var player2_Score = 0;
+
+const	point_limit = 3;
 
 
 function sendKeys(keys, id) {
@@ -76,7 +78,7 @@ class Game {
 		context.fillRect(0,0, this.width, this.height);
 		context.fillStyle = "white";
 
-		for (let y = 5; y < this.height; y += 25) {
+		for (let y = 5; y < this.height; y += 7) {
 			context.fillRect(this.width / 2 - 1, y, 2, 12.5); // by this order: (center of the screen, I = position(y), 2 = width, 12.5 = height)
 		}
 
@@ -124,23 +126,15 @@ window.addEventListener('load', () => {
 	const ctx = canvas.getContext("2d");
 	
 	const game = new Game(canvas.width, canvas.height);
-	console.log(game);
-	
-	let game_id;
 
-	// createMatch(1, 2)
-	// .then((data) => {
-	// 	game_id = data.game_id;
-	// 	animate(); // Start animation loop after getting the game_id
-	// })
-	// .catch(error => {
-	// 	console.error('Error fetching data:', error);
-	// });
+
+	animate(0);
+	
 	
 	function animate() {
 
 		ctx.clearRect(0, 0, canvas.width, canvas.height);
-		if (player1_Score >= 7 || player2_Score >= 7)
+		if (player1_Score >= point_limit || player2_Score >= point_limit)
 			return;
 		requestAnimationFrame(animate);
 		
@@ -148,44 +142,4 @@ window.addEventListener('load', () => {
 		game.draw(ctx);
 	}
 
-	animate(0);
-
-
-	// updateMatch(game_id);
-
-	// function createMatch(user1, user2) {
-	// 	fetch("http://127.0.0.1:8000/api/game/create-match", {
-	// 		credentials: 'include',
-	// 		method: "POST",
-	// 		headers: {
-	// 			"Content-Type": "application/json"
-	// 		},
-	// 		body: JSON.stringify({
-	// 			player1_id : user1,
-	// 			player2_id : user2
-	// 		})
-	// 	})
-	// 	.then(response => {
-	// 		console.log("ALKNSJNKASNJKSNJKAKNJSNKASNJKANJKSANJKSKNJA")
-	// 		return response.json();
-	// 	});
-	// }
-
-	// function updateMatch(game_id) {
-	// 	fetch("http://127.0.0.1:8000/api/game/finish-match", {
-	// 		credentials: 'include',
-	// 		method: "POST",
-	// 		headers: {
-	// 			"Content-Type": "application/json"
-	// 		},
-	// 		body: JSON.stringify({
-	// 			game_id : game_id
-	// 		})
-	// 	})
-	// 	.then(response => response.json())
-	// 	.catch(error => {
-	// 		console.error('Error fetching data:', error);
-	// 	});
-	// }
 });
-
