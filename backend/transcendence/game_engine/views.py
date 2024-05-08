@@ -71,9 +71,9 @@ def	player_controls(request) :
 	data = json.loads(request.body.decode('utf-8')) # Parse JSON data from request body
 	
 	if (requestTesting["game_id"] == -1 and data.get("id") != "html"):
-		requestTesting["game_id"] = create_match(requestTesting)["game_id"]
+		# requestTesting["game_id"] = create_match(requestTesting)["game_id"]
 		print("")
-		print("key:", data.get("key"))
+		print("player_id:", data.get("player_id"), "game_id:", requestTesting["game_id"], create_match(requestTesting)["game_id"])
 		print("")
 
 
