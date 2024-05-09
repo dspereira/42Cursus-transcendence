@@ -25,18 +25,18 @@ document.addEventListener("DOMContentLoaded", function() {
 	
 		const acceptBtn = document.createElement('button');
 		acceptBtn.classList.add('btn', 'btn-success', 'mr-2');
-		acceptBtn.innerHTML = '&#10004;';
+		acceptBtn.innerHTML = '&#10004;&#65039;';
 		acceptBtn.addEventListener('click', function() {
 			acceptNotification(notification);
 		});
-	
+
 		const denyBtn = document.createElement('button');
 		denyBtn.classList.add('btn', 'btn-danger');
 		denyBtn.innerHTML = '&#10060;';
 		denyBtn.addEventListener('click', function() {
 			denyNotification(notification);
 		});
-	
+
 		cardBody.appendChild(cardText);
 		cardBody.appendChild(acceptBtn);
 		cardBody.appendChild(denyBtn);
