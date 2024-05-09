@@ -9,4 +9,5 @@ urlpatterns = [
     path("info", views.info, name="info"),
     path("user_info", views.apiGetUserInfo, name="apiUserInfo"),
     path("users_list", views.apiGetUsersList, name="apiUsersList"),
+    path("validate_email", views.validate_email, name="validate_email"),
 ]
