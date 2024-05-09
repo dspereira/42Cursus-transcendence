@@ -38,7 +38,7 @@ div {
 	display: none;
 }
 
-#email, #password {
+#email, #username, #password, #confirm-password {
 	background-image: none;
 }
 
@@ -63,26 +63,24 @@ const getHtml = function(data) {
 	const html = `
 		<h1>Sign up</h1>
 		<form id="signup-form">
-			<div class="alert alert-danger hide" role="alert">
-				Invalid authentication credentials.
-			</div>
+			<div class="alert alert-danger hide" role="alert"></div>
 			<div class="form-group">
 				<i class="icon left-icon bi-envelope"></i>
-				<input type="text" class="input-padding form-control form-control-lg" id="email" placeholder="Email">
+				<input type="text" class="input-padding form-control form-control-lg" id="email" placeholder="Email" maxlength="100">
 			</div>
 			<div class="form-group">
 				<i class="icon left-icon bi-person"></i>
-				<input type="text" class="input-padding form-control form-control-lg" id="username" placeholder="Username">
+				<input type="text" class="input-padding form-control form-control-lg" id="username" placeholder="Username" maxlength="30">
 			</div>
 			<div class="form-group">
 				<i class="icon left-icon bi bi-key"></i>
 				<i class="icon right-icon bi bi-eye-slash eye-icon"></i>
-				<input type="password" class="input-padding form-control form-control-lg" id="password" placeholder="Password">
+				<input type="password" class="input-padding form-control form-control-lg" id="password" placeholder="Password" maxlength="128">
 			</div>
 			<div class="form-group">
 				<i class="icon left-icon bi bi-key"></i>
 				<i class="icon right-icon bi bi-eye-slash eye-icon"></i>
-				<input type="password" class="input-padding form-control form-control-lg" id="confirm-password" placeholder="Confirm Password">
+				<input type="password" class="input-padding form-control form-control-lg" id="confirm-password" placeholder="Confirm Password" maxlength="128">
 			</div>
 			<div>
 				<button type="submit" class="btn btn-primary btn-submit">Sign Up</button>
@@ -139,20 +137,20 @@ export default class SignupForm extends HTMLElement {
 	#scripts() {
 		this.#showHidePassword();
 		this.#submit();
-		this.#redirectToSignUpForm();
+		this.#redirectToSignInForm();
 	}
 
 	#showHidePassword() {
 		let eyes = this.html.querySelectorAll(".eye-icon");
-        eyes.forEach(eye => {			
-            eye.addEventListener("click", () => {
-                const openEye = "bi-eye";
-                const closeEye = "bi-eye-slash";
-                eye.classList.toggle(openEye);
-                eye.classList.toggle(closeEye);
-                const input = eye.parentElement.querySelector("input");
-                input.type = input.type === "password" ? "text" : "password";
-            });
+		eyes.forEach(eye => {			
+			eye.addEventListener("click", () => {
+				const openEye = "bi-eye";
+				const closeEye = "bi-eye-slash";
+				eye.classList.toggle(openEye);
+				eye.classList.toggle(closeEye);
+				const input = eye.parentElement.querySelector("input");
+				input.type = input.type === "password" ? "text" : "password";
+			});
 		})
 	}
 
@@ -197,12 +195,13 @@ export default class SignupForm extends HTMLElement {
 			}	
 		}
 		console.log(invalidFilds);
+		return invalidFilds;
 	}
 
-	#redirectToSignUpForm() {
-		const btn = this.html.querySelector(".btn-signup");
+	#redirectToSignInForm() {
+		const btn = this.html.querySelector(".btn-signin");
 		btn.addEventListener("click", (event) => {
-			redirect("/signup");
+			redirect("/login");
 		});
 	}
 
@@ -210,8 +209,15 @@ export default class SignupForm extends HTMLElement {
 		const loginForm = this.html.querySelector("#signup-form");
 		loginForm.addEventListener("submit", (event) => {
 			event.preventDefault();
-			const data = this.#getdInputData();
-			this.#getInvalidFields(data);
+			const dataForm = this.#getdInputData();
+			const invalidFilds = this.#getInvalidFields(dataForm);
+			this.#removeAllInvalidStyles();
+			if (Object.keys(invalidFilds).length)
+				this.#setAllFormErrors(invalidFilds);
+			else {
+				callAPI("POST", "http://127.0.0.1:8000/api/auth/register", dataForm, this.#apiResHandlerCalback);
+			}
+
 
 
 			/*if (!dataForm.username || !dataForm.password)
@@ -225,21 +231,87 @@ export default class SignupForm extends HTMLElement {
 	#apiResHandlerCalback = (res, data) => {
 		if (res.ok)
 			redirect("/");
-		else
-			this.#setInvalidForm();
+		else {
+			if (res.status == 409) {
+				console.log(data.message);
+				this.#handleApiFormErrors(res.status, data.message);
+			}
+		}
 	}
 
-	#setInvalidForm() {
+	#setInvalidInputStyle(inputId) {
+		if (inputId === "confirmPassword")
+			inputId = "confirm-password";
+		document.getElementById(inputId).classList.add("is-invalid");
+	}
+
+	#removeAllInvalidInputsStyle() {
 		const inputs = document.querySelectorAll('input');
 		inputs.forEach(input => {
-			input.classList.add("is-invalid");
+			input.classList.remove("is-invalid");
 		})
+	}
+
+	#removeAlertMessage() {
 		const alert = document.querySelector(".alert");
-		if (alert.classList.contains("hide"))
-		{
-			alert.classList.add("show");
-			alert.classList.remove("hide");
-		}	
+		alert.classList.remove("show");
+		alert.classList.add("hide");
+		alert.textContent = "";	
+	}
+
+	#removeAllInvalidStyles() {
+		this.#removeAllInvalidInputsStyle();
+		this.#removeAlertMessage();
+	}
+
+	#showAlertMessage(message) {
+		const alert = document.querySelector(".alert");
+		alert.classList.remove("hide");
+		alert.classList.add("show");
+		if (message)
+			alert.textContent = message;
+	}
+
+	#updateAlertMessage(message) {
+		const alert = document.querySelector(".alert");
+		const msg = alert.textContent;
+		if (!msg)
+			alert.textContent = message;
+		else
+			alert.textContent = `${msg} / ${message}`;
+	}
+
+	#setAllFormErrors(invalidFilds) {
+		let emptyFilds = false;
+
+		this.#showAlertMessage();
+		for (const [key, value] of Object.entries(invalidFilds)) {
+			this.#setInvalidInputStyle(key);
+			if (key === "email" && value === "invalid")
+				this.#updateAlertMessage("Invalid email");
+			else if (key === "password" && value === "unmatch")
+				this.#updateAlertMessage("Unmatched passwords");
+			else if (value === "empty")
+				emptyFilds = true;
+		}
+		if (emptyFilds)
+			this.#updateAlertMessage("Required fields");
+	}
+
+	#handleApiFormErrors(status, message) {
+		
+		console.log(status);
+		console.log(message);
+
+		if (status == 400)
+			; // Invalid Form
+		if (status == 409) {
+			this.#showAlertMessage(message);
+			if (message.indexOf("Username") > -1)
+				this.#setInvalidInputStyle("username");
+			else if (message.indexOf("Email") > -1)
+				this.#setInvalidInputStyle("email");
+		} 
 	}
 }
 

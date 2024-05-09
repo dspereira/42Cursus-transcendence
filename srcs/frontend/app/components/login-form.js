@@ -130,7 +130,7 @@ export default class LoginForm extends HTMLElement {
 	#scripts() {
 		this.#showHidePassword();
 		this.#submit();
-		this.#changeToSignUpForm();
+		this.#redirectToSignUpForm();
 	}
 
 	#showHidePassword() {
@@ -146,7 +146,7 @@ export default class LoginForm extends HTMLElement {
 		});
 	}
 
-	#changeToSignUpForm() {
+	#redirectToSignUpForm() {
 		const btn = this.html.querySelector(".btn-signup");
 		btn.addEventListener("click", (event) => {
 			redirect("/signup");
