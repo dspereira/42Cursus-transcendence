@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 	'two_factor_auth',
+    'notifications',
     'user_auth',
     'live_chat',
     'channels',
