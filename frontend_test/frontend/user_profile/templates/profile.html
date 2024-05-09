@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile Info</title>
+    <script src="../static/image_scripts.js" ></script>
+</head>
+<body>
+    <h2>Upload Image</h2>
+    <br><br>
+    <form action="http://127.0.0.1:8000/api/profile/updatepicture" method="post" enctype="multipart/form-data">
+        <input type="file" name="image" accept="image/*">
+        <input type="text" name="user_id" placeholder="user_id">
+        <button type="submit">Upload</button>
+    </form>
+    <h2>View Image</h2>
+    <br><br>
+    <form id="ViewImageForm">
+        <input type="text" id="user_id" name="user_id" placeholder="user_id">
+        <button type="button" onclick="showImage()">View</button>
+    </form>
+    <div id="imageContainer"></div>
+</body>
+</html>

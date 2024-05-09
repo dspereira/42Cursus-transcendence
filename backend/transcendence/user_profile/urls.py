@@ -7,5 +7,5 @@ urlpatterns = [
     path('decline', views.apiDeclineFriendRequest, name='decline'),
     path('editbio', views.apiEditBio, name='editbio'),
     path('updatepicture', views.apiUpdateProfilePicture, name='updatepicture'),
-    path('test', views.apiCreatUserInfo, name='test'),
+    path('showimage', views.apiShowImage, name='ushowimage'),
 ]

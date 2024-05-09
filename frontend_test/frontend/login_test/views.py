@@ -22,6 +22,3 @@ def chat(request):
 
 def refresh(request):
 	return render(request, "login_test/refresh.html")
-
-def profilepic(request):
-	return render(request, "login_test/profilepic.html")

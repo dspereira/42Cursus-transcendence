@@ -8,6 +8,7 @@ from .auth_utils import login as user_login
 from .auth_utils import logout as user_logout
 from .auth_utils import refresh_token as user_refresh_token
 from .auth_utils import update_blacklist
+from user_profile.models import UserProfileInfo
 
 from custom_utils.models_utils import ModelManager
 
@@ -33,6 +34,8 @@ def register(request):
 		user = user_model.create(username=username, email=email, password=password)
 		if not user:
 			return JsonResponse({"message": "Error creating user"}, status=500)
+		user_info = ModelManager(UserProfileInfo)
+		user_info.create(user_id=user)
 
 	return JsonResponse({"message": "success"})
 
