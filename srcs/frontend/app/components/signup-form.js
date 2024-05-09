@@ -156,10 +156,10 @@ export default class SignupForm extends HTMLElement {
 
 	#getdInputData() {
 		const data = {
-			email: document.querySelector('#email').value,
-			username: document.querySelector('#username').value,
-			password: document.querySelector('#password').value,
-			confirmPassword: document.querySelector("#confirm-password").value
+			email: document.querySelector('#email').value.trim(),
+			username: document.querySelector('#username').value.trim(),
+			password: document.querySelector('#password').value.trim(),
+			confirmPassword: document.querySelector("#confirm-password").value.trim()
 		}
 		return data;
 	}
@@ -178,15 +178,21 @@ export default class SignupForm extends HTMLElement {
 		return true;
 	}
 
+	#isValidUsername(username) {
+		var regex = /^[a-zA-Z0-9_-]+$/;
+		return regex.test(username);
+	}
+
 	#getInvalidFields(data) {
 		const invalidFilds = {};
-
+	
 		for (const [key, value] of Object.entries(data)) {
-
 			if (!value)
 				invalidFilds[key] = "empty";
 			else if (key === "email" && !this.#isValidEmail(value))
-				invalidFilds.email = "invalid"
+				invalidFilds.email = "invalid";
+			else if (key === "username" && !this.#isValidUsername(value))
+				invalidFilds.username = "invalid";
 		}
 		if (!invalidFilds.password && !invalidFilds.confirmPassword) {
 			if (data.password !== data.confirmPassword) {
@@ -194,7 +200,6 @@ export default class SignupForm extends HTMLElement {
 				invalidFilds.confirmPassword = "unmatch";
 			}	
 		}
-		console.log(invalidFilds);
 		return invalidFilds;
 	}
 
@@ -214,29 +219,16 @@ export default class SignupForm extends HTMLElement {
 			this.#removeAllInvalidStyles();
 			if (Object.keys(invalidFilds).length)
 				this.#setAllFormErrors(invalidFilds);
-			else {
-				callAPI("POST", "http://127.0.0.1:8000/api/auth/register", dataForm, this.#apiResHandlerCalback);
-			}
-
-
-
-			/*if (!dataForm.username || !dataForm.password)
-				this.#setInvalidForm();
 			else
-				callAPI("POST", "http://127.0.0.1:8000/api/auth/login", dataForm, this.#apiResHandlerCalback);
-			*/
+				callAPI("POST", "http://127.0.0.1:8000/api/auth/register", dataForm, this.#apiResHandlerCalback);
 		});
 	}
 
 	#apiResHandlerCalback = (res, data) => {
 		if (res.ok)
 			redirect("/");
-		else {
-			if (res.status == 409) {
-				console.log(data.message);
-				this.#handleApiFormErrors(res.status, data.message);
-			}
-		}
+		else
+			this.#handleApiFormErrors(res.status, data.message);
 	}
 
 	#setInvalidInputStyle(inputId) {
@@ -289,6 +281,8 @@ export default class SignupForm extends HTMLElement {
 			this.#setInvalidInputStyle(key);
 			if (key === "email" && value === "invalid")
 				this.#updateAlertMessage("Invalid email");
+			else if (key === "username" && value === "invalid")
+				this.#updateAlertMessage("Invalid username");
 			else if (key === "password" && value === "unmatch")
 				this.#updateAlertMessage("Unmatched passwords");
 			else if (value === "empty")
@@ -304,7 +298,7 @@ export default class SignupForm extends HTMLElement {
 		console.log(message);
 
 		if (status == 400)
-			; // Invalid Form
+			this.#showAlertMessage("Invalid Form");
 		if (status == 409) {
 			this.#showAlertMessage(message);
 			if (message.indexOf("Username") > -1)

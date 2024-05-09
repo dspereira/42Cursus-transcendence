@@ -68,12 +68,12 @@ const getHtml = function(data) {
 			</div>
 			<div class="form-group">
 				<i class="icon left-icon bi-person"></i>
-				<input type="text" class="input-padding form-control form-control-lg" id="email" placeholder="Email / Username">
+				<input type="text" class="input-padding form-control form-control-lg" id="email" placeholder="Email / Username" maxlength="100">
 			</div>
 			<div class="form-group">
 				<i class="icon left-icon bi bi-key"></i>
 				<i class="icon right-icon bi bi-eye-slash eye-icon"></i>
-				<input type="password" class="input-padding form-control form-control-lg" id="password" placeholder="Password">
+				<input type="password" class="input-padding form-control form-control-lg" id="password" placeholder="Password" maxlength="128">
 			</div>
 			<div>
 				<button type="submit" class="btn btn-primary btn-submit">Sign In</button>
@@ -158,8 +158,8 @@ export default class LoginForm extends HTMLElement {
 		loginForm.addEventListener("submit", (event) => {
 			event.preventDefault();
 			const dataForm = {
-				username: document.querySelector('#email').value,
-				password: document.querySelector('#password').value
+				username: document.querySelector('#email').value.trim(),
+				password: document.querySelector('#password').value.trim()
 			}
 			if (!dataForm.username || !dataForm.password)
 				this.#setInvalidCredentialsStyle();
