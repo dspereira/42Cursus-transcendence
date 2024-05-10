@@ -24,7 +24,6 @@ export default class PageLogin extends HTMLElement {
 		super()
 		this.#initComponent();
 		this.#render();
-
 	}
 
 	static get componentName() {
