@@ -9,6 +9,7 @@ import AppTest from "../components/app-test.js";
 import AppHeader from "../components/app-header.js";
 import LoginForm from "../components/login-form.js";
 import SignupForm from "../components/signup-form.js";
+import SidePanel from "../components/side-panel.js";
 
 //  /user/:id devo poder configurar neste formato
 const routes = {

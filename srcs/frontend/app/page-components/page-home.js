@@ -1,21 +1,11 @@
 const styles = `
-	.user {
-		font-size: 24px;
-	}
+
+
 `;
 
 const html = `
 
-<app-header></app-header>
-
-<a href="/login/">Login</a>
-<h1>Home Page</h1>
-<br><br>
-<app-test class="test" message="This Test message is awsome"></app-test>
-
-<h2 class="id"></h1>
-<h2 class="username"></h1>
-<h2 class="email"></h1>
+	<side-panel></side-panel>
 
 `;
 
@@ -26,7 +16,7 @@ export default class PageHome extends HTMLElement {
 
 	constructor() {
 		super()
-		this.#loadData();
+		//this.#loadData();
 		this.#initComponent();
 		this.#render();
 	}
