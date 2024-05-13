@@ -6,16 +6,18 @@ from custom_utils.models_utils import ModelManager
 
 from asgiref.sync import sync_to_async
 
-class ChannelsAuthMiddleware(BaseMiddleware):
+class WebsocketsAuthMiddleware(BaseMiddleware):
 
 	async def __call__(self, scope, receive, send):
-		scope['access_data'] = JwtData(self.__getAccessToken(scope))
-		scope['room_id'] = None
-		if scope['access_data']:
-			room_id = self.__getRoomId(scope['query_string'])
-			print("Scope Room ID -> ", scope['room_id'])
-			if await self.__isUserAllowedInChatRoom(scope['access_data'].sub, room_id):
-				scope['room_id'] = room_id
+
+		if (scope['path'] == "/chat_connection/"):
+			scope['access_data'] = JwtData(self.__getAccessToken(scope))
+			scope['room_id'] = None
+			if scope['access_data']:
+				room_id = self.__getRoomId(scope['query_string'])
+				print("Scope Room ID -> ", scope['room_id'])
+				if await self.__isUserAllowedInChatRoom(scope['access_data'].sub, room_id):
+					scope['room_id'] = room_id
 		return await super().__call__(scope, receive, send)
 
 	def __getAccessToken(self, scope):

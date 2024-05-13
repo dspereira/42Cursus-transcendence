@@ -12,15 +12,18 @@ from django.core.asgi import get_asgi_application
 from channels.routing import ProtocolTypeRouter, URLRouter
 from channels.security.websocket import AllowedHostsOriginValidator
 from live_chat.routing import chat_urls
-from custom_middlewares import ChannelsAuthMiddleware
+from notifications.routing import notifications_urls
+from custom_middlewares import WebsocketsAuthMiddleware
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'transcendence.settings')
+
+websocket_urls = chat_urls + notifications_urls
 
 application = ProtocolTypeRouter({
 	'http': get_asgi_application(),
 	"websocket": AllowedHostsOriginValidator(
-		ChannelsAuthMiddleware(
-			URLRouter(chat_urls)
+		WebsocketsAuthMiddleware(
+			URLRouter(websocket_urls)
 		),
 	),
 })
