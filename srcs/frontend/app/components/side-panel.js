@@ -8,10 +8,13 @@ const styles = `
 		display: flex;
 		flex-direction: column;
 		align-items: flex-start;
-		width: 240px;
+		width: 200px;
 		height: 100%;
-		padding: 40px 10px 30px 10px;
+		/*padding: 10px 10px 10px 20px;*/
 		border-right: 1px solid #2f3336;
+
+		padding-left: 10px;
+		padding-right: 10px;
 	}
 
 	.side-panel-header {
@@ -32,27 +35,58 @@ const styles = `
 
 	.side-panel button {
 		display: block;
-		/*height: 60px;*/
 		background : transparent;
 		border: 0;
 		font-family: innherit;
 		text-align: left;
 		padding: 0;
-		margin-bottom: 20px;
+		margin-bottom: 10px;
+
+		/*border: 1px solid red;*/
 	}
 
 	.side-panel button > span {
 		display: inline-flex;
 		align-items: center;
-		gap: 12px;
-		/*padding: 0 16px 0 12px;*/
+		gap: 15px;
 	}
 
-	.side-panel button i {
+	.icon {
+		font-size: 22px;
+		padding: 1px 0px 1px 10px;
+	}
+
+
+	.icon-text {
+		font-size: 14px;
+		padding: 1px 10px 1px 0px;
+	}
+
+	/*.icon:hover {
+		background-color: #dbd9d7;
+		border-radius: 8px;
+	}*/
+
+	
+
+	button:hover {
+		background-color: #dbd9d7;
+		border-radius: 8px;
+	}
+
+
+	/*.side-panel button i {
 		position: relative;
-		font-size: 28px;
+		font-size: 22px;
+		border: 1px solid blue;
 	}
 
+	.side-panel button > span > span {
+		font-size: 16px;
+		border: 1px solid green;
+	}*/
+
+	/*
 	.side-panel button  {
 		position: relative;
 		font-size: 28px;
@@ -61,6 +95,7 @@ const styles = `
 	.side-panel button span {
 		font-size: 28px;
 	}
+	*/
 
 	.side-panel > nav {
 		flex: 1 1 auto;
@@ -113,25 +148,25 @@ const getHtml = function(data) {
 			<button>
 				<span>
 					<i class="icon bi bi-chat"></i>
-					<span>Chat</span>
+					<span class="icon-text">Chat</span>
 				</span>
 			</button>
 			<button>
 				<span>
 					<i class="icon bi bi-trophy"></i>
-					<span>Tornement</span>
+					<span class="icon-text">Tornement</span>
 				</span>
 			</button>
 			<button>
 				<span>
 					<i class="icon bi bi-chat"></i>
-					<span>Chat</span>
+					<span class="icon-text">Chat</span>
 				</span>
 			</button>
 			<button>
 				<span>
 					<i class="icon bi bi-trophy"></i>
-					<span>Tornement</span>
+					<span class="icon-text">Tornement</span>
 				</span>
 			</button>
 		<nav>
