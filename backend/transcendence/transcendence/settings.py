@@ -51,9 +51,10 @@ INSTALLED_APPS = [
     'user_auth',
     'live_chat',
     'channels',
-	'game_engine',
+    'game_engine',
     'generate_users', # test app
     'generate_chatrooms', # test app
+    'tournament',
 ]
 
 MIDDLEWARE = [
