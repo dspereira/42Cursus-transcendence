@@ -10,8 +10,8 @@ class WebsocketsAuthMiddleware(BaseMiddleware):
 
 	async def __call__(self, scope, receive, send):
 
+		scope['access_data'] = JwtData(self.__getAccessToken(scope))
 		if (scope['path'] == "/chat_connection/"):
-			scope['access_data'] = JwtData(self.__getAccessToken(scope))
 			scope['room_id'] = None
 			if scope['access_data']:
 				room_id = self.__getRoomId(scope['query_string'])
