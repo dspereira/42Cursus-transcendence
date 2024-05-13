@@ -22,4 +22,5 @@ urlpatterns = [
     path('api/chat/', include('live_chat.urls')),
 	path('api/auth/', include('user_auth.urls')),
 	path('api/two_factor_auth/', include('two_factor_auth.urls')),
+	path('api/notifications/', include('notifications.urls')),
 ]
