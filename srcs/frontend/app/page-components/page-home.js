@@ -5,6 +5,8 @@ const styles = `
 
 const html = `
 
+
+	<app-header></app-header>
 	<side-panel></side-panel>
 
 `;

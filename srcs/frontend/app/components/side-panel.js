@@ -33,7 +33,7 @@ const styles = `
 	/*** OPEN ***/
 	.open .side-panel {
 		position: fixed;
-		top: 0;
+		top: 90px;
 		display: flex;
 		flex-direction: column;
 		align-items: flex-start;
@@ -125,7 +125,7 @@ const styles = `
 
 	.close .side-panel {
 		position: fixed;
-		top: 0;
+		top: 90;
 		display: flex;
 		flex-direction: column;
 		align-items: flex-start;
@@ -186,12 +186,12 @@ const getHtml = function(data) {
 	
 	<div class="side-panel-wrapper open">
 		<aside class="side-panel">
-			<header class="side-panel-header">
+		<!--<header class="side-panel-header">
 				<div class="logo">
 					<img src="/img/logo.png" class="logo-img" alt="logo">
 					<span class="logo-text"><strong>BlitzPong</strong></span>
 				</div>
-			</header>
+			</header>-->
 			<nav>
 				<button>
 					<span>
@@ -270,7 +270,7 @@ const getHtml = function(data) {
 	</div>-->
 
 
-	<div class="content">
+	<!--<div class="content">
 
 	<div class="row">
 		<div class="col-md-6 offset-md-3">
@@ -278,7 +278,7 @@ const getHtml = function(data) {
 		</div>
   	</div>
 
-	</div>
+	</div>-->
 
 	`;
 	return html;

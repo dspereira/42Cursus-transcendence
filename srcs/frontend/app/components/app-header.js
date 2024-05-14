@@ -1,71 +1,114 @@
+import {redirect} from "../js/router.js";
 
-const colors = {
-	c1: "#FFFFFF",
-	c2: "#526D82",
-	c3: "#9DB2BF",
-	c4: "#DDE6ED",
-}
 
 const styles = `
-body {
-	margin: 0;
-	padding: 0;
-	background-color: ${colors.c1};
+
+header {
+	display: flex;
+    justify-content: space-between;
+    align-items: center;
+	width: 100%;
+	padding: 15px 20px 0px 20px;
 }
 
-.avatar {
-	width: 50px;
+.left-side {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+}
+
+.logo-img {
+	width: 45px;
+}
+
+.logo-text {
+	font-size: 22px;
+}
+
+
+.right-side {
+	display: flex;
+	align-items: center;
+	gap: 30px;	
+}
+
+.profile-photo {
+	width: 45px;
+	height: auto;
 	clip-path:circle();
 }
 
-.logo {
-	width: 115px;
+.bell {
+	font-size: 22px;
 }
 
-.header {
-	background-color: ${colors.c3};
-	display: flex;
-	justify-content: space-between;
-	align-items: center;
-	/* top | right | bottom | left */
-	padding: 15px 30px 15px 30px;
-}
 `;
 
-const html = `
-	<div class="app-header">
-		<div class="header">
-				<div class="logo">
-					<img src="/img/logo_black.png" class="logo" alt="logo">
-				</div>
-				<div>
-					<img src="/img/fox_profile.png" class="avatar" alt="profile">
-				</div>
+
+const getHtml = function(data) {
+	const html = `
+	
+	<header>
+		<div class="left-side">
+			<img src="/img/logo.png" class="logo-img" alt="logo">
+			<span class="logo-text"><strong>BlitzPong</strong></span>
 		</div>
-	</div>
-`;
+
+		<div class="right-side">
+			<i class="bell bi bi-bell"></i>
+			<img src="https://api.dicebear.com/8.x/bottts/svg?seed=Diogo" class="profile-photo"  alt="avatar"/>
+		</div>
+	</header>
+
+	`;
+	return html;
+}
 
 export default class AppHeader extends HTMLElement {
+	static observedAttributes = [];
 
 	constructor() {
 		super()
-		this.elmtId = `elmtId_${Math.floor(Math.random() * 100000000000)}`;
-		const elmBody = document.createElement("div");
-		elmBody.classList.add(`${this.elmtId}`);
-		const styles = document.createElement("style");
-		styles.textContent = this.#styles();
-		elmBody.innerHTML = this.#html();
-		this.appendChild(styles);
-		this.appendChild(elmBody);
+		this.#initComponent();
+		this.#render();
+		this.#scripts();
+	}
+
+	attributeChangedCallback(name, oldValue, newValue) {
+
+	}
+
+	#initComponent() {
+		this.html = document.createElement("div");
+		this.html.innerHTML = this.#html();
+		if (styles) {
+			this.elmtId = `elmtId_${Math.floor(Math.random() * 100000000000)}`;
+			this.styles = document.createElement("style");
+			this.styles.textContent = this.#styles();
+			this.html.classList.add(`${this.elmtId}`);
+		}
 	}
 
 	#styles() {
-		return `@scope (.${this.elmtId}) {${styles}}`;
+			if (styles)
+				return `@scope (.${this.elmtId}) {${styles}}`;
+			return null;
 	}
 
-	#html(){
-		return html;
+	#html(data){
+		return getHtml(data);
 	}
+
+	#render() {
+		if (styles)
+			this.appendChild(this.styles);
+		this.appendChild(this.html);
+	}
+
+	#scripts() {
+
+	}
+
 }
 
 customElements.define("app-header", AppHeader);
