@@ -3,11 +3,16 @@ import json
 from asgiref.sync import sync_to_async
 from channels.generic.websocket import AsyncWebsocketConsumer
 from custom_utils.auth_utils import is_authenticated, get_authenticated_user
-from .models import FriendsRequestNotification
+from .models import FriendsRequestNotification, GameInviteNotification
 from channels.exceptions import StopConsumer
 from custom_utils.models_utils import ModelManager
 from user_auth.models import User
+import json
 
+from .notifications import get_user_notifications
+
+friend_req_notification_model = ModelManager(FriendsRequestNotification)
+game_inv_notification_model = ModelManager(GameInviteNotification)
 user_model = ModelManager(User)
 
 class Notifications(AsyncWebsocketConsumer):
@@ -53,6 +58,15 @@ class Notifications(AsyncWebsocketConsumer):
 		data_json = json.loads(text_data)
 
 		print(data_json)
+
+		if data_json["type"] == "get_all_notifications":
+			notifications = await get_user_notifications(self.user)
+			print("------------------------------------------------")
+			if notifications:
+				print(notifications)
+			else:
+				print("Não existem notificações no momento.")
+			print("------------------------------------------------")
 
 		""" message = data_json['message'].strip()
 		if message:
