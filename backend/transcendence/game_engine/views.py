@@ -88,3 +88,32 @@ def	player_controls(request) :
 		finish_match(requestTesting)
 
 	return JsonResponse(response_data)
+
+
+
+
+
+
+def	finish_match_test(request):
+
+	if request:
+		req_data = json.loads(request.body)
+		# req_data = request
+		match_by_id = match_model.get(id=req_data["game_id"])
+		match_by_id.user1_score = req_data["score_player1"]
+		match_by_id.user2_score = req_data["score_player2"]
+		if match_by_id.user1_score >= 7:
+			match_by_id.winner = match_by_id.user1
+		elif match_by_id.user2_score >= 7:
+			match_by_id.winner = match_by_id.user2
+		match_by_id.save()
+		response = {
+			"message":"successfully refreshed"
+		}
+	else:
+		response = {
+			"message":"failed to refresh"
+		}
+
+	return JsonResponse(response)
+
