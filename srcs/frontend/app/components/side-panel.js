@@ -10,39 +10,47 @@ const styles = `
 		align-items: flex-start;
 		width: 200px;
 		height: 100%;
-		/*padding: 10px 10px 10px 20px;*/
-		border-right: 1px solid #2f3336;
 
+		padding-top: 20px;
 		padding-left: 10px;
 		padding-right: 10px;
+
+		/* Não terá border apenas um background de outra cor */
+		border-right: 1px solid #2f3336;
 	}
 
-	.side-panel-header {
-		margin-bottom: 16px;
-		width: 100%;
+	.side-panel > nav {
+		width: 100%
 	}
 
-	.profile-photo {
-		width: 35px;
-		min-height: 35px;
-		clip-path:circle();
-		transition: transform 0.5s;
+	.logo {
+		display: inline-flex;
+		align-items: center;
+		gap: 12px;
 	}
 
-	.profile-photo:hover {
-		transform: scale(1.5);
+	.logo-img {
+		width: 45px;
+		margin-bottom: 25px;
+		padding-left: 10px
 	}
 
-	.side-panel button {
+	.logo-text {
+		font-size: 22px;
+		padding-bottom: 25px;
+	} 
+
+
+
+	button {
 		display: block;
 		background : transparent;
 		border: 0;
+		padding: 0;
 		font-family: innherit;
 		text-align: left;
-		padding: 0;
-		margin-bottom: 10px;
-
-		/*border: 1px solid red;*/
+		margin-bottom: 15px;
+		width: 100%;
 	}
 
 	.side-panel button > span {
@@ -53,56 +61,17 @@ const styles = `
 
 	.icon {
 		font-size: 22px;
-		padding: 1px 0px 1px 10px;
+		padding: 3px 0px 3px 10px;
 	}
-
 
 	.icon-text {
 		font-size: 14px;
-		padding: 1px 10px 1px 0px;
+		padding: 3px 10px 3px 0px;
 	}
-
-	/*.icon:hover {
-		background-color: #dbd9d7;
-		border-radius: 8px;
-	}*/
-
-	
 
 	button:hover {
 		background-color: #dbd9d7;
-		border-radius: 8px;
-	}
-
-
-	/*.side-panel button i {
-		position: relative;
-		font-size: 22px;
-		border: 1px solid blue;
-	}
-
-	.side-panel button > span > span {
-		font-size: 16px;
-		border: 1px solid green;
-	}*/
-
-	/*
-	.side-panel button  {
-		position: relative;
-		font-size: 28px;
-	}
-
-	.side-panel button span {
-		font-size: 28px;
-	}
-	*/
-
-	.side-panel > nav {
-		flex: 1 1 auto;
-		display: flex;
-		flex-direction: column;
-		width: 100%
-		
+		border-radius: 6px;
 	}
 
 	.content {
@@ -114,19 +83,37 @@ const styles = `
 
 	@media (width < 920px) {
 		.side-panel {
-			width: 65px;
+			width: auto;
+			padding-left: 3px;
+			padding-right: 3px;
 		}
 
-		.side-panel button > span {
-			display: inline-flex;
-			align-items: center;
-			gap: 12px;
-			/*padding: 0 16px 0 12px;*/
+		.logo-img {
+			width: 40px;
+			margin-bottom: 25px;
+			padding-left: 8px
 		}
-
-		.side-panel button > span > span  {
+	
+		.logo-text {
 			display: none;
-			visibility: hidden;
+		}
+
+		.icon {
+			font-size: 22px;
+			padding: 8px 12px 8px 12px;
+		}
+
+		.icon-text  {
+			display: none;
+		}
+
+		button:hover {
+			background-color: transparent;
+		}
+
+		.icon:hover {
+			background-color: #dbd9d7;
+			border-radius: 3px;
 		}
 
 		.content {
@@ -142,19 +129,22 @@ const getHtml = function(data) {
 	
 	<aside class="side-panel">
 		<header class="side-panel-header">
-			<img src="/img/fox_profile.png" class="profile-photo" alt="user profile photo"/>
+			<div class="logo">
+				<img src="/img/logo.png" class="logo-img" alt="logo">
+				<span class="logo-text"><strong>BlitzPong</strong></span>
+			</div>
 		</header>
 		<nav>
 			<button>
 				<span>
-					<i class="icon bi bi-chat"></i>
-					<span class="icon-text">Chat</span>
+					<i class="icon bi bi-house-door"></i>
+					<span class="icon-text">Home</span>
 				</span>
 			</button>
 			<button>
 				<span>
-					<i class="icon bi bi-trophy"></i>
-					<span class="icon-text">Tornement</span>
+					<i class="icon bi bi-person"></i>
+					<span class="icon-text">Profile</span>
 				</span>
 			</button>
 			<button>
