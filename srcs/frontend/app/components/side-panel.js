@@ -184,7 +184,7 @@ const styles = `
 const getHtml = function(data) {
 	const html = `
 	
-	<div class="main open">
+	<div class="side-panel-wrapper open">
 		<aside class="side-panel">
 			<header class="side-panel-header">
 				<div class="logo">
@@ -326,36 +326,20 @@ export default class SidePanel extends HTMLElement {
 	}
 
 	#scripts() {
-		this.#closePanel();
-		this.#openPanel();
+		this.#openClosePanel("open");
+		this.#openClosePanel("close");
+
 	}
 
-	#closePanel() {
-		let btn = this.html.querySelector(".close-btn");
+	#openClosePanel(status) {
+		let btn = this.html.querySelector(`.${status}-btn`);
 		btn.addEventListener("click", () => {
-
-			this.html.querySelector(".main").classList.remove("open");
-			this.html.querySelector(".main").classList.add("close");
-
+			let sidePanel = this.html.querySelector(".side-panel-wrapper");
+			sidePanel.classList.toggle("close");
+			sidePanel.classList.toggle("open");
 			this.html.querySelector(".open-btn").classList.toggle("hide");
 			this.html.querySelector(".close-btn").classList.toggle("hide");
-
-		});
-	}
-
-	#openPanel() {
-		let btn = this.html.querySelector(".open-btn");
-		btn.addEventListener("click", () => {
-
-			this.html.querySelector(".main").classList.remove("close");
-			this.html.querySelector(".main").classList.add("open");
-
-
-			this.html.querySelector(".open-btn").classList.toggle("hide");
-			this.html.querySelector(".close-btn").classList.toggle("hide");
-
-
-		});
+		});		
 	}
 }
 
