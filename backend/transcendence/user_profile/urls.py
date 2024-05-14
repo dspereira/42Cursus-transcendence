@@ -2,10 +2,7 @@ from django.urls import path
 from . import views
 
 urlpatterns = [
-	path('request', views.apiSendFriendRequest, name='request'),
-    path('accept', views.apiAcceptFriendRequest, name='accept'),
-    path('decline', views.apiDeclineFriendRequest, name='decline'),
-    path('editbio', views.apiEditBio, name='editbio'),
-    path('updatepicture', views.apiUpdateProfilePicture, name='updatepicture'),
-    path('showimage', views.apiShowImage, name='ushowimage'),
+    path('editbio', views.api_edit_bio, name='editbio'),
+    path('updatepicture', views.api_update_profile_picture, name='updatepicture'),
+    path('showimage', views.api_show_image, name='showimage'),
 ]
