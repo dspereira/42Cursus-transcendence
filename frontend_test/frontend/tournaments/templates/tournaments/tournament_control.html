@@ -1,0 +1,33 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<title>Tournament controls</title>
+		<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css">
+		<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.min.js"></script>
+		<script src="{% static 'tournament_control.js' %}"></script>
+		<style>
+			#roomSelect {
+				height: 300px;
+			}
+		</style>
+	</head>
+	<body>
+		<div class="container mt-3 p-5">
+			<button class="btn btn-dark" onclick="window.location.assign('http://127.0.0.1:8080/tournaments/')">Go Back</button><br><br>
+			<h2>Control pannel hehe!</h2>
+			
+			<select id="Tournament_list" class="form-select" multiple size="10"></select>
+			<br>
+			<button type="click" id="create_button" class="btn btn-outline-success">Create Tournament!</button><br><br>
+			<button type="click" id="invite_button" class="btn btn-outline-success">Invite to Tournament!</button><br><br>
+			<button type="click" id="update_button" class="btn btn-outline-success">Update Tournament!</button><br><br>
+			<button type="click" id="check_button" class="btn btn-outline-success">Check Tournament!</button><br><br>
+			<button type="click" id="list_button" class="btn btn-outline-success">List Tournaments!</button><br><br>
+			<!-- <blockquote class="blockquote">
+				<p class="mb-0">Join Room Status:</p>
+				<p class="mb-0 status_join_chatroom"></p>
+			</blockquote> -->
+		</div>
+	</body>
+</html>
