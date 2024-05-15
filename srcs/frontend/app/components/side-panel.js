@@ -20,7 +20,7 @@ const styles = `
 		padding: 0;
 		font-family: innherit;
 		text-align: left;
-		margin-bottom: 15px;
+		margin-bottom: 10px;
 		width: 100%;
 	}
 
@@ -30,48 +30,51 @@ const styles = `
 		gap: 15px;
 	}
 
+
 	/*** OPEN ***/
 	.open .side-panel {
 		position: fixed;
-		top: 90px;
+		top: 0;
 		display: flex;
 		flex-direction: column;
 		align-items: flex-start;
 		width: 200px;
 		height: 100%;
 		padding-top: 20px;
-		padding-left: 10px;
-		padding-right: 10px;
+		padding-left: 5px;
+		padding-right: 5px;
 
 		/* Não terá border apenas um background de outra cor */
 		border-right: 1px solid #2f3336;
 	}
 
-	.open .logo-img {
-		width: 45px;
-		margin-bottom: 25px;
-		padding-left: 10px
+	.open .list-btn .icon {
+		display: inline-block;
+		font-size: 22px;
+		padding: 8px 14px 8px 14px;
+		text-align: center;
 	}
 
-	.open .logo-text {
-		font-size: 22px;
-		padding-bottom: 25px;
-	} 
-
-	.open .icon {
-		font-size: 22px;
-		padding: 3px 0px 3px 10px;
+	.open .list-btn .icon:hover {
+		background-color: #dbd9d7;
+		clip-path:circle();
 	}
 
-	.open .icon-text {
+	.open .link-btn .icon {
+		font-size: 22px;
+		padding: 3px 14px 3px 14px;
+	}
+
+	.open .link-btn .icon-text {
 		font-size: 14px;
-		padding: 3px 10px 3px 0px;
 	}
 
-	.open button:hover {
+	.open .link-btn button:hover {
 		background-color: #dbd9d7;
 		border-radius: 6px;
 	}
+
+
 
 	.open .content {
 		margin-left: 255px;
@@ -80,89 +83,57 @@ const styles = `
 		overflow: hidden;
 	}
 
-	/*@media (width < 920px) {
-		.side-panel {
-			width: auto;
-			padding-left: 3px;
-			padding-right: 3px;
-		}
-
-		.logo-img {
-			width: 40px;
-			margin-bottom: 25px;
-			padding-left: 8px
-		}
-	
-		.logo-text {
-			display: none;
-		}
-
-		.icon {
-			font-size: 22px;
-			padding: 8px 12px 8px 12px;
-		}
-
-		.icon-text  {
-			display: none;
-		}
-
-		button:hover {
-			background-color: transparent;
-		}
-
-		.icon:hover {
-			background-color: #dbd9d7;
-			border-radius: 3px;
-		}
-
-		.content {
-			margin-left: 70px;
-
-		}
-	}*/
 
 	/*** CLOSE ***/
 
 	.close .side-panel {
 		position: fixed;
-		top: 90;
+		top: 0;
 		display: flex;
 		flex-direction: column;
 		align-items: flex-start;
 		width: auto;
 		height: 100%;
 		padding-top: 20px;
-		padding-left: 3px;
-		padding-right: 3px;
+		padding-left: 5px;
+		padding-right: 5px;
 
 		/* Não terá border apenas um background de outra cor */
 		border-right: 1px solid #2f3336;
 	}
 
-	.close .logo-img {
-		width: 40px;
-		margin-bottom: 25px;
-		padding-left: 8px
-	}
-
-	.close .logo-text {
-		display: none;
-	}
-
-	.close .icon {
+	.close .list-btn .icon {
+		display: inline-block;
 		font-size: 22px;
-		padding: 8px 12px 8px 12px;
+		padding: 8px 14px 8px 14px;
+		text-align: center;
 	}
 
-	.close .icon-text {
+	.close .list-btn .icon:hover {
+		background-color: #dbd9d7;
+		clip-path:circle();
+	}
+
+	.close #list:hover {
+		background-color: #dbd9d7;
+		clip-path:circle();
+	}
+
+
+	.close .link-btn .icon {
+		font-size: 22px;
+		padding: 8px 14px 8px 14px;
+	}
+
+	.close .link-btn .icon-text {
 		display: none;
 	}
 
-	.close button:hover {
+	.close .link-btn button:hover {
 		background-color: transparent;
 	}
 
-	.close .icon:hover {
+	.close .link-btn .icon:hover {
 		background-color: #dbd9d7;
 		border-radius: 3px;
 	}
@@ -193,42 +164,51 @@ const getHtml = function(data) {
 				</div>
 			</header>-->
 			<nav>
-				<button>
-					<span>
-						<i class="icon bi bi-house-door"></i>
-						<span class="icon-text">Home</span>
-					</span>
-				</button>
-				<button>
-					<span>
-						<i class="icon bi bi-person"></i>
-						<span class="icon-text">Profile</span>
-					</span>
-				</button>
-				<button>
-					<span>
-						<i class="icon bi bi-chat"></i>
-						<span class="icon-text">Chat</span>
-					</span>
-				</button>
-				<button>
-					<span>
-						<i class="icon bi bi-trophy"></i>
-						<span class="icon-text">Tornement</span>
-					</span>
-				</button>
-				<button class="close-btn">
-					<span>
-						<i class="icon bi bi-arrow-bar-left"></i>
-						<span class="icon-text">Close</span>
-					</span>
-				</button>
-				<button class="open-btn hide">
-					<span>
-						<i class="icon bi bi-arrow-bar-right"></i>
-						<span class="icon-text">Open</span>
-					</span>
-				</button>
+				<div class="list-btn">
+					<button>
+						<span>
+							<i class="icon bi bi-list"></i>
+						</span>
+					</button>
+				</div>
+				<div class="link-btn">
+					<button>
+						<span>
+							<i class="icon bi bi-house-door"></i>
+							<span class="icon-text">Home</span>
+						</span>
+					</button>
+					<button>
+						<span>
+							<i class="icon bi bi-person"></i>
+							<span class="icon-text">Profile</span>
+						</span>
+					</button>
+					<button>
+						<span>
+							<i class="icon bi bi-chat"></i>
+							<span class="icon-text">Chat</span>
+						</span>
+					</button>
+					<button>
+						<span>
+							<i class="icon bi bi-trophy"></i>
+							<span class="icon-text">Tornement</span>
+						</span>
+					</button>
+					<button class="close-btn">
+						<span>
+							<i class="icon bi bi-arrow-bar-left"></i>
+							<span class="icon-text">Close</span>
+						</span>
+					</button>
+					<button class="open-btn hide">
+						<span>
+							<i class="icon bi bi-arrow-bar-right"></i>
+							<span class="icon-text">Open</span>
+						</span>
+					</button>
+				</div>
 			<nav>
 		</aside>
 	</div>

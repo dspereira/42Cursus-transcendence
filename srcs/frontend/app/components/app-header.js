@@ -50,8 +50,8 @@ const getHtml = function(data) {
 	
 	<header>
 		<div class="left-side">
-			<img src="/img/logo.png" class="logo-img" alt="logo">
-			<span class="logo-text"><strong>BlitzPong</strong></span>
+			<!--<img src="/img/logo.png" class="logo-img" alt="logo">
+			<span class="logo-text"><strong>BlitzPong</strong></span>-->
 		</div>
 
 		<div class="right-side">
