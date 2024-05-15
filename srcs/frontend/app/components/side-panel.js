@@ -3,15 +3,49 @@ import {redirect} from "../js/router.js";
 
 const styles = `
 
+	.hide {
+		display: none;
+	}
+
+	.side-panel {
+		position: fixed;
+		top: 0;
+		display: flex;
+		flex-direction: column;
+		align-items: flex-start;
+		height: 100%;
+		padding-top: 20px;
+		padding-left: 5px;
+		padding-right: 5px;
+
+		/* Não terá border apenas um background de outra cor */
+		border-right: 1px solid #2f3336;
+	}
+
 	.side-panel > nav {
 		width: 100%
 	}
 
-	.logo {
-		display: inline-flex;
-		align-items: center;
-		gap: 12px;
+	.header-container {
+		display: flex;
+		gap: 15px;
 	}
+
+	.logo {
+		display: flex;
+		align-items: center;
+		gap: 2px;
+		padding-bottom: 20px;
+	}
+	
+	.logo-img {
+		width: 30px;
+	}
+	
+	.logo-text {
+		font-size: 16px;
+	}
+	
 
 	button {
 		display: block;
@@ -20,8 +54,27 @@ const styles = `
 		padding: 0;
 		font-family: innherit;
 		text-align: left;
-		margin-bottom: 10px;
 		width: 100%;
+	}
+
+	.list-btn button {
+		margin-bottom: 20px;
+	}
+
+	.link-btn button {
+		margin-bottom: 10px;
+	}
+
+	.list-btn .icon {
+		display: inline-block;
+		font-size: 22px;
+		padding: 8px 14px 8px 14px;
+		text-align: center;
+	}
+
+	.list-btn .icon:hover {
+		background-color: #dbd9d7;
+		clip-path:circle();
 	}
 
 	.side-panel button > span {
@@ -33,31 +86,11 @@ const styles = `
 
 	/*** OPEN ***/
 	.open .side-panel {
-		position: fixed;
-		top: 0;
-		display: flex;
-		flex-direction: column;
-		align-items: flex-start;
 		width: 200px;
-		height: 100%;
-		padding-top: 20px;
-		padding-left: 5px;
-		padding-right: 5px;
-
-		/* Não terá border apenas um background de outra cor */
-		border-right: 1px solid #2f3336;
 	}
 
-	.open .list-btn .icon {
-		display: inline-block;
-		font-size: 22px;
-		padding: 8px 14px 8px 14px;
-		text-align: center;
-	}
-
-	.open .list-btn .icon:hover {
-		background-color: #dbd9d7;
-		clip-path:circle();
+	.open .list-btn button{
+		margin-bottom: 20px;
 	}
 
 	.open .link-btn .icon {
@@ -74,8 +107,6 @@ const styles = `
 		border-radius: 6px;
 	}
 
-
-
 	.open .content {
 		margin-left: 255px;
 		margin-right: 10px;
@@ -87,31 +118,11 @@ const styles = `
 	/*** CLOSE ***/
 
 	.close .side-panel {
-		position: fixed;
-		top: 0;
-		display: flex;
-		flex-direction: column;
-		align-items: flex-start;
 		width: auto;
-		height: 100%;
-		padding-top: 20px;
-		padding-left: 5px;
-		padding-right: 5px;
-
-		/* Não terá border apenas um background de outra cor */
-		border-right: 1px solid #2f3336;
 	}
 
-	.close .list-btn .icon {
-		display: inline-block;
-		font-size: 22px;
-		padding: 8px 14px 8px 14px;
-		text-align: center;
-	}
-
-	.close .list-btn .icon:hover {
-		background-color: #dbd9d7;
-		clip-path:circle();
+	.close .list-btn button{
+		margin-bottom: 15px;
 	}
 
 	.close #list:hover {
@@ -145,10 +156,6 @@ const styles = `
 		overflow: hidden;
 	}
 
-	.hide {
-		display: none;
-	}
-
 `;
 
 
@@ -157,19 +164,19 @@ const getHtml = function(data) {
 	
 	<div class="side-panel-wrapper open">
 		<aside class="side-panel">
-		<!--<header class="side-panel-header">
-				<div class="logo">
-					<img src="/img/logo.png" class="logo-img" alt="logo">
-					<span class="logo-text"><strong>BlitzPong</strong></span>
-				</div>
-			</header>-->
 			<nav>
-				<div class="list-btn">
-					<button>
-						<span>
-							<i class="icon bi bi-list"></i>
-						</span>
-					</button>
+				<div class="header-container">
+					<div class="list-btn">
+						<button>
+							<span>
+								<i class="icon bi bi-list"></i>
+							</span>
+						</button>
+					</div>
+					<div class="logo">
+						<img src="/img/logo.png" class="logo-img" alt="logo">
+						<span class="logo-text"><strong>BlitzPong</strong></span>
+					</div>
 				</div>
 				<div class="link-btn">
 					<button>
@@ -194,18 +201,6 @@ const getHtml = function(data) {
 						<span>
 							<i class="icon bi bi-trophy"></i>
 							<span class="icon-text">Tornement</span>
-						</span>
-					</button>
-					<button class="close-btn">
-						<span>
-							<i class="icon bi bi-arrow-bar-left"></i>
-							<span class="icon-text">Close</span>
-						</span>
-					</button>
-					<button class="open-btn hide">
-						<span>
-							<i class="icon bi bi-arrow-bar-right"></i>
-							<span class="icon-text">Open</span>
 						</span>
 					</button>
 				</div>
@@ -306,19 +301,16 @@ export default class SidePanel extends HTMLElement {
 	}
 
 	#scripts() {
-		this.#openClosePanel("open");
-		this.#openClosePanel("close");
+		this.#openClosePanel();
 
 	}
 
-	#openClosePanel(status) {
-		let btn = this.html.querySelector(`.${status}-btn`);
+	#openClosePanel() {
+		let btn = this.html.querySelector(`.list-btn > button`);
 		btn.addEventListener("click", () => {
 			let sidePanel = this.html.querySelector(".side-panel-wrapper");
 			sidePanel.classList.toggle("close");
 			sidePanel.classList.toggle("open");
-			this.html.querySelector(".open-btn").classList.toggle("hide");
-			this.html.querySelector(".close-btn").classList.toggle("hide");
 		});		
 	}
 }
