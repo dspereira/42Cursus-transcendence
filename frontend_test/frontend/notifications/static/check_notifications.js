@@ -6,19 +6,26 @@ document.addEventListener("DOMContentLoaded", function() {
 
 	console.log("Pagina HTML totalmente carregada !")
 
-	const notifications = [
-		{ message: 'Notification 1', type: 'info' },
-		{ message: 'Notification 2', type: 'warning' },
-		{ message: 'Notification 3', type: 'success' }
-	];
+	let notifications = [];
 
-	function createNotificationCard(notification) {
+	function create_notification_card(notification) {
 		const card = document.createElement('div');
 		card.classList.add('card', 'mb-3');
+	
+		const cardHeader = document.createElement('div');
+		cardHeader.classList.add('card-header');
 
+		const timestamp = new Date(notification.timestamp * 1000);
+		const timestampOptions = { hour12: false };
+		const timestampStr = timestamp.toLocaleTimeString('en-US', timestampOptions);
+
+		const timestampSpan = document.createElement('span');
+		timestampSpan.classList.add('float-end', 'text-muted');
+		timestampSpan.textContent = timestampStr;
+	
 		const cardBody = document.createElement('div');
 		cardBody.classList.add('card-body');
-
+	
 		const cardText = document.createElement('p');
 		cardText.classList.add('card-text');
 		cardText.textContent = notification.message;
@@ -27,58 +34,68 @@ document.addEventListener("DOMContentLoaded", function() {
 		acceptBtn.classList.add('btn', 'btn-outline-success', 'mr-2');
 		acceptBtn.innerHTML = '&#10004;&#65039;';
 		acceptBtn.addEventListener('click', function() {
-			acceptNotification(notification);
+			accept_notification(notification);
 		});
-
+	
 		const denyBtn = document.createElement('button');
 		denyBtn.classList.add('btn', 'btn-outline-danger');
 		denyBtn.innerHTML = '&#10060;';
 		denyBtn.addEventListener('click', function() {
-			denyNotification(notification);
+			deny_notification(notification);
 		});
-
+	
+		cardHeader.appendChild(timestampSpan);
+		card.appendChild(cardHeader);
 		cardBody.appendChild(cardText);
 		cardBody.appendChild(acceptBtn);
 		cardBody.appendChild(denyBtn);
 		card.appendChild(cardBody);
-
+	
 		return card;
 	}
 
-	function renderNotifications() {
+	function render_notifications() {
 		const container = document.getElementById('notification-container');
 		container.innerHTML = '';
 		notifications.forEach(notification => {
-			container.appendChild(createNotificationCard(notification));
+			container.appendChild(create_notification_card(notification));
 		});
 	}
 
-	function addNotification(message) {
-		const newNotification = {
-			id: notifications.length + 1,
-			message: message,
-			type: 'info'
-		};
-		notifications.unshift(newNotification);
-		renderNotifications();
+	function add_notification(new_notification)
+	{
+		notifications.unshift(JSON.parse(new_notification));
+		render_notifications();
 	}
 
-	function acceptNotification(notification) {
+	function accept_notification(notification) {
 		const index = notifications.indexOf(notification);
 		if (notification) {
 			console.log(`Accepted: ${notification.message}`);
 			notifications.splice(index, 1);
 		}
-		renderNotifications();
+		render_notifications();
 	}
 
-	function denyNotification(notification) {
+	function deny_notification(notification)
+	{
 		const index = notifications.indexOf(notification);
 		if (notification) {
 			console.log(`Denied: ${notification.message}`);
 			notifications.splice(index, 1);
 		}
-		renderNotifications();
+		render_notifications();
+	}
+
+	function init_notifications(notifications_list_string)
+	{
+		let new_notifications = JSON.parse(notifications_list_string)
+		for (let i = 0; i < new_notifications.length; i++)
+			notifications.unshift(new_notifications[i]);
+		render_notifications();
+		/* notifications.forEach(element => {
+			console.log(element.id, element.from_user, element.timestamp);
+		}); */
 	}
 
 	function connect()
@@ -108,27 +125,21 @@ document.addEventListener("DOMContentLoaded", function() {
 				// connect();
 			}, 2000);
 		};
-
-		/* chat_form.addEventListener("submit", function(event) {
-			event.preventDefault();
-
-			let message = event.target.message.value;
-			if (message)
-			{
-
-				notification_socket.send(JSON.stringify({
-					"message": message,
-				}))
-			}
-			chat_form.reset()
-		}); */
 	
 		notification_socket.onmessage = function(event)
 		{
 			const data = JSON.parse(event.data);
-			console.log(data);
+			
+			if (data)
+			{
+				console.log(data);
+				if (data['type'] == "send_all_notifications")
+					init_notifications(data['notifications']);
+				else if (data['type'] == "send_friend_notification")
+					add_notification(data['friend_req_notification'])
+			}
 		};
-	
+
 		notification_socket.onerror = function(err)
 		{
 			console.log("WebSocket encountered an error: " + err.message);
@@ -138,18 +149,6 @@ document.addEventListener("DOMContentLoaded", function() {
 	
 	}
 
-	renderNotifications();
 	connect()
-
-	// TESTING - Adicionar Notificações
-	setTimeout(function() {
-		addNotification("Mensagem 1")
-		setTimeout(function() {
-			addNotification("Mensagem 2")
-			setTimeout(function() {
-				addNotification("Mensagem 3")
-			}, 2000);
-		}, 2000);
-	}, 2000);
 
 });

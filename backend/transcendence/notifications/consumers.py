@@ -10,6 +10,7 @@ from user_auth.models import User
 import json
 
 from .notifications import get_user_notifications
+from .notifications import create_friend_request
 
 friend_req_notification_model = ModelManager(FriendsRequestNotification)
 game_inv_notification_model = ModelManager(GameInviteNotification)
@@ -57,34 +58,62 @@ class Notifications(AsyncWebsocketConsumer):
 			return
 		data_json = json.loads(text_data)
 
-		print(data_json)
+		print("===========================================================================")
+		for key, value in data_json.items():
+			print(f"{key}: {value}")
+		print("===========================================================================")
 
 		if data_json["type"] == "get_all_notifications":
-			notifications = await get_user_notifications(self.user)
+			print("Erro Aqui 1")
+			notifications = await sync_to_async(get_user_notifications)(self.user)
+			print("Erro Aqui 2")
+			print("------------------------------------------------")
+			print("get_all_notifications")
 			print("------------------------------------------------")
 			if notifications:
 				print(notifications)
+				await self.channel_layer.group_send(
+					self.room_group_name,
+					{
+						'type': 'send_all_notifications',
+						'notifications': notifications,
+					}
+				)
 			else:
 				print("Não existem notificações no momento.")
 			print("------------------------------------------------")
+		elif data_json["type"] == "friend_request":
+			receiver_username = data_json["receiver_name"]
+			if receiver_username != self.user.username:
+				to_user = await sync_to_async(user_model.get)(username=receiver_username)
+				if to_user:
+					friend_req_notif = await sync_to_async(create_friend_request)(from_user=self.user, to_user=to_user)
+					await self.channel_layer.group_send(
+						to_user.username,
+						{
+							'type': 'send_friend_notification',
+							'friend_req_notification': friend_req_notif,
+						}
+					)
+				else:
+					print("User does not exist!")
+			else:
+				print("Não podes enviar pedidos de amizade para ti próprio!")
 
-		""" message = data_json['message'].strip()
-		if message:
-			result_message = f"{self.username}: {message}"
-			await sync_to_async(msg_model.create)(user=self.user, room=self.room, content=message)
-			await self.channel_layer.group_send(
-				self.room_group_name,
-				{
-					'type': 'chat_message',
-					'message': result_message,
-				}
-			) """
-
-	""" async def chat_message(self, event):
+	async def send_all_notifications(self, event):
 		if not await sync_to_async(is_authenticated)(self.access_data):
 			await self.close(4000)
 			return
 		await self.send(text_data=json.dumps({
-			'type': 'chat_message',
-			'message': event['message'],
-		})) """
+			'type': 'send_all_notifications',
+			'notifications': event['notifications'],
+		}))
+
+	async def send_friend_notification(self, event):
+		if not await sync_to_async(is_authenticated)(self.access_data):
+			await self.close(4000)
+			return
+		await self.send(text_data=json.dumps({
+			'type': 'send_friend_notification',
+			'friend_req_notification': event['friend_req_notification'],
+		}))
