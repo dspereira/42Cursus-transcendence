@@ -79,7 +79,7 @@ function update_tournament() {
 function create_tournament(){
 	fetch("http://127.0.0.1:8000/api/tournament/create-tournament", {
 		credentials: 'include',
-		method: "GET",
+		method: "POST",
 		headers: {
 			"Content-Type": "application/json"
 		}
@@ -186,7 +186,7 @@ function list_tournaments()
 				console.log("--------------------------");
 				const option = document.createElement('option');
 				option.value = 33;
-				option.textContent = `${room.id}`;
+				option.textContent = `${room.id} winner ${room.first_place}`;
 				select.appendChild(option);
 			});
 			console.log("--------------------------");

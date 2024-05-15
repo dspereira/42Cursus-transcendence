@@ -5,7 +5,6 @@ from game_engine.models import Match
 from custom_utils.models_utils import ModelManager
 from .models import Tournament, PlayerList, MatchList
 from custom_decorators import login_required, accepted_methods
-from django.views.decorators.http import require_http_methods
 
 
 match_model = ModelManager(Match)
@@ -14,24 +13,21 @@ match_list_model = ModelManager(MatchList)
 tournament_model = ModelManager(Tournament)
 player_list_model = ModelManager(PlayerList)
 
-
+#check player position on function, rewrap this into a decorator
 def checker(req_data, request):
 
 	user = user_model.get(id=request.access_data.sub)
-	if user is None:
-		return -1
+
 	tournament = tournament_model.get(id=req_data["tournament_id"])
 	if tournament is None:
-		return -2
+		return -1
 	match_list = match_list_model.get(id=tournament.match_list.id)
 	player_list = player_list_model.get(id=tournament.player_list.id)
 	if player_list is None or match_list is None:
-		return -2
-	if user.id == player_list.player1.id:
+		return -1
+	if user.id == player_list.player1.id or user.id == player_list.player2.id or user.id == player_list.player3.id or user.id == player_list.player4.id:
 		return 1
-	if user.id == player_list.player2.id or user.id == player_list.player3.id or user.id == player_list.player4.id:
-		return 2
-	return -5
+	return -1
 
 
 
@@ -41,31 +37,26 @@ def checker(req_data, request):
 
 
 
-# @login_required
-@require_http_methods(["GET"])
+@accepted_methods(["POST"])
+@login_required
 def	create_tournament(request):
 
-	print("I have been summoned")
-
 	player1 = user_model.get(id=request.access_data.sub)
-	print(request.access_data.sub)
-	# player1 = request.access_data.sub
-	if player1:
-		new_PlayerList = player_list_model.create(n_players=1,player1=player1)
-		new_MatchList = match_list_model.create()
-		new_tournament = tournament_model.create(player_list=new_PlayerList, match_list=new_MatchList)
+	new_player_list = player_list_model.create(n_players=1,player1=player1)
+	new_match_list = match_list_model.create()
+	new_tournament = tournament_model.create(player_list=new_player_list, match_list=new_match_list)
+	if not new_tournament:
+		response = {
+			"message": "Creation failed",
+		}
+	else:
 		response = {
 			"message": "Tournament successfully created",
 			"tournament_id": new_tournament.id
 		}
-		return JsonResponse(response)
-
-	response = {
-		"message" : "failed to create tournament"
-	}
 	return JsonResponse(response)
 
-	
+
 
 
 
@@ -77,17 +68,16 @@ def	create_tournament(request):
 def	insert_user(req_data, player_list):
 
 	#Checks if the player is already invited
-	print("hello there")
 	invitee = user_model.get(id=req_data["invitee"])
 	print(invitee)
-	if (player_list.player1 == invitee or player_list.player2 == invitee or player_list.player3 == invitee or player_list.player4 == invitee):
+	if not invitee or (player_list.player1 == invitee or player_list.player2 == invitee or player_list.player3 == invitee or player_list.player4 == invitee):
 		return False
 	#Inserts the player
-	if (player_list.player2 is None):
+	if not player_list.player2:
 		player_list.player2 = invitee
-	elif (player_list.player3 is None):
+	elif not player_list.player3:
 		player_list.player3 = invitee
-	elif (player_list.player4 is None):
+	elif not player_list.player4:
 		player_list.player4 = invitee
 	else:
 		return False
@@ -95,25 +85,28 @@ def	insert_user(req_data, player_list):
 	player_list.save()
 	return True
 
+
+@accepted_methods(["POST"])
 @login_required
 def	invite_to_tournament(request):
-	print("hello there")
 
 	if request.body:
 		req_data = json.loads(request.body.decode('utf-8'))
-		tournament = tournament_model.get(id=req_data["tournament_id"])
-		print("general kenoby")
-		if checker(req_data, request) == 1:
+		tournament = tournament_model.get(id=req_data.get("tournament_id"))
+		player_list = player_list_model.get(id=tournament.player_list.id)
+		print("cheguei aqui")
+		if user_model.get(id=request.access_data.sub).id == player_list.player1.id:
 			player_list = player_list_model.get(id=tournament.player_list.id)
 			if insert_user(req_data, player_list) is True:
 				response = {
 					"message": "User invited"
 				}
 				return JsonResponse(response)
-	if checker == 2:
-		response = {
-			"message" : "Only the creator of the tournament can invite users"
-		}
+		else:
+			print("entrei aqui")
+			response = {
+				"message" : "Only the creator of the tournament can invite users"
+			}
 	response = {
 		"message" : "failed to invite user"
 	}
@@ -173,12 +166,14 @@ def	create_final_games(match_list, player_list):
 
 	match_list.save()
 
+
+@accepted_methods(["POST"])
 @login_required
 def update_tournament(request):
 
 	if request.body:
 		req_data = json.loads(request.body.decode("utf-8"))
-		if checker(req_data, request) > 0:
+		if checker(req_data, request) == 1:
 			tournament = tournament_model.get(id=req_data["tournament_id"])
 			match_list = match_list_model.get(id=tournament.match_list.id)
 			player_list = player_list_model.get(id=tournament.player_list.id)
@@ -203,14 +198,12 @@ def update_tournament(request):
 						"message": "game failed to update"
 					}
 				return JsonResponse(response)
-			response = {
-				"message": "There aren't 4 players yet"
-			}
-			return JsonResponse(response)
-	response = {
-		"message": "game failed to update"
-	}
-	return JsonResponse(response)
+			return JsonResponse({"message": "There aren't 4 players yet"})
+	return JsonResponse({"message": "game failed to update"})
+
+
+
+
 
 
 def _get_row(tournament):
@@ -219,7 +212,7 @@ def _get_row(tournament):
 	if match_list.n_matches == 4 and match_list.final.winner and match_list.loser_game.winner and player_list.n_players == 4:
 
 		first_place = match_list.final.winner
-		second_place = match_list.final.user1 if match_list.final.winner == match_list.final.user2 else match_list.final.user1
+		second_place = match_list.final.user1 if match_list.final.winner == match_list.final.user1 else match_list.final.user2
 		third_place = match_list.loser_game.winner
 		forth_place = match_list.loser_game.user1 if match_list.loser_game.winner == match_list.loser_game.user2 else match_list.loser_game.user1
 
@@ -264,7 +257,7 @@ def _get_row(tournament):
 
 
 @login_required
-@require_http_methods(["GET"])
+@accepted_methods(["GET"])
 def get_data_tournament(request):
 	if request.body:
 		req_data = json.loads(request.body.decode("utf-8"))
@@ -276,7 +269,7 @@ def get_data_tournament(request):
 	}
 	return JsonResponse(response)
 
-@require_http_methods(["GET"])
+@accepted_methods(["GET"])
 def list_tournaments(request):
 	tournament_rooms = tournament_model.all()
 	tournament_rooms_count = tournament_model.count()
