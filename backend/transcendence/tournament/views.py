@@ -42,20 +42,23 @@ def checker(req_data, request):
 
 
 # @login_required
+@require_http_methods(["GET"])
 def	create_tournament(request):
 
-	if request.body:
-		# player1 = user_model.get(id=req_data["user_id"])
-		player1 = request.access_data.sub
-		if player1:
-			new_PlayerList = player_list_model.create(n_players=1,player1=player1)
-			new_MatchList = match_list_model.create()
-			new_tournament = tournament_model.create(player_list=new_PlayerList, match_list=new_MatchList)
-			response = {
-				"message": "Tournament successfully created",
-				"tournament_id": new_tournament.id
-			}
-			return JsonResponse(response)
+	print("I have been summoned")
+
+	player1 = user_model.get(id=request.access_data.sub)
+	print(request.access_data.sub)
+	# player1 = request.access_data.sub
+	if player1:
+		new_PlayerList = player_list_model.create(n_players=1,player1=player1)
+		new_MatchList = match_list_model.create()
+		new_tournament = tournament_model.create(player_list=new_PlayerList, match_list=new_MatchList)
+		response = {
+			"message": "Tournament successfully created",
+			"tournament_id": new_tournament.id
+		}
+		return JsonResponse(response)
 
 	response = {
 		"message" : "failed to create tournament"
@@ -267,7 +270,7 @@ def get_data_tournament(request):
 	}
 	return JsonResponse(response)
 
-# @require_http_methods(["GET"])
+@require_http_methods(["GET"])
 def list_tournaments(request):
 	tournament_rooms = tournament_model.all()
 	tournament_rooms_count = tournament_model.count()
