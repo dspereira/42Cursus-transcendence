@@ -1,5 +1,30 @@
 console.log("list_tournaments.js is %cActive", 'color: #90EE90')
 
+
+document.addEventListener("DOMContentLoaded", function() {
+
+
+	//dar add a button listener para cada fetch
+	console.log("Pagina HTML totalmente carregada !")
+	
+	document.getElementById("list_button").addEventListener('click', () =>{
+		console.log("list button has been called");
+		flushSelectOptions();
+		list_tournaments();
+	});
+	document.getElementById("read_number_button").addEventListener('click', () => {
+		console.log("read button has been called");
+		flushSelectOptions();
+		send_invite();
+	});
+	document.getElementById("create_button").addEventListener('click', () =>{
+		console.log("create button has been called");
+		flushSelectOptions();
+		create_tournament();
+	});
+
+});
+
 function create_tournament(){
 	fetch("http://127.0.0.1:8000/api/tournament/create-tournament", {
 		credentials: 'include',
@@ -35,9 +60,10 @@ function create_tournament(){
 
 
 function send_invite() {
-	const numberInput = document.getElementById('invite_id').value;
+	const number_input = document.getElementById('invite_id').value;
+	const tournament_input = document.getElementById('tournament_id').value;
 
-	if (!numberInput) {
+	if (!number_input || !tournament_input) {
 		console.log("No number entered. Please provide a valid number.");
 		alert("Please enter an id before sending the invite.");
 		return; // Exit the function early if the input is invalid
@@ -46,6 +72,31 @@ function send_invite() {
 	fetch("http://127.0.0.1:8000/api/tournament/invite-tournament", {
 		credentials: 'include',
 		method: "POST",
+		headers: {
+			"Content-Type": "application/json"
+		},
+		body: JSON.stringify({
+			invitee: number_input,
+			tournament_id: tournament_input
+		})
+	})
+	.then(response => {
+		if (!response.ok) {
+			console.log("No body in response")
+			throw new Error('Network response was not ok');
+		}
+		return response.json();
+	})
+	.then ((data) => {
+
+		const select = document.getElementById("Tournament_list");
+
+		const option = document.createElement('option');
+		option.value = 1
+		option.textContent = data["message"];
+
+		select.appendChild(option)
+
 	})
 	.catch(error => {
 		console.log("PIAMSMASA")
@@ -53,28 +104,6 @@ function send_invite() {
 	});
 }
 
-document.addEventListener("DOMContentLoaded", function() {
-
-
-	//dar add a button listener para cada fetch
-	console.log("Pagina HTML totalmente carregada !")
-	
-	document.getElementById("list_button").addEventListener('click', () =>{
-		console.log("list button has been called");
-		list_tournaments();
-	});
-	document.getElementById("read_number_button").addEventListener('click', () => {
-		console.log("read button has been called");
-		send_invite();
-	});
-	document.getElementById("create_button").addEventListener('click', () =>{
-		console.log("create button has been called");
-		create_tournament();
-	});
-
-});
-
-	
 function list_tournaments()
 {
 	fetch("http://127.0.0.1:8000/api/tournament/list-tournaments", {
@@ -117,4 +146,13 @@ function list_tournaments()
 		console.log("PIAMSMASA")
 		console.log("List Tournaments Fetch Error", error);
 	});
+}
+
+function flushSelectOptions() {
+	const selectElement = document.querySelector('.form-select');
+	if (selectElement) {
+		while (selectElement.options.length > 0) {
+			selectElement.remove(0);
+		}
+	}
 }

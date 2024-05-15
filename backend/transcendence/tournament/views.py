@@ -17,9 +17,9 @@ player_list_model = ModelManager(PlayerList)
 
 def checker(req_data, request):
 
-	# User = user_model.get(id=request.access_data.sub)
-	# if User is None:
-		# return -1
+	user = user_model.get(id=request.access_data.sub)
+	if user is None:
+		return -1
 	tournament = tournament_model.get(id=req_data["tournament_id"])
 	if tournament is None:
 		return -2
@@ -27,9 +27,9 @@ def checker(req_data, request):
 	player_list = player_list_model.get(id=tournament.player_list.id)
 	if player_list is None or match_list is None:
 		return -2
-	if User.id == player_list.player1.id:
+	if user.id == player_list.player1.id:
 		return 1
-	if User.id == player_list.player2.id or User.id == player_list.player3.id or User.id == player_list.player4.id:
+	if user.id == player_list.player2.id or user.id == player_list.player3.id or user.id == player_list.player4.id:
 		return 2
 	return -5
 
@@ -74,10 +74,12 @@ def	create_tournament(request):
 
 
 
-def	insert_user(request, player_list):
+def	insert_user(req_data, player_list):
 
 	#Checks if the player is already invited
-	invitee = user_model.get(id=request.access_data.sub)
+	print("hello there")
+	invitee = user_model.get(id=req_data["invitee"])
+	print(invitee)
 	if (player_list.player1 == invitee or player_list.player2 == invitee or player_list.player3 == invitee or player_list.player4 == invitee):
 		return False
 	#Inserts the player
@@ -95,18 +97,23 @@ def	insert_user(request, player_list):
 
 @login_required
 def	invite_to_tournament(request):
+	print("hello there")
 
 	if request.body:
 		req_data = json.loads(request.body.decode('utf-8'))
 		tournament = tournament_model.get(id=req_data["tournament_id"])
+		print("general kenoby")
 		if checker(req_data, request) == 1:
 			player_list = player_list_model.get(id=tournament.player_list.id)
-			if insert_user(request, player_list) is True:
+			if insert_user(req_data, player_list) is True:
 				response = {
 					"message": "User invited"
 				}
 				return JsonResponse(response)
-
+	if checker == 2:
+		response = {
+			"message" : "Only the creator of the tournament can invite users"
+		}
 	response = {
 		"message" : "failed to invite user"
 	}
