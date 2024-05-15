@@ -214,7 +214,6 @@ def update_tournament(request):
 
 
 def _get_row(tournament):
-	print("Tournament id:", tournament.id)
 	match_list = match_list_model.get(id=tournament.match_list.id)
 	player_list = player_list_model.get(id=tournament.player_list.id)
 	if match_list.n_matches == 4 and match_list.final.winner and match_list.loser_game.winner and player_list.n_players == 4:
