@@ -6,7 +6,7 @@ const styles = `
 const html = `
 
 	<app-header></app-header>
-	<side-panel selected="home" state="open"></side-panel>
+	<side-panel selected="home"></side-panel>
 
 	<!--
 	<div class="content">

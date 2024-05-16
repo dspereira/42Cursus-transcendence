@@ -135,7 +135,7 @@ const styles = `
 const getHtml = function(data) {
 	const html = `
 	
-	<div class="side-panel-wrapper open">
+	<div class="side-panel-wrapper ${data.state}">
 		<aside class="side-panel">
 			<nav>
 				<div class="list-btn">
@@ -199,9 +199,9 @@ const deselectedIcon = {
 	tournaments: "bi-trophy" 
 }
 
-
 export default class SidePanel extends HTMLElement {
 	static observedAttributes = ["selected", "state"];
+	static #state = "open";
 
 	constructor() {
 		super()
@@ -219,7 +219,7 @@ export default class SidePanel extends HTMLElement {
 
 	#initComponent() {
 		this.html = document.createElement("div");
-		this.html.innerHTML = this.#html();
+		this.html.innerHTML = this.#html({state: SidePanel.#state});
 		if (styles) {
 			this.elmtId = `elmtId_${Math.floor(Math.random() * 100000000000)}`;
 			this.styles = document.createElement("style");
@@ -256,6 +256,10 @@ export default class SidePanel extends HTMLElement {
 			let sidePanel = this.html.querySelector(".side-panel-wrapper");
 			sidePanel.classList.toggle("close");
 			sidePanel.classList.toggle("open");
+			if (sidePanel.classList.contains("close"))
+				SidePanel.#state = "close";
+			else
+				SidePanel.#state = "open";
 		});		
 	}
 
@@ -296,10 +300,10 @@ export default class SidePanel extends HTMLElement {
 			return ;
 
 		const sidePanel = this.html.querySelector(".side-panel-wrapper");
-		console.log(sidePanel);
 		sidePanel.classList.remove("close");
 		sidePanel.classList.remove("open");
 		sidePanel.classList.add(value);
+		SidePanel.#state = value;
 	}
 }
 
