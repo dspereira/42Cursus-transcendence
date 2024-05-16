@@ -31,18 +31,28 @@ def get_user_notifications(user: User):
 		notification_data = notification.get_data()
 		all_notifications_info.append(notification_data)
 
-	print("---------------------------------------------------------------")
-	for entry in all_notifications_info:
-		print(entry)
-		print("---------------------------------------------------------------")
+	# print("---------------------------------------------------------------")
+	# for entry in all_notifications_info:
+		# for key, value in entry.items():
+			# print(f"{key}: {value}")
+		# print("---------------------------------------------------------------")
 
 	return json.dumps(all_notifications_info)
 
 def create_friend_request(from_user: User, to_user: User):
 	friend_req = friend_req_notification_model.create(from_user=from_user, to_user=to_user)
 
-	print("::::::::::::::::::::::::::::::::::::::::::::::::::::::")
-	print(json.dumps(friend_req.get_data()))
-	print("::::::::::::::::::::::::::::::::::::::::::::::::::::::")
+	# print("::::::::::::::::::::::::::::::::::::::::::::::::::::::")
+	# print(json.dumps(friend_req.get_data()))
+	# print("::::::::::::::::::::::::::::::::::::::::::::::::::::::")
 
 	return json.dumps(friend_req.get_data())
+
+def create_game_invite(from_user: User, to_user: User, game: int):
+	game_inv = game_inv_notification_model.create(from_user=from_user, to_user=to_user, game=game)
+
+	print("::::::::::::::::::::::::::::::::::::::::::::::::::::::")
+	print(json.dumps(game_inv.get_data()))
+	print("::::::::::::::::::::::::::::::::::::::::::::::::::::::")
+
+	return json.dumps(game_inv.get_data())

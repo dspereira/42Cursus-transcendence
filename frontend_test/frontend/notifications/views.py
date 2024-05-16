@@ -13,3 +13,6 @@ def create_notifications(request):
 
 def friend_request(request):
 	return render(request, "notifications/friends_request.html")
+
+def game_invite(request):
+	return render(request, "notifications/game_invite.html")

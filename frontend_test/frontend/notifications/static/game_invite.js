@@ -6,7 +6,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
 	console.log("Pagina HTML totalmente carregada !")
 
-	friend_form = document.getElementById('friend_request_form')
+	game_form = document.getElementById('game_invite_form')
 
 	function connect()
 	{
@@ -37,21 +37,25 @@ document.addEventListener("DOMContentLoaded", function() {
 			}, 2000);
 		};
 
-		friend_form.addEventListener("submit", function(event) {
+		game_form.addEventListener("submit", function(event) {
 			event.preventDefault();
 
 			let receiver_name = event.target.receiver_name.value;
+			let game = event.target.game.value;
+			console.log("Username:" + receiver_name);
+			console.log("Game:" + game);
 			if (receiver_name)
 			{
 				console.log("Friend: " + receiver_name);
 				notification_socket.send(JSON.stringify({
-					"type": "friend_request",
+					"type": "game_invite",
 					"receiver_name": receiver_name,
+					"game": game
 				}))
 			}
-			friend_form.reset()
+			game_form.reset()
 		});
-	
+
 		notification_socket.onmessage = function(event)
 		{
 			const data = JSON.parse(event.data);

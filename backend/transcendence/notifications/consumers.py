@@ -11,10 +11,17 @@ import json
 
 from .notifications import get_user_notifications
 from .notifications import create_friend_request
+from .notifications import create_game_invite
 
 friend_req_notification_model = ModelManager(FriendsRequestNotification)
 game_inv_notification_model = ModelManager(GameInviteNotification)
 user_model = ModelManager(User)
+
+# Apenas para debug
+def print_entry(entry: str):
+	print("------------------------------------------------")
+	print(entry)
+	print("------------------------------------------------")
 
 class Notifications(AsyncWebsocketConsumer):
 
@@ -58,18 +65,15 @@ class Notifications(AsyncWebsocketConsumer):
 			return
 		data_json = json.loads(text_data)
 
+		print("")
 		print("===========================================================================")
 		for key, value in data_json.items():
 			print(f"{key}: {value}")
 		print("===========================================================================")
 
 		if data_json["type"] == "get_all_notifications":
-			print("Erro Aqui 1")
+			print_entry("get_all_notifications")
 			notifications = await sync_to_async(get_user_notifications)(self.user)
-			print("Erro Aqui 2")
-			print("------------------------------------------------")
-			print("get_all_notifications")
-			print("------------------------------------------------")
 			if notifications:
 				print(notifications)
 				await self.channel_layer.group_send(
@@ -83,6 +87,7 @@ class Notifications(AsyncWebsocketConsumer):
 				print("Não existem notificações no momento.")
 			print("------------------------------------------------")
 		elif data_json["type"] == "friend_request":
+			print_entry("friend_request")
 			receiver_username = data_json["receiver_name"]
 			if receiver_username != self.user.username:
 				to_user = await sync_to_async(user_model.get)(username=receiver_username)
@@ -99,6 +104,28 @@ class Notifications(AsyncWebsocketConsumer):
 					print("User does not exist!")
 			else:
 				print("Não podes enviar pedidos de amizade para ti próprio!")
+		elif data_json["type"] == "game_invite":
+			print_entry("game_invite")
+			receiver_username = data_json["receiver_name"]
+			game = data_json["game"]
+			if receiver_username != self.user.username:
+				to_user = await sync_to_async(user_model.get)(username=receiver_username)
+				if to_user:
+					game_inv_notif = await sync_to_async(create_game_invite)(from_user=self.user, to_user=to_user, game=game)
+					await self.channel_layer.group_send(
+						to_user.username,
+						{
+							'type': 'send_game_invite_notification',
+							'game_inv_notification': game_inv_notif,
+						}
+					)
+				else:
+					print("User does not exist!")
+			else:
+				print("Não podes enviar pedidos de amizade para ti próprio!")
+		elif data_json["type"] == "friend_request_status":
+			print("Friend Request Status: " + str(data_json['status']))
+		print("")
 
 	async def send_all_notifications(self, event):
 		if not await sync_to_async(is_authenticated)(self.access_data):
@@ -116,4 +143,13 @@ class Notifications(AsyncWebsocketConsumer):
 		await self.send(text_data=json.dumps({
 			'type': 'send_friend_notification',
 			'friend_req_notification': event['friend_req_notification'],
+		}))
+
+	async def send_game_invite_notification(self, event):
+		if not await sync_to_async(is_authenticated)(self.access_data):
+			await self.close(4000)
+			return
+		await self.send(text_data=json.dumps({
+			'type': 'send_game_invite_notification',
+			'game_inv_notification': event['game_inv_notification'],
 		}))

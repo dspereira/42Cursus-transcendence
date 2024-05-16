@@ -13,12 +13,9 @@ class FriendsRequestNotification(models.Model):
 
 	def get_data(self):
 		return {
-			"id": self.id,
-			"from_user": self.from_user.username,
-			"to_user": self.to_user.username,
-			"timestamp": self.timestamp.timestamp(),
-			"read": self.read,
 			"type": "friend_request",
+			"id": self.id,
+			"timestamp": self.timestamp.timestamp(),
 			"message": f"{self.from_user.username} wants to be your friend!"
 		}
 
@@ -37,13 +34,9 @@ class GameInviteNotification(models.Model):
 
 	def get_data(self):
 		return {
-			"id": self.id,
-			"from_user": self.from_user.username,
-			"to_user": self.to_user.username,
-			"timestamp": self.timestamp.timestamp(),
-			"read": self.read,
-			"game": self.game,
 			"type": "game_invite",
+			"id": self.id,
+			"timestamp": self.timestamp.timestamp(),
 			"message": f"{self.from_user.username} invited you to a game."
 		}
 
