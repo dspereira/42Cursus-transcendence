@@ -14,38 +14,14 @@ const styles = `
 		flex-direction: column;
 		align-items: flex-start;
 		height: 100%;
-		padding-top: 20px;
+		padding-top: 8px;
 		padding-left: 5px;
 		padding-right: 5px;
-
-		/* Não terá border apenas um background de outra cor */
-		border-right: 1px solid #2f3336;
 	}
 
 	.side-panel > nav {
 		width: 100%
 	}
-
-	.header-container {
-		display: flex;
-		gap: 15px;
-	}
-
-	.logo {
-		display: flex;
-		align-items: center;
-		gap: 2px;
-		padding-bottom: 20px;
-	}
-	
-	.logo-img {
-		width: 30px;
-	}
-	
-	.logo-text {
-		font-size: 16px;
-	}
-	
 
 	button {
 		display: block;
@@ -90,7 +66,7 @@ const styles = `
 	}
 
 	.open .list-btn button{
-		margin-bottom: 20px;
+		margin-bottom: 12px;
 	}
 
 	.open .link-btn .icon {
@@ -122,7 +98,7 @@ const styles = `
 	}
 
 	.close .list-btn button{
-		margin-bottom: 15px;
+		margin-bottom: 7px;
 	}
 
 	.close #list:hover {
@@ -165,18 +141,12 @@ const getHtml = function(data) {
 	<div class="side-panel-wrapper open">
 		<aside class="side-panel">
 			<nav>
-				<div class="header-container">
-					<div class="list-btn">
-						<button>
-							<span>
-								<i class="icon bi bi-list"></i>
-							</span>
-						</button>
-					</div>
-					<div class="logo">
-						<img src="/img/logo.png" class="logo-img" alt="logo">
-						<span class="logo-text"><strong>BlitzPong</strong></span>
-					</div>
+				<div class="list-btn">
+					<button>
+						<span>
+							<i class="icon bi bi-list"></i>
+						</span>
+					</button>
 				</div>
 				<div class="link-btn">
 					<button>

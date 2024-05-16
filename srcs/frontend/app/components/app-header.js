@@ -8,23 +8,24 @@ header {
     justify-content: space-between;
     align-items: center;
 	width: 100%;
-	padding: 15px 20px 0px 20px;
+	padding: 8px 25px 0px 20px;
 }
 
 .left-side {
 	display: flex;
 	align-items: center;
-	gap: 12px;
+	gap: 3px;
+	margin-left: 48px;
+
 }
 
 .logo-img {
-	width: 45px;
+	width: 30px;
 }
 
 .logo-text {
-	font-size: 22px;
+	font-size: 16px;
 }
-
 
 .right-side {
 	display: flex;
@@ -50,8 +51,8 @@ const getHtml = function(data) {
 	
 	<header>
 		<div class="left-side">
-			<!--<img src="/img/logo.png" class="logo-img" alt="logo">
-			<span class="logo-text"><strong>BlitzPong</strong></span>-->
+			<img src="/img/logo.png" class="logo-img" alt="logo">
+			<span class="logo-text"><strong>BlitzPong</strong></span>
 		</div>
 
 		<div class="right-side">
