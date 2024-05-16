@@ -4,10 +4,13 @@ import {redirect} from "../js/router.js";
 const styles = `
 
 header {
+	position: fixed;
+	top: 0;
 	display: flex;
     justify-content: space-between;
     align-items: center;
 	width: 100%;
+	height: 56px;
 	padding: 8px 25px 0px 20px;
 }
 
@@ -16,7 +19,6 @@ header {
 	align-items: center;
 	gap: 3px;
 	margin-left: 48px;
-
 }
 
 .logo-img {
@@ -43,6 +45,19 @@ header {
 	font-size: 22px;
 }
 
+.number {
+	position: fixed;
+	right: 112px;
+    display: inline-block;
+    border-radius: 3px;
+    background-color: red; 
+    text-align: center;
+	font-weight: bold;
+    color: white; 
+    font-size: 9px;
+	padding: 0px 2px 0px 2px;
+}
+
 `;
 
 
@@ -56,7 +71,10 @@ const getHtml = function(data) {
 		</div>
 
 		<div class="right-side">
-			<i class="bell bi bi-bell"></i>
+			<div>
+				<span class="number">99</span>
+				<i class="bell bi bi-bell"></i>
+			</div>
 			<img src="https://api.dicebear.com/8.x/bottts/svg?seed=Diogo" class="profile-photo"  alt="avatar"/>
 		</div>
 	</header>

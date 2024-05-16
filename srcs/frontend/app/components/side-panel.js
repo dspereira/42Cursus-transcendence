@@ -3,6 +3,19 @@ import {redirect} from "../js/router.js";
 
 const styles = `
 
+	/*.content {
+		margin: 80px 24px 0px 224px;
+		background-color: #dbd9d7;
+	}*/
+
+	/*
+	.content {
+		margin: 80px 24px 0px 84px;
+		background-color: #dbd9d7;
+	}
+	*/
+
+
 	.hide {
 		display: none;
 	}
@@ -83,14 +96,6 @@ const styles = `
 		border-radius: 6px;
 	}
 
-	.open .content {
-		margin-left: 255px;
-		margin-right: 10px;
-		padding-top: 40px;
-		overflow: hidden;
-	}
-
-
 	/*** CLOSE ***/
 
 	.close .side-panel {
@@ -125,15 +130,7 @@ const styles = `
 		border-radius: 3px;
 	}
 
-	.close .content {
-		margin-left: 70px;
-		margin-right: 10px;
-		padding-top: 40px;
-		overflow: hidden;
-	}
-
 `;
-
 
 const getHtml = function(data) {
 	const html = `
@@ -149,88 +146,62 @@ const getHtml = function(data) {
 					</button>
 				</div>
 				<div class="link-btn">
-					<button>
+					<button id="home">
 						<span>
 							<i class="icon bi bi-house-door"></i>
 							<span class="icon-text">Home</span>
 						</span>
 					</button>
-					<button>
+					<button id="profile">
 						<span>
 							<i class="icon bi bi-person"></i>
 							<span class="icon-text">Profile</span>
 						</span>
 					</button>
-					<button>
+					<button id="chat">
 						<span>
 							<i class="icon bi bi-chat"></i>
 							<span class="icon-text">Chat</span>
 						</span>
 					</button>
-					<button>
+					<button id="tournaments">
 						<span>
 							<i class="icon bi bi-trophy"></i>
-							<span class="icon-text">Tornement</span>
+							<span class="icon-text">Tournaments</span>
 						</span>
 					</button>
 				</div>
 			<nav>
 		</aside>
 	</div>
-
-	<!--<div class="content">
-
-	<h1>Content Whatever</h1>
-
-	<p>
-	Bacon ipsum dolor amet doner salami pastrami drumstick meatloaf shoulder tenderloin sausage. Biltong bresaola filet mignon, swine drumstick cow rump picanha hamburger kevin fatback doner pig salami. Short ribs cow ribeye, turducken tail sirloin jowl prosciutto meatball chicken pancetta tenderloin hamburger. Ground round pork chop shank, sausage venison rump salami ribeye prosciutto kevin. Pork belly chicken rump, brisket flank andouille tenderloin kielbasa pig doner ground round ham venison. Short ribs pork belly turkey leberkas spare ribs salami landjaeger ground round strip steak tri-tip beef ribs frankfurter ham ball tip jowl. Tenderloin sirloin filet mignon ham hock, capicola cupim shank kevin.
-	</p>
-	<p>
-	Rump drumstick tri-tip alcatra. Flank ground round pastrami beef short ribs pork belly jowl. Spare ribs beef ribs andouille, frankfurter short loin shankle venison salami turducken. Beef ribs alcatra capicola shoulder pork loin sirloin biltong turkey pancetta flank pork andouille bacon. Doner hamburger shoulder tenderloin flank prosciutto corned beef. Chislic tongue doner porchetta pastrami sirloin filet mignon leberkas brisket ribeye pork chop shank cupim corned beef sausage.
-	</p>
-	<p>	
-	Sausage andouille t-bone kielbasa, doner chicken brisket burgdoggen hamburger prosciutto. Chicken chislic frankfurter meatloaf jerky spare ribs. Buffalo chuck andouille bresaola tongue bacon, short loin ham t-bone chicken pork chop. Brisket ground round short ribs, strip steak rump pork loin biltong pancetta. Biltong corned beef venison spare ribs ham hock, fatback turducken chislic buffalo ground round. Sausage burgdoggen hamburger, prosciutto sirloin filet mignon fatback meatloaf kevin pancetta ribeye biltong beef ribs kielbasa. Drumstick corned beef meatloaf shoulder t-bone porchetta.
-	</p>
-	<p>	
-	Pastrami pork chop beef, brisket chuck tail salami buffalo bresaola fatback pork doner sirloin shoulder. Jowl meatloaf beef ribs boudin short ribs doner sausage chicken, meatball drumstick. Tenderloin pork beef pig andouille, cupim chislic. Pork beef chicken jerky bacon meatloaf strip steak turkey. Cupim swine chislic doner picanha meatball sausage spare ribs frankfurter pork chop. Rump fatback kielbasa prosciutto, venison capicola ground round tenderloin pork beef strip steak jerky. Shoulder short ribs burgdoggen pancetta meatball, strip steak pig leberkas drumstick jerky beef.
-	</p>
-	<p>	
-	Porchetta capicola pork loin frankfurter brisket, short ribs ribeye sirloin swine chuck ground round meatloaf. Pork loin flank buffalo, tongue hamburger shank turducken chuck andouille swine tri-tip beef ribs ribeye brisket shoulder. Ham hock chicken meatball, hamburger beef ribs biltong porchetta sirloin tenderloin cow. Porchetta boudin burgdoggen, jowl chicken kevin ground round landjaeger. Jerky frankfurter jowl, tail tri-tip kielbasa chicken pork loin shoulder ham hock corned beef biltong filet mignon.
-	</p>
-	<p>
-	Bacon ipsum dolor amet doner salami pastrami drumstick meatloaf shoulder tenderloin sausage. Biltong bresaola filet mignon, swine drumstick cow rump picanha hamburger kevin fatback doner pig salami. Short ribs cow ribeye, turducken tail sirloin jowl prosciutto meatball chicken pancetta tenderloin hamburger. Ground round pork chop shank, sausage venison rump salami ribeye prosciutto kevin. Pork belly chicken rump, brisket flank andouille tenderloin kielbasa pig doner ground round ham venison. Short ribs pork belly turkey leberkas spare ribs salami landjaeger ground round strip steak tri-tip beef ribs frankfurter ham ball tip jowl. Tenderloin sirloin filet mignon ham hock, capicola cupim shank kevin.
-	</p>
-	<p>
-	Rump drumstick tri-tip alcatra. Flank ground round pastrami beef short ribs pork belly jowl. Spare ribs beef ribs andouille, frankfurter short loin shankle venison salami turducken. Beef ribs alcatra capicola shoulder pork loin sirloin biltong turkey pancetta flank pork andouille bacon. Doner hamburger shoulder tenderloin flank prosciutto corned beef. Chislic tongue doner porchetta pastrami sirloin filet mignon leberkas brisket ribeye pork chop shank cupim corned beef sausage.
-	</p>
-	<p>
-	Sausage andouille t-bone kielbasa, doner chicken brisket burgdoggen hamburger prosciutto. Chicken chislic frankfurter meatloaf jerky spare ribs. Buffalo chuck andouille bresaola tongue bacon, short loin ham t-bone chicken pork chop. Brisket ground round short ribs, strip steak rump pork loin biltong pancetta. Biltong corned beef venison spare ribs ham hock, fatback turducken chislic buffalo ground round. Sausage burgdoggen hamburger, prosciutto sirloin filet mignon fatback meatloaf kevin pancetta ribeye biltong beef ribs kielbasa. Drumstick corned beef meatloaf shoulder t-bone porchetta.
-	</p>
-	<p>
-	Pastrami pork chop beef, brisket chuck tail salami buffalo bresaola fatback pork doner sirloin shoulder. Jowl meatloaf beef ribs boudin short ribs doner sausage chicken, meatball drumstick. Tenderloin pork beef pig andouille, cupim chislic. Pork beef chicken jerky bacon meatloaf strip steak turkey. Cupim swine chislic doner picanha meatball sausage spare ribs frankfurter pork chop. Rump fatback kielbasa prosciutto, venison capicola ground round tenderloin pork beef strip steak jerky. Shoulder short ribs burgdoggen pancetta meatball, strip steak pig leberkas drumstick jerky beef.
-	</p>
-	<p>
-	Porchetta capicola pork loin frankfurter brisket, short ribs ribeye sirloin swine chuck ground round meatloaf. Pork loin flank buffalo, tongue hamburger shank turducken chuck andouille swine tri-tip beef ribs ribeye brisket shoulder. Ham hock chicken meatball, hamburger beef ribs biltong porchetta sirloin tenderloin cow. Porchetta boudin burgdoggen, jowl chicken kevin ground round landjaeger. Jerky frankfurter jowl, tail tri-tip kielbasa chicken pork loin shoulder ham hock corned beef biltong filet mignon.		
-	</p>
-	</div>-->
-
-
-	<!--<div class="content">
-
-	<div class="row">
-		<div class="col-md-6 offset-md-3">
-			<signup-form></signup-form>
-		</div>
-  	</div>
-
-	</div>-->
-
 	`;
 	return html;
 }
 
+const navigation = [
+	"home",
+	"profile",
+	"chat",
+	"tournaments"
+]
+
+const selectedIcon  = {
+	home: "bi-house-door-fill",
+	profile: "bi-person-fill",
+	chat: "bi-chat-fill",
+	tournaments: "bi-trophy-fill" 
+}
+
+const deselectedIcon = {
+	home: "bi-house-door",
+	profile: "bi-person",
+	chat: "bi-chat",
+	tournaments: "bi-trophy" 
+}
+
+
 export default class SidePanel extends HTMLElement {
-	static observedAttributes = [];
+	static observedAttributes = ["selected", "state"];
 
 	constructor() {
 		super()
@@ -240,7 +211,10 @@ export default class SidePanel extends HTMLElement {
 	}
 
 	attributeChangedCallback(name, oldValue, newValue) {
-
+		if (name === "selected")
+			this.#changeSelectedPage(oldValue, newValue);
+		else if (name === "state")
+			this.#changeState(newValue);
 	}
 
 	#initComponent() {
@@ -272,6 +246,7 @@ export default class SidePanel extends HTMLElement {
 
 	#scripts() {
 		this.#openClosePanel();
+		this.#setupNavigationEvents();
 
 	}
 
@@ -282,6 +257,49 @@ export default class SidePanel extends HTMLElement {
 			sidePanel.classList.toggle("close");
 			sidePanel.classList.toggle("open");
 		});		
+	}
+
+	#addButtonClickEvent(btnId) {
+		let btn = this.html.querySelector(`#${btnId}`);
+		btn.addEventListener("click", () => {
+			if (btnId === "home")
+				btnId = "/";
+			redirect(btnId);
+		});
+	}
+
+	#setupNavigationEvents() {
+		navigation.forEach((elem) => {
+			this.#addButtonClickEvent(elem);
+		})
+	}
+
+	#changeSelectedPage(oldValue, newValue) {		
+		const newPage = navigation.find((elem) => elem === newValue);
+		const oldPage = navigation.find((elem) => elem === oldValue);
+		if (newPage === oldPage)
+			return ;
+		if (newPage)
+			this.#changeIcon(newPage, deselectedIcon[newPage], selectedIcon[newPage]);
+		if (oldPage)
+			this.#changeIcon(oldPage, selectedIcon[newPage], deselectedIcon[newPage]);
+	}
+
+	#changeIcon(page, oldIconClass, newIconClass) {
+		const icon = this.html.querySelector(`#${page} .icon`);
+		icon.classList.remove(oldIconClass);
+		icon.classList.add(newIconClass);
+	}
+	
+	#changeState(value) {
+		if (value !== "close" && value !== "open")
+			return ;
+
+		const sidePanel = this.html.querySelector(".side-panel-wrapper");
+		console.log(sidePanel);
+		sidePanel.classList.remove("close");
+		sidePanel.classList.remove("open");
+		sidePanel.classList.add(value);
 	}
 }
 

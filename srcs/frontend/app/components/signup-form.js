@@ -234,7 +234,7 @@ export default class SignupForm extends HTMLElement {
 	#setInvalidInputStyle(inputId) {
 		if (inputId === "confirmPassword")
 			inputId = "confirm-password";
-		document.getElementById(inputId).classList.add("is-invalid");
+		document.getElementd(inputId).classList.add("is-invalid");
 	}
 
 	#removeAllInvalidInputsStyle() {

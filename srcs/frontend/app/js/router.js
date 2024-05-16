@@ -1,5 +1,8 @@
 // Pages
 import PageHome from "../page-components/page-home.js";
+import PageProfile from "../page-components/page-profile.js";
+import PageChat from "../page-components/page-chat.js";
+import PageTournaments from "../page-components/page-tournaments.js";
 import PageLogin from "../page-components/page-login.js";
 import PageSignup from "../page-components/page-signup.js";
 import Page404 from "../page-components/page-404.js";
@@ -17,6 +20,9 @@ const routes = {
 	"/index.html"	: PageHome.componentName,
 	"/login"		: PageLogin.componentName,
 	"/signup"		: PageSignup.componentName,
+	"/profile"		: PageProfile.componentName,
+	"/chat"			: PageChat.componentName,
+	"/tournaments"	: PageTournaments.componentName,
 }
 
 const render = function(page) {
