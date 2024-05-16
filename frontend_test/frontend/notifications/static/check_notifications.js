@@ -176,7 +176,7 @@ document.addEventListener("DOMContentLoaded", function() {
 		notification_socket.onmessage = function(event)
 		{
 			const data = JSON.parse(event.data);
-			
+
 			if (data)
 			{
 				console.log(data);

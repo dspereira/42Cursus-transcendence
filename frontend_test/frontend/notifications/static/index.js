@@ -6,6 +6,16 @@ document.addEventListener("DOMContentLoaded", function() {
 
 	console.log("Pagina HTML totalmente carregada !")
 
+	/* function update_email_icon(counterValue)
+	{
+
+	} */
+
+	let counterValue = 0;
+	document.getElementById('notifications_to_read_counter').innerHTML = "Notifications to Read Counter -> " + counterValue;
+	if (counterValue > 0)
+		document.getElementById('notificationIcon').innerHTML = '<i class="bi bi-envelope-paper-fill fill"></i><i class="bi bi-envelope-paper outline"></i>';
+
 	let notification_socket = null;
 
 	result_str = "ws://127.0.0.1:8000/notifications/";
@@ -21,27 +31,17 @@ document.addEventListener("DOMContentLoaded", function() {
 		notification_socket = null;
 
 		const code = event.code;
+
+		if (code == 4000)
+			document.getElementById('index_notifications_body').innerHTML = _401ErrorPage
+
 		console.log("Exit Code: " + code);
 		console.log("WebSocket connection closed unexpectedly. Trying to reconnect in 2s...");
 		setTimeout(function() {
 			console.log("Reconnecting...");
-			connect();
+			// connect();
 		}, 2000);
 	};
-
-	/* chat_form.addEventListener("submit", function(event) {
-		event.preventDefault();
-	
-		let message = event.target.message.value;
-		if (message)
-		{
-			
-			notification_socket.send(JSON.stringify({
-				"message": message,
-			}))
-		}
-		chat_form.reset()
-	}); */
 
 	notification_socket.onmessage = function(event)
 	{
