@@ -1,20 +1,8 @@
 import {redirect} from "../js/router.js";
+import stateManager from "../js/StateManager.js";
 
 
 const styles = `
-
-	/*.content {
-		margin: 80px 24px 0px 224px;
-		background-color: #dbd9d7;
-	}*/
-
-	/*
-	.content {
-		margin: 80px 24px 0px 84px;
-		background-color: #dbd9d7;
-	}
-	*/
-
 
 	.hide {
 		display: none;
@@ -201,7 +189,6 @@ const deselectedIcon = {
 
 export default class SidePanel extends HTMLElement {
 	static observedAttributes = ["selected", "state"];
-	static #state = "open";
 
 	constructor() {
 		super()
@@ -219,7 +206,7 @@ export default class SidePanel extends HTMLElement {
 
 	#initComponent() {
 		this.html = document.createElement("div");
-		this.html.innerHTML = this.#html({state: SidePanel.#state});
+		this.html.innerHTML = this.#html({state: stateManager.getState("sidePanel")});
 		if (styles) {
 			this.elmtId = `elmtId_${Math.floor(Math.random() * 100000000000)}`;
 			this.styles = document.createElement("style");
@@ -250,6 +237,8 @@ export default class SidePanel extends HTMLElement {
 
 	}
 
+	//btnOpenClose()
+	// criar uma função só de abrir e uma de fechar DRY principle
 	#openClosePanel() {
 		let btn = this.html.querySelector(`.list-btn > button`);
 		btn.addEventListener("click", () => {
@@ -257,9 +246,9 @@ export default class SidePanel extends HTMLElement {
 			sidePanel.classList.toggle("close");
 			sidePanel.classList.toggle("open");
 			if (sidePanel.classList.contains("close"))
-				SidePanel.#state = "close";
+				stateManager.setState("sidePanel", "close");
 			else
-				SidePanel.#state = "open";
+				stateManager.setState("sidePanel", "open");
 		});		
 	}
 
@@ -303,7 +292,7 @@ export default class SidePanel extends HTMLElement {
 		sidePanel.classList.remove("close");
 		sidePanel.classList.remove("open");
 		sidePanel.classList.add(value);
-		SidePanel.#state = value;
+		stateManager.setState("sidePanel", value);
 	}
 }
 

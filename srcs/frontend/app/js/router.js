@@ -14,6 +14,9 @@ import LoginForm from "../components/login-form.js";
 import SignupForm from "../components/signup-form.js";
 import SidePanel from "../components/side-panel.js";
 
+// Others
+import stateManager from "./StateManager.js";
+
 //  /user/:id devo poder configurar neste formato
 const routes = {
 	"/"				: PageHome.componentName,
@@ -42,6 +45,7 @@ const getPageName = function() {
 }
 
 export const router = function() {
+	stateManager.cleanEvents();
 	render(getPageName());
 }
 

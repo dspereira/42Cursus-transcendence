@@ -1,15 +1,14 @@
-const styles = `
+import stateManager from "../js/StateManager.js";
+import { adjustContent } from "../utils/adjustContent.js";
 
-
-`;
+const styles = ``;
 
 const html = `
 
 	<app-header></app-header>
 	<side-panel selected="home"></side-panel>
 
-	<!--
-	<div class="content">
+	<div class="content content-small">
 
 		<h1>Page Home</h1>
 		<p>
@@ -19,7 +18,6 @@ const html = `
 		Rump drumstick tri-tip alcatra. Flank ground round pastrami beef short ribs pork belly jowl. Spare ribs beef ribs andouille, frankfurter short loin shankle venison salami turducken. Beef ribs alcatra capicola shoulder pork loin sirloin biltong turkey pancetta flank pork andouille bacon. Doner hamburger shoulder tenderloin flank prosciutto corned beef. Chislic tongue doner porchetta pastrami sirloin filet mignon leberkas brisket ribeye pork chop shank cupim corned beef sausage.
 		</p>
 	</div>
-	-->
 
 `;
 
@@ -33,6 +31,8 @@ export default class PageHome extends HTMLElement {
 		//this.#loadData();
 		this.#initComponent();
 		this.#render();
+
+		adjustContent(this.html.querySelector(".content"));
 	}
 
 	#initComponent() {
