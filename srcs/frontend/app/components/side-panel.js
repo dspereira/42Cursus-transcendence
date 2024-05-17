@@ -42,6 +42,10 @@ const styles = `
 		margin-bottom: 10px;
 	}
 
+	.list-btn {
+		width: 52px;
+	}
+
 	.list-btn .icon {
 		display: inline-block;
 		font-size: 22px;

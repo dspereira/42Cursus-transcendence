@@ -34,7 +34,6 @@ class StateManager {
 
 	triggerEvent(event) {
 		const stateValue = this.states[event];
-		console.log(this.stateEvents[event]);
 		this.stateEvents[event].forEach(callback => callback(stateValue));
 	}
 

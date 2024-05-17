@@ -6,7 +6,7 @@ const styles = ``;
 
 const getHtml = function(data) {
 	const html = `
-		<app-header></app-header>
+		<app-header bell="selected"></app-header>
 		<side-panel></side-panel>
 		<div class="content content-small">
 			<h1>Page Notifications</h1>

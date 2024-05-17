@@ -63,7 +63,6 @@ header {
 
 `;
 
-
 const getHtml = function(data) {
 	const html = `
 	
@@ -86,8 +85,13 @@ const getHtml = function(data) {
 	return html;
 }
 
+const bellIcon = {
+    selected: "bi-bell-fill",
+    unselected: "bi-bell",
+};
+
 export default class AppHeader extends HTMLElement {
-	static observedAttributes = [];
+	static observedAttributes = ["bell"];
 
 	constructor() {
 		super()
@@ -97,7 +101,8 @@ export default class AppHeader extends HTMLElement {
 	}
 
 	attributeChangedCallback(name, oldValue, newValue) {
-
+		if (name === "bell")
+			this.#changeBellIcon(newValue);
 	}
 
 	#initComponent() {
@@ -130,11 +135,19 @@ export default class AppHeader extends HTMLElement {
 	#scripts() {
 		const bell = this.html.querySelector(".notif-bell");
 		bell.addEventListener("click", () => {
+
 			redirect("/notifications");
 		});
 	}
 
+	#changeBellIcon(newValue) {
+		const bell = this.html.querySelector(".bell");
+		bell.classList.remove(bellIcon["selected"]);
+		bell.classList.remove(bellIcon["unselected"]);
+		bell.classList.add(bellIcon[newValue]);
 
+		console.log(bell);
+	}
 }
 
 customElements.define("app-header", AppHeader);
