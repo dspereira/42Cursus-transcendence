@@ -100,6 +100,16 @@ document.addEventListener("DOMContentLoaded", function() {
 		render_notifications(notification_socket);
 	}
 
+	function update_notification_read_status(notification_socket, new_notification)
+	{
+		let notification = JSON.parse(new_notification)
+		notification_socket.send(JSON.stringify({
+			'type': "update_notification_read_status",
+			'notification_type': notification.type,
+			'notification_id': notification.id,
+		}));
+	}
+
 	function send_friend_notification_status(notification_socket, notification, status)
 	{
 		notification_socket.send(JSON.stringify({
@@ -136,9 +146,6 @@ document.addEventListener("DOMContentLoaded", function() {
 		for (let i = 0; i < new_notifications.length; i++)
 			notifications.unshift(new_notifications[i]);
 		render_notifications(notification_socket);
-		/* notifications.forEach(element => {
-			console.log(element.id, element.from_user, element.timestamp);
-		}); */
 	}
 
 	function connect()
@@ -183,9 +190,17 @@ document.addEventListener("DOMContentLoaded", function() {
 				if (data['type'] == "send_all_notifications")
 					init_notifications(notification_socket, data['notifications']);
 				else if (data['type'] == "send_friend_notification")
-					add_notification(notification_socket, data['friend_req_notification'])
+				{
+					let new_notification = data['friend_req_notification']
+					add_notification(notification_socket, new_notification)
+					update_notification_read_status(notification_socket, new_notification)
+				}
 				else if (data['type'] == "send_game_invite_notification")
-					add_notification(notification_socket, data['game_inv_notification'])
+				{
+					let new_notification = data['game_inv_notification']
+					add_notification(notification_socket, new_notification)
+					update_notification_read_status(notification_socket, new_notification)
+				}
 			}
 		};
 

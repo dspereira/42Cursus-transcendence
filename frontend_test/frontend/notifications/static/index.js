@@ -6,15 +6,14 @@ document.addEventListener("DOMContentLoaded", function() {
 
 	console.log("Pagina HTML totalmente carregada !")
 
-	/* function update_email_icon(counterValue)
+	let unread_notifications_counter = 0;
+
+	function update_email_icon()
 	{
-
-	} */
-
-	let counterValue = 0;
-	document.getElementById('notifications_to_read_counter').innerHTML = "Notifications to Read Counter -> " + counterValue;
-	if (counterValue > 0)
-		document.getElementById('notificationIcon').innerHTML = '<i class="bi bi-envelope-paper-fill fill"></i><i class="bi bi-envelope-paper outline"></i>';
+		document.getElementById('notifications_to_read_counter').innerHTML = "Notifications to Read Counter -> " + unread_notifications_counter;
+		if (unread_notifications_counter > 0)
+			document.getElementById('notificationIcon').innerHTML = '<i class="bi bi-envelope-paper-fill fill"></i><i class="bi bi-envelope-paper outline"></i>';
+	}
 
 	let notification_socket = null;
 
@@ -24,6 +23,9 @@ document.addEventListener("DOMContentLoaded", function() {
 	notification_socket.onopen = function(event)
 	{
 		console.log("Successfully connected to the WebSocket.");
+		notification_socket.send(JSON.stringify({
+			"type": "has_unread_notifications",
+		}))
 	}
 
 	notification_socket.onclose = function(event)
@@ -47,6 +49,11 @@ document.addEventListener("DOMContentLoaded", function() {
 	{
 		const data = JSON.parse(event.data);
 		console.log(data);
+		if (data["type"] == "unread_notifications_counter")
+			unread_notifications_counter = data["unread_notifications_counter"];
+		if (data["type"] == "new_notification")
+			unread_notifications_counter += 1;
+		update_email_icon()
 	};
 
 	notification_socket.onerror = function(err)

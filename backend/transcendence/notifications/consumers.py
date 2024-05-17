@@ -12,6 +12,8 @@ import json
 from .notifications import get_user_notifications
 from .notifications import create_friend_request
 from .notifications import create_game_invite
+from .notifications import has_unread_notifications
+from .notifications import update_notification_read_status
 
 friend_req_notification_model = ModelManager(FriendsRequestNotification)
 game_inv_notification_model = ModelManager(GameInviteNotification)
@@ -86,6 +88,21 @@ class Notifications(AsyncWebsocketConsumer):
 			else:
 				print("Não existem notificações no momento.")
 			print("------------------------------------------------")
+		elif data_json["type"] == "has_unread_notifications":
+			print_entry("has_unread_notifications")
+			unread_notifications_counter = await sync_to_async(has_unread_notifications)(self.user)
+			await self.channel_layer.group_send(
+				self.user.username,
+				{
+					'type': 'unread_notifications_counter',
+					'unread_notifications_counter': unread_notifications_counter,
+				}
+			)
+		elif data_json["type"] == "update_notification_read_status":
+			print_entry("update_notification_read_status")
+			notification_type = data_json["notification_type"]
+			notification_id = data_json["notification_id"]
+			await sync_to_async(update_notification_read_status)(notification_type, notification_id)
 		elif data_json["type"] == "friend_request":
 			print_entry("friend_request")
 			receiver_username = data_json["receiver_name"]
@@ -98,6 +115,12 @@ class Notifications(AsyncWebsocketConsumer):
 						{
 							'type': 'send_friend_notification',
 							'friend_req_notification': friend_req_notif,
+						}
+					)
+					await self.channel_layer.group_send(
+						to_user.username,
+						{
+							'type': 'new_notification',
 						}
 					)
 				else:
@@ -119,6 +142,12 @@ class Notifications(AsyncWebsocketConsumer):
 							'game_inv_notification': game_inv_notif,
 						}
 					)
+					await self.channel_layer.group_send(
+						to_user.username,
+						{
+							'type': 'new_notification',
+						}
+					)
 				else:
 					print("User does not exist!")
 			else:
@@ -134,6 +163,23 @@ class Notifications(AsyncWebsocketConsumer):
 		await self.send(text_data=json.dumps({
 			'type': 'send_all_notifications',
 			'notifications': event['notifications'],
+		}))
+
+	async def new_notification(self, event):
+		if not await sync_to_async(is_authenticated)(self.access_data):
+			await self.close(4000)
+			return
+		await self.send(text_data=json.dumps({
+			'type': 'new_notification',
+		}))
+
+	async def unread_notifications_counter(self, event):
+		if not await sync_to_async(is_authenticated)(self.access_data):
+			await self.close(4000)
+			return
+		await self.send(text_data=json.dumps({
+			'type': 'unread_notifications_counter',
+			'unread_notifications_counter': event['unread_notifications_counter']
 		}))
 
 	async def send_friend_notification(self, event):
