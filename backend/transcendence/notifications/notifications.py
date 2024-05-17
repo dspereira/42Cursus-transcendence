@@ -68,14 +68,12 @@ def create_game_invite(from_user: User, to_user: User, game: int):
 def has_unread_notifications(user: User):
 	all_notifications = get_all_notifications(user)
 
-	if not all_notifications:
-		return None
-
 	unread_notifications_counter = 0
 
-	for notification in all_notifications:
-		if not notification.read:
-			unread_notifications_counter += 1
+	if all_notifications:
+		for notification in all_notifications:
+			if not notification.read:
+				unread_notifications_counter += 1
 
 	return unread_notifications_counter
 
