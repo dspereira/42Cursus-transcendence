@@ -5,7 +5,8 @@ from game_engine.models import Match
 from custom_utils.models_utils import ModelManager
 from .models import Tournament, PlayerList, MatchList
 from custom_decorators import login_required, accepted_methods
-from .utils.utils import create_final_games, get_row, check_tournament, insert_user, matches_finished, create_semi_finals 
+from .utils.utils import create_final_games, get_row, insert_user, matches_finished, create_semi_finals 
+from .utils.custom_decorators import check_tournament
 
 match_model = ModelManager(Match)
 user_model = ModelManager(User)
