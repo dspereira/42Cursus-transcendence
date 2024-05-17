@@ -1,6 +1,5 @@
 import {redirect} from "../js/router.js";
 
-
 const styles = `
 
 header {
@@ -45,6 +44,10 @@ header {
 	font-size: 22px;
 }
 
+.notif-bell {
+	cursor: pointer;
+}
+
 .number {
 	position: fixed;
 	right: 112px;
@@ -71,7 +74,7 @@ const getHtml = function(data) {
 		</div>
 
 		<div class="right-side">
-			<div>
+			<div class="notif-bell">
 				<span class="number">99</span>
 				<i class="bell bi bi-bell"></i>
 			</div>
@@ -125,8 +128,12 @@ export default class AppHeader extends HTMLElement {
 	}
 
 	#scripts() {
-
+		const bell = this.html.querySelector(".notif-bell");
+		bell.addEventListener("click", () => {
+			redirect("/notifications");
+		});
 	}
+
 
 }
 
