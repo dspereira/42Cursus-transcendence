@@ -1,0 +1,26 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<title>Gane controls</title>
+		<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css">
+		<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.min.js"></script>
+		<style>
+			#roomSelect {
+				height: 300px;
+			}
+		</style>
+	</head>
+	<body>
+		<script src="{% static 'front_page.js' %}"></script>
+		<div class="container mt-5 p-5">
+			<h1><b><a>!LET THE GAMES BEGIN!</a></b></h1>
+			<button class="btn btn-dark" onclick="window.location.assign('http://127.0.0.1:8080/game/game_create/')">Create games!</button><br>
+			<!-- <select id="Tournament_list" class="form-select" multiple size="10"></select>
+			<button type="click" id="list_button" class="btn btn-outline-success">List Games!</button><br><br> -->
+
+			<br>
+		</div>
+	</body>
+</html>

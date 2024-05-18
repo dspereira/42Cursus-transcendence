@@ -1,6 +1,7 @@
-import {Paddle} from "./paddle.js"
-import {InputHandler} from "./input.js"
-import {Ball} from "./ball.js"
+console.log("main.js is %cActive", 'color: #90EE90')
+import {Paddle} from "./game_utils/paddle.js"
+import {InputHandler} from "./game_utils/input.js"
+import {Ball} from "./game_utils/ball.js"
 
 const gData = {
 	width: 800,
@@ -30,8 +31,12 @@ var ball_x = 0;
 var ball_y = 0;
 var player1_Score = 0;
 var player2_Score = 0;
+var match_id = -1;
+
 
 const	point_limit = 3;
+
+
 
 function pause_game(pause_status){
 	fetch("http://127.0.0.1:8000/api/game/pause-game", {
@@ -41,7 +46,7 @@ function pause_game(pause_status){
 			"Content-Type": "application/json"
 		},
 		body: JSON.stringify({
-			pause: pause_status
+			game_id: match_id
 		})
 	})
 	.catch(error => {
@@ -49,8 +54,42 @@ function pause_game(pause_status){
 	});
 }
 
+function create_game(){
+	fetch("http://127.0.0.1:8000/api/game/create-game", {
+		credentials: 'include',
+		method: "POST",
+		headers: {
+			"Content-Type": "application/json"
+		},
+		body: JSON.stringify({
+			invitee: 2,
+		})
+	})
+	.then(response => {
+		if (!response.ok) {
+			console.log("No body in response")
+			throw new Error('Network response was not ok');
+		}
+		return response.json();
+	})
+	.then ((data) => {
 
-function sendKeys(keys, id) {
+		const select = document.getElementById("game_list");
+
+		const option = document.createElement('option');
+		option.value = data["game_id"];
+		console.log("game id:", data["game_id"])
+		option.textContent = data["message"] + "	id: " + data["game_id"];
+
+		select.appendChild(option)
+	})
+	.catch(error => {
+		console.log("failed to create game:", error);
+	});
+}
+
+
+function sendKeys(keys) {
 	fetch("http://127.0.0.1:8000/api/game/player-input", {
 		credentials: 'include',
 		method: "POST",
@@ -58,8 +97,33 @@ function sendKeys(keys, id) {
 			"Content-Type": "application/json"
 		},
 		body: JSON.stringify({
-			player_id: id,
-			keys: keys
+			keys: keys,
+			game_id: match_id
+		})
+	})
+	.then(response => response.json())
+	.then ((data) => {
+		leftPaddle_y = data["left_coords"];
+		rightPaddle_y = data["right_coords"];
+		ball_x = data["ball_x"];
+		ball_y = data["ball_y"];
+		player1_Score = data["player1_score"];
+		player2_Score = data["player2_score"];
+	})
+	.catch(error => {
+		console.log(error);
+	});
+}
+
+function get_state() {
+	fetch("http://127.0.0.1:8000/api/game/update-game", {
+		credentials: 'include',
+		method: "POST",
+		headers: {
+			"Content-Type": "application/json"
+		},
+		body: JSON.stringify({
+			game_id: match_id
 		})
 	})
 	.then(response => response.json())
@@ -129,7 +193,7 @@ class Game {
 			sendKeys(this.rightInput.keys, this.rightInput.id);
 		if (this.leftInput.keys.length > 0)
 			sendKeys(this.leftInput.keys, this.leftInput.id);
-		sendKeys(null, -1);
+		get_state(null);
 		this.leftPaddle.y = leftPaddle_y;
 		this.rightPaddle.y = rightPaddle_y;
 		this.ball.x = ball_x;
@@ -137,28 +201,48 @@ class Game {
 	}
 }
 
-window.addEventListener('load', () => {
+function get_number()
+{
+	const tournament_input = document.getElementById('tournament_id').value;
+
+		if (!tournament_input) {
+			console.log("No number entered. Please provide a valid number.");
+			alert("Please enter a tournament id before requesting the update.");
+			return 0; // Exit the function early if the input is invalid
+		}
+	match_id = tournament_input
+	return 1
+}
+
+document.addEventListener("DOMContentLoaded", function() {
+
 	const canvas = document.getElementById('canvas1')
 	const ctx = canvas.getContext("2d");
 	
 	const game = new Game(canvas.width, canvas.height);
-
-	let pause_status = -1;
-	
-	
-	document.querySelector(".btn").addEventListener('click', () =>{
-		pause_status *= -1;
-		console.log(pause_status);
-		pause_game(pause_status);
+		
+	document.getElementById("pause_button").addEventListener('click', () =>{
+		pause_game();
 	})
-	animate(0);
-	
+
+	match_id = localStorage.getItem('game_id');
+	if (match_id) {
+		console.log('Game ID:', match_id);
+		localStorage.clear();
+		animate(0)
+	}
+	else {
+		window.location.assign('http://127.0.0.1:8080/game/')
+		console.log('No game ID found');
+	}
+
 	
 	function animate() {
 
 		ctx.clearRect(0, 0, canvas.width, canvas.height);
-		if (player1_Score >= point_limit || player2_Score >= point_limit)
-			return;
+		if (player1_Score >= point_limit || player2_Score >= point_limit){
+			window.location.assign('http://127.0.0.1:8080/game/')
+			}
 		requestAnimationFrame(animate);
 		
 		game.draw(ctx);
