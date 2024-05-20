@@ -20,7 +20,6 @@ class Game:
 				self._right_Paddle.update(key)
 			self._ball.update(self._left_Paddle, self._right_Paddle, self._score, self.game_paused)
 
-
 		def get_state(self):
 
 			response = {
@@ -34,4 +33,6 @@ class Game:
 			return response
 		
 		def	pause(self):
+			if self.game_paused == 1:
+				self._ball.unpause()
 			self.game_paused *= -1

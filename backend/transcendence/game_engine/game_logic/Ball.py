@@ -26,7 +26,10 @@ class Ball:
 			self._calculate_position(score)
 
 		self.last_call = self.time_now
-  
+
+	def unpause(self):
+		self.time_now = int(round(time.time() * 1000))
+		self.last_call = self.time_now
 
 	def _check_paddle_collision(self):
 

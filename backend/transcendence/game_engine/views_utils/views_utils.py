@@ -1,6 +1,4 @@
 from django.http import JsonResponse
-import json
-import time
 from game_engine.game_logic.Game import Game
 from user_auth.models import User
 from game_engine.models import Match
@@ -27,3 +25,18 @@ def	update_match(response_data, game_id):
 	}
 
 	return (response)
+
+def get_player_id(keys, match_id, user, data):
+
+	if data["id"] == -1:
+		return -1
+	if match_id.user2:
+		if match_id.user1.id == user:
+			return 0
+		else:
+			return 1
+	else:
+		if keys[0] == 'w' or keys[0] == 's':
+			return 0
+		else:
+			return 1

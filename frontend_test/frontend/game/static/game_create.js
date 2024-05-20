@@ -89,15 +89,15 @@ function check_id(id){
 
 function get_number(id)
 {
-	const tournament_input = document.getElementById(id).value;
+	const game_input = document.getElementById(id).value;
 
-		if (tournament_input < 0) {
+		if (game_input < 0) {
 			console.log("No number entered. Please provide a valid number.");
 			alert("Please enter a valid id.");
 			return 0; // Exit the function early if the input is invalid
 		}
 
-	return tournament_input
+	return game_input
 }
 
 function flushSelectOptions() {

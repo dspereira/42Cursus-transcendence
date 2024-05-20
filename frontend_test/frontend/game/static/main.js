@@ -33,9 +33,7 @@ var player1_Score = 0;
 var player2_Score = 0;
 var match_id = -1;
 
-
 const	point_limit = 3;
-
 
 
 function pause_game(pause_status){
@@ -54,42 +52,9 @@ function pause_game(pause_status){
 	});
 }
 
-function create_game(){
-	fetch("http://127.0.0.1:8000/api/game/create-game", {
-		credentials: 'include',
-		method: "POST",
-		headers: {
-			"Content-Type": "application/json"
-		},
-		body: JSON.stringify({
-			invitee: 2,
-		})
-	})
-	.then(response => {
-		if (!response.ok) {
-			console.log("No body in response")
-			throw new Error('Network response was not ok');
-		}
-		return response.json();
-	})
-	.then ((data) => {
-
-		const select = document.getElementById("game_list");
-
-		const option = document.createElement('option');
-		option.value = data["game_id"];
-		console.log("game id:", data["game_id"])
-		option.textContent = data["message"] + "	id: " + data["game_id"];
-
-		select.appendChild(option)
-	})
-	.catch(error => {
-		console.log("failed to create game:", error);
-	});
-}
 
 
-function sendKeys(keys) {
+function sendKeys(keys, id) {
 	fetch("http://127.0.0.1:8000/api/game/player-input", {
 		credentials: 'include',
 		method: "POST",
@@ -98,7 +63,8 @@ function sendKeys(keys) {
 		},
 		body: JSON.stringify({
 			keys: keys,
-			game_id: match_id
+			game_id: match_id,
+			id: id
 		})
 	})
 	.then(response => response.json())
@@ -190,28 +156,16 @@ class Game {
 
 	async checkKeyInputs() {
 		if (this.rightInput.keys.length > 0 )
-			sendKeys(this.rightInput.keys, this.rightInput.id);
+			sendKeys(this.rightInput.keys, 0);
 		if (this.leftInput.keys.length > 0)
-			sendKeys(this.leftInput.keys, this.leftInput.id);
-		get_state(null);
+			sendKeys(this.leftInput.keys, 0);
+		sendKeys(null, -1);
+		// setTimeout(sendKeys(null, -1), 1000);
 		this.leftPaddle.y = leftPaddle_y;
 		this.rightPaddle.y = rightPaddle_y;
 		this.ball.x = ball_x;
 		this.ball.y = ball_y;
 	}
-}
-
-function get_number()
-{
-	const tournament_input = document.getElementById('tournament_id').value;
-
-		if (!tournament_input) {
-			console.log("No number entered. Please provide a valid number.");
-			alert("Please enter a tournament id before requesting the update.");
-			return 0; // Exit the function early if the input is invalid
-		}
-	match_id = tournament_input
-	return 1
 }
 
 document.addEventListener("DOMContentLoaded", function() {
@@ -242,9 +196,9 @@ document.addEventListener("DOMContentLoaded", function() {
 		ctx.clearRect(0, 0, canvas.width, canvas.height);
 		if (player1_Score >= point_limit || player2_Score >= point_limit){
 			window.location.assign('http://127.0.0.1:8080/game/')
-			}
+		}
 		requestAnimationFrame(animate);
-		
+			
 		game.draw(ctx);
 		game.checkKeyInputs();
 	}
