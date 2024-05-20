@@ -1,6 +1,7 @@
-import {Paddle} from "./paddle.js"
-import {InputHandler} from "./input.js"
-import {Ball} from "./ball.js"
+console.log("main.js is %cActive", 'color: #90EE90')
+import {Paddle} from "./game_utils/paddle.js"
+import {InputHandler} from "./game_utils/input.js"
+import {Ball} from "./game_utils/ball.js"
 
 const gData = {
 	width: 800,
@@ -30,8 +31,27 @@ var ball_x = 0;
 var ball_y = 0;
 var player1_Score = 0;
 var player2_Score = 0;
+var match_id = -1;
 
 const	point_limit = 3;
+
+
+function pause_game(pause_status){
+	fetch("http://127.0.0.1:8000/api/game/pause-game", {
+		credentials: 'include',
+		method: "POST",
+		headers: {
+			"Content-Type": "application/json"
+		},
+		body: JSON.stringify({
+			game_id: match_id
+		})
+	})
+	.catch(error => {
+		console.log(error);
+	});
+}
+
 
 
 function sendKeys(keys, id) {
@@ -42,8 +62,34 @@ function sendKeys(keys, id) {
 			"Content-Type": "application/json"
 		},
 		body: JSON.stringify({
-			player_id: id,
-			keys: keys
+			keys: keys,
+			game_id: match_id,
+			id: id
+		})
+	})
+	.then(response => response.json())
+	.then ((data) => {
+		leftPaddle_y = data["left_coords"];
+		rightPaddle_y = data["right_coords"];
+		ball_x = data["ball_x"];
+		ball_y = data["ball_y"];
+		player1_Score = data["player1_score"];
+		player2_Score = data["player2_score"];
+	})
+	.catch(error => {
+		console.log(error);
+	});
+}
+
+function get_state() {
+	fetch("http://127.0.0.1:8000/api/game/update-game", {
+		credentials: 'include',
+		method: "POST",
+		headers: {
+			"Content-Type": "application/json"
+		},
+		body: JSON.stringify({
+			game_id: match_id
 		})
 	})
 	.then(response => response.json())
@@ -110,10 +156,11 @@ class Game {
 
 	async checkKeyInputs() {
 		if (this.rightInput.keys.length > 0 )
-			sendKeys(this.rightInput.keys, this.rightInput.id);
+			sendKeys(this.rightInput.keys, 0);
 		if (this.leftInput.keys.length > 0)
-			sendKeys(this.leftInput.keys, this.leftInput.id);
+			sendKeys(this.leftInput.keys, 0);
 		sendKeys(null, -1);
+		// setTimeout(sendKeys(null, -1), 1000);
 		this.leftPaddle.y = leftPaddle_y;
 		this.rightPaddle.y = rightPaddle_y;
 		this.ball.x = ball_x;
@@ -121,25 +168,40 @@ class Game {
 	}
 }
 
-window.addEventListener('load', () => {
+document.addEventListener("DOMContentLoaded", function() {
+
 	const canvas = document.getElementById('canvas1')
 	const ctx = canvas.getContext("2d");
 	
 	const game = new Game(canvas.width, canvas.height);
+		
+	document.getElementById("pause_button").addEventListener('click', () =>{
+		pause_game();
+	})
 
+	match_id = localStorage.getItem('game_id');
+	if (match_id) {
+		console.log('Game ID:', match_id);
+		localStorage.clear();
+		animate(0)
+	}
+	else {
+		window.location.assign('http://127.0.0.1:8080/game/')
+		console.log('No game ID found');
+	}
 
-	animate(0);
-	
 	
 	function animate() {
 
 		ctx.clearRect(0, 0, canvas.width, canvas.height);
-		if (player1_Score >= point_limit || player2_Score >= point_limit)
-			return;
+		if (player1_Score >= point_limit || player2_Score >= point_limit){
+			window.location.assign('http://127.0.0.1:8080/game/')
+		}
 		requestAnimationFrame(animate);
-		
-		game.checkKeyInputs();
+			
 		game.draw(ctx);
+		game.checkKeyInputs();
 	}
+
 
 });

@@ -24,7 +24,8 @@ def refresh(request):
 	return render(request, "login_test/refresh.html")
 
 def game(request):
-	return render(request, "login_test/game.html")
+	return render(request, "game/templates/game/index.html")
 
 def tournament(request):
 	return render(request, "tournaments/templates/tournaments/index.html")
+
