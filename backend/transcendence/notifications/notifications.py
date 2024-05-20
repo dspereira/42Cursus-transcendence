@@ -86,3 +86,9 @@ def update_notification_read_status(notification_type: str, notification_id: int
 
 	notification.read = True
 	notification.save()
+
+def create_notification(model: ModelManager, data: dict):
+	notification = model.create(**data)
+	return json.dumps(notification.get_data())
+
+def send_data():
