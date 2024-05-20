@@ -7,9 +7,15 @@ document.addEventListener("DOMContentLoaded", function() {
 
 	document.getElementById("create_button").addEventListener('click', () =>{
 		console.log("create button has been pressed");
-		input = get_number('invitee_id');
-		flushSelectOptions();
-		create_game(input);
+		input = get_number('invitee_id')
+		if (input == -1)
+			return 0
+		if (!input){
+			flushSelectOptions();
+			create_game(input);
+		}
+		if (input)
+			check_invitee(input)
 	});
 
 	document.getElementById("join_button").addEventListener('click', () => {
@@ -54,6 +60,38 @@ function create_game(invitee_id){
 	});
 }
 
+function check_invitee(id){
+	fetch("http://127.0.0.1:8000/api/game/check-invitee", {
+		credentials: 'include',
+		method: "POST",
+		headers: {
+			"Content-Type": "application/json"
+		},
+		body: JSON.stringify({
+			invitee: id,
+		})
+	})
+	.then(response => {
+		if (!response.ok) {
+			console.log("No body in response")
+			throw new Error('Network response was not ok');
+		}
+		return response.json();
+	})
+	.then ((data) => {
+		if (data["message"] == "Valid id"){
+			flushSelectOptions();
+			create_game(input);
+		}
+		else
+			alert("Please enter a valid id.");
+	})
+	.catch(error => {
+		console.log("failed to create game:", error);
+		alert("Please enter a valid id.");
+	});
+}
+
 function check_id(id){
 	fetch("http://127.0.0.1:8000/api/game/check-id", {
 		credentials: 'include',
@@ -94,7 +132,7 @@ function get_number(id)
 		if (game_input < 0) {
 			console.log("No number entered. Please provide a valid number.");
 			alert("Please enter a valid id.");
-			return 0; // Exit the function early if the input is invalid
+			return -1; // Exit the function early if the input is invalid
 		}
 
 	return game_input

@@ -120,4 +120,19 @@ def create_match(request):
 @login_required
 @check_match
 def check_id(request):
+
 	return JsonResponse({"message":"Valid id"})
+
+
+@accepted_methods(["POST"])
+@login_required
+def	check_invitee(request):
+	if request.body:
+		if request.access_data:
+			req_data = json.loads(request.body.decode("utf-8"))
+			user = user_model.get(id=request.access_data.sub)
+			invitee = user_model.get(id=req_data["invitee"])
+			if invitee:
+				if invitee is not user:
+					return JsonResponse({"message":"Valid id"})
+	return JsonResponse({"message":"Invalid id"})
