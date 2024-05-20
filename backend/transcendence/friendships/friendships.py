@@ -11,10 +11,8 @@ friend_list_model = ModelManager(FriendList)
 friend_requests_model = ModelManager(FriendRequests)
 user_model = ModelManager(User)
 
-@accepted_methods(["GET"])
-def api_get_friend_list(request):
-	print(request.GET.get("user_id"))
-	user = user_model.get(user_id=request.GET.get("user_id"))
+def get_friend_list(user_id):
+	user = user_model.get(user_id=user_id)
 	if user:
 		filtered_list1 = friend_list_model.filter(user1=user)
 		filtered_list2 = friend_list_model.filter(user2=user)
@@ -22,59 +20,46 @@ def api_get_friend_list(request):
 			filtered_list = filtered_list1 | filtered_list2
 		if filtered_list:
 			data = list(filtered_list)
-			result = {
-				"message": "User Friendlist:",
-				"friendlist": data
-			}
-		else:
-			result = {
-				"message": "Error: User has no friends"
-			}
-	else:
-		result = {
-			"message": "Error: User not found"
-			}
-	return JsonResponse(result)
+	return data
 
-@accepted_methods(["POST"])
-def api_accept_friend_request(request):
-	if request.body:
-		req_data = json.loads(request.body)
-		friend_request = friend_requests_model.get(id=req_data["request_id"])
+def accept_friend_request(request_id):
+	if request_id:
+		friend_request = friend_requests_model.get(id=request_id)
 		if friend_request:
 			friend_list_model.create(user1=friend_request.from_user , user2=friend_request.to_user)
 			result = {
-				"message": "Friendship accepted",
-				"user": friend_request.from_user.username,
-				"requested_user": friend_request.to_user.username
+				"message": friend_request.to_user + " accepted your friend request.",
 			}
 			friend_request.delete()
+		else:
+			result = {
+				"message": "Error: request_id does not exist"
+			}
 	else:
 		result = {
-			"message": "Error: Empty Body"
+			"message": "Error: No request_id"
 		}
 	return JsonResponse(result)
 
-@accepted_methods(["POST"])
-def api_decline_friend_request(request):
-	if request.body:
-		req_data = json.loads(request.body)
-		friend_request = friend_requests_model.get(id=req_data["request_id"])
+def decline_friend_request(request_id):
+	if request_id:
+		friend_request = friend_requests_model.get(id=request_id)
 		if friend_request:
 			result = {
-				"message": "Friendship declined",
-				"user": friend_request.from_user.username,
-				"requested_user": friend_request.to_user.username
+				"message": friend_request.to_user + " declined your friend request",
 			}
 			friend_request.delete()
+		else:
+			result = {
+				"message": "Error: request_id does not exist"
+			}
 	else:
 		result = {
-			"message": "Error: Empty Body"
+			"message": "Error: No request_id"
 		}
 	return JsonResponse(result)
 
-@accepted_methods(["POST"])
-def api_send_friend_request(request):
+def send_friend_request(request):
 	if request.body:
 		req_data = json.loads(request.body)
 		user = user_model.get(id=req_data["user"])

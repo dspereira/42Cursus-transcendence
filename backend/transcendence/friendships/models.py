@@ -2,14 +2,16 @@ from django.db import models
 from user_auth.models import User
 
 class FriendRequests(models.Model):
-	from_user = models.ForeignKey(to=User, related_name='from_user', on_delete=models.CASCADE)
-	to_user = models.ForeignKey(to=User, related_name='to_user', on_delete=models.CASCADE)
-	
+	from_user = models.ForeignKey(User, related_name='from_user_friend_req', on_delete=models.CASCADE)
+	to_user = models.ForeignKey(User, related_name='to_user_friend_req', on_delete=models.CASCADE, db_index=True)
+	timestamp = models.DateTimeField(auto_now_add=True)
+	read = models.BooleanField(default=False)
+
 	def __str__(self) -> str:
-		return f'From: {self.user1} | To: {self.user2}'
-	
+		return f"--------------------\nFrom: {self.from_user}\nTo: {self.to_user}\nTime: {self.timestamp}\nRead: {self.read}\n--------------------"
+
 	class Meta:
-		db_table = 'friend_requests'
+		db_table = 'friend_request'
 
 
 class FriendList(models.Model):
