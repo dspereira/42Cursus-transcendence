@@ -18,6 +18,8 @@ header {
 	align-items: center;
 	gap: 3px;
 	margin-left: 48px;
+	/*border: 1px red solid;*/
+	cursor: pointer;
 }
 
 .logo-img {
@@ -145,8 +147,6 @@ export default class AppHeader extends HTMLElement {
 		bell.classList.remove(bellIcon["selected"]);
 		bell.classList.remove(bellIcon["unselected"]);
 		bell.classList.add(bellIcon[newValue]);
-
-		console.log(bell);
 	}
 }
 

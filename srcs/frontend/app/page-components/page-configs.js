@@ -9,10 +9,10 @@ const styles = `
 const getHtml = function(data) {
 	const html = `
 		<app-header></app-header>
-		<side-panel selected="chat"></side-panel>
+		<side-panel selected="configurations"></side-panel>
 		<div class="content content-small">
 
-		<h1>Page Chat</h1>
+		<h1>Page Configurations</h1>
 		<p>
 		Rump drumstick tri-tip alcatra. Flank ground round pastrami beef short ribs pork belly jowl. Spare ribs beef ribs andouille, frankfurter short loin shankle venison salami turducken. Beef ribs alcatra capicola shoulder pork loin sirloin biltong turkey pancetta flank pork andouille bacon. Doner hamburger shoulder tenderloin flank prosciutto corned beef. Chislic tongue doner porchetta pastrami sirloin filet mignon leberkas brisket ribeye pork chop shank cupim corned beef sausage.
 		</p>
@@ -25,10 +25,10 @@ const getHtml = function(data) {
 }
 
 
-const title = "Chat";
+const title = "Configurations";
 
-export default class PageChat extends HTMLElement {
-	static #componentName = "page-chat";
+export default class PageConfigs extends HTMLElement {
+	static #componentName = "page-configs";
 
 	constructor() {
 		super()
@@ -73,4 +73,4 @@ export default class PageChat extends HTMLElement {
 	}
 }
 
-customElements.define(PageChat.componentName, PageChat);
+customElements.define(PageConfigs.componentName, PageConfigs);

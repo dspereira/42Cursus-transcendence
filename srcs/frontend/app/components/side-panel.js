@@ -24,6 +24,13 @@ const styles = `
 		width: 100%
 	}
 
+	.bottom-buttons {
+		position: fixed;
+		bottom: 0;
+		border-top: 1px #dbd9d7 solid;
+		padding-bottom: 8px;
+	}
+
 	button {
 		display: block;
 		background : transparent;
@@ -67,6 +74,10 @@ const styles = `
 
 	/*** OPEN ***/
 	.open .side-panel {
+		width: 200px;
+	}
+
+	.open .bottom-buttons {
 		width: 200px;
 	}
 
@@ -121,7 +132,6 @@ const styles = `
 		background-color: #dbd9d7;
 		border-radius: 3px;
 	}
-
 `;
 
 const getHtml = function(data) {
@@ -162,6 +172,20 @@ const getHtml = function(data) {
 							<span class="icon-text">Tournaments</span>
 						</span>
 					</button>
+					<div class="bottom-buttons">
+						<button id="logout">
+							<span>
+								<i class="icon bi bi-power"></i>
+								<span class="icon-text">Logout</span>
+							</span>
+						</button>
+						<button id="configurations">
+							<span>
+								<i class="icon bi bi-gear"></i>
+								<span class="icon-text">Configurations</span>
+							</span>
+						</button>
+					</div>
 				</div>
 			<nav>
 		</aside>
@@ -174,21 +198,23 @@ const navigation = [
 	"home",
 	"profile",
 	"chat",
-	"tournaments"
+	"tournaments",
+	"configurations",
 ]
 
 const selectedIcon  = {
 	home: "bi-house-door-fill",
 	profile: "bi-person-fill",
 	chat: "bi-chat-fill",
-	tournaments: "bi-trophy-fill" 
+	tournaments: "bi-trophy-fill",
+	configurations: "bi-gear-fill" 
 }
 
 const deselectedIcon = {
 	home: "bi-house-door",
 	profile: "bi-person",
 	chat: "bi-chat",
-	tournaments: "bi-trophy" 
+	configurations: "bi-gear"
 }
 
 export default class SidePanel extends HTMLElement {
