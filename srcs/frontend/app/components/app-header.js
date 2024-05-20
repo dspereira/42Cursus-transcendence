@@ -18,7 +18,11 @@ header {
 	align-items: center;
 	gap: 3px;
 	margin-left: 48px;
-	/*border: 1px red solid;*/
+}
+
+.logo {
+	position: absolute;
+	z-index: 10;
 	cursor: pointer;
 }
 
@@ -33,13 +37,14 @@ header {
 .right-side {
 	display: flex;
 	align-items: center;
-	gap: 30px;	
+	gap: 30px;
 }
 
 .profile-photo {
 	width: 45px;
 	height: auto;
 	clip-path:circle();
+	cursor: pointer;
 }
 
 .bell {
@@ -70,8 +75,10 @@ const getHtml = function(data) {
 	
 	<header>
 		<div class="left-side">
-			<img src="/img/logo.png" class="logo-img" alt="logo">
-			<span class="logo-text"><strong>BlitzPong</strong></span>
+			<div class= "logo">
+				<img src="/img/logo.png" class="logo-img" alt="logo">
+				<span class="logo-text"><strong>BlitzPong</strong></span>
+			</div>
 		</div>
 
 		<div class="right-side">
@@ -135,11 +142,9 @@ export default class AppHeader extends HTMLElement {
 	}
 
 	#scripts() {
-		const bell = this.html.querySelector(".notif-bell");
-		bell.addEventListener("click", () => {
-
-			redirect("/notifications");
-		});
+		this.#addPageRedirection("notifications", "notif-bell");
+		this.#addPageRedirection("profile", "profile-photo");
+		this.#addPageRedirection("home", "logo");
 	}
 
 	#changeBellIcon(newValue) {
@@ -147,6 +152,13 @@ export default class AppHeader extends HTMLElement {
 		bell.classList.remove(bellIcon["selected"]);
 		bell.classList.remove(bellIcon["unselected"]);
 		bell.classList.add(bellIcon[newValue]);
+	}
+
+	#addPageRedirection(page, classIdentifier) {
+		const elm = this.html.querySelector(`.${classIdentifier}`);
+		if (page === "/home" || page === "home")
+			page = "";
+		elm.addEventListener("click", () => redirect(`/${page}`));		
 	}
 }
 

@@ -71,10 +71,9 @@ const styles = `
 		gap: 15px;
 	}
 
-
 	/*** OPEN ***/
 	.open .side-panel {
-		width: 200px;
+		width: 70px;
 	}
 
 	.open .bottom-buttons {
@@ -97,6 +96,7 @@ const styles = `
 	.open .link-btn button:hover {
 		background-color: #dbd9d7;
 		border-radius: 6px;
+		width: 200px;
 	}
 
 	/*** CLOSE ***/
