@@ -214,6 +214,7 @@ const deselectedIcon = {
 	home: "bi-house-door",
 	profile: "bi-person",
 	chat: "bi-chat",
+	tournaments: "bi-trophy",
 	configurations: "bi-gear"
 }
 
