@@ -22,7 +22,6 @@ header {
 
 .logo {
 	position: absolute;
-	z-index: 10;
 	cursor: pointer;
 }
 
