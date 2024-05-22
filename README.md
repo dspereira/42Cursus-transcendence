@@ -6,7 +6,7 @@
 - [x] Live Chat
 - [x] Implement Two-Factor Authentication (2FA) and JWT
 - [ ] Remote players
-- [ ] Server side pong - API
+- [x] Server side pong - API
 
 ## Minor Modules
 - [x] Bootstrap
