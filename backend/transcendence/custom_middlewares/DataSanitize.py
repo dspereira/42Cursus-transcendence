@@ -60,8 +60,9 @@ class DataSanitize:
 	
 
 	def _validate_email(self, email):
+
 		email_regex = r'^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$'
-		if re.match(email_regex, email): #sees if email has correct form
+		if re.match(email_regex, email):
 			return email_regex
 		return None
 
