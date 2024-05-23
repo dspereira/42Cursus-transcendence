@@ -223,7 +223,60 @@ export default class AppChat extends HTMLElement {
 	}
 
 	#scripts() {
+		this.#socket();
 
+	}
+
+	#socket() {
+		let chatSocket = null;
+		const result_str = "ws://127.0.0.1:8000/chat_connection/?room_id=1";
+		chatSocket = new WebSocket(result_str);
+
+		chatSocket.onopen = function(event) {
+			console.log("Successfully connected to the WebSocket.");
+		}
+
+		chatSocket.onclose = function(event) {
+
+			console.log("Fecha ligação");
+
+			chatSocket = null;
+
+		};
+
+
+		const chatForm = this.html.querySelector("#chat-form");
+		chatForm.addEventListener("submit", (event) => {
+			event.preventDefault();
+
+			let msgField = document.querySelector('#message');
+			msgField.value.trim();
+
+			let message = document.querySelector('#message').value.trim();
+			if (message)
+			{
+				chatSocket.send(JSON.stringify({
+					"message": message,
+				}))
+
+				console.log(chatSocket);
+
+			}
+			msgField.innerHTML = "";
+
+		});
+
+		chatSocket.onmessage = function(event) {
+			const data = JSON.parse(event.data);
+			console.log(data);
+		};
+
+		chatSocket.onerror = function(err) {
+			console.log("WebSocket encountered an error: " + err.message);
+			console.log("Closing the socket.");
+			chatSocket.close();
+		}
+		
 	}
 
 }

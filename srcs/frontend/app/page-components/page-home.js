@@ -10,13 +10,17 @@ const html = `
 
 	<div class="content content-small">
 
-		<h1>Page Home</h1>
+		<h1 class="id"></h1>
+		<h1 class="username"></h1>
+		<h1 class="email"></h1>
+
+		<!--<h1>Page Home</h1>
 		<p>
 		Rump drumstick tri-tip alcatra. Flank ground round pastrami beef short ribs pork belly jowl. Spare ribs beef ribs andouille, frankfurter short loin shankle venison salami turducken. Beef ribs alcatra capicola shoulder pork loin sirloin biltong turkey pancetta flank pork andouille bacon. Doner hamburger shoulder tenderloin flank prosciutto corned beef. Chislic tongue doner porchetta pastrami sirloin filet mignon leberkas brisket ribeye pork chop shank cupim corned beef sausage.
 		</p>
 		<p>
 		Rump drumstick tri-tip alcatra. Flank ground round pastrami beef short ribs pork belly jowl. Spare ribs beef ribs andouille, frankfurter short loin shankle venison salami turducken. Beef ribs alcatra capicola shoulder pork loin sirloin biltong turkey pancetta flank pork andouille bacon. Doner hamburger shoulder tenderloin flank prosciutto corned beef. Chislic tongue doner porchetta pastrami sirloin filet mignon leberkas brisket ribeye pork chop shank cupim corned beef sausage.
-		</p>
+		</p>-->
 	</div>
 
 `;
@@ -28,10 +32,9 @@ export default class PageHome extends HTMLElement {
 
 	constructor() {
 		super()
-		//this.#loadData();
+		this.#loadData();
 		this.#initComponent();
-		this.#render();
-
+		//this.#render();
 		adjustContent(this.html.querySelector(".content"));
 	}
 
@@ -107,8 +110,9 @@ export default class PageHome extends HTMLElement {
 			this.#callAPI("GET", "http://127.0.0.1:8000/api/auth/email")
 		]);
 		this.#handleApiData(data);
+		console.log(data);
 		this.#updateHtml();
-		//this.#render();
+		this.#render();
 	}
 
 	static get componentName() {
