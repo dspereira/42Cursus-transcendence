@@ -95,7 +95,6 @@ const styles = `
 	margin-right: 65px;
 }
 
-
 `;
 
 const getHtml = function(data) {
@@ -133,7 +132,7 @@ const getHtml = function(data) {
 						<img src="https://api.dicebear.com/8.x/bottts/svg?seed=Diogo" class="profile-photo" alt="profile photo chat"/>
 					</div>
 					<div class="card-msg">
-						<div class="friend-color card-text">Bacon ipsum dolor amet bresaola beef tongue, burgdoggen flank brisket ham meatloaf pastrami chislic. Bresaola shoulder alcatra frankfurter leberkas boudin capicola. Meatball buffalo swine cow, ham hock short loin ball tip fatback pancetta landjaeger pork loin kevin drumstick shank. </div>
+						<div class="friend-color card-text">Bacon ipsum dolor amet bresaola beef tongue, burgdoggen flank brisket ham meatloaf pastrami chislic. Bresaola shoulder alcatra frankfurter leberkas boudin capicola. Meatball buffalo swine cow, ham hock short loin ball tip fatback pancetta landjaeger pork loin kevin drumstick shank.</div>
 					</div>
 				</div>
 
@@ -167,7 +166,12 @@ const getHtml = function(data) {
 					<div class="card-msg card-text-margin-own">
 						<div class="own-color card-text">Bacon ipsum dolor amet bresaola beef tongue</div>
 					</div>
-				</div>	
+				</div>
+
+				<form id="chat-form">
+					<textarea id="message" placeholder="Type a message here.." maxlength="256"></textarea>
+					<button type="submit">Send</button>
+				</form>
 
 			</div>
 		</div>
