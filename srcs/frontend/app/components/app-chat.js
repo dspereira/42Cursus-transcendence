@@ -48,6 +48,14 @@ const styles = `
 	border-radius: 8px; 
 }
 
+.card-text-margin-friend {
+	margin-left: 65px;
+}
+
+.card-text-margin-own {
+	margin-right: 65px;
+}
+
 .friend-color {
 	background-color: #FF5733;
 }
@@ -82,6 +90,8 @@ const styles = `
 .name-date-own {
 	position: absolute;
 	margin-top: 4px;
+
+	/* size of profile-photo 50px + gap 15px */
 	margin-right: 65px;
 }
 
@@ -117,7 +127,7 @@ const getHtml = function(data) {
 				<div class="msg friend-pos">
 
 					<div class="name-date-friend">
-						<span>Username e data da mensagem</span>
+						<span>dsilveri Today 10:34AM</span>
 					</div>
 					<div>
 						<img src="https://api.dicebear.com/8.x/bottts/svg?seed=Diogo" class="profile-photo" alt="profile photo chat"/>
@@ -127,9 +137,19 @@ const getHtml = function(data) {
 					</div>
 				</div>
 
+				<div class="msg friend-pos">
+
+					<div class="name-date-friend">
+						<span>dsilveri Today 10:34AM</span>
+					</div>
+					<div class="card-msg card-text-margin-friend">
+						<div class="friend-color card-text">oi</div>
+					</div>
+				</div>
+
 				<div class="msg own-pos">
 					<div class="name-date-own">
-						<span>Username e data da mensagem</span>
+					<span>dsilveri Today 10:34AM</span>
 					</div>
 					<div class="card-msg">
 						<div class="own-color card-text">Bacon ipsum dolor amet bresaola beef tongue, burgdoggen flank brisket ham meatloaf pastrami chislic. Bresaola shoulder alcatra frankfurter leberkas boudin capicola. Meatball buffalo swine cow, ham hock short loin ball tip fatback pancetta landjaeger pork loin kevin drumstick shank. </div>
@@ -137,7 +157,17 @@ const getHtml = function(data) {
 					<div>
 						<img src="https://api.dicebear.com/8.x/bottts/svg?seed=Diogo" class="profile-photo" alt="profile photo chat"/>
 					</div>
-				</div>		
+				</div>
+
+
+				<div class="msg own-pos">
+					<div class="name-date-own">
+						<span>dsilveri Today 10:34AM</span>
+					</div>
+					<div class="card-msg card-text-margin-own">
+						<div class="own-color card-text">Bacon ipsum dolor amet bresaola beef tongue</div>
+					</div>
+				</div>	
 
 			</div>
 		</div>
