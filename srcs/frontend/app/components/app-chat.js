@@ -43,7 +43,7 @@ const styles = `
 }
 
 .card-text {
-	margin-top: 6px;
+	margin-top:30px;
 	padding: 5px 8px 5px 8px;
 	border-radius: 8px; 
 }
@@ -70,6 +70,19 @@ const styles = `
 	flex-direction: row;
 	justify-content: flex-end;
 	gap: 15px;
+}
+
+
+.name-date-friend {
+	position: absolute;
+	margin-top: 4px;
+	margin-left: 65px;
+}
+
+.name-date-own {
+	position: absolute;
+	margin-top: 4px;
+	margin-right: 65px;
 }
 
 
@@ -102,6 +115,10 @@ const getHtml = function(data) {
 			<div class="chat-panel">
 
 				<div class="msg friend-pos">
+
+					<div class="name-date-friend">
+						<span>Username e data da mensagem</span>
+					</div>
 					<div>
 						<img src="https://api.dicebear.com/8.x/bottts/svg?seed=Diogo" class="profile-photo" alt="profile photo chat"/>
 					</div>
@@ -111,13 +128,16 @@ const getHtml = function(data) {
 				</div>
 
 				<div class="msg own-pos">
+					<div class="name-date-own">
+						<span>Username e data da mensagem</span>
+					</div>
 					<div class="card-msg">
 						<div class="own-color card-text">Bacon ipsum dolor amet bresaola beef tongue, burgdoggen flank brisket ham meatloaf pastrami chislic. Bresaola shoulder alcatra frankfurter leberkas boudin capicola. Meatball buffalo swine cow, ham hock short loin ball tip fatback pancetta landjaeger pork loin kevin drumstick shank. </div>
 					</div>
 					<div>
 						<img src="https://api.dicebear.com/8.x/bottts/svg?seed=Diogo" class="profile-photo" alt="profile photo chat"/>
 					</div>
-				</div>				
+				</div>		
 
 			</div>
 		</div>
