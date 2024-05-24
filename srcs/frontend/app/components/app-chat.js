@@ -1,28 +1,36 @@
 
 const styles = `
 
+.chat {
+	display: flex;
+}
+
+.friend-list {
+	margin-right: 25px;
+}
+
 /* Friend List */
-.red { 
+
+.red {
 	border: 1px red solid;
 }
 
 .user {
 	display: flex;
-	border: 1px red solid;
 	cursor: pointer;
 	align-items: center;
-	gap: 30px;
+	gap: 10px;
 	margin-bottom: 20px;
 }
 
 .user .profile-photo {
-	width: 60px;
+	width: 40px;
 	height: auto;
 	clip-path:circle();
 }
 
 .user .name {
-	font-size: 20px;
+	font-size: 16px;
 	font-weight: bold;
 }
 
@@ -30,7 +38,7 @@ const styles = `
 /* Chat panel */
 
 .chat-panel .profile-photo {
-	width: 50px;
+	width: 45px;
 }
 
 .msg {
@@ -70,7 +78,6 @@ const styles = `
 	flex-direction: row;
 	justify-content: flex-start;
 	gap: 15px;
-	
 }
 
 .own-pos {
@@ -100,81 +107,65 @@ const styles = `
 const getHtml = function(data) {
 	const html = `
 	
-	<div class="row">
-		<div class="col-4 red">
-			<div class="user">
-				<img src="https://api.dicebear.com/8.x/bottts/svg?seed=Diogo1" class="profile-photo" alt="profile photo chat"/>
-				<span class="name">Nome do utilizador</span>
-			</div>
-			<div class="user">
-				<img src="https://api.dicebear.com/8.x/bottts/svg?seed=Diogo2" class="profile-photo" alt="profile photo chat"/>
-				<span class="name">Nome do utilizador</span>
-			</div>
-			<div class="user">
-				<img src="https://api.dicebear.com/8.x/bottts/svg?seed=Diogo3" class="profile-photo" alt="profile photo chat"/>
-				<span class="name">Nome do utilizador</span>
-			</div>
-			<div class="user">
-				<img src="https://api.dicebear.com/8.x/bottts/svg?seed=Diogo4" class="profile-photo" alt="profile photo chat"/>
-				<span class="name">Nome do utilizador</span>
-			</div>
-		</div>
+	<div class="chat">
 
-		<div class="col-8">
-			<div class="chat-panel">
+		<div class="friend-list"></div>
 
-				<div class="msg friend-pos">
+		
+		<div class="chat-panel">
 
-					<div class="name-date-friend">
-						<span>dsilveri Today 10:34AM</span>
-					</div>
-					<div>
-						<img src="https://api.dicebear.com/8.x/bottts/svg?seed=Diogo" class="profile-photo" alt="profile photo chat"/>
-					</div>
-					<div class="card-msg">
-						<div class="friend-color card-text">Bacon ipsum dolor amet bresaola beef tongue, burgdoggen flank brisket ham meatloaf pastrami chislic. Bresaola shoulder alcatra frankfurter leberkas boudin capicola. Meatball buffalo swine cow, ham hock short loin ball tip fatback pancetta landjaeger pork loin kevin drumstick shank.</div>
-					</div>
-				</div>
+			<div class="msg friend-pos">
 
-				<div class="msg friend-pos">
-
-					<div class="name-date-friend">
-						<span>dsilveri Today 10:34AM</span>
-					</div>
-					<div class="card-msg card-text-margin-friend">
-						<div class="friend-color card-text">oi</div>
-					</div>
-				</div>
-
-				<div class="msg own-pos">
-					<div class="name-date-own">
+				<div class="name-date-friend">
 					<span>dsilveri Today 10:34AM</span>
-					</div>
-					<div class="card-msg">
-						<div class="own-color card-text">Bacon ipsum dolor amet bresaola beef tongue, burgdoggen flank brisket ham meatloaf pastrami chislic. Bresaola shoulder alcatra frankfurter leberkas boudin capicola. Meatball buffalo swine cow, ham hock short loin ball tip fatback pancetta landjaeger pork loin kevin drumstick shank. </div>
-					</div>
-					<div>
-						<img src="https://api.dicebear.com/8.x/bottts/svg?seed=Diogo" class="profile-photo" alt="profile photo chat"/>
-					</div>
 				</div>
-
-
-				<div class="msg own-pos">
-					<div class="name-date-own">
-						<span>dsilveri Today 10:34AM</span>
-					</div>
-					<div class="card-msg card-text-margin-own">
-						<div class="own-color card-text">Bacon ipsum dolor amet bresaola beef tongue</div>
-					</div>
+				<div>
+					<img src="https://api.dicebear.com/8.x/bottts/svg?seed=Diogo" class="profile-photo" alt="profile photo chat"/>
 				</div>
-
-				<form id="chat-form">
-					<textarea id="message" placeholder="Type a message here.." maxlength="256"></textarea>
-					<button type="submit">Send</button>
-				</form>
-
+				<div class="card-msg">
+					<div class="friend-color card-text">Bacon ipsum dolor amet bresaola beef tongue, burgdoggen flank brisket ham meatloaf pastrami chislic. Bresaola shoulder alcatra frankfurter leberkas boudin capicola. Meatball buffalo swine cow, ham hock short loin ball tip fatback pancetta landjaeger pork loin kevin drumstick shank.</div>
+				</div>
 			</div>
+
+			<div class="msg friend-pos">
+
+				<div class="name-date-friend">
+					<span>dsilveri Today 10:34AM</span>
+				</div>
+				<div class="card-msg card-text-margin-friend">
+					<div class="friend-color card-text">oi</div>
+				</div>
+			</div>
+
+			<div class="msg own-pos">
+				<div class="name-date-own">
+				<span>dsilveri Today 10:34AM</span>
+				</div>
+				<div class="card-msg">
+					<div class="own-color card-text">Bacon ipsum dolor amet bresaola beef tongue, burgdoggen flank brisket ham meatloaf pastrami chislic. Bresaola shoulder alcatra frankfurter leberkas boudin capicola. Meatball buffalo swine cow, ham hock short loin ball tip fatback pancetta landjaeger pork loin kevin drumstick shank. </div>
+				</div>
+				<div>
+					<img src="https://api.dicebear.com/8.x/bottts/svg?seed=Diogo" class="profile-photo" alt="profile photo chat"/>
+				</div>
+			</div>
+
+
+			<div class="msg own-pos">
+				<div class="name-date-own">
+					<span>dsilveri Today 10:34AM</span>
+				</div>
+				<div class="card-msg card-text-margin-own">
+					<div class="own-color card-text">Bacon ipsum dolor amet bresaola beef tongue</div>
+				</div>
+			</div>
+
+			<form id="chat-form">
+				<textarea id="message" placeholder="Type a message here.." maxlength="256"></textarea>
+				<button type="submit">Send</button>
+			</form>
+
 		</div>
+
 	</div>
 
 	`;
@@ -223,7 +214,9 @@ export default class AppChat extends HTMLElement {
 	}
 
 	#scripts() {
-		this.#socket();
+		const friendList = getFriendsFakeCall();
+
+		this.#createFriendListHtml(friendList);
 
 	}
 
@@ -276,9 +269,55 @@ export default class AppChat extends HTMLElement {
 			console.log("Closing the socket.");
 			chatSocket.close();
 		}
-		
 	}
 
+	#createFriendListHtml(friendList) {
+		const friendListHtml = this.html.querySelector(".friend-list");
+		friendList.forEach((friendObj) => {
+			friendListHtml.appendChild(this.#getFriendHtml(friendObj));
+		})
+	}
+
+	#getFriendHtml(friendObj) {
+		const elm = document.createElement("div");
+		elm.classList.add("user");
+		if (friendObj) {
+			elm.innerHTML = `
+			<img src="${friendObj.image}" class="profile-photo" alt="profile photo chat"/>
+			<span class="name">${friendObj.username}</span>`;
+		}
+		return elm;
+	}
 }
 
 customElements.define("app-chat", AppChat);
+
+
+// just for debug
+const getFriendsFakeCall = function ()
+{
+	const data = `[
+		{
+			"id": 7,
+			"username": "candeia1",
+			"image": "https://api.dicebear.com/8.x/bottts/svg?seed=candeia"
+		},
+		{
+			"id": 1,
+			"username": "candeia2",
+			"image": "https://api.dicebear.com/8.x/bottts/svg?seed=candeia"
+		},
+		{
+			"id": 2,
+			"username": "candeia3",
+			"image": "https://api.dicebear.com/8.x/bottts/svg?seed=candeia"
+		},
+		{
+			"id": 3,
+			"username": "candeia4",
+			"image": "https://api.dicebear.com/8.x/bottts/svg?seed=candeia"
+		}
+	]`;
+
+	return JSON.parse(data);
+}
