@@ -1,23 +1,37 @@
-from django.shortcuts import render
 from friendships.models import FriendList, FriendRequests
-from user_auth.models import User
-from django.http import JsonResponse
-import json
-import os
 from custom_utils.models_utils import ModelManager
-from custom_decorators import accepted_methods, login_required
+from user_profile.models import UserProfileInfo
+from user_profile.aux import get_image_url
+from django.http import JsonResponse
+from user_auth.models import User
+import json
 
-friend_list_model = ModelManager(FriendList)
+user_profile_info_model = ModelManager(UserProfileInfo)
 friend_requests_model = ModelManager(FriendRequests)
+friend_list_model = ModelManager(FriendList)
 user_model = ModelManager(User)
 
-def get_friend_list(user_id):
-	user = user_model.get(user_id=user_id)
+def get_friend_info(friendsip, side):
+	if side == "left":
+		user = friendsip.user1
+	else:
+		user = friendsip.user2
+	image_url = get_image_url(user_profile_info_model.get(user_id=user.id))
+	info = {
+		"id": user.id,
+		"username": user.username,
+		"image": image_url
+	}
+	return info
+
+def get_friend_list(user_id, side):
+	data = []
+	user = user_model.get(id=user_id)
 	if user:
-		filtered_list1 = friend_list_model.filter(user1=user)
-		filtered_list2 = friend_list_model.filter(user2=user)
-		if filtered_list1 and filtered_list2:
-			filtered_list = filtered_list1 | filtered_list2
+		if side == "left":
+			filtered_list = friend_list_model.filter(user1=user)
+		else:
+			filtered_list = friend_list_model.filter(user2=user)
 		if filtered_list:
 			data = list(filtered_list)
 	return data

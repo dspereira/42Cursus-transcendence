@@ -1,5 +1,4 @@
 from custom_decorators import accepted_methods, login_required
-from friendships.friendships import get_friend_list
 from custom_utils.models_utils import ModelManager
 from user_profile.models import UserProfileInfo
 from user_profile.aux import get_image_url
@@ -36,31 +35,6 @@ def api_get_all_info(request):
 	else:
 		result = {
 			"message": "Error: No User"
-		}
-	return JsonResponse(result)
-
-@login_required
-@accepted_methods(["GET"])
-def api_show_friends(request):
-	user = user_profile_info_model.get(user_id=request.access_data.sub)
-	if user:
-		friend_list = get_friend_list(user)
-		if friend_list:
-			result = {
-				"friends": ""
-			}
-			for friend in friend_list:
-				if result["friends"]:
-					result += ", " #add the logic to see if the user is the frist or second user in the collomn
-				#else:
-				#	result += #add the logic to see if the user is the frist or second user in the collomn
-		else:
-			result = {
-			"message": "User has no friends"
-		}
-	else:
-		result = {
-			"message": "Error: Can't find user"
 		}
 	return JsonResponse(result)
 
