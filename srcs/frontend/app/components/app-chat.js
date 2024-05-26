@@ -1,6 +1,10 @@
 
 const styles = `
 
+.red {
+	border: 1px red solid;
+}
+
 .chat {
 	display: flex;
 }
@@ -10,10 +14,6 @@ const styles = `
 }
 
 /* Friend List */
-
-.red {
-	border: 1px red solid;
-}
 
 .user {
 	display: flex;
@@ -37,69 +37,75 @@ const styles = `
 
 /* Chat panel */
 
+.chat-panel {
+	background-color: #C0C0C0;
+	padding: 10px 10px 10px 10px;
+	border-radius: 10px;
+	overflow-y: scroll;
+	height: 80vh;
+	width: 100%;
+}
+
 .chat-panel .profile-photo {
 	width: 45px;
 }
 
-.msg {
-	margin-bottom: 20px;	
+
+.test-msg {
+	display: inline-block;
 }
 
-.card-msg {
-	display: block;
-	max-width: 70%;
+.test-msg-date {
+	display: flex;
+	flex-direction: column;
 }
 
-.card-text {
-	margin-top:30px;
-	padding: 5px 8px 5px 8px;
-	border-radius: 8px; 
+.test-date {
+	font-size: 14px;
 }
 
-.card-text-margin-friend {
-	margin-left: 65px;
-}
-
-.card-text-margin-own {
-	margin-right: 65px;
-}
-
-.friend-color {
+.test-msg-card {
+	display: inline-block;
 	background-color: #FF5733;
+	padding: 5px 8px 5px 8px;
+	border-radius: 8px;
+	font-size: 16px;
 }
 
-.own-color {
-	background-color: #33FFBD;
-}
-
-
-.friend-pos {
-	display: flex;
-	flex-direction: row;
-	justify-content: flex-start;
-	gap: 15px;
-}
-
-.own-pos {
-	display: flex;
-	flex-direction: row;
-	justify-content: flex-end;
-	gap: 15px;
+.test-img {
+	display: inline-block;
 }
 
 
-.name-date-friend {
-	position: absolute;
-	margin-top: 4px;
-	margin-left: 65px;
+.test-msg-total1, .test-msg-total2 {
+    display: flex;
+    flex-direction: row;
+    gap: 15px;
+    margin-bottom: 20px;
+    max-width: 100%;
 }
 
-.name-date-own {
-	position: absolute;
-	margin-top: 4px;
+.test-msg-total1 {
+    justify-content: flex-start;
+}
 
-	/* size of profile-photo 50px + gap 15px */
-	margin-right: 65px;
+.test-msg-total2 {
+    justify-content: flex-end;
+}
+
+
+.test-msg-total {
+	max-width: 80%;
+}
+
+.friend-msg-without-photo {
+	/* size of profile-photo 45px + gap 15px */
+	margin-left: 60px;
+}
+
+.own-msg-without-photo {
+	/* size of profile-photo 45px + gap 15px */
+	margin-right: 60px;
 }
 
 `;
@@ -112,52 +118,122 @@ const getHtml = function(data) {
 		<div class="friend-list"></div>
 
 		
-		<div class="chat-panel">
-
-			<div class="msg friend-pos">
-
-				<div class="name-date-friend">
-					<span>dsilveri Today 10:34AM</span>
-				</div>
-				<div>
+		<div class="chat-panel red">
+			
+			<div class="test-msg-total1">
+				<div class="test-img red">
 					<img src="https://api.dicebear.com/8.x/bottts/svg?seed=Diogo" class="profile-photo" alt="profile photo chat"/>
 				</div>
-				<div class="card-msg">
-					<div class="friend-color card-text">Bacon ipsum dolor amet bresaola beef tongue, burgdoggen flank brisket ham meatloaf pastrami chislic. Bresaola shoulder alcatra frankfurter leberkas boudin capicola. Meatball buffalo swine cow, ham hock short loin ball tip fatback pancetta landjaeger pork loin kevin drumstick shank.</div>
+				<div class="test-msg-total red">
+					<div class="test-msg-date">
+						<span class="test-date red">Today 10:34AM</span>
+						<div class="test-msg red">
+							<div class="test-msg-card">Bacon ipsum dolor amet pastrami chuck</div>
+						</div>
+					</div>
 				</div>
 			</div>
 
-			<div class="msg friend-pos">
 
-				<div class="name-date-friend">
-					<span>dsilveri Today 10:34AM</span>
-				</div>
-				<div class="card-msg card-text-margin-friend">
-					<div class="friend-color card-text">oi</div>
+			<div class="test-msg-total1">
+				<div class="test-msg-total friend-msg-without-photo red">
+					<div class="test-msg-date">
+						<span class="test-date red">Today 10:34AM</span>
+						<div class="test-msg red">
+							<div class="test-msg-card">Bacon ipsum dolor amet pastrami chuck fatback strip steak, flank capicola chislic bacon shankle. Meatloaf buffalo tri-tip frankfurter, jowl meatball spare ribs ribeye andouille landjaeger doner. Frankfurter ground round burgdoggen beef ribs, biltong pork pancetta cupim pig filet mignon bacon pork belly ball tip bresaola kielbasa. Buffalo ham hock turkey, flank alcatra ground round burgdoggen capicola landjaeger hamburger chuck.</div>
+						</div>
+					</div>
 				</div>
 			</div>
 
-			<div class="msg own-pos">
-				<div class="name-date-own">
-				<span>dsilveri Today 10:34AM</span>
+
+			<div class="test-msg-total2 red">
+				<div class="test-msg-total red">
+					<div class="test-msg-date">
+						<span class="test-date red">Today 10:34AM</span>
+						<div class="test-msg red">
+							<div class="test-msg-card">Bacon ipsum dolor amet pastrami chuck</div>
+						</div>
+					</div>
 				</div>
-				<div class="card-msg">
-					<div class="own-color card-text">Bacon ipsum dolor amet bresaola beef tongue, burgdoggen flank brisket ham meatloaf pastrami chislic. Bresaola shoulder alcatra frankfurter leberkas boudin capicola. Meatball buffalo swine cow, ham hock short loin ball tip fatback pancetta landjaeger pork loin kevin drumstick shank. </div>
-				</div>
-				<div>
+				<div class="test-img red">
 					<img src="https://api.dicebear.com/8.x/bottts/svg?seed=Diogo" class="profile-photo" alt="profile photo chat"/>
 				</div>
 			</div>
 
 
-			<div class="msg own-pos">
-				<div class="name-date-own">
-					<span>dsilveri Today 10:34AM</span>
-				</div>
-				<div class="card-msg card-text-margin-own">
-					<div class="own-color card-text">Bacon ipsum dolor amet bresaola beef tongue</div>
+			<div class="test-msg-total2 red">
+				<div class="test-msg-total own-msg-without-photo red">
+					<div class="test-msg-date">
+						<span class="test-date red">Today 10:34AM</span>
+						<div class="test-msg red">
+							<div class="test-msg-card">Bacon ipsum dolor amet pastrami chuck</div>
+						</div>
+					</div>
 				</div>
 			</div>
+
+
+
+			<!--#########################-->
+
+			<div class="test-msg-total1">
+				<div class="test-img red">
+					<img src="https://api.dicebear.com/8.x/bottts/svg?seed=Diogo" class="profile-photo" alt="profile photo chat"/>
+				</div>
+				<div class="test-msg-total red">
+					<div class="test-msg-date">
+						<span class="test-date red">Today 10:34AM</span>
+						<div class="test-msg red">
+							<div class="test-msg-card">Bacon ipsum dolor amet pastrami chuck</div>
+						</div>
+					</div>
+				</div>
+			</div>
+
+
+			<div class="test-msg-total1">
+				<div class="test-msg-total friend-msg-without-photo red">
+					<div class="test-msg-date">
+						<span class="test-date red">Today 10:34AM</span>
+						<div class="test-msg red">
+							<div class="test-msg-card">Bacon ipsum dolor amet pastrami chuck fatback strip steak, flank capicola chislic bacon shankle. Meatloaf buffalo tri-tip frankfurter, jowl meatball spare ribs ribeye andouille landjaeger doner. Frankfurter ground round burgdoggen beef ribs, biltong pork pancetta cupim pig filet mignon bacon pork belly ball tip bresaola kielbasa. Buffalo ham hock turkey, flank alcatra ground round burgdoggen capicola landjaeger hamburger chuck.</div>
+						</div>
+					</div>
+				</div>
+			</div>
+
+
+			<div class="test-msg-total2 red">
+				<div class="test-msg-total red">
+					<div class="test-msg-date">
+						<span class="test-date red">Today 10:34AM</span>
+						<div class="test-msg red">
+							<div class="test-msg-card">Bacon ipsum dolor amet pastrami chuck</div>
+						</div>
+					</div>
+				</div>
+				<div class="test-img red">
+					<img src="https://api.dicebear.com/8.x/bottts/svg?seed=Diogo" class="profile-photo" alt="profile photo chat"/>
+				</div>
+			</div>
+
+
+			<div class="test-msg-total2 red">
+				<div class="test-msg-total own-msg-without-photo red">
+					<div class="test-msg-date">
+						<span class="test-date red">Today 10:34AM</span>
+						<div class="test-msg red">
+							<div class="test-msg-card">Bacon ipsum dolor amet pastrami chuck</div>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<!--#########################-->
+
+
+			<br><br>
 
 			<form id="chat-form">
 				<textarea id="message" placeholder="Type a message here.." maxlength="256"></textarea>
@@ -303,8 +379,8 @@ const getFriendsFakeCall = function ()
 			"image": "https://api.dicebear.com/8.x/bottts/svg?seed=candeia"
 		},
 		{
-			"id": 1,
-			"username": "candeia2",
+			"id": 8,
+			"username": "user",
 			"image": "https://api.dicebear.com/8.x/bottts/svg?seed=candeia"
 		},
 		{
