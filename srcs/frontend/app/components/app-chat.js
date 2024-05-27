@@ -41,7 +41,7 @@ const styles = `
 	background-color: #C0C0C0;
 	padding: 10px 10px 10px 10px;
 	border-radius: 10px;
-	overflow-y: scroll;
+	/*overflow-y: scroll;*/
 	height: 80vh;
 	width: 100%;
 }
@@ -108,6 +108,43 @@ const styles = `
 	margin-right: 60px;
 }
 
+.scroll {
+	overflow-y: scroll;
+}
+
+
+form {
+	position: relative;
+}
+
+.text-area {
+	padding-right: 50px;
+}
+
+.icon {
+	position: absolute;
+	/*margin-top: 3px;*/
+	font-size: 22px;
+	right: 0;
+	bottom: 2px;
+
+	margin-right: 20px;
+}
+
+.icon:hover {
+	cursor: pointer;
+	color: blue;
+	transform: scale(1.3);
+	transition: transform 0.3s ease, color 0.3s ease;
+}
+
+.icon:active {
+	transform: scale(1.1);
+}
+
+
+
+
 `;
 
 const getHtml = function(data) {
@@ -119,6 +156,8 @@ const getHtml = function(data) {
 
 		
 		<div class="chat-panel red">
+
+		
 			
 			<div class="test-msg-total1">
 				<div class="test-img red">
@@ -167,80 +206,21 @@ const getHtml = function(data) {
 					<div class="test-msg-date">
 						<span class="test-date red">Today 10:34AM</span>
 						<div class="test-msg red">
-							<div class="test-msg-card">Bacon ipsum dolor amet pastrami chuck</div>
+							<div class="test-msg-card">Bacon ipsum dolor amet pastrami chuck.</div>
 						</div>
 					</div>
 				</div>
 			</div>
 
 
-
-			<!--#########################-->
-
-			<div class="test-msg-total1">
-				<div class="test-img red">
-					<img src="https://api.dicebear.com/8.x/bottts/svg?seed=Diogo" class="profile-photo" alt="profile photo chat"/>
-				</div>
-				<div class="test-msg-total red">
-					<div class="test-msg-date">
-						<span class="test-date red">Today 10:34AM</span>
-						<div class="test-msg red">
-							<div class="test-msg-card">Bacon ipsum dolor amet pastrami chuck</div>
-						</div>
-					</div>
-				</div>
-			</div>
-
-
-			<div class="test-msg-total1">
-				<div class="test-msg-total friend-msg-without-photo red">
-					<div class="test-msg-date">
-						<span class="test-date red">Today 10:34AM</span>
-						<div class="test-msg red">
-							<div class="test-msg-card">Bacon ipsum dolor amet pastrami chuck fatback strip steak, flank capicola chislic bacon shankle. Meatloaf buffalo tri-tip frankfurter, jowl meatball spare ribs ribeye andouille landjaeger doner. Frankfurter ground round burgdoggen beef ribs, biltong pork pancetta cupim pig filet mignon bacon pork belly ball tip bresaola kielbasa. Buffalo ham hock turkey, flank alcatra ground round burgdoggen capicola landjaeger hamburger chuck.</div>
-						</div>
-					</div>
-				</div>
-			</div>
-
-
-			<div class="test-msg-total2 red">
-				<div class="test-msg-total red">
-					<div class="test-msg-date">
-						<span class="test-date red">Today 10:34AM</span>
-						<div class="test-msg red">
-							<div class="test-msg-card">Bacon ipsum dolor amet pastrami chuck</div>
-						</div>
-					</div>
-				</div>
-				<div class="test-img red">
-					<img src="https://api.dicebear.com/8.x/bottts/svg?seed=Diogo" class="profile-photo" alt="profile photo chat"/>
-				</div>
-			</div>
-
-
-			<div class="test-msg-total2 red">
-				<div class="test-msg-total own-msg-without-photo red">
-					<div class="test-msg-date">
-						<span class="test-date red">Today 10:34AM</span>
-						<div class="test-msg red">
-							<div class="test-msg-card">Bacon ipsum dolor amet pastrami chuck</div>
-						</div>
-					</div>
-				</div>
-			</div>
-
-			<!--#########################-->
-
-
-			<br><br>
-
-			<form id="chat-form">
-				<textarea id="message" placeholder="Type a message here.." maxlength="256"></textarea>
-				<button type="submit">Send</button>
-			</form>
+		<form id="chat-form">
+			<textarea class="form-control text-area" id="msg-input" rows="1" maxlength="1000" placeholder="Type your message here.."></textarea>
+			<i class="icon bi bi-send"></i>
+		</form>
 
 		</div>
+
+
 
 	</div>
 
@@ -271,6 +251,9 @@ export default class AppChat extends HTMLElement {
 			this.styles.textContent = this.#styles();
 			this.html.classList.add(`${this.elmtId}`);
 		}
+		this.msgInputscrollHeight = 0;
+		this.msgInputscrollHeight1 = 0;
+		this.msgInputMaxRows = 4;
 	}
 
 	#styles() {
@@ -293,6 +276,7 @@ export default class AppChat extends HTMLElement {
 		const friendList = getFriendsFakeCall();
 
 		this.#createFriendListHtml(friendList);
+		this.#resizeMessageInput();
 
 	}
 
@@ -363,6 +347,42 @@ export default class AppChat extends HTMLElement {
 			<span class="name">${friendObj.username}</span>`;
 		}
 		return elm;
+	}
+
+
+	// this.initialScrollHeight -> Pre-calculated initial scrollHeight
+	// this.scrollHeightPerLine -> Pre-calculated scrollHeight for each line after the initial line
+	// scrollHeight -> Actual height of the textarea
+
+	// Since the 'rows' attribute affects the scrollHeight of the element, I need to set the attribute 
+	// to 1 to get the scrollHeight and reset to the original value
+	#resizeMessageInput() {
+		const input = this.html.querySelector(".text-area");
+		
+		input.addEventListener('click', () => {
+			if (!this.msgInputscrollHeight) {
+				input.setAttribute("rows", "1");
+				this.msgInputscrollHeight = input.scrollHeight;
+			}
+			if (!this.msgInputscrollHeight1) {
+				input.setAttribute("rows", "2");
+				this.msgInputscrollHeight1 = input.scrollHeight - this.msgInputscrollHeight;
+				input.setAttribute("rows", "1");
+			}
+		});
+
+		input.addEventListener("input", () => {
+			const actualRowsValue = input.getAttribute("rows");
+			input.setAttribute("rows", "1");
+			const  scrollHeight = input.scrollHeight;
+			input.setAttribute("rows", actualRowsValue);
+			const rows = ((scrollHeight - this.msgInputscrollHeight) / this.msgInputscrollHeight1) + 1;
+			if (actualRowsValue != rows) {
+				if (rows > this.msgInputMaxRows)
+					rows = this.msgInputMaxRows;
+				input.setAttribute("rows", rows);
+			}
+		});
 	}
 }
 
