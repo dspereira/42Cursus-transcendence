@@ -16,9 +16,16 @@
     <br><br>
     <h2>Upload Image</h2>
     <br>
-    <form action="http://127.0.0.1:8000/api/profile/updatepicture" method="post" enctype="multipart/form-data">
+    <form action="http://127.0.0.1:8000/api/profile/setpicture" method="post" enctype="multipart/form-data">
         <input type="file" name="image" accept="image/*">
         <input type="text" name="user_id" placeholder="user_id">
+        <button type="submit">Upload</button>
+    </form>
+    <br><br>
+    <h2>New Default Image Seed</h2>
+    <br>
+    <form id="setnewdefaultseed">
+        <input type="text" name="new_seed" placeholder="new_seed">
         <button type="submit">Upload</button>
     </form>
     <br><br>
@@ -39,7 +46,28 @@
                 jsonData[key] = value;
             })
 
-            fetch("http://127.0.0.1:8000/api/profile/editbio", {
+            fetch("http://127.0.0.1:8000/api/profile/setbio", {
+                credentials: 'include',
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(jsonData)
+            })
+        })
+    </script>
+
+    <script>
+        document.getElementById("setnewdefaultseed").addEventListener("submit", function(event) {
+            event.preventDefault();
+
+            const formData = new FormData(setnewdefaultseed);
+            const jsonData = {};
+            formData.forEach((value, key) => {
+                jsonData[key] = value;
+            })
+
+            fetch("http://127.0.0.1:8000/api/profile/setnewdefaultseed", {
                 credentials: 'include',
                 method: "POST",
                 headers: {

@@ -24,15 +24,15 @@ document.addEventListener("DOMContentLoaded", function() {
 				document.getElementById("username").innerHTML = "Username: " + data["username"];
 				document.getElementById("bio").innerHTML = "Bio: " + data["bio"];
                 document.getElementById("statistics").innerHTML = "Total Games: " + data["total_games"] + "<br>Victories: " + data["victories"] + "<br>Defeats: " + data["defeats"] + "<br>Win Rate: " + data["win_rate"] + "<br>Tournaments won: " + data["tournaments_won"];
-				//document.getElementById("imageContainer").innerHTML = "<image src='" + data["image_url"] + "' alt='User Image'>";
-				showImage()
+				document.getElementById("imageContainer").innerHTML = "<img src='" + data["image_url"] + "' alt='User Image'>";
+				//showImage()
 			}
 		}
 	}
 
 	async function showImage()
 	{
-		const response = await fetch("http://127.0.0.1:8000/api/profile/showimage", {
+		const response = await fetch("http://127.0.0.1:8000/api/profile/getimage", {
 			credentials: 'include',
 			method: 'GET'
 		});
@@ -44,7 +44,7 @@ document.addEventListener("DOMContentLoaded", function() {
 			const data = await response.json();
 
 			if (data)
-                document.getElementById("imageContainer").innerHTML = "<image src='" + data["image_url"] + "' alt='User Image'>";
+                document.getElementById("imageContainer").innerHTML = "<img src='" + data["image_url"] + "' alt='User Image'>";
 		}
 	}
 
