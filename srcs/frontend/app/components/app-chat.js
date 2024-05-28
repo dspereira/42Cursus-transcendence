@@ -1,4 +1,3 @@
-
 const styles = `
 
 .red {
@@ -38,81 +37,25 @@ const styles = `
 /* Chat panel */
 
 .chat-panel {
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
 	background-color: #C0C0C0;
 	padding: 10px 10px 10px 10px;
 	border-radius: 10px;
-	overflow-y: scroll;
 	height: 80vh;
 	width: 100%;
 }
 
-/*
-.chat-panel .profile-photo {
-	width: 45px;
-}
-*/
-
-.test-msg {
-	display: inline-block;
-}
-
-.test-msg-date {
-	display: flex;
-	flex-direction: column;
-}
-
-.test-date {
-	font-size: 14px;
-}
-
-.test-msg-card {
-	display: inline-block;
-	background-color: #FF5733;
-	padding: 5px 8px 5px 8px;
-	border-radius: 8px;
-	font-size: 16px;
-}
-
-.test-img {
-	display: inline-block;
-}
-
-
-.test-msg-total1, .test-msg-total2 {
-	display: flex;
-	flex-direction: row;
-	gap: 15px;
-	margin-bottom: 20px;
-	max-width: 100%;
-}
-
-.test-msg-total1 {
-	justify-content: flex-start;
-}
-
-.test-msg-total2 {
-	justify-content: flex-end;
-}
-
-
-.test-msg-total {
-	max-width: 80%;
-}
-
-.friend-msg-without-photo {
-	/* size of profile-photo 45px + gap 15px */
-	margin-left: 60px;
-}
-
-.own-msg-without-photo {
-	/* size of profile-photo 45px + gap 15px */
-	margin-right: 60px;
-}
-
 .scroll {
-	overflow-y: scroll;
+	/*overflow-y: scroll;*/
+	overflow-y: auto;
 }
 
+
+
+
+/* Input Form */
 
 form {
 	position: relative;
@@ -158,6 +101,37 @@ const getHtml = function(data) {
 		
 		<div class="chat-panel red">
 
+			<div class="msg-panel scroll">
+
+				<msg-card 
+					sender="friend" 
+					message="oi" 
+					profile-photo="https://api.dicebear.com/8.x/bottts/svg?seed=Diogo"
+					timestamp="1716890582">
+				</msg-card>
+
+
+				<msg-card 
+					sender="owner" 
+					message="Bacon ipsum dolor amet spare ribs swine chicken ribeye bresaola porchetta leberkas strip steak shoulder landjaeger ground round alcatra turducken. Ribeye pig pastrami turkey ham chicken shankle venison jowl. Sausage bacon tongue turducken, jerky prosciutto hamburger alcatra. Short loin alcatra biltong corned beef capicola picanha. Filet mignon rump bresaola frankfurter meatball."
+					profile-photo="https://api.dicebear.com/8.x/bottts/svg?seed=Diogo"
+					timestamp="1716890582">
+				</msg-card>
+
+				<msg-card 
+					sender="owner" 
+					message="Bacon ipsum dolor amet spare ribs swine chicken ribeye bresaola porchetta leberkas strip steak shoulder landjaeger ground round alcatra turducken. Ribeye pig pastrami turkey ham chicken shankle venison jowl. Sausage bacon tongue turducken, jerky prosciutto hamburger alcatra. Short loin alcatra biltong corned beef capicola picanha. Filet mignon rump bresaola frankfurter meatball."
+					profile-photo="https://api.dicebear.com/8.x/bottts/svg?seed=Diogo"
+					timestamp="1716890582">
+				</msg-card>	
+
+			<msg-card 
+				sender="owner" 
+				message="Bacon ipsum dolor amet spare ribs swine chicken ribeye bresaola porchetta leberkas strip steak shoulder landjaeger ground round alcatra turducken. Ribeye pig pastrami turkey ham chicken shankle venison jowl. Sausage bacon tongue turducken, jerky prosciutto hamburger alcatra. Short loin alcatra biltong corned beef capicola picanha. Filet mignon rump bresaola frankfurter meatball."
+				profile-photo="https://api.dicebear.com/8.x/bottts/svg?seed=Diogo"
+				timestamp="1716890582">
+			</msg-card>
+
 			<msg-card 
 				sender="friend" 
 				message="oi" 
@@ -165,30 +139,16 @@ const getHtml = function(data) {
 				timestamp="1716890582">
 			</msg-card>
 
-			<msg-card 
-				sender="friend" 
-				message="message test"
-				timestamp="1716890582">
-			</msg-card>
+			</div>
 
-			<msg-card 
-				sender="owner" 
-				message="Bacon ipsum dolor amet spare ribs swine chicken ribeye bresaola porchetta leberkas strip steak shoulder landjaeger ground round alcatra turducken. Ribeye pig pastrami turkey ham chicken shankle venison jowl. Sausage bacon tongue turducken, jerky prosciutto hamburger alcatra. Short loin alcatra biltong corned beef capicola picanha. Filet mignon rump bresaola frankfurter meatball."
-				profile-photo="https://api.dicebear.com/8.x/bottts/svg?seed=Diogo"
-				timestamp="1716890582">
-			</msg-card>	
+			<div class="msg-input">
+		
+				<form id="chat-form">
+					<textarea class="form-control text-area" id="msg-input" rows="1" maxlength="1000" placeholder="Type your message here.."></textarea>
+					<i class="icon bi bi-send"></i>
+				</form>
 
-			<msg-card 
-				sender="owner" 
-				message="message test"
-				timestamp="1716890582">
-			</msg-card>		
-			
-
-		<form id="chat-form">
-			<textarea class="form-control text-area" id="msg-input" rows="1" maxlength="1000" placeholder="Type your message here.."></textarea>
-			<i class="icon bi bi-send"></i>
-		</form>
+			</div>
 
 		</div>
 
@@ -385,33 +345,5 @@ const getFriendsFakeCall = function ()
 	]`;
 
 	return JSON.parse(data);
-}
-
-
-const data = {
-	profilePhoto: "https://api.dicebear.com/8.x/bottts/svg?seed=candeia",
-	timestamp: "1716890582",
-	message: "Bacon ipsum dolor amet spare ribs swine chicken ribeye bresaola porchetta leberkas strip steak.",
-	lastMessage: "owner",
-	ownerMessage: "friend"
-}
-
-const generateProfilePhotoSection = function (profilePhoto) {
-
-}
-
-const generateMessageCard = function (message, timestamp) {
-
-}
-
-const generateMessage = function(data) {
-	const elm = document.createElement("div");
-	if (data.ownerMessage == "friend")
-		elm.classList.add("friend-msg");
-	else if (data.ownerMessage == "owner")
-		elm.classList.add("owner-msg");
-
-
-
 }
 
