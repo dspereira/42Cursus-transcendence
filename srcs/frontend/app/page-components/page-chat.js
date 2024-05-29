@@ -59,9 +59,6 @@ export default class PageChat extends HTMLElement {
 			this.appendChild(this.styles);
 		this.appendChild(this.html);
 		stateManager.setState("pageReady", true);
-
-		console.log("CHAT PAGE");
-
 	}
 
 	#scripts() {

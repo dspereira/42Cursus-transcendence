@@ -132,7 +132,7 @@ const getHtml = function(data) {
 				timestamp="1716890582">
 			</msg-card>
 
-			<msg-card 
+			<msg-card
 				sender="friend" 
 				message="oi" 
 				profile-photo="https://api.dicebear.com/8.x/bottts/svg?seed=Diogo"
@@ -142,12 +142,10 @@ const getHtml = function(data) {
 			</div>
 
 			<div class="msg-input">
-		
-				<form id="chat-form">
-					<textarea class="form-control text-area" id="msg-input" rows="1" maxlength="1000" placeholder="Type your message here.."></textarea>
-					<i class="icon bi bi-send"></i>
+				<form id="msg-submit">
+					<textarea class="form-control text-area" id="text-area" rows="1" maxlength="1000" placeholder="Type your message here.."></textarea>
+					<i class="icon bi bi-send" id="send-icon"></i>
 				</form>
-
 			</div>
 
 		</div>
@@ -163,10 +161,15 @@ export default class AppChat extends HTMLElement {
 
 	constructor() {
 		super()
+
+	}
+
+	connectedCallback() {
 		this.#initComponent();
 		this.#render();
 		this.#scripts();
-	}
+		this.#socket();
+    }
 
 	attributeChangedCallback(name, oldValue, newValue) {
 
@@ -204,61 +207,49 @@ export default class AppChat extends HTMLElement {
 
 	#scripts() {
 		const friendList = getFriendsFakeCall();
-
 		this.#createFriendListHtml(friendList);
 		this.#resizeMessageInput();
-
+		this.#setSubmitEvents();
 	}
 
 	#socket() {
-		let chatSocket = null;
-		const result_str = "ws://127.0.0.1:8000/chat_connection/?room_id=1";
-		chatSocket = new WebSocket(result_str);
+		console.log("Init Websocket");
 
-		chatSocket.onopen = function(event) {
+		const result_str = "ws://127.0.0.1:8000/chat_connection/?room_id=1";
+		let chatSocket = new WebSocket(result_str);
+
+		chatSocket.onopen = (event) => {
 			console.log("Successfully connected to the WebSocket.");
 		}
 
-		chatSocket.onclose = function(event) {
-
+		chatSocket.onclose = (event) => {
 			console.log("Fecha ligação");
-
 			chatSocket = null;
-
 		};
 
-
-		const chatForm = this.html.querySelector("#chat-form");
-		chatForm.addEventListener("submit", (event) => {
-			event.preventDefault();
-
-			let msgField = document.querySelector('#message');
-			msgField.value.trim();
-
-			let message = document.querySelector('#message').value.trim();
-			if (message)
-			{
-				chatSocket.send(JSON.stringify({
-					"message": message,
-				}))
-
-				console.log(chatSocket);
-
-			}
-			msgField.innerHTML = "";
-
-		});
-
-		chatSocket.onmessage = function(event) {
-			const data = JSON.parse(event.data);
-			console.log(data);
-		};
-
-		chatSocket.onerror = function(err) {
+		chatSocket.onerror = (err) => {
 			console.log("WebSocket encountered an error: " + err.message);
 			console.log("Closing the socket.");
 			chatSocket.close();
 		}
+
+		chatSocket.onmessage = (event) => {
+			const data = JSON.parse(event.data);
+			console.log(data);
+		};
+
+		// create a function that get the message from textarea and reset the value
+		const submitForm = this.html.querySelector("#msg-submit");
+		submitForm.addEventListener("submit", (event) => {
+			event.preventDefault();
+			const textArea = this.html.querySelector("#text-area");
+			let msg = textArea.value.trim();
+			if (msg) {
+				console.log(`msg: ${msg} `);
+				textArea.value = "";
+				textArea.setAttribute("rows", "1");
+			}
+		});
 	}
 
 	#createFriendListHtml(friendList) {
@@ -305,11 +296,27 @@ export default class AppChat extends HTMLElement {
 			input.setAttribute("rows", "1");
 			const  scrollHeight = input.scrollHeight;
 			input.setAttribute("rows", actualRowsValue);
-			const rows = ((scrollHeight - this.msgInputscrollHeight) / this.msgInputscrollHeight1) + 1;
+			let rows = ((scrollHeight - this.msgInputscrollHeight) / this.msgInputscrollHeight1) + 1;
 			if (actualRowsValue != rows) {
 				if (rows > this.msgInputMaxRows)
 					rows = this.msgInputMaxRows;
-				input.setAttribute("rows", rows);
+				input.setAttribute("rows", String(rows));
+			}
+		});
+	}
+
+	#setSubmitEvents() {
+		const icon = this.html.querySelector("#send-icon");
+		const textArea = this.html.querySelector("#text-area");
+
+		icon.addEventListener("click", (event) => {
+			this.html.querySelector("#msg-submit").requestSubmit();
+		});
+
+		textArea.addEventListener("keydown", (event) => {
+			if (event.key === "Enter" && !event.shiftKey) {
+				event.preventDefault();
+				this.html.querySelector("#msg-submit").requestSubmit();
 			}
 		});
 	}
