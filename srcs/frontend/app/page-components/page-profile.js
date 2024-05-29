@@ -1,5 +1,6 @@
 import { redirect } from "../js/router.js";
 import { adjustContent } from "../utils/adjustContent.js";
+import stateManager from "../js/StateManager.js";
 
 const styles = ``;
 
@@ -62,6 +63,7 @@ export default class PageProfile extends HTMLElement {
 		if (styles)
 			this.appendChild(this.styles);
 		this.appendChild(this.html);
+		stateManager.setState("pageReady", true);
 	}
 
 	#scripts() {

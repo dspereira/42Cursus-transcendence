@@ -63,6 +63,7 @@ export default class PageNotifications extends HTMLElement {
 		if (styles)
 			this.appendChild(this.styles);
 		this.appendChild(this.html);
+		stateManager.setState("pageReady", true);
 	}
 
 	#scripts() {

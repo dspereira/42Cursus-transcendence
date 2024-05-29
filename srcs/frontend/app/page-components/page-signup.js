@@ -1,3 +1,5 @@
+import stateManager from "../js/StateManager.js";
+
 const styles = ``;
 
 const getHtml = function(data) {
@@ -54,8 +56,8 @@ export default class PageSignup extends HTMLElement {
 		if (styles)
 			this.appendChild(this.styles);
 		this.appendChild(this.html);
-	}
-	
+		stateManager.setState("pageReady", true);
+	}	
 }
 
 customElements.define(PageSignup.componentName, PageSignup);

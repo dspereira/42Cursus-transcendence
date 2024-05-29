@@ -1,4 +1,5 @@
 import {redirect} from "../js/router.js";
+import stateManager from "../js/StateManager.js";
 
 const styles = ``;
 
@@ -55,6 +56,7 @@ export default class PageLogin extends HTMLElement {
 		if (styles)
 			this.appendChild(this.styles);
 		this.appendChild(this.html);
+		stateManager.setState("pageReady", true);
 	}
 }
 

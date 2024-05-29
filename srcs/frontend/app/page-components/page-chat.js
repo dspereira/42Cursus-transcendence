@@ -1,4 +1,5 @@
 import { adjustContent } from "../utils/adjustContent.js";
+import stateManager from "../js/StateManager.js";
 
 const styles = `
 
@@ -57,6 +58,10 @@ export default class PageChat extends HTMLElement {
 		if (styles)
 			this.appendChild(this.styles);
 		this.appendChild(this.html);
+		stateManager.setState("pageReady", true);
+
+		console.log("CHAT PAGE");
+
 	}
 
 	#scripts() {

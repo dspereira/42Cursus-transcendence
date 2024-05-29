@@ -56,8 +56,10 @@ export default class PageHome extends HTMLElement {
 	}
 
 	#render() {
-		this.appendChild(this.styles);
+		if (styles)
+			this.appendChild(this.styles);
 		this.appendChild(this.html);
+		stateManager.setState("pageReady", true);
 	}
 
 	#updateHtml() {
@@ -113,6 +115,7 @@ export default class PageHome extends HTMLElement {
 		console.log(data);
 		this.#updateHtml();
 		this.#render();
+		
 	}
 
 	static get componentName() {

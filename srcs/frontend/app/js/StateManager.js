@@ -7,9 +7,11 @@ class StateManager {
 
 		this.states = {
 			sidePanel: "open",
+			pageReady: false,
 		}
 		this.stateEvents = {
-			sidePanel: []
+			sidePanel: [],
+			pageReady: []
 		}
 
 		StateManager.instance = this;
@@ -20,7 +22,7 @@ class StateManager {
 	}
 
 	setState(name, value) {
-		if (this.states[name]) {
+		if (this.states[name] != undefined) {
 			this.states[name] = value;
 			this.triggerEvent(name);
 		}
@@ -34,7 +36,8 @@ class StateManager {
 
 	triggerEvent(event) {
 		const stateValue = this.states[event];
-		this.stateEvents[event].forEach(callback => callback(stateValue));
+		if (this.stateEvents[event])
+			this.stateEvents[event].forEach(callback => callback(stateValue));
 	}
 
 	cleanEvents() {

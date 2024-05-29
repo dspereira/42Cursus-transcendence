@@ -35,9 +35,24 @@ const routes = {
 }
 
 const render = function(page) {
-	document.querySelector("#app").innerHTML = `<${page}></${page}>`;
+	const app = document.querySelector("#app");
+	const oldElm = app.querySelector("#app > div");
+	const newElm = document.createElement("div");
+
+	stateManager.addEvent("pageReady", (state) => {
+		if (state) {
+			stateManager.setState("pageReady", false);
+			if (!oldElm)
+				app.appendChild(newElm);
+			else
+				app.replaceChild(newElm, oldElm);
+		}
+	});
+
+	newElm.innerHTML = `<${page}></${page}>`;
 }
 
+  
 const getPageName = function() {
 	let route = location.pathname.replace(/\/+(?=\/|$)/g, '');
 	if (route.length === 0)
