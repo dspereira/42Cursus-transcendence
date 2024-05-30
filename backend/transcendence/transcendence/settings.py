@@ -68,7 +68,8 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'custom_middlewares.CorsMiddleware',
     'custom_middlewares.JwtMiddleware',
-    'custom_middlewares.BlacklistTokenMiddleware'
+    'custom_middlewares.BlacklistTokenMiddleware',
+	'custom_middlewares.DataSanitize',
 ]
 
 AUTHENTICATION_BACKENDS = [

@@ -1,11 +1,16 @@
 # ft_transcendence
 
 ## Major Modules
-- Django
-- Standart user management
-- Live Chat
-- Implement Two-Factor Authentication (2FA) and JWT
+- [x] Django
+- [x] Standart user management
+- [x] Live Chat
+- [x] Implement Two-Factor Authentication (2FA) and JWT
+- [ ] Remote players
+- [x] Server side pong - API
 
 ## Minor Modules
-- Bootstrap
-- Database
+- [x] Bootstrap
+- [x] Database
+- [ ] Multi language support
+- [ ] User and game stats dashboard
+- [ ] Multi screen support
