@@ -35,6 +35,13 @@
         <input type="text" id="new_bio" name="new_bio">
         <button type="submit">Upload</button>
     </form>
+    <br><br>
+    <h2>Block User</h2>
+    <br>
+    <form id="blockuser">
+        <input type="text" id="blocked_user" name="blocked_user">
+        <button type="submit">Upload</button>
+    </form>
 
     <script>
         document.getElementById("editBio").addEventListener("submit", function(event) {
@@ -68,6 +75,27 @@
             })
 
             fetch("http://127.0.0.1:8000/api/profile/setnewdefaultseed", {
+                credentials: 'include',
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(jsonData)
+            })
+        })
+    </script>
+
+    <script>
+        document.getElementById("blockuser").addEventListener("submit", function(event) {
+            event.preventDefault();
+
+            const formData = new FormData(blockuser);
+            const jsonData = {};
+            formData.forEach((value, key) => {
+                jsonData[key] = value;
+            })
+
+            fetch("http://127.0.0.1:8000/api/friendships/blockuser", {
                 credentials: 'include',
                 method: "POST",
                 headers: {

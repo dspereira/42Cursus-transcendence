@@ -23,3 +23,13 @@ class FriendList(models.Model):
 	
 	class Meta:
 		db_table = 'friend_list'
+
+class BlockList(models.Model):
+	user = models.ForeignKey(to=User, related_name='blocker', on_delete=models.CASCADE)
+	blocked_user = models.ForeignKey(to=User, related_name='blocked', on_delete=models.CASCADE)
+
+	def __str__(self) -> str:
+		return f'User: {self.user1} | Blocked: {self.user2}'
+	
+	class Meta:
+		db_table = 'block_list'
