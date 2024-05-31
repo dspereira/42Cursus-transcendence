@@ -242,13 +242,12 @@ export default class AppChat extends HTMLElement {
 		const submitForm = this.html.querySelector("#msg-submit");
 		submitForm.addEventListener("submit", (event) => {
 			event.preventDefault();
-			const textArea = this.html.querySelector("#text-area");
-			let msg = textArea.value.trim();
-			if (msg) {
-				console.log(`msg: ${msg} `);
-				textArea.value = "";
-				textArea.setAttribute("rows", "1");
-			}
+			let input = this.html.querySelector("#text-area");
+			const msg = this.#getMessageToSend(input);
+			if (!msg)
+				return ;
+			this.#clearInputMessage(input)
+			console.log(`msg: ${msg}`);
 		});
 	}
 
@@ -319,6 +318,25 @@ export default class AppChat extends HTMLElement {
 				this.html.querySelector("#msg-submit").requestSubmit();
 			}
 		});
+	}
+
+	#getMessageToSend(elm) {
+		let msg = "";
+
+		if (!elm)
+			elm = this.html.querySelector("#text-area");
+		if (elm)
+			msg = elm.value.trim();
+		return (msg);
+	}
+
+	#clearInputMessage(elm) {
+		if (!elm)
+			elm = this.html.querySelector("#text-area");
+		if (elm) {
+			elm.value = "";
+			elm.setAttribute("rows", "1");
+		}
 	}
 }
 
