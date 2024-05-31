@@ -1,6 +1,3 @@
-from custom_utils.models_utils import ModelManager
-from user_profile.models import UserProfileInfo
-from user_profile.forms import ImageForm
 import base64
 import imghdr
 

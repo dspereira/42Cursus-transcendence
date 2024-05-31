@@ -1,5 +1,5 @@
-from django.db import models
 from user_auth.models import User
+from django.db import models
 
 class FriendRequests(models.Model):
 	from_user = models.ForeignKey(User, related_name='from_user_friend_req', on_delete=models.CASCADE)
@@ -15,8 +15,8 @@ class FriendRequests(models.Model):
 
 
 class FriendList(models.Model):
-	user1 = models.ForeignKey(to=User, related_name='first', on_delete=models.CASCADE)
-	user2 = models.ForeignKey(to=User, related_name='second', on_delete=models.CASCADE)
+	user1 = models.ForeignKey(to=User, related_name='first', on_delete=models.CASCADE, db_index=True)
+	user2 = models.ForeignKey(to=User, related_name='second', on_delete=models.CASCADE, db_index=True)
 
 	def __str__(self) -> str:
 		return f'User1: {self.user1} | User2: {self.user2}'

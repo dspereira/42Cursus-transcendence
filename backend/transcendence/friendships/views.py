@@ -1,8 +1,8 @@
 from friendships.friendships import get_friend_list, get_friend_info
 from custom_decorators import accepted_methods, login_required
+from friendships.models import FriendList, BlockList
 from custom_utils.models_utils import ModelManager
 from user_profile.models import UserProfileInfo
-from friendships.models import FriendList, BlockList
 from django.http import JsonResponse
 from user_auth.models import User
 import json

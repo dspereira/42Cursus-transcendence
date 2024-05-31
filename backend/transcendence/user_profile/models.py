@@ -1,5 +1,5 @@
-from django.db import models
 from user_auth.models import User
+from django.db import models
 
 class UserProfileInfo(models.Model):
 	user_id = models.ForeignKey(to=User, db_index=True, on_delete=models.CASCADE)

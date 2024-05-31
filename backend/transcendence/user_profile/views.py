@@ -96,11 +96,9 @@ def set_profile_picture(request):
 		new_image_data = request.FILES['image'].read()
 		if user_to_alter:
 			user_to_alter.profile_image = new_image_data
-
-			#new aditions
 			image = Image.open(BytesIO(new_image_data))
 			output = BytesIO()
-			image.save(output, format='JPEG', quality=50) #quality goes from 1 up to 95 (the lower the number the lighter and lower quality the image)
+			image.save(output, format='JPEG', quality=25) #quality goes from 1 up to 95 (the lower the number the lighter and lower quality the image)
 			compressed_image_data = output.getvalue()
 			user_to_alter.compressed_profile_image = compressed_image_data
 
@@ -141,13 +139,3 @@ def set_bio(request):
 		"message": "Error: Can't find user"
 		}
 	return JsonResponse(result)
-
-'''
-@login_required
-@accepted_methods(["POST", "GET"]) #escrever na DB
-def api_edit_bio(request):
-	user_id = request.access_data.sub
-	print(user_id)
-	type = request.method
-	return JsonResponse({"result": type})
-'''

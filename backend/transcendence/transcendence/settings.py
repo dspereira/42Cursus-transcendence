@@ -69,7 +69,7 @@ MIDDLEWARE = [
     'custom_middlewares.CorsMiddleware',
     'custom_middlewares.JwtMiddleware',
     'custom_middlewares.BlacklistTokenMiddleware',
-	'custom_middlewares.DataSanitize',
+	#'custom_middlewares.DataSanitize',
 ]
 
 AUTHENTICATION_BACKENDS = [
