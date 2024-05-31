@@ -16,10 +16,13 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import include, path
+from django.conf import settings
 
 urlpatterns = [
 	path('admin/', admin.site.urls),
     path('api/chat/', include('live_chat.urls')),
 	path('api/auth/', include('user_auth.urls')),
 	path('api/two_factor_auth/', include('two_factor_auth.urls')),
+    path('api/profile/', include('user_profile.urls')),
+    path('api/friendships/', include('friendships.urls')),
 ]

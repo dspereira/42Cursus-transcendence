@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'login_test',
 	'chat',
 	'two_factor_auth',
+    'user_profile'
 ]
 
 MIDDLEWARE = [

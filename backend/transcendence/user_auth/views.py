@@ -14,6 +14,7 @@ from .auth_utils import add_email_token_to_blacklist
 
 from two_factor_auth.two_factor import setup_default_tfa_configs
 from two_factor_auth.two_factor import initiate_two_factor_authentication
+from user_profile.models import UserProfileInfo
 
 from custom_utils.models_utils import ModelManager
 
@@ -40,6 +41,8 @@ def register(request):
 		if not user:
 			return JsonResponse({"message": "Error creating user"}, status=500)
 		send_email_verification(user)
+		user_info = ModelManager(UserProfileInfo)
+		user_info.create(user_id=user, default_image_seed=username)
 
 	return JsonResponse({"message": "success"})
 
