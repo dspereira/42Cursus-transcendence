@@ -48,9 +48,12 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+	'two_factor_auth',
     'user_auth',
     'live_chat',
     'channels',
+    'user_profile',
+    'friendships',
     'generate_users', # test app
     'generate_chatrooms', # test app
 ]
@@ -65,7 +68,8 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'custom_middlewares.CorsMiddleware',
     'custom_middlewares.JwtMiddleware',
-    'custom_middlewares.BlacklistTokenMiddleware'
+    'custom_middlewares.BlacklistTokenMiddleware',
+	#'custom_middlewares.DataSanitize',
 ]
 
 AUTHENTICATION_BACKENDS = [
@@ -118,7 +122,6 @@ DATABASES = {
     }
 }
 
-
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
 
@@ -158,3 +161,11 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# Relacionado com o email
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = 'blitzpong42@gmail.com'
+EMAIL_HOST_PASSWORD ="jchr ccsy sefv cvxh" 

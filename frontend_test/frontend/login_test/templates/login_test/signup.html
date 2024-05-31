@@ -65,7 +65,10 @@
 					msgElm.classList.remove("error");
 					msgElm.innerHTML = data["message"];
 					if (data["message"] == "success")
+					{
 						msgElm.classList.add("success");
+						window.location.href = "/email_sended";
+					}
 					else
 						msgElm.classList.add("error");
 				})

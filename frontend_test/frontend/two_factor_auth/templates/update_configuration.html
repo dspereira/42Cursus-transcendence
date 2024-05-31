@@ -1,0 +1,53 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<title>2FA</title>
+		<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css">
+		<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.min.js"></script>
+		<script src="{% static 'update_configuration.js' %}"></script>
+	</head>
+	<body class="update_configuration_2fa_body">
+		<div class="container mt-3 p-5 myBody">
+			<h1>2FA Update Configuration</h1><br>
+
+			<form id="update_configuration_form">
+
+				<div class="form-check form-switch">
+					<input class="form-check-input" type="checkbox" id="switch_1">
+					<label class="form-check-label" for="switch1">QR Code</label>
+				</div>
+
+				<div class="form-check form-switch">
+					<input class="form-check-input" type="checkbox" id="switch_2">
+					<label class="form-check-label" for="switch2">Email</label>
+				</div>
+
+				<div class="form-check form-switch">
+					<input class="form-check-input" type="checkbox" id="switch_3">
+					<label class="form-check-label" for="switch3">Phone</label>
+				</div>
+
+				<br>
+				<div class="input-group">
+					<select class="form-select" id="countryCode" aria-label="Select Country Code" name="country_code">
+					  <option value="+351">+351 (PT)</option>
+					  <option value="+1">+1 (USA)</option>
+					  <option value="+44">+44 (UK)</option>
+					  <option value="+91">+91 (India)</option>
+					</select>
+					<input type="tel" class="form-control" id="phone" name="phone" placeholder="Enter your phone number" required>
+				</div>
+
+				<br>
+                <button type="submit" class="btn btn-success" id="update_configs_btn">Update Settings</button>
+
+			</form>
+
+			<br>
+			<h4 class="configuration_message_info">Message -> </h4>
+			<h4 class="configuration_status_info">Status  -> </h4>
+
+		</div>
+	</body>
+</html>
