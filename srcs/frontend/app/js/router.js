@@ -39,6 +39,7 @@ const render = function(page) {
 	const oldElm = app.querySelector("#app > div");
 	const newElm = document.createElement("div");
 
+	// pode ser colocado nos eventos globais e retirado daqui
 	stateManager.addEvent("pageReady", (state) => {
 		if (state) {
 			stateManager.setState("pageReady", false);

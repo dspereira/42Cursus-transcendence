@@ -13,4 +13,6 @@ urlpatterns = [
     path("id", views.get_user_id, name="id"),
     path("username", views.get_username, name="username"),
     path("email", views.get_user_email, name="email"),
+
+    path("login_status", views.check_login_status, name="check_login_status")
 ]

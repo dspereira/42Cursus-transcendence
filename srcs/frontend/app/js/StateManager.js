@@ -1,3 +1,5 @@
+const globalEvents = ["isLoggedIn"];
+
 class StateManager {
 
 	constructor() {
@@ -8,10 +10,12 @@ class StateManager {
 		this.states = {
 			sidePanel: "open",
 			pageReady: false,
+			isLoggedIn: false,
 		}
 		this.stateEvents = {
 			sidePanel: [],
-			pageReady: []
+			pageReady: [],
+			isLoggedIn: []
 		}
 
 		StateManager.instance = this;
@@ -41,8 +45,10 @@ class StateManager {
 	}
 
 	cleanEvents() {
+
 		for (const key in this.stateEvents) {
-			this.stateEvents[key] = [];
+			if (!globalEvents.includes(key))
+				this.stateEvents[key] = [];
 		}
 	}
 }

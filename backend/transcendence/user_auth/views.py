@@ -135,6 +135,7 @@ def apiGetUsersList(request):
 
 
 # Test views
+@accepted_methods(["GET"])
 @login_required
 def get_user_id(request):
 	user_model = ModelManager(User)
@@ -153,6 +154,7 @@ def get_user_id(request):
 	}
 	return JsonResponse(res_data)
 
+@accepted_methods(["GET"])
 @login_required
 def get_username(request):
 	user_model = ModelManager(User)
@@ -172,6 +174,7 @@ def get_username(request):
 	return JsonResponse(res_data)
 
 
+@accepted_methods(["GET"])
 @login_required
 def get_user_email(request):
 	user_model = ModelManager(User)
@@ -189,3 +192,11 @@ def get_user_email(request):
 		"email": email
 	}
 	return JsonResponse(res_data)
+
+@accepted_methods(["GET"])
+def check_login_status(request):
+	if request.access_data:
+		is_logged_in = True
+	else:
+		is_logged_in = False
+	return JsonResponse({"logged_in": is_logged_in})

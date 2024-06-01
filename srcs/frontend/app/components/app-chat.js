@@ -168,7 +168,7 @@ export default class AppChat extends HTMLElement {
 		this.#initComponent();
 		this.#render();
 		this.#scripts();
-		this.#socket();
+		//this.#socket();
     }
 
 	attributeChangedCallback(name, oldValue, newValue) {
@@ -213,10 +213,16 @@ export default class AppChat extends HTMLElement {
 	}
 
 	#socket() {
+
+		let chatSocket = null;
+
 		console.log("Init Websocket");
 
 		const result_str = "ws://127.0.0.1:8000/chat_connection/?room_id=1";
-		let chatSocket = new WebSocket(result_str);
+		chatSocket = new WebSocket(result_str);
+
+		console.log("socket");
+		console.log(chatSocket);
 
 		chatSocket.onopen = (event) => {
 			console.log("Successfully connected to the WebSocket.");
@@ -246,7 +252,14 @@ export default class AppChat extends HTMLElement {
 			const msg = this.#getMessageToSend(input);
 			if (!msg)
 				return ;
-			this.#clearInputMessage(input)
+			chatSocket.send(JSON.stringify({
+				"message": msg,
+			}));
+
+			console.log("PASSA AQUI");
+
+			this.#clearInputMessage(input);
+
 			console.log(`msg: ${msg}`);
 		});
 	}
