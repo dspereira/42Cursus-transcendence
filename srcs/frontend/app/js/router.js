@@ -20,6 +20,7 @@ import MsgCard from "../components/msg-card.js";
 
 // Others
 import stateManager from "./StateManager.js";
+import checkUserLoginStatus from "../utils/checkUserLoginStatus.js";
 
 //  /user/:id devo poder configurar neste formato
 const routes = {
@@ -33,6 +34,11 @@ const routes = {
 	"/notifications"	: PageNotifications.componentName,
 	"/configurations"	: PageConfigs.componentName
 }
+
+const publicRoutes = ["/login", "/signup"];
+
+const initialRoute = "/login";
+
 
 const render = function(page) {
 	const app = document.querySelector("#app");
@@ -52,10 +58,9 @@ const render = function(page) {
 
 	newElm.innerHTML = `<${page}></${page}>`;
 }
-
   
 const getPageName = function() {
-	let route = location.pathname.replace(/\/+(?=\/|$)/g, '');
+	let route = getCurrentRoute();
 	if (route.length === 0)
 		route = "/";
 
@@ -67,8 +72,12 @@ const getPageName = function() {
 }
 
 export const router = function() {
-	stateManager.cleanEvents();
-	render(getPageName());
+	checkUserLoginStatus((status) => {
+		if (status === false)
+			stateManager.setState("isLoggedIn", false);
+		stateManager.cleanEvents();
+		render(getPageName());
+	});
 }
 
 export const setHistoryEvents = function() {
@@ -77,11 +86,46 @@ export const setHistoryEvents = function() {
 	});
 }
 
+const updateRoute = function(route) {
+	history.pushState({route: route}, null, route);
+}
+
+const getCurrentRoute = function() {
+	return window.location.pathname.replace(/\/+(?=\/|$)/g, '');
+}
+
+const getLastRoute = function() {
+	return history.state ? history.state.route : null;
+}
 export const redirect = function(route) {
 	if (!route)
 		console.log(`Error: Redirection Failed`);
 	else {
-		history.pushState({route: route}, null, route);
+		updateRoute(route);
 		router();
 	}
 }
+
+
+stateManager.addEvent("isLoggedIn", (state) => {
+	if (state == false) {
+		console.log(`getCurrentRoute: ${getCurrentRoute()}`);
+		if (!publicRoutes.includes(getCurrentRoute()))
+			redirect(initialRoute);
+	}
+});
+
+
+// contabilizar com página 404
+// Não pode aceder ha rota signin ou signup se estiver logado
+// Se não estiver logado tem de poder aceder a todas as rotas publicas.
+/*
+stateManager.addEvent("isLoggedIn", (state) => {
+	if (state == false) {
+		console.log(`getCurrentRoute: ${getCurrentRoute()}`);
+		console.log(`getLastRoute: ${getLastRoute()}`);
+
+
+	}
+});
+*/
