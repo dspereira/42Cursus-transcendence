@@ -56,5 +56,5 @@ class StateManager {
 const stateManager = new StateManager();
 
 // prevent to add new methods or attributes
-Object.freeze(stateManager); 
+Object.freeze(stateManager);
 export default stateManager;

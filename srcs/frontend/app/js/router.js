@@ -39,8 +39,6 @@ const routes = {
 const publicRoutes = ["/login", "/signup"];
 const initialRoute = "/login";
 
-//let firtTime = true;
-
 const render = function(page) {
 	const app = document.querySelector("#app");
 	const oldElm = app.querySelector("#app > div");
@@ -48,7 +46,6 @@ const render = function(page) {
 	
 	stateManager.addEvent("pageReady", (state) => {
 		if (state) {
-			console.log("page ready");
 			stateManager.setState("pageReady", false);
 			if (!oldElm)
 				app.appendChild(newElm);
@@ -63,10 +60,6 @@ const render = function(page) {
 const getPageName = function(route) {
 	let pageName = null;
 
-	console.log("getPageName Route: ", route);
-	console.log("getPageName Routes: ", routes[route]);
-
-
 	if (route)
 		pageName = routes[route];
 	else
@@ -79,14 +72,14 @@ const getPageName = function(route) {
 }
 
 const updateIsLoggedInState = function(state) {
+	if (state === undefined || state === null)
+		return ;
 	if (state != stateManager.getState("isLoggedIn")) {
 		stateManager.setState("isLoggedIn", state);
 	}
 }
 
 const getRouteByPermissions = function(route, isLoggedIn) {
-	
-	console.log(`----------${route}----------`)
 	if (isLoggedIn) {
 		if (publicRoutes.includes(route))
 			return "/";
@@ -95,7 +88,6 @@ const getRouteByPermissions = function(route, isLoggedIn) {
 		if (!publicRoutes.includes(route) && routes[route])
 			return initialRoute;
 	}
-	console.log(`#########${route}########`)
 	return route;
 }
 
@@ -106,18 +98,15 @@ export const router = function(route) {
 	checkUserLoginState((state) => {
 		if (!route)
 			route = getCurrentRoute();
+		else {
+			if (route[0] != '/')
+				route = `/${route}`;
+		}
 		const newRoute = getRouteByPermissions(route, state);
-
-		console.log("New route: ", newRoute);
-
 		if (!init)
 			updateRoute(newRoute);
 		render(getPageName(newRoute));
-
-
-		/*updateRoute(getRouteByPermissions(route, state));
-		render(getPageName());*/
-		updateIsLoggedInState();
+		updateIsLoggedInState(state);
 		init = false;
 	});
 }
@@ -126,9 +115,8 @@ const routingHistory = function() {
 	stateManager.cleanEvents();
 	checkUserLoginState((state) => {
 		let newRoute = getRouteByPermissions(getCurrentRoute(), state);
-		console.log(window.location);
 		render(getPageName(newRoute));
-		updateIsLoggedInState();
+		updateIsLoggedInState(state);
 	});
 }
 
@@ -146,12 +134,11 @@ const getCurrentRoute = function() {
 	let route = window.location.pathname.replace(/\/+(?=\/|$)/g, '');
 	if (!route)
 		route = "/";
-
-	console.log(`getCurrent Route :${route}`);
 	return route;
 }
 
 export const redirect = function(route) {
+
 	if (!route)
 		console.log(`Error: Redirection Failed`);
 	else {
@@ -163,7 +150,6 @@ export const redirect = function(route) {
 
 stateManager.addEvent("isLoggedIn", (state) => {
 	if (state == false) {
-		console.log(`getCurrentRoute: ${getCurrentRoute()}`);
 		if (!publicRoutes.includes(getCurrentRoute()))
 			redirect(initialRoute);
 	}
