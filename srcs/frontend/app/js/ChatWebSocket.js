@@ -33,6 +33,14 @@ class ChatWebSocket {
 		}
 	}
 
+	send(msg) {
+		if (this.socket) {
+			this.socket.send(JSON.stringify({
+				"message": msg,
+			}));
+		}
+	}
+
 	#setSocketCallbacks() {
 		this.socket.onopen = function(event) {
 			console.log('WebSocket chat open: ', event);

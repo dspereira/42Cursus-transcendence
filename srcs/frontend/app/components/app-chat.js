@@ -1,5 +1,6 @@
-const styles = `
+import chatWebSocket from "../js/ChatWebSocket.js";
 
+const styles = `
 .red {
 	border: 1px red solid;
 }
@@ -210,6 +211,7 @@ export default class AppChat extends HTMLElement {
 		this.#createFriendListHtml(friendList);
 		this.#resizeMessageInput();
 		this.#setSubmitEvents();
+		this.#sendMessage();
 	}
 
 	#socket() {
@@ -322,6 +324,7 @@ export default class AppChat extends HTMLElement {
 		const textArea = this.html.querySelector("#text-area");
 
 		icon.addEventListener("click", (event) => {
+			event.preventDefault();
 			this.html.querySelector("#msg-submit").requestSubmit();
 		});
 
@@ -350,6 +353,20 @@ export default class AppChat extends HTMLElement {
 			elm.value = "";
 			elm.setAttribute("rows", "1");
 		}
+	}
+
+	#sendMessage() {
+		const submitForm = this.html.querySelector("#msg-submit");
+		submitForm.addEventListener("submit", (event) => {
+			event.preventDefault();
+			let input = this.html.querySelector("#text-area");
+			const msg = this.#getMessageToSend(input);
+			this.#clearInputMessage(input);
+			if (!msg)
+				return ;
+			chatWebSocket.send(msg);
+			console.log(`msg to send: ${msg}`);
+		});
 	}
 }
 
