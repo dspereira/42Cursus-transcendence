@@ -1,7 +1,7 @@
 import { router, setHistoryEvents } from "./router.js"
 import stateManager from "./StateManager.js";
 import chatWebSocket from "./ChatWebSocket.js";
-import checkUserLoginStatus from "../utils/checkUserLoginStatus.js";
+import checkUserLoginState from "../utils/checkUserLoginState.js";
 
 // Cada vez que o estado do evento altera entre true or false deve fechar ou abrir as ligações websockets
 stateManager.addEvent("isLoggedIn", (stateValue) => {
@@ -11,18 +11,19 @@ stateManager.addEvent("isLoggedIn", (stateValue) => {
 		chatWebSocket.close();
 });
 
-const setupLoginStatusChecker  = function(intervalSeconds) {
+const setupLoginStateChecker  = function(intervalSeconds) {
 	setInterval(() => {
-		checkUserLoginStatus((status) => {
-			if (status != stateManager.getState("isLoggedIn")) {
-				stateManager.setState("isLoggedIn", status);
+		checkUserLoginState((state) => {
+			console.log(`setupLoginStateChecker log state: ${state} `);
+			if (state != stateManager.getState("isLoggedIn")) {
+				stateManager.setState("isLoggedIn", state);
 			}	
 		});
 	}, intervalSeconds * 1000);
 }
 
 const startApp = function() {
-	setupLoginStatusChecker(5);
+	setupLoginStateChecker(5);
 	router();
 	setHistoryEvents();
 }

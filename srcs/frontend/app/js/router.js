@@ -20,10 +20,11 @@ import MsgCard from "../components/msg-card.js";
 
 // Others
 import stateManager from "./StateManager.js";
-import checkUserLoginStatus from "../utils/checkUserLoginStatus.js";
+import checkUserLoginState from "../utils/checkUserLoginState.js";
 
 //  /user/:id devo poder configurar neste formato
 const routes = {
+	//""					: PageHome.componentName,
 	"/"					: PageHome.componentName,
 	"/index.html"		: PageHome.componentName,
 	"/login"			: PageLogin.componentName,
@@ -36,18 +37,18 @@ const routes = {
 }
 
 const publicRoutes = ["/login", "/signup"];
-
 const initialRoute = "/login";
 
+//let firtTime = true;
 
 const render = function(page) {
 	const app = document.querySelector("#app");
 	const oldElm = app.querySelector("#app > div");
 	const newElm = document.createElement("div");
-
-	// pode ser colocado nos eventos globais e retirado daqui
+	
 	stateManager.addEvent("pageReady", (state) => {
 		if (state) {
+			console.log("page ready");
 			stateManager.setState("pageReady", false);
 			if (!oldElm)
 				app.appendChild(newElm);
@@ -58,54 +59,107 @@ const render = function(page) {
 
 	newElm.innerHTML = `<${page}></${page}>`;
 }
-  
-const getPageName = function() {
-	let route = getCurrentRoute();
-	if (route.length === 0)
-		route = "/";
 
-	const pageName = routes[route];
+const getPageName = function(route) {
+	let pageName = null;
+
+	console.log("getPageName Route: ", route);
+	console.log("getPageName Routes: ", routes[route]);
+
+
+	if (route)
+		pageName = routes[route];
+	else
+		pageName = routes[getCurrentRoute()];
+
 	if (pageName)
 		return pageName;
 	else
 		return Page404.componentName;
 }
 
-export const router = function() {
-	checkUserLoginStatus((status) => {
-		if (status === false)
-			stateManager.setState("isLoggedIn", false);
-		stateManager.cleanEvents();
-		render(getPageName());
+const updateIsLoggedInState = function(state) {
+	if (state != stateManager.getState("isLoggedIn")) {
+		stateManager.setState("isLoggedIn", state);
+	}
+}
+
+const getRouteByPermissions = function(route, isLoggedIn) {
+	
+	console.log(`----------${route}----------`)
+	if (isLoggedIn) {
+		if (publicRoutes.includes(route))
+			return "/";
+	}
+	else {
+		if (!publicRoutes.includes(route) && routes[route])
+			return initialRoute;
+	}
+	console.log(`#########${route}########`)
+	return route;
+}
+
+
+let init = true;
+export const router = function(route) {
+	stateManager.cleanEvents();
+	checkUserLoginState((state) => {
+		if (!route)
+			route = getCurrentRoute();
+		const newRoute = getRouteByPermissions(route, state);
+
+		console.log("New route: ", newRoute);
+
+		if (!init)
+			updateRoute(newRoute);
+		render(getPageName(newRoute));
+
+
+		/*updateRoute(getRouteByPermissions(route, state));
+		render(getPageName());*/
+		updateIsLoggedInState();
+		init = false;
+	});
+}
+
+const routingHistory = function() {
+	stateManager.cleanEvents();
+	checkUserLoginState((state) => {
+		let newRoute = getRouteByPermissions(getCurrentRoute(), state);
+		console.log(window.location);
+		render(getPageName(newRoute));
+		updateIsLoggedInState();
 	});
 }
 
 export const setHistoryEvents = function() {
 	window.addEventListener("popstate", (event) => {
-		router();
+		routingHistory();
 	});
 }
 
 const updateRoute = function(route) {
-	history.pushState({route: route}, null, route);
+	window.history.pushState({route: route}, null, route);
 }
 
 const getCurrentRoute = function() {
-	return window.location.pathname.replace(/\/+(?=\/|$)/g, '');
+	let route = window.location.pathname.replace(/\/+(?=\/|$)/g, '');
+	if (!route)
+		route = "/";
+
+	console.log(`getCurrent Route :${route}`);
+	return route;
 }
 
-const getLastRoute = function() {
-	return history.state ? history.state.route : null;
-}
 export const redirect = function(route) {
 	if (!route)
 		console.log(`Error: Redirection Failed`);
 	else {
-		updateRoute(route);
-		router();
+		router(route);
 	}
 }
 
+// criar funçao que verifica se rota existe procura com / e sem /
 
 stateManager.addEvent("isLoggedIn", (state) => {
 	if (state == false) {
@@ -114,18 +168,3 @@ stateManager.addEvent("isLoggedIn", (state) => {
 			redirect(initialRoute);
 	}
 });
-
-
-// contabilizar com página 404
-// Não pode aceder ha rota signin ou signup se estiver logado
-// Se não estiver logado tem de poder aceder a todas as rotas publicas.
-/*
-stateManager.addEvent("isLoggedIn", (state) => {
-	if (state == false) {
-		console.log(`getCurrentRoute: ${getCurrentRoute()}`);
-		console.log(`getLastRoute: ${getLastRoute()}`);
-
-
-	}
-});
-*/
