@@ -16,7 +16,14 @@ const setupLoginStateChecker  = function(intervalSeconds) {
 		checkUserLoginState((state) => {
 			if (state != stateManager.getState("isLoggedIn")) {
 				stateManager.setState("isLoggedIn", state);
-			}	
+			}
+			else {
+				if (state) {
+					if (!chatWebSocket.isOpen()) {
+						chatWebSocket.open();
+					}
+				}
+			}
 		});
 	}, intervalSeconds * 1000);
 }
@@ -30,5 +37,3 @@ const startApp = function() {
 document.addEventListener('DOMContentLoaded', () => {
 	startApp();
 });
-
-

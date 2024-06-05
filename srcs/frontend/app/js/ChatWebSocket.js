@@ -29,7 +29,6 @@ class ChatWebSocket {
 	close() {
 		if (this.socket && this.socket.OPEN) {
 			this.socket.close();
-			this.socket = null;
 		}
 	}
 
@@ -41,21 +40,28 @@ class ChatWebSocket {
 		}
 	}
 
+	isOpen() {
+		if (this.socket && this.socket.OPEN)
+			return true;
+		return false;
+	}
+
 	#setSocketCallbacks() {
-		this.socket.onopen = function(event) {
+		this.socket.onopen = (event) => {
 			console.log('WebSocket chat open: ', event);
 		};
 
-		this.socket.onerror = function(error) {
+		this.socket.onerror = (error) => {
 			console.error('WebSocket chat error: ', error);
 		};
 
-		this.socket.onmessage = function(event) {
+		this.socket.onmessage = (event) => {
 			console.log('WebSocket chat message received: ', event.data);
 		};
 
-		this.socket.onclose = function(event) {
+		this.socket.onclose = (event) => {
 			console.log('WebSocket chat close: ', event);
+			this.socket = null;
 		};
 	}
 }
