@@ -22,6 +22,7 @@ const styles = `
 	align-items: center;
 	gap: 10px;
 	margin-bottom: 20px;
+	padding: 10px;
 }
 
 .user .profile-photo {
@@ -86,6 +87,11 @@ form {
 
 .icon:active {
 	transform: scale(1.1);
+}
+
+.friend-selected {
+	background-color: #4287f5;
+	border-radius: 8px;
 }
 
 `;
@@ -227,6 +233,7 @@ export default class AppChat extends HTMLElement {
 	#getFriendHtml(friendObj) {
 		const elm = document.createElement("div");
 		elm.classList.add("user");
+		//elm.classList.add("friend-selected");
 		elm.id = `id-${friendObj.id}`;
 		if (friendObj) {
 			elm.innerHTML = `
@@ -236,15 +243,23 @@ export default class AppChat extends HTMLElement {
 		return elm;
 	}
 
+	#removeAllSelectedFriends(friends) {
+		friends.forEach((elm) => {
+			elm.classList.remove("friend-selected");
+		});
+	}
+
 	#setFriendClickEventHandler() {
 		const friends = this.html.querySelectorAll(".user");
 
 		friends.forEach((elm) => {
 			elm.addEventListener("click", (event) => {
+				this.#removeAllSelectedFriends(friends);
 				const id = elm.id.substring(3);
 				if (stateManager.getState("friendChatId") != id) {
 					stateManager.setState("friendChatId", id);
 				}
+				elm.classList.add("friend-selected");
 			});
 		});
 	}
