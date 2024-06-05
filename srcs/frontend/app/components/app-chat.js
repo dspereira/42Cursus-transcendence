@@ -1,4 +1,5 @@
 import chatWebSocket from "../js/ChatWebSocket.js";
+import stateManager from "../js/StateManager.js";
 
 const styles = `
 .red {
@@ -212,58 +213,8 @@ export default class AppChat extends HTMLElement {
 		this.#resizeMessageInput();
 		this.#setSubmitEvents();
 		this.#sendMessage();
-	}
-
-	#socket() {
-
-		let chatSocket = null;
-
-		console.log("Init Websocket");
-
-		const result_str = "ws://127.0.0.1:8000/chat_connection/?room_id=1";
-		chatSocket = new WebSocket(result_str);
-
-		console.log("socket");
-		console.log(chatSocket);
-
-		chatSocket.onopen = (event) => {
-			console.log("Successfully connected to the WebSocket.");
-		}
-
-		chatSocket.onclose = (event) => {
-			console.log("Fecha ligação");
-			chatSocket = null;
-		};
-
-		chatSocket.onerror = (err) => {
-			console.log("WebSocket encountered an error: " + err.message);
-			console.log("Closing the socket.");
-			chatSocket.close();
-		}
-
-		chatSocket.onmessage = (event) => {
-			const data = JSON.parse(event.data);
-			console.log(data);
-		};
-
-		// create a function that get the message from textarea and reset the value
-		const submitForm = this.html.querySelector("#msg-submit");
-		submitForm.addEventListener("submit", (event) => {
-			event.preventDefault();
-			let input = this.html.querySelector("#text-area");
-			const msg = this.#getMessageToSend(input);
-			if (!msg)
-				return ;
-			chatSocket.send(JSON.stringify({
-				"message": msg,
-			}));
-
-			console.log("PASSA AQUI");
-
-			this.#clearInputMessage(input);
-
-			console.log(`msg: ${msg}`);
-		});
+		this.#setFriendClickEventHandler();
+		this.#setStateEvent();
 	}
 
 	#createFriendListHtml(friendList) {
@@ -276,12 +227,32 @@ export default class AppChat extends HTMLElement {
 	#getFriendHtml(friendObj) {
 		const elm = document.createElement("div");
 		elm.classList.add("user");
+		elm.id = `id-${friendObj.id}`;
 		if (friendObj) {
 			elm.innerHTML = `
 			<img src="${friendObj.image}" class="profile-photo" alt="profile photo chat"/>
 			<span class="name">${friendObj.username}</span>`;
 		}
 		return elm;
+	}
+
+	#setFriendClickEventHandler() {
+		const friends = this.html.querySelectorAll(".user");
+
+		friends.forEach((elm) => {
+			elm.addEventListener("click", (event) => {
+				const id = elm.id.substring(3);
+				if (stateManager.getState("friendChatId") != id) {
+					stateManager.setState("friendChatId", id);
+				}
+			});
+		});
+	}
+
+	#setStateEvent() {
+		stateManager.addEvent("friendChatId", (stateValue) => {
+			console.log(`friendChatId: ${stateValue}`);
+		});
 	}
 
 	// this.initialScrollHeight -> Pre-calculated initial scrollHeight
@@ -364,8 +335,7 @@ export default class AppChat extends HTMLElement {
 			this.#clearInputMessage(input);
 			if (!msg)
 				return ;
-			chatWebSocket.send(msg);
-			console.log(`msg to send: ${msg}`);
+			chatWebSocket.send(msg, stateManager.getState("friendChatId"));
 		});
 	}
 }

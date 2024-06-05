@@ -32,9 +32,16 @@ class ChatWebSocket {
 		}
 	}
 
-	send(msg) {
+	send(msg, friend_id) {
 		if (this.socket) {
+			console.log(JSON.stringify({
+				"friend_id": friend_id,
+				"type": "message",
+				"message": msg,
+			}));
 			this.socket.send(JSON.stringify({
+				"friend_id": friend_id,
+				"type": "message",
 				"message": msg,
 			}));
 		}
