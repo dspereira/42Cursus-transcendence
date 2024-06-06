@@ -225,7 +225,7 @@ export default class SignupForm extends HTMLElement {
 	}
 
 	#apiResHandlerCalback = (res, data) => {
-		if (res.ok)
+		if (res.ok && data.message === "success")
 			redirect("/");
 		else
 			this.#handleApiFormErrors(res.status, data.message);

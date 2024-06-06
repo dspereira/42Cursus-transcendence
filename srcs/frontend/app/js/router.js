@@ -8,8 +8,8 @@ import PageConfigs from "../page-components/page-configs.js";
 import PageLogin from "../page-components/page-login.js";
 import PageSignup from "../page-components/page-signup.js";
 import Page404 from "../page-components/page-404.js";
-
 import PageInitial from "../page-components/page-initial.js";
+import PageLogout from "../page-components/page-logout.js";
 
 // Components
 import AppTest from "../components/app-test.js";
@@ -32,6 +32,7 @@ const routes = {
 	//"/index.html"		: PageHome.componentName,
 	"/login"			: PageLogin.componentName,
 	"/signup"			: PageSignup.componentName,
+	"/logout"			: PageLogout.componentName,
 	"/profile"			: PageProfile.componentName,
 	"/chat"				: PageChat.componentName,
 	"/tournaments"		: PageTournaments.componentName,
@@ -164,7 +165,6 @@ const getCurrentRoute = function() {
 }
 
 export const redirect = function(route) {
-
 	if (!route)
 		console.log(`Error: Redirection Failed`);
 	else {

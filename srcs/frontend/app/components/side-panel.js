@@ -199,6 +199,7 @@ const navigation = [
 	"profile",
 	"chat",
 	"tournaments",
+	"logout",
 	"configurations",
 ]
 

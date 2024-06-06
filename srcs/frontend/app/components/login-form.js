@@ -169,7 +169,7 @@ export default class LoginForm extends HTMLElement {
 	}
 
 	#apiResHandlerCalback = (res, data) => {
-		if (res.ok)
+		if (res.ok && data.message === "success")
 			redirect("/");
 		else
 			this.#setInvalidCredentialsStyle();
