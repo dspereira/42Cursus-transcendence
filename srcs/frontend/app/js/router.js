@@ -9,6 +9,8 @@ import PageLogin from "../page-components/page-login.js";
 import PageSignup from "../page-components/page-signup.js";
 import Page404 from "../page-components/page-404.js";
 
+import PageInitial from "../page-components/page-initial.js";
+
 // Components
 import AppTest from "../components/app-test.js";
 import AppHeader from "../components/app-header.js";
@@ -25,19 +27,20 @@ import checkUserLoginState from "../utils/checkUserLoginState.js";
 //  /user/:id devo poder configurar neste formato
 const routes = {
 	//""					: PageHome.componentName,
+	"/initial"			: PageInitial.componentName,
 	"/"					: PageHome.componentName,
-	"/index.html"		: PageHome.componentName,
+	//"/index.html"		: PageHome.componentName,
 	"/login"			: PageLogin.componentName,
 	"/signup"			: PageSignup.componentName,
 	"/profile"			: PageProfile.componentName,
 	"/chat"				: PageChat.componentName,
 	"/tournaments"		: PageTournaments.componentName,
 	"/notifications"	: PageNotifications.componentName,
-	"/configurations"	: PageConfigs.componentName
+	"/configurations"	: PageConfigs.componentName,
 }
 
-const publicRoutes = ["/login", "/signup"];
-const initialRoute = "/login";
+const publicRoutes = ["/initial", "/login", "/signup"];
+const initialRoute = "/initial";
 
 const render = function(page) {
 	const app = document.querySelector("#app");
@@ -91,6 +94,21 @@ const getRouteByPermissions = function(route, isLoggedIn) {
 	return route;
 }
 
+const normalizeRouteForHistory = function(route) {
+	if (route === "/initial")
+		return "/";
+	return route; 
+}
+
+const normalizeRoute = function(route) {
+	if (!route)
+		route = "/";
+	else if (route === "")
+		route = "/";
+	else if (route[0] != '/')
+		route = `/${route}`;
+	return route;
+}
 
 let init = true;
 export const router = function(route) {
@@ -98,14 +116,13 @@ export const router = function(route) {
 	checkUserLoginState((state) => {
 		if (!route)
 			route = getCurrentRoute();
-		else {
-			if (route[0] != '/')
-				route = `/${route}`;
-		}
-		const newRoute = getRouteByPermissions(route, state);
-		if (!init)
-			updateRoute(newRoute);
-		render(getPageName(newRoute));
+		route = normalizeRoute(route);
+		const authorizedRoute = getRouteByPermissions(route, state);
+		if (init)
+			replaceCurrentRoute(normalizeRouteForHistory(authorizedRoute));
+		else
+			pushNewRoute(normalizeRouteForHistory(authorizedRoute));
+		render(getPageName(authorizedRoute));
 		updateIsLoggedInState(state);
 		init = false;
 	});
@@ -114,8 +131,9 @@ export const router = function(route) {
 const routingHistory = function() {
 	stateManager.cleanEvents();
 	checkUserLoginState((state) => {
-		let newRoute = getRouteByPermissions(getCurrentRoute(), state);
-		render(getPageName(newRoute));
+		const authorizedRoute = getRouteByPermissions(getCurrentRoute(), state);
+		replaceCurrentRoute(normalizeRouteForHistory(authorizedRoute));
+		render(getPageName(authorizedRoute));
 		updateIsLoggedInState(state);
 	});
 }
@@ -127,14 +145,22 @@ export const setHistoryEvents = function() {
 }
 
 const updateRoute = function(route) {
+	if (route === "/initial")
+		route = "/";
 	window.history.pushState({route: route}, null, route);
+}
+
+const pushNewRoute = function(route) {
+	window.history.pushState({route: route}, null, route);
+}
+
+const replaceCurrentRoute = function(route) {
+	window.history.replaceState({route: route}, null, route);
 }
 
 const getCurrentRoute = function() {
 	let route = window.location.pathname.replace(/\/+(?=\/|$)/g, '');
-	if (!route)
-		route = "/";
-	return route;
+	return normalizeRoute(route);
 }
 
 export const redirect = function(route) {
@@ -145,8 +171,6 @@ export const redirect = function(route) {
 		router(route);
 	}
 }
-
-// criar funçao que verifica se rota existe procura com / e sem /
 
 stateManager.addEvent("isLoggedIn", (state) => {
 	if (state == false) {
