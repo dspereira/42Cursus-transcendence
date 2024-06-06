@@ -24,27 +24,9 @@ class ChatConsumer(AsyncWebsocketConsumer):
 		self.access_data = self.scope['access_data']
 		if await sync_to_async(is_authenticated)(self.access_data):
 			self.user = await sync_to_async(get_authenticated_user)(self.access_data.sub)
-			self.room = await sync_to_async(room_model.get)(id=self.scope["room_id"])
-		if not self.user or not self.room:
+		if not self.user:
 			await self.close(4000)
 			return
-
-		self.username = self.user.username
-		self.room_group_name = str(self.room.id)
-
-		await self.channel_layer.group_add(
-			self.room_group_name,
-			self.channel_name
-		)
-
-		chat_messages = await sync_to_async(self.__getRoomMessages)()
-		await self.channel_layer.group_send(
-			self.room_group_name,
-			{
-				'type': 'chat_empty_status',
-				'messages': chat_messages,
-			}
-		)
 
 	async def disconnect(self, close_code):
 		print(" Close code -> ", close_code)
@@ -60,38 +42,56 @@ class ChatConsumer(AsyncWebsocketConsumer):
 			await self.close(4000)
 			return
 		data_json = json.loads(text_data)
-		message = data_json['message'].strip()
-		if message:
-			result_message = f"{self.username}: {message}"
-			await sync_to_async(msg_model.create)(user=self.user, room=self.room, content=message)
-			await self.channel_layer.group_send(
+		data_type = data_json['type']
+		if data_type == "connect":
+			await self.__disconnect_previous_chatroom()
+			await self.__connect_to_friend_chatroom(data_json['friend_id'])
+		elif data_type == "message":
+			await self.__send_message(data_json['message'].strip())
+
+	async def __connect_to_friend_chatroom(self, friends_id):
+		self.room = await self.__get_room(friends_id=friends_id)
+		if self.room:
+			self.room_group_name = self.room.name
+			await self.channel_layer.group_add(
 				self.room_group_name,
-				{
-					'type': 'chat_message',
-					'message': result_message,
-				}
+				self.channel_name
 			)
 
-	async def chat_message(self, event):
+	async def __disconnect_previous_chatroom(self):
+		if self.room_group_name:
+			await self.channel_layer.group_discard(
+				self.room_group_name,
+				self.channel_name
+			)
+
+	async def __send_message(self, message):
 		if not await sync_to_async(is_authenticated)(self.access_data):
 			await self.close(4000)
 			return
+		if self.room_group_name:
+			await self.channel_layer.group_send(
+				self.room_group_name,
+				{
+					'type': 'send_message_to_friend',
+					'message': message,
+				}
+			)
+
+	async def send_message_to_friend(self, event):
 		await self.send(text_data=json.dumps({
-			'type': 'chat_message',
+			'type': 'message',
 			'message': event['message'],
 		}))
 
-	async def chat_empty_status(self, event):
-		await self.send(text_data=json.dumps({
-			'type': 'chat_empty_status',
-			'messages': event['messages'],
-		}))
+	async def __get_room(self, friends_id):
+		room_name_1 = f'{self.user.id}_{friends_id}'
+		room_name_2 = f'{friends_id}_{self.user.id}'
 
-	def __getRoomMessages(self):
-		chat_messages = ""
-		messages = msg_model.filter(room=self.room)
-		if messages:
-			for msg in messages:
-				result_message = f"{msg.user.username}: {msg.content}"
-				chat_messages += result_message + "\n"
-		return chat_messages
+		room_1 = await sync_to_async(room_model.get)(name=room_name_1)
+		if room_1:
+			return room_1
+		room_2 = await sync_to_async(room_model.get)(name=room_name_2)
+		if room_2:
+			return room_2
+		return None

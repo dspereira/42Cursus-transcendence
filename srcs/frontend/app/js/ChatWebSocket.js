@@ -32,17 +32,20 @@ class ChatWebSocket {
 		}
 	}
 
-	send(msg, friend_id) {
+	send(msg) {
 		if (this.socket) {
-			console.log(JSON.stringify({
-				"friend_id": friend_id,
+			this.socket.send(JSON.stringify({
 				"type": "message",
 				"message": msg,
 			}));
+		}
+	}
+
+	connect(friendId) {
+		if (this.socket) {
 			this.socket.send(JSON.stringify({
-				"friend_id": friend_id,
-				"type": "message",
-				"message": msg,
+				"type": "connect",
+				"friend_id": friendId,
 			}));
 		}
 	}
@@ -63,7 +66,7 @@ class ChatWebSocket {
 		};
 
 		this.socket.onmessage = (event) => {
-			console.log('WebSocket chat message received: ', event.data);
+			console.log('WebSocket chat message received: \n', event.data);
 		};
 
 		this.socket.onclose = (event) => {

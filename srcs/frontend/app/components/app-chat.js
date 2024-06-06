@@ -267,6 +267,7 @@ export default class AppChat extends HTMLElement {
 	#setStateEvent() {
 		stateManager.addEvent("friendChatId", (stateValue) => {
 			console.log(`friendChatId: ${stateValue}`);
+			chatWebSocket.connect(stateManager.getState("friendChatId"))
 		});
 	}
 
@@ -350,7 +351,7 @@ export default class AppChat extends HTMLElement {
 			this.#clearInputMessage(input);
 			if (!msg)
 				return ;
-			chatWebSocket.send(msg, stateManager.getState("friendChatId"));
+			chatWebSocket.send(msg);
 		});
 	}
 }
@@ -363,27 +364,26 @@ const getFriendsFakeCall = function ()
 {
 	const data = `[
 		{
-			"id": 7,
-			"username": "candeia1",
-			"image": "https://api.dicebear.com/8.x/bottts/svg?seed=candeia"
-		},
-		{
-			"id": 8,
-			"username": "user",
-			"image": "https://api.dicebear.com/8.x/bottts/svg?seed=candeia"
-		},
-		{
 			"id": 2,
-			"username": "candeia3",
+			"username": "admin",
 			"image": "https://api.dicebear.com/8.x/bottts/svg?seed=candeia"
 		},
 		{
 			"id": 3,
-			"username": "candeia4",
+			"username": "irineu",
+			"image": "https://api.dicebear.com/8.x/bottts/svg?seed=candeia"
+		},
+		{
+			"id": 4,
+			"username": "irineu2",
+			"image": "https://api.dicebear.com/8.x/bottts/svg?seed=candeia"
+		},
+		{
+			"id": 5,
+			"username": "candeia",
 			"image": "https://api.dicebear.com/8.x/bottts/svg?seed=candeia"
 		}
 	]`;
 
 	return JSON.parse(data);
 }
-
