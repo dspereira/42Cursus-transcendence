@@ -12,12 +12,14 @@ class StateManager {
 			pageReady: false,
 			isLoggedIn: false,
 			friendChatId: null,
+			newChatMessage: null,
 		}
 		this.stateEvents = {
 			sidePanel: [],
 			pageReady: [],
 			isLoggedIn: [],
 			friendChatId: [],
+			newChatMessage: [],
 		}
 
 		StateManager.instance = this;

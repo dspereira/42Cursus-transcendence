@@ -1,3 +1,5 @@
+import stateManager from "./StateManager.js";
+
 // Wrong link, another link is needed. This is just for test
 const webSockettUrl = "ws://127.0.0.1:8000/chat_connection/?room_id=1";
 
@@ -67,6 +69,7 @@ class ChatWebSocket {
 
 		this.socket.onmessage = (event) => {
 			console.log('WebSocket chat message received: \n', event.data);
+			stateManager.setState("newChatMessage", event.data);
 		};
 
 		this.socket.onclose = (event) => {

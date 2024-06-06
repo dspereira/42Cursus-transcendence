@@ -111,41 +111,23 @@ const getHtml = function(data) {
 
 			<div class="msg-panel scroll">
 
-				<msg-card 
-					sender="friend" 
-					message="oi" 
-					profile-photo="https://api.dicebear.com/8.x/bottts/svg?seed=Diogo"
-					timestamp="1716890582">
-				</msg-card>
+				<div>
+					<msg-card 
+						sender="friend" 
+						message="oi" 
+						profile-photo="https://api.dicebear.com/8.x/bottts/svg?seed=Diogo"
+						timestamp="1716890582">
+					</msg-card>
+				</div>
 
-
-				<msg-card 
-					sender="owner" 
-					message="Bacon ipsum dolor amet spare ribs swine chicken ribeye bresaola porchetta leberkas strip steak shoulder landjaeger ground round alcatra turducken. Ribeye pig pastrami turkey ham chicken shankle venison jowl. Sausage bacon tongue turducken, jerky prosciutto hamburger alcatra. Short loin alcatra biltong corned beef capicola picanha. Filet mignon rump bresaola frankfurter meatball."
-					profile-photo="https://api.dicebear.com/8.x/bottts/svg?seed=Diogo"
-					timestamp="1716890582">
-				</msg-card>
-
-				<msg-card 
-					sender="owner" 
-					message="Bacon ipsum dolor amet spare ribs swine chicken ribeye bresaola porchetta leberkas strip steak shoulder landjaeger ground round alcatra turducken. Ribeye pig pastrami turkey ham chicken shankle venison jowl. Sausage bacon tongue turducken, jerky prosciutto hamburger alcatra. Short loin alcatra biltong corned beef capicola picanha. Filet mignon rump bresaola frankfurter meatball."
-					profile-photo="https://api.dicebear.com/8.x/bottts/svg?seed=Diogo"
-					timestamp="1716890582">
-				</msg-card>	
-
-			<msg-card 
-				sender="owner" 
-				message="Bacon ipsum dolor amet spare ribs swine chicken ribeye bresaola porchetta leberkas strip steak shoulder landjaeger ground round alcatra turducken. Ribeye pig pastrami turkey ham chicken shankle venison jowl. Sausage bacon tongue turducken, jerky prosciutto hamburger alcatra. Short loin alcatra biltong corned beef capicola picanha. Filet mignon rump bresaola frankfurter meatball."
-				profile-photo="https://api.dicebear.com/8.x/bottts/svg?seed=Diogo"
-				timestamp="1716890582">
-			</msg-card>
-
-			<msg-card
-				sender="friend" 
-				message="oi" 
-				profile-photo="https://api.dicebear.com/8.x/bottts/svg?seed=Diogo"
-				timestamp="1716890582">
-			</msg-card>
+				<div>
+					<msg-card 
+						sender="owner" 
+						message="Bacon ipsum dolor amet spare ribs swine chicken ribeye bresaola porchetta leberkas strip steak shoulder landjaeger ground round alcatra turducken. Ribeye pig pastrami turkey ham chicken shankle venison jowl. Sausage bacon tongue turducken, jerky prosciutto hamburger alcatra. Short loin alcatra biltong corned beef capicola picanha. Filet mignon rump bresaola frankfurter meatball."
+						profile-photo="https://api.dicebear.com/8.x/bottts/svg?seed=Diogo"
+						timestamp="1716890582">
+					</msg-card>
+				</div>
 
 			</div>
 
@@ -221,6 +203,7 @@ export default class AppChat extends HTMLElement {
 		this.#sendMessage();
 		this.#setFriendClickEventHandler();
 		this.#setStateEvent();
+		this.#newMessageEvent();
 	}
 
 	#createFriendListHtml(friendList) {
@@ -354,6 +337,29 @@ export default class AppChat extends HTMLElement {
 			chatWebSocket.send(msg);
 		});
 	}
+
+	#newMessageEvent() {
+		stateManager.addEvent("newChatMessage", (data) => {
+			if (data) {
+				const msgData = JSON.parse(data)
+				console.log("New message received.\n", msgData);
+				stateManager.setState("newChatMessage", null);
+			
+				const msgPanel = this.html.querySelector(".msg-panel")
+				const newMsg = document.createElement("div");
+				newMsg.innerHTML = `
+					<msg-card 
+						sender="${msgData.owner}" 
+						message="${msgData.message}"
+						profile-photo="https://api.dicebear.com/8.x/bottts/svg?seed=Diogo"
+						timestamp="1716890582">
+					</msg-card>
+				`
+				msgPanel.appendChild(newMsg);
+			}
+		});
+	}
+
 }
 
 customElements.define("app-chat", AppChat);
@@ -379,8 +385,8 @@ const getFriendsFakeCall = function ()
 			"image": "https://api.dicebear.com/8.x/bottts/svg?seed=candeia"
 		},
 		{
-			"id": 5,
-			"username": "candeia",
+			"id": 1,
+			"username": "diogo",
 			"image": "https://api.dicebear.com/8.x/bottts/svg?seed=candeia"
 		}
 	]`;

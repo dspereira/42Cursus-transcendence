@@ -69,19 +69,26 @@ class ChatConsumer(AsyncWebsocketConsumer):
 		if not await sync_to_async(is_authenticated)(self.access_data):
 			await self.close(4000)
 			return
+		await sync_to_async(msg_model.create)(user=self.user, room=self.room, content=message)
 		if self.room_group_name:
 			await self.channel_layer.group_send(
 				self.room_group_name,
 				{
 					'type': 'send_message_to_friend',
 					'message': message,
+					'id': self.user.id,
 				}
 			)
 
 	async def send_message_to_friend(self, event):
+		if self.user.id == event['id']:
+			owner = "owner"
+		else:
+			owner = "friend"
 		await self.send(text_data=json.dumps({
 			'type': 'message',
 			'message': event['message'],
+			'owner': owner,
 		}))
 
 	async def __get_room(self, friends_id):
