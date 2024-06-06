@@ -24,10 +24,12 @@ const styles = `
 	max-width: 80%;
 }
 
+
 .date-text {
 	display: flex;
 	flex-direction: column;
 }
+
 
 .msg-date {
 	font-size: 14px;
@@ -100,11 +102,13 @@ const getHtml = function(data) {
 			${photoElm && data.sender=='friend' ? photoElm : '' }
 			<div class="msg ${marginCard}">
 				<div class="date-text">
-					<span class="msg-date ${data.sender=='friend' ? 'msg-date-friend' : 'msg-date-owner'}">Today 10:34AM</span>
 					<div>
+						<span class="msg-date ${data.sender=='friend' ? 'msg-date-friend' : 'msg-date-owner'}">Today 10:34AM</span>
+					</div>
+					<div class="${data.sender=='friend' ? 'msg-date-friend' : 'msg-date-owner'}">
 						<div class="msg-text ${data.sender == 'friend' ? 'friend-color' : 'owner-color'}">${data.message}</div>
 					</div>
-				</div>		
+				</div>
 			</div>
 			${photoElm && data.sender=='owner' ? photoElm : '' }
 		</div>

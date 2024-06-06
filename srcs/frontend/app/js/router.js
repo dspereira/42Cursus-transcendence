@@ -145,12 +145,6 @@ export const setHistoryEvents = function() {
 	});
 }
 
-const updateRoute = function(route) {
-	if (route === "/initial")
-		route = "/";
-	window.history.pushState({route: route}, null, route);
-}
-
 const pushNewRoute = function(route) {
 	window.history.pushState({route: route}, null, route);
 }
