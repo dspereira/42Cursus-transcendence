@@ -2,10 +2,6 @@ import chatWebSocket from "../js/ChatWebSocket.js";
 import stateManager from "../js/StateManager.js";
 
 const styles = `
-.red {
-	border: 1px red solid;
-}
-
 .chat {
 	display: flex;
 }
@@ -106,30 +102,9 @@ const getHtml = function(data) {
 
 		<div class="friend-list"></div>
 
-		
-		<div class="chat-panel red">
+		<div class="chat-panel">
 
-			<div class="msg-panel scroll">
-
-				<div>
-					<msg-card 
-						sender="friend" 
-						message="oi" 
-						profile-photo="https://api.dicebear.com/8.x/bottts/svg?seed=Diogo"
-						timestamp="1716890582">
-					</msg-card>
-				</div>
-
-				<div>
-					<msg-card 
-						sender="owner" 
-						message="Bacon ipsum dolor amet spare ribs swine chicken ribeye bresaola porchetta leberkas strip steak shoulder landjaeger ground round alcatra turducken. Ribeye pig pastrami turkey ham chicken shankle venison jowl. Sausage bacon tongue turducken, jerky prosciutto hamburger alcatra. Short loin alcatra biltong corned beef capicola picanha. Filet mignon rump bresaola frankfurter meatball."
-						profile-photo="https://api.dicebear.com/8.x/bottts/svg?seed=Diogo"
-						timestamp="1716890582">
-					</msg-card>
-				</div>
-
-			</div>
+			<div class="msg-panel scroll"></div>
 
 			<div class="msg-input">
 				<form id="msg-submit">
@@ -338,28 +313,56 @@ export default class AppChat extends HTMLElement {
 		});
 	}
 
+	#getTimeDate(timestamp) {
+
+		const msgDate = new Date(timestamp * 1000);
+		const now = new Date();
+		const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+		const yesterday = new Date(today);
+		let hours = msgDate.getHours();
+		const minutes = msgDate.getMinutes();
+		const ampm = hours >= 12 ? 'PM' : 'AM';
+
+		yesterday.setDate(today.getDate() - 1);
+		hours = hours % 12;
+		hours = hours ? hours : 12;
+
+		const minutesFormatted = minutes < 10 ? '0' + minutes : minutes;
+		const time = `${hours}:${minutesFormatted}${ampm}`
+		let dateStr = null;
+
+		if (msgDate >= today)
+			dateStr = `Today`;
+		else if (msgDate >= yesterday)
+			dateStr = `Yesterday`;
+		else
+			dateStr = `${msgDate.getFullYear()}-${msgDate.getMonth()}-${msgDate.getDate}`;
+
+		return `${dateStr} ${time}`;
+	}
+
 	#newMessageEvent() {
 		stateManager.addEvent("newChatMessage", (data) => {
 			if (data) {
-				const msgData = JSON.parse(data)
+				const msgData = JSON.parse(data);
 				console.log("New message received.\n", msgData);
 				stateManager.setState("newChatMessage", null);
-			
-				const msgPanel = this.html.querySelector(".msg-panel")
+
+				const msgPanel = this.html.querySelector(".msg-panel");
 				const newMsg = document.createElement("div");
+				const timeDate = this.#getTimeDate(msgData['timestamp']);
 				newMsg.innerHTML = `
 					<msg-card 
 						sender="${msgData.owner}" 
 						message="${msgData.message}"
 						profile-photo="https://api.dicebear.com/8.x/bottts/svg?seed=Diogo"
-						timestamp="1716890582">
+						time-date="${timeDate}">
 					</msg-card>
 				`
 				msgPanel.appendChild(newMsg);
 			}
 		});
 	}
-
 }
 
 customElements.define("app-chat", AppChat);

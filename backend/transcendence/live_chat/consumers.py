@@ -6,6 +6,7 @@ from .models import ChatRoom, Message
 from channels.exceptions import StopConsumer
 from .auth_utils import is_authenticated, get_authenticated_user
 from custom_utils.models_utils import ModelManager
+from datetime import datetime
 
 msg_model = ModelManager(Message)
 room_model = ModelManager(ChatRoom)
@@ -69,7 +70,8 @@ class ChatConsumer(AsyncWebsocketConsumer):
 		if not await sync_to_async(is_authenticated)(self.access_data):
 			await self.close(4000)
 			return
-		await sync_to_async(msg_model.create)(user=self.user, room=self.room, content=message)
+		new_message = await sync_to_async(msg_model.create)(user=self.user, room=self.room, content=message)
+		timestamp = int(datetime.fromisoformat(str(new_message.timestamp)).timestamp())
 		if self.room_group_name:
 			await self.channel_layer.group_send(
 				self.room_group_name,
@@ -77,6 +79,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
 					'type': 'send_message_to_friend',
 					'message': message,
 					'id': self.user.id,
+					'timestamp': timestamp,
 				}
 			)
 
@@ -89,6 +92,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
 			'type': 'message',
 			'message': event['message'],
 			'owner': owner,
+			'timestamp': event['timestamp']
 		}))
 
 	async def __get_room(self, friends_id):
