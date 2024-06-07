@@ -47,8 +47,10 @@ class ChatConsumer(AsyncWebsocketConsumer):
 		if data_type == "connect":
 			await self.__disconnect_previous_chatroom()
 			await self.__connect_to_friend_chatroom(data_json['friend_id'])
+			await self.__send_chat_group_messages()
 		elif data_type == "message":
-			await self.__send_message(data_json['message'].strip())
+			new_message = await self.__save_message(data_json['message'].strip())
+			await self.__send_message(new_message)
 
 	async def __connect_to_friend_chatroom(self, friends_id):
 		self.room = await self.__get_room(friends_id=friends_id)
@@ -66,19 +68,24 @@ class ChatConsumer(AsyncWebsocketConsumer):
 				self.channel_name
 			)
 
-	async def __send_message(self, message):
+	async def __save_message(self, message):
 		if not await sync_to_async(is_authenticated)(self.access_data):
 			await self.close(4000)
 			return
 		new_message = await sync_to_async(msg_model.create)(user=self.user, room=self.room, content=message)
-		timestamp = int(datetime.fromisoformat(str(new_message.timestamp)).timestamp())
+		return new_message
+
+	async def __send_message(self, message):
+		message_content = message.content
+		user_id = await sync_to_async(lambda: message.user.id)()
+		timestamp = int(datetime.fromisoformat(str(message.timestamp)).timestamp())
 		if self.room_group_name:
 			await self.channel_layer.group_send(
 				self.room_group_name,
 				{
 					'type': 'send_message_to_friend',
-					'message': message,
-					'id': self.user.id,
+					'message': message_content,
+					'id': user_id,
 					'timestamp': timestamp,
 				}
 			)
@@ -94,6 +101,12 @@ class ChatConsumer(AsyncWebsocketConsumer):
 			'owner': owner,
 			'timestamp': event['timestamp']
 		}))
+
+	async def __send_chat_group_messages(self):
+		all_chat_group_messages = await sync_to_async(list)(await sync_to_async(msg_model.filter)(room=self.room))
+		for message in all_chat_group_messages:
+			print("MSG TYPE:", str(type(message)))
+			await self.__send_message(message=message)
 
 	async def __get_room(self, friends_id):
 		room_name_1 = f'{self.user.id}_{friends_id}'

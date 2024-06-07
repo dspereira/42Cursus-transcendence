@@ -336,7 +336,12 @@ export default class AppChat extends HTMLElement {
 		else if (msgDate >= yesterday)
 			dateStr = `Yesterday`;
 		else
-			dateStr = `${msgDate.getFullYear()}-${msgDate.getMonth()}-${msgDate.getDate}`;
+		{
+			const year = msgDate.getFullYear();
+			const month = msgDate.getMonth() < 10 ? '0' + msgDate.getMonth() : msgDate.getMonth();
+			const day = msgDate.getDate() < 10 ? '0' + msgDate.getDate() : msgDate.getDate();
+			dateStr = `${year}-${month}-${day}`;
+		}
 
 		return `${dateStr} ${time}`;
 	}
@@ -378,6 +383,11 @@ const getFriendsFakeCall = function ()
 			"image": "https://api.dicebear.com/8.x/bottts/svg?seed=candeia"
 		},
 		{
+			"id": 1,
+			"username": "diogo",
+			"image": "https://api.dicebear.com/8.x/bottts/svg?seed=candeia"
+		},
+		{
 			"id": 3,
 			"username": "irineu",
 			"image": "https://api.dicebear.com/8.x/bottts/svg?seed=candeia"
@@ -385,11 +395,6 @@ const getFriendsFakeCall = function ()
 		{
 			"id": 4,
 			"username": "irineu2",
-			"image": "https://api.dicebear.com/8.x/bottts/svg?seed=candeia"
-		},
-		{
-			"id": 1,
-			"username": "diogo",
 			"image": "https://api.dicebear.com/8.x/bottts/svg?seed=candeia"
 		}
 	]`;
