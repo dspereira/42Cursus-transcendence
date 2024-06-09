@@ -225,7 +225,8 @@ export default class AppChat extends HTMLElement {
 	#setStateEvent() {
 		stateManager.addEvent("friendChatId", (stateValue) => {
 			console.log(`friendChatId: ${stateValue}`);
-			chatWebSocket.connect(stateManager.getState("friendChatId"))
+			chatWebSocket.connect(stateManager.getState("friendChatId"));
+			chatWebSocket.get_messages(stateManager.getState("chatMessagesCounter"));
 		});
 	}
 
@@ -347,9 +348,8 @@ export default class AppChat extends HTMLElement {
 	}
 
 	#newMessageEvent() {
-		stateManager.addEvent("newChatMessage", (data) => {
-			if (data) {
-				const msgData = JSON.parse(data);
+		stateManager.addEvent("newChatMessage", (msgData) => {
+			if (msgData) {
 				console.log("New message received.\n", msgData);
 				stateManager.setState("newChatMessage", null);
 

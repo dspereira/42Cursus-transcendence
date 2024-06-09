@@ -11,6 +11,8 @@ from datetime import datetime
 msg_model = ModelManager(Message)
 room_model = ModelManager(ChatRoom)
 
+MESSAGE_LIMIT_COUNT = 7
+
 class ChatConsumer(AsyncWebsocketConsumer):
 
 	def __init__(self, *args, **kwargs):
@@ -47,7 +49,8 @@ class ChatConsumer(AsyncWebsocketConsumer):
 		if data_type == "connect":
 			await self.__disconnect_previous_chatroom()
 			await self.__connect_to_friend_chatroom(data_json['friend_id'])
-			await self.__send_chat_group_messages()
+		elif data_type == "get_messages":
+			await self.__send_chat_group_messages(data_json['message_count'])
 		elif data_type == "message":
 			new_message = await self.__save_message(data_json['message'].strip())
 			await self.__send_message(new_message)
@@ -102,11 +105,52 @@ class ChatConsumer(AsyncWebsocketConsumer):
 			'timestamp': event['timestamp']
 		}))
 
-	async def __send_chat_group_messages(self):
-		all_chat_group_messages = await sync_to_async(list)(await sync_to_async(msg_model.filter)(room=self.room))
+	async def __send_get_message(self, message):
+		message_content = message.content
+		user_id = await sync_to_async(lambda: message.user.id)()
+		timestamp = int(datetime.fromisoformat(str(message.timestamp)).timestamp())
+		if self.room_group_name:
+			await self.channel_layer.group_send(
+				self.room_group_name,
+				{
+					'type': 'send_requested_message',
+					'message': message_content,
+					'id': user_id,
+					'timestamp': timestamp,
+					'requester_id': self.user.id
+				}
+			)
+
+	async def send_requested_message(self, event):
+		if self.user.id == event['id']:
+			owner = "owner"
+		else:
+			owner = "friend"
+		await self.send(text_data=json.dumps({
+			'type': 'get_message',
+			'message': event['message'],
+			'owner': owner,
+			'timestamp': event['timestamp'],
+			'requester_id': event['requester_id']
+		}))
+
+	def __get_messages(self, start, limit):
+		return list(msg_model.filter(room=self.room)[start:start+limit])
+
+	def __get_count_messages(self):
+		return msg_model.filter(room=self.room).count()
+
+	async def __send_chat_group_messages(self, amount_messages):
+
+		message_count = await sync_to_async(self.__get_count_messages)()
+		message_limit = MESSAGE_LIMIT_COUNT
+		message_start = message_count - message_limit - amount_messages
+		if amount_messages:
+			message_start -= 1
+
+		all_chat_group_messages = await sync_to_async(self.__get_messages)(message_start, message_limit)
 		for message in all_chat_group_messages:
-			print("MSG TYPE:", str(type(message)))
-			await self.__send_message(message=message)
+			await self.__send_get_message(message=message)
 
 	async def __get_room(self, friends_id):
 		room_name_1 = f'{self.user.id}_{friends_id}'

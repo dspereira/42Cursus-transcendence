@@ -13,6 +13,8 @@ class StateManager {
 			isLoggedIn: false,
 			friendChatId: null,
 			newChatMessage: null,
+			chatMessagesCounter: 0,
+			userId: null,
 		}
 		this.stateEvents = {
 			sidePanel: [],
@@ -20,6 +22,8 @@ class StateManager {
 			isLoggedIn: [],
 			friendChatId: [],
 			newChatMessage: [],
+			chatMessagesCounter: [],
+			userId: [],
 		}
 
 		StateManager.instance = this;

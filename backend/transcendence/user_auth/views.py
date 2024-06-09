@@ -49,7 +49,7 @@ def login(request):
 		user = authenticate(request, email_username=username, password=password)
 		if not user:
 			return JsonResponse({"message": "Invalid credentials. Please check your username or password."}, status=401)
-		response = user_login(JsonResponse({"message": "success"}), user)
+		response = user_login(JsonResponse({"message": "success", "id": user.id}), user)
 		return response
 	return JsonResponse({"message": "Empty request body"}, status=400)
 
@@ -197,6 +197,8 @@ def get_user_email(request):
 def check_login_status(request):
 	if request.access_data:
 		is_logged_in = True
+		user_id = request.access_data.sub
 	else:
 		is_logged_in = False
-	return JsonResponse({"logged_in": is_logged_in})
+		user_id = None
+	return JsonResponse({"logged_in": is_logged_in, "id": user_id})

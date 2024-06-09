@@ -1,7 +1,7 @@
 import stateManager from "./StateManager.js";
 
 // Wrong link, another link is needed. This is just for test
-const webSockettUrl = "ws://127.0.0.1:8000/chat_connection/?room_id=1";
+const webSockettUrl = "ws://127.0.0.1:8000/chat_connection/";
 
 class ChatWebSocket {
 
@@ -52,10 +52,23 @@ class ChatWebSocket {
 		}
 	}
 
+	get_messages(messagesCount) {
+		if (this.socket) {
+			this.socket.send(JSON.stringify({
+				"type": "get_messages",
+				"message_count": messagesCount,
+			}));
+		}
+	}
+
 	isOpen() {
 		if (this.socket && this.socket.OPEN)
 			return true;
 		return false;
+	}
+
+	#updateMessageCounterState(actual_state) {
+		stateManager.setState("chatMessagesCounter", actual_state + 1);
 	}
 
 	#setSocketCallbacks() {
@@ -68,8 +81,19 @@ class ChatWebSocket {
 		};
 
 		this.socket.onmessage = (event) => {
-			console.log('WebSocket chat message received: \n', event.data);
-			stateManager.setState("newChatMessage", event.data);
+			if (event.data) {
+				const data = JSON.parse(event.data);
+				const dataType = data['type'];
+				if (dataType == "message") {
+					this.#updateMessageCounterState(stateManager.getState("chatMessagesCounter"));
+					stateManager.setState("newChatMessage", data);
+				}
+				else if (dataType == "get_message" && data['requester_id'] == stateManager.getState("userId")) {
+					console.log("Data:", data)
+					this.#updateMessageCounterState(stateManager.getState("chatMessagesCounter"));
+					stateManager.setState("newChatMessage", data);
+				}
+			}
 		};
 
 		this.socket.onclose = (event) => {

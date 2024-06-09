@@ -5,7 +5,9 @@ const checkUserLoginState = function(callback) {
 		if (!data || !res.ok)
 			return ;
 		const state = data.logged_in;
-		callback(state);
+		const userId = data.id
+		if (callback)
+			callback(state, userId);
 	});
 }
 
