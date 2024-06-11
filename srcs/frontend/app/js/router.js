@@ -91,7 +91,6 @@ const getRouteByPermissions = function(route, isLoggedIn) {
 	return route;
 }
 
-
 let init = true;
 export const router = function(route) {
 	stateManager.cleanEvents();
