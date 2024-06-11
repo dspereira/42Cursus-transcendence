@@ -108,7 +108,7 @@ const getHtml = function(data) {
 
 			<div class="msg-input">
 				<form id="msg-submit">
-					<textarea class="form-control text-area" id="text-area" rows="1" maxlength="1000" placeholder="Type your message here.."></textarea>
+					<textarea class="form-control text-area" id="text-area" rows="1" maxlength="2000" placeholder="Type your message here.."></textarea>
 					<i class="icon bi bi-send" id="send-icon"></i>
 				</form>
 			</div>
