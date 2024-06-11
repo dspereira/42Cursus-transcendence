@@ -138,19 +138,26 @@ class ChatConsumer(AsyncWebsocketConsumer):
 		return list(msg_model.filter(room=self.room)[start:start+limit])
 
 	def __get_count_messages(self):
-		return msg_model.filter(room=self.room).count()
+		filter_msgs = msg_model.filter(room=self.room)
+		if filter_msgs:
+			return filter_msgs.count()
+		return 0
 
 	async def __send_chat_group_messages(self, amount_messages):
-
 		message_count = await sync_to_async(self.__get_count_messages)()
-		message_limit = MESSAGE_LIMIT_COUNT
-		message_start = message_count - message_limit - amount_messages
-		if amount_messages:
-			message_start -= 1
+		if message_count > amount_messages and message_count > 0:
 
-		all_chat_group_messages = await sync_to_async(self.__get_messages)(message_start, message_limit)
-		for message in all_chat_group_messages:
-			await self.__send_get_message(message=message)
+			if message_count - amount_messages < MESSAGE_LIMIT_COUNT:
+				message_start = 0
+				message_limit = message_count - amount_messages
+			else:
+				message_limit = MESSAGE_LIMIT_COUNT
+				message_start = message_count - message_limit - amount_messages
+
+			all_chat_group_messages = await sync_to_async(self.__get_messages)(message_start, message_limit)
+			all_chat_group_messages.reverse()
+			for message in all_chat_group_messages:
+				await self.__send_get_message(message=message)
 
 	async def __get_room(self, friends_id):
 		room_name_1 = f'{self.user.id}_{friends_id}'

@@ -179,6 +179,7 @@ export default class AppChat extends HTMLElement {
 		this.#setFriendClickEventHandler();
 		this.#setStateEvent();
 		this.#newMessageEvent();
+		this.#chatScrollEvent();
 	}
 
 	#createFriendListHtml(friendList) {
@@ -228,12 +229,6 @@ export default class AppChat extends HTMLElement {
 			if (stateValue) {
 				chatWebSocket.connect(stateManager.getState("friendChatId"));
 				chatWebSocket.get_messages(stateManager.getState("chatMessagesCounter"));
-				
-				let scroll = this.html.querySelector(".scroll");
-				console.log("Scroll\n", scroll);
-				console.log("ScrollHeight:", scroll.scrollHeight);
-				// scroll.scrollTop = scroll.scrollHeight;
-				// scroll.scrollTop = 0;
 			}
 		});
 	}
@@ -376,16 +371,32 @@ export default class AppChat extends HTMLElement {
 				let scroll = this.html.querySelector(".scroll");
 				let scrollBottom = scroll.scrollHeight - scroll.scrollTop - scroll.clientHeight;
 
-				msgPanel.appendChild(newMsg);
+				if (msgData.type == "message")
+					msgPanel.appendChild(newMsg);
+				else {
+					let firstMsg = msgPanel.querySelector("div")
+					msgPanel.insertBefore(newMsg, firstMsg);
+				}
+
 				if (scrollBottom == 0)
 					scroll.scrollTop = scroll.scrollHeight;
+			}
+		});
+	}
+
+	#chatScrollEvent() {
+		let scroll = this.html.querySelector(".scroll");
+		scroll.addEventListener("scroll", (event) => {
+			let scrollTop = scroll.scrollTop;
+			if (!scrollTop) {
+				chatWebSocket.get_messages(stateManager.getState("chatMessagesCounter"));
+				scroll.scrollTop = 1;
 			}
 		});
 	}
 }
 
 customElements.define("app-chat", AppChat);
-
 
 // just for debug
 const getFriendsFakeCall = function ()
