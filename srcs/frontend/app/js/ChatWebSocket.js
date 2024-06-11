@@ -85,8 +85,8 @@ class ChatWebSocket {
 				const data = JSON.parse(event.data);
 				const dataType = data['type'];
 
-				const testSTR = "-------------------------\n" + "Data Type: " + dataType + "\n" + "Data:\n" + data + "\n" + "UserID:" + stateManager.getState("userId") + "\n-------------------------"
-				console.log(testSTR);
+				// const testSTR = "-------------------------\n" + "Data Type: " + dataType + "\n" + "Data:\n" + data + "\n" + "UserID:" + stateManager.getState("userId") + "\n-------------------------"
+				// console.log(testSTR);
 
 				if (dataType == "message") {
 					this.#updateMessageCounterState(stateManager.getState("chatMessagesCounter"));

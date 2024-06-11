@@ -228,6 +228,12 @@ export default class AppChat extends HTMLElement {
 			if (stateValue) {
 				chatWebSocket.connect(stateManager.getState("friendChatId"));
 				chatWebSocket.get_messages(stateManager.getState("chatMessagesCounter"));
+				
+				let scroll = this.html.querySelector(".scroll");
+				console.log("Scroll\n", scroll);
+				console.log("ScrollHeight:", scroll.scrollHeight);
+				// scroll.scrollTop = scroll.scrollHeight;
+				// scroll.scrollTop = 0;
 			}
 		});
 	}
@@ -350,9 +356,10 @@ export default class AppChat extends HTMLElement {
 	}
 
 	#newMessageEvent() {
+
 		stateManager.addEvent("newChatMessage", (msgData) => {
 			if (msgData) {
-				console.log("New message received.\n", msgData);
+				// console.log("New message received.\n", msgData);
 				stateManager.setState("newChatMessage", null);
 
 				const msgPanel = this.html.querySelector(".msg-panel");
@@ -366,7 +373,12 @@ export default class AppChat extends HTMLElement {
 						time-date="${timeDate}">
 					</msg-card>
 				`
+				let scroll = this.html.querySelector(".scroll");
+				let scrollBottom = scroll.scrollHeight - scroll.scrollTop - scroll.clientHeight;
+
 				msgPanel.appendChild(newMsg);
+				if (scrollBottom == 0)
+					scroll.scrollTop = scroll.scrollHeight;
 			}
 		});
 	}

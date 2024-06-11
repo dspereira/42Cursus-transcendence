@@ -11,7 +11,7 @@ from datetime import datetime
 msg_model = ModelManager(Message)
 room_model = ModelManager(ChatRoom)
 
-MESSAGE_LIMIT_COUNT = 7
+MESSAGE_LIMIT_COUNT = 5
 
 class ChatConsumer(AsyncWebsocketConsumer):
 
