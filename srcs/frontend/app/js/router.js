@@ -95,7 +95,7 @@ const getRouteByPermissions = function(route, isLoggedIn) {
 let init = true;
 export const router = function(route) {
 	stateManager.cleanEvents();
-	checkUserLoginState((state) => {
+	checkUserLoginState((state, userId) => {
 		if (!route)
 			route = getCurrentRoute();
 		else {
@@ -107,6 +107,7 @@ export const router = function(route) {
 			updateRoute(newRoute);
 		render(getPageName(newRoute));
 		updateIsLoggedInState(state);
+		stateManager.setState("userId", userId);
 		init = false;
 	});
 }

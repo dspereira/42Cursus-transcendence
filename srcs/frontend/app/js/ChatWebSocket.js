@@ -84,12 +84,15 @@ class ChatWebSocket {
 			if (event.data) {
 				const data = JSON.parse(event.data);
 				const dataType = data['type'];
+
+				const testSTR = "-------------------------\n" + "Data Type: " + dataType + "\n" + "Data:\n" + data + "\n" + "UserID:" + stateManager.getState("userId") + "\n-------------------------"
+				console.log(testSTR);
+
 				if (dataType == "message") {
 					this.#updateMessageCounterState(stateManager.getState("chatMessagesCounter"));
 					stateManager.setState("newChatMessage", data);
 				}
 				else if (dataType == "get_message" && data['requester_id'] == stateManager.getState("userId")) {
-					console.log("Data:", data)
 					this.#updateMessageCounterState(stateManager.getState("chatMessagesCounter"));
 					stateManager.setState("newChatMessage", data);
 				}

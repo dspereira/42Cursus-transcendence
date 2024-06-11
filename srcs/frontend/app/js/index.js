@@ -14,9 +14,7 @@ stateManager.addEvent("isLoggedIn", (stateValue) => {
 const setupLoginStateChecker  = function(intervalSeconds) {
 	setInterval(() => {
 		checkUserLoginState((state, userId) => {
-			if (userId != stateManager.getState("userId")) {
-				stateManager.setState("userId", userId)
-			}
+			stateManager.setState("userId", userId);
 			if (state != stateManager.getState("isLoggedIn")) {
 				stateManager.setState("isLoggedIn", state);
 			}
