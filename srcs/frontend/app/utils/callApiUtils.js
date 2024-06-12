@@ -1,17 +1,47 @@
+import stateManager from "../js/StateManager.js";
+
+const refreshUrl = "http://127.0.0.1:8000/api/auth/refresh_token";
+const refreshMethod = "POST";
+
 export const callAPI = async function (method, url, data, callback_sucess, callback_error) {
-	try {
-		const res = await fetch(url, getReqHeader(method, data));
-		const resData = await res.json();
-		if (callback_sucess)
-			callback_sucess(res, resData);
+	let resApi = await fetchApi(method, url, data);
+
+	if (!resApi.error && resApi.data && resApi.res) {
+		if (stateManager.getState("isLoggedIn")) {
+			if (resApi.res.status == 401 || ("logged_in" in resApi.data && resApi.data.logged_in == false)) {
+				let resRefresh = await fetchApi(refreshMethod, refreshUrl, null);
+				if (resRefresh.data && resRefresh.data.message == "success")
+					resApi = await fetchApi(method, url, data);
+			}
+		}
+	}
+	if (!resApi.error && callback_sucess)
+		callback_sucess(resApi.res, resApi.data);
+	else if (resApi.error) {
+		if (callback_error)
+			callback_error(resApi.error);
 		else
-			console.log(resData);
+			console.log(resApi.error);
+	}		
+}
+
+const fetchApi = async function (method, url, data) {
+	let res = null;
+	let resData = null;
+	let callError = null;
+	
+	try {
+		res = await fetch(url, getReqHeader(method, data));
+		resData = await res.json();
 	}
 	catch (error) {
-		if (callback_error)
-			callback_error(error);
-		else
-			console.log(error);
+		callError = error;
+	}
+
+	return {
+		res: res,
+		data: resData,
+		error: callError,
 	}
 }
 

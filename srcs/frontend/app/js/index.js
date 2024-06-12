@@ -16,7 +16,7 @@ const setupLoginStateChecker  = function(intervalSeconds) {
 		checkUserLoginState((state) => {
 			if (state != stateManager.getState("isLoggedIn")) {
 				stateManager.setState("isLoggedIn", state);
-			}	
+			}
 		});
 	}, intervalSeconds * 1000);
 }
@@ -30,5 +30,3 @@ const startApp = function() {
 document.addEventListener('DOMContentLoaded', () => {
 	startApp();
 });
-
-

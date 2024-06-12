@@ -51,6 +51,15 @@ class StateManager {
 				this.stateEvents[key] = [];
 		}
 	}
+
+	// DEBUG
+	showAllStates() {
+		Object.entries(this.states).forEach(([key, value]) => {
+			console.log(`${key}: ${value}`);
+		});
+
+		
+	}
 }
 
 const stateManager = new StateManager();
