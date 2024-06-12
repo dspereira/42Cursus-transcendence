@@ -57,8 +57,6 @@ class StateManager {
 		Object.entries(this.states).forEach(([key, value]) => {
 			console.log(`${key}: ${value}`);
 		});
-
-		
 	}
 }
 
