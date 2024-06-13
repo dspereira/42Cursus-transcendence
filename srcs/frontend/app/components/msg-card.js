@@ -103,7 +103,7 @@ const getHtml = function(data) {
 			<div class="msg ${marginCard}">
 				<div class="date-text">
 					<div>
-						<span class="msg-date ${data.sender=='friend' ? 'msg-date-friend' : 'msg-date-owner'}">Today 10:34AM</span>
+						<span class="msg-date ${data.sender=='friend' ? 'msg-date-friend' : 'msg-date-owner'}">${data.timeDate}</span>
 					</div>
 					<div class="${data.sender=='friend' ? 'msg-date-friend' : 'msg-date-owner'}">
 						<div class="msg-text ${data.sender == 'friend' ? 'friend-color' : 'owner-color'}">${data.message}</div>
@@ -117,7 +117,7 @@ const getHtml = function(data) {
 }
 
 export default class MsgCard extends HTMLElement {
-	static observedAttributes = ["sender", "message", "profile-photo", "timestamp"];
+	static observedAttributes = ["sender", "message", "profile-photo", "time-date"];
 
 	constructor() {
 		super()
@@ -133,6 +133,8 @@ export default class MsgCard extends HTMLElement {
 	attributeChangedCallback(name, oldValue, newValue) {
 		if (name == "profile-photo")
 			name = "profilePhoto";
+		if (name == "time-date")
+			name = "timeDate";
 		this.data[name] = newValue;
 	}
 

@@ -1,5 +1,7 @@
+import stateManager from "./StateManager.js";
+
 // Wrong link, another link is needed. This is just for test
-const webSockettUrl = "ws://127.0.0.1:8000/chat_connection/?room_id=1";
+const webSockettUrl = "ws://127.0.0.1:8000/chat_connection/";
 
 class ChatWebSocket {
 
@@ -29,33 +31,77 @@ class ChatWebSocket {
 	close() {
 		if (this.socket && this.socket.OPEN) {
 			this.socket.close();
-			this.socket = null;
 		}
 	}
 
 	send(msg) {
 		if (this.socket) {
 			this.socket.send(JSON.stringify({
+				"type": "message",
 				"message": msg,
 			}));
 		}
 	}
 
+	connect(friendId) {
+		if (this.socket) {
+			this.socket.send(JSON.stringify({
+				"type": "connect",
+				"friend_id": friendId,
+			}));
+		}
+	}
+
+	get_messages(messagesCount) {
+		if (this.socket) {
+			this.socket.send(JSON.stringify({
+				"type": "get_messages",
+				"message_count": messagesCount,
+			}));
+		}
+	}
+
+	isOpen() {
+		if (this.socket && this.socket.OPEN)
+			return true;
+		return false;
+	}
+
+	#updateMessageCounterState(actual_state) {
+		stateManager.setState("chatMessagesCounter", actual_state + 1);
+	}
+
 	#setSocketCallbacks() {
-		this.socket.onopen = function(event) {
+		this.socket.onopen = (event) => {
 			console.log('WebSocket chat open: ', event);
 		};
 
-		this.socket.onerror = function(error) {
+		this.socket.onerror = (error) => {
 			console.error('WebSocket chat error: ', error);
 		};
 
-		this.socket.onmessage = function(event) {
-			console.log('WebSocket chat message received: ', event.data);
+		this.socket.onmessage = (event) => {
+			if (event.data) {
+				const data = JSON.parse(event.data);
+				const dataType = data['type'];
+
+				// const testSTR = "-------------------------\n" + "Data Type: " + dataType + "\n" + "Data:\n" + data + "\n" + "UserID:" + stateManager.getState("userId") + "\n-------------------------"
+				// console.log(testSTR);
+
+				if (dataType == "message") {
+					this.#updateMessageCounterState(stateManager.getState("chatMessagesCounter"));
+					stateManager.setState("newChatMessage", data);
+				}
+				else if (dataType == "get_message" && data['requester_id'] == stateManager.getState("userId")) {
+					this.#updateMessageCounterState(stateManager.getState("chatMessagesCounter"));
+					stateManager.setState("newChatMessage", data);
+				}
+			}
 		};
 
-		this.socket.onclose = function(event) {
+		this.socket.onclose = (event) => {
 			console.log('WebSocket chat close: ', event);
+			this.socket = null;
 		};
 	}
 }

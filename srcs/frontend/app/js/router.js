@@ -114,7 +114,7 @@ const normalizeRoute = function(route) {
 let init = true;
 export const router = function(route) {
 	stateManager.cleanEvents();
-	checkUserLoginState((state) => {
+	checkUserLoginState((state, userId) => {
 		if (!route)
 			route = getCurrentRoute();
 		route = normalizeRoute(route);
@@ -125,6 +125,7 @@ export const router = function(route) {
 			pushNewRoute(normalizeRouteForHistory(authorizedRoute));
 		render(getPageName(authorizedRoute));
 		updateIsLoggedInState(state);
+		stateManager.setState("userId", userId);
 		init = false;
 	});
 }

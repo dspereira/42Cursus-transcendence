@@ -11,11 +11,19 @@ class StateManager {
 			sidePanel: "open",
 			pageReady: false,
 			isLoggedIn: false,
+			friendChatId: null,
+			newChatMessage: null,
+			chatMessagesCounter: 0,
+			userId: null,
 		}
 		this.stateEvents = {
 			sidePanel: [],
 			pageReady: [],
-			isLoggedIn: []
+			isLoggedIn: [],
+			friendChatId: [],
+			newChatMessage: [],
+			chatMessagesCounter: [],
+			userId: [],
 		}
 
 		StateManager.instance = this;
@@ -26,7 +34,7 @@ class StateManager {
 	}
 
 	setState(name, value) {
-		if (this.states[name] != undefined) {
+		if (this.states.hasOwnProperty(name)) {
 			this.states[name] = value;
 			this.triggerEvent(name);
 		}

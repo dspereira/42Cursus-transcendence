@@ -1,10 +1,7 @@
 import chatWebSocket from "../js/ChatWebSocket.js";
+import stateManager from "../js/StateManager.js";
 
 const styles = `
-.red {
-	border: 1px red solid;
-}
-
 .chat {
 	display: flex;
 }
@@ -21,6 +18,7 @@ const styles = `
 	align-items: center;
 	gap: 10px;
 	margin-bottom: 20px;
+	padding: 10px;
 }
 
 .user .profile-photo {
@@ -34,6 +32,24 @@ const styles = `
 	font-weight: bold;
 }
 
+/* Chat section */
+
+.chat-section {
+	width: 100%;
+}
+
+/* Chat panel */
+
+.chat-panel {
+	display: flex;
+	justify-content: space-between;
+	flex-direction: column;
+	background-color: #C0C0C0;
+	/*padding: 10px 10px 10px 10px;*/
+	border-radius: 0px 0px 10px 10px;
+	height: 80vh;
+	width: 100%;
+}
 
 /* Chat Header */
 
@@ -44,6 +60,8 @@ const styles = `
 	padding-top: 10px;
 	padding-bottom: 10px;
 	padding-right: 25px;
+	border-radius: 10px 10px 0px 0px;
+	background-color: #A9A9A9;
 }
 
 .chat-header .profile-photo {
@@ -75,25 +93,23 @@ const styles = `
 	font-size: 16px;
 }
 
-/* Chat panel */
+/* msg panel */
 
-.chat-panel {
-	display: flex;
-	flex-direction: column;
-	justify-content: space-between;
-	background-color: #C0C0C0;
+.msg-panel {
 	padding: 10px 10px 10px 10px;
-	border-radius: 10px;
-	height: 80vh;
-	width: 100%;
 }
-
 .scroll {
 	/*overflow-y: scroll;*/
 	overflow-y: auto;
 }
 
 /* Input Form */
+
+.msg-input {
+	padding: 10px 10px 10px 10px;
+	border-radius: 0px 0px 10px 10px;
+	background-color: #A9A9A9;
+}
 
 form {
 	position: relative;
@@ -124,6 +140,11 @@ form {
 	transform: scale(1.1);
 }
 
+.friend-selected {
+	background-color: #4287f5;
+	border-radius: 8px;
+}
+
 `;
 
 const getHtml = function(data) {
@@ -136,7 +157,7 @@ const getHtml = function(data) {
 
 		<div class="friend-list"></div>
 
-		<div class="chat-panel red">
+		<div class="chat-section">
 
 			<div class="chat-header">
 				<div>
@@ -149,63 +170,26 @@ const getHtml = function(data) {
 						Unblock
 					</button>
 					
-					<!--
+					
 					<button type="button" class="btn btn-success">
 						<i class="icon-play bi bi-controller"></i>
 					</button>
 					<button type="button" class="btn btn-danger">
 						<i class="icon-ban bi bi-ban"></i>
 					</button>
-					-->
+					
 					
 				</div>
 			</div>
 
-			<div class="msg-panel scroll">
-
-				<msg-card 
-					sender="friend" 
-					message="oi" 
-					profile-photo="https://api.dicebear.com/8.x/bottts/svg?seed=Diogo"
-					timestamp="1716890582">
-				</msg-card>
-
-
-				<msg-card 
-					sender="owner" 
-					message="Bacon ipsum dolor amet spare ribs swine chicken ribeye bresaola porchetta leberkas strip steak shoulder landjaeger ground round alcatra turducken. Ribeye pig pastrami turkey ham chicken shankle venison jowl. Sausage bacon tongue turducken, jerky prosciutto hamburger alcatra. Short loin alcatra biltong corned beef capicola picanha. Filet mignon rump bresaola frankfurter meatball."
-					profile-photo="https://api.dicebear.com/8.x/bottts/svg?seed=Diogo"
-					timestamp="1716890582">
-				</msg-card>
-
-				<msg-card 
-					sender="owner" 
-					message="Bacon ipsum dolor amet spare ribs swine chicken ribeye bresaola porchetta leberkas strip steak shoulder landjaeger ground round alcatra turducken. Ribeye pig pastrami turkey ham chicken shankle venison jowl. Sausage bacon tongue turducken, jerky prosciutto hamburger alcatra. Short loin alcatra biltong corned beef capicola picanha. Filet mignon rump bresaola frankfurter meatball."
-					profile-photo="https://api.dicebear.com/8.x/bottts/svg?seed=Diogo"
-					timestamp="1716890582">
-				</msg-card>	
-
-				<msg-card 
-					sender="owner" 
-					message="Bacon ipsum dolor amet spare ribs swine chicken ribeye bresaola porchetta leberkas strip steak shoulder landjaeger ground round alcatra turducken. Ribeye pig pastrami turkey ham chicken shankle venison jowl. Sausage bacon tongue turducken, jerky prosciutto hamburger alcatra. Short loin alcatra biltong corned beef capicola picanha. Filet mignon rump bresaola frankfurter meatball."
-					profile-photo="https://api.dicebear.com/8.x/bottts/svg?seed=Diogo"
-					timestamp="1716890582">
-				</msg-card>
-
-				<msg-card
-					sender="owner" 
-					message="Bacon ipsum dolor amet spare ribs swine chicken ribeye bresaola porchetta leberkas strip steak shoulder landjaeger ground round alcatra turducken. Ribeye pig pastrami turkey ham chicken shankle venison jowl. Sausage bacon tongue turducken, jerky prosciutto hamburger alcatra. Short loin alcatra biltong corned beef capicola picanha. Filet mignon rump bresaola frankfurter meatball."
-					profile-photo="https://api.dicebear.com/8.x/bottts/svg?seed=Diogo"
-					timestamp="1716890582">
-				</msg-card>	
-
-			</div>
-
-			<div class="msg-input">
-				<form id="msg-submit">
-					<textarea class="form-control text-area" id="text-area" rows="1" maxlength="1000" placeholder="Type your message here.."></textarea>
-					<i class="icon bi bi-send" id="send-icon"></i>
-				</form>
+			<div class="chat-panel">
+				<div class="msg-panel scroll"></div>
+				<div class="msg-input">
+					<form id="msg-submit">
+						<textarea class="form-control text-area" id="text-area" rows="1" maxlength="2000" placeholder="Type your message here.."></textarea>
+						<i class="icon bi bi-send" id="send-icon"></i>
+					</form>
+				</div>
 			</div>
 
 		</div>
@@ -271,53 +255,10 @@ export default class AppChat extends HTMLElement {
 		this.#resizeMessageInput();
 		this.#setSubmitEvents();
 		this.#sendMessage();
-	}
-
-	#socket() {
-
-		let chatSocket = null;
-
-		console.log("Init Websocket");
-
-		const result_str = "ws://127.0.0.1:8000/chat_connection/?room_id=1";
-		chatSocket = new WebSocket(result_str);
-
-		console.log("socket");
-		console.log(chatSocket);
-
-		chatSocket.onopen = (event) => {
-			console.log("Successfully connected to the WebSocket.");
-		}
-
-		chatSocket.onclose = (event) => {
-			console.log("Fecha ligação");
-			chatSocket = null;
-		};
-
-		chatSocket.onerror = (err) => {
-			console.log("WebSocket encountered an error: " + err.message);
-			console.log("Closing the socket.");
-			chatSocket.close();
-		}
-
-		chatSocket.onmessage = (event) => {
-			const data = JSON.parse(event.data);
-			console.log(data);
-		};
-
-		// create a function that get the message from textarea and reset the value
-		const submitForm = this.html.querySelector("#msg-submit");
-		submitForm.addEventListener("submit", (event) => {
-			event.preventDefault();
-			let input = this.html.querySelector("#text-area");
-			const msg = this.#getMessageToSend(input);
-			if (!msg)
-				return ;
-			chatSocket.send(JSON.stringify({
-				"message": msg,
-			}));
-			this.#clearInputMessage(input);
-		});
+		this.#setFriendClickEventHandler();
+		this.#setStateEvent();
+		this.#newMessageEvent();
+		this.#chatScrollEvent();
 	}
 
 	#createFriendListHtml(friendList) {
@@ -330,12 +271,45 @@ export default class AppChat extends HTMLElement {
 	#getFriendHtml(friendObj) {
 		const elm = document.createElement("div");
 		elm.classList.add("user");
+		//elm.classList.add("friend-selected");
+		elm.id = `id-${friendObj.id}`;
 		if (friendObj) {
 			elm.innerHTML = `
 			<img src="${friendObj.image}" class="profile-photo" alt="profile photo chat"/>
 			<span class="name">${friendObj.username}</span>`;
 		}
 		return elm;
+	}
+
+	#removeAllSelectedFriends(friends) {
+		friends.forEach((elm) => {
+			elm.classList.remove("friend-selected");
+		});
+	}
+
+	#setFriendClickEventHandler() {
+		const friends = this.html.querySelectorAll(".user");
+
+		friends.forEach((elm) => {
+			elm.addEventListener("click", (event) => {
+				this.#removeAllSelectedFriends(friends);
+				const id = elm.id.substring(3);
+				if (stateManager.getState("friendChatId") != id) {
+					stateManager.setState("friendChatId", id);
+				}
+				elm.classList.add("friend-selected");
+			});
+		});
+	}
+
+	#setStateEvent() {
+		stateManager.addEvent("friendChatId", (stateValue) => {
+			console.log(`friendChatId: ${stateValue}`);
+			if (stateValue) {
+				chatWebSocket.connect(stateManager.getState("friendChatId"));
+				chatWebSocket.get_messages(stateManager.getState("chatMessagesCounter"));
+			}
+		});
 	}
 
 	// this.initialScrollHeight -> Pre-calculated initial scrollHeight
@@ -419,40 +393,115 @@ export default class AppChat extends HTMLElement {
 			if (!msg)
 				return ;
 			chatWebSocket.send(msg);
-			console.log(`msg to send: ${msg}`);
+		});
+	}
+
+	#getTimeDate(timestamp) {
+
+		const msgDate = new Date(timestamp * 1000);
+		const now = new Date();
+		const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+		const yesterday = new Date(today);
+		let hours = msgDate.getHours();
+		const minutes = msgDate.getMinutes();
+		const ampm = hours >= 12 ? 'PM' : 'AM';
+
+		yesterday.setDate(today.getDate() - 1);
+		hours = hours % 12;
+		hours = hours ? hours : 12;
+
+		const minutesFormatted = minutes < 10 ? '0' + minutes : minutes;
+		const time = `${hours}:${minutesFormatted}${ampm}`
+		let dateStr = null;
+
+		if (msgDate >= today)
+			dateStr = `Today`;
+		else if (msgDate >= yesterday)
+			dateStr = `Yesterday`;
+		else
+		{
+			const year = msgDate.getFullYear();
+			const month = msgDate.getMonth() < 10 ? '0' + msgDate.getMonth() : msgDate.getMonth();
+			const day = msgDate.getDate() < 10 ? '0' + msgDate.getDate() : msgDate.getDate();
+			dateStr = `${year}-${month}-${day}`;
+		}
+
+		return `${dateStr} ${time}`;
+	}
+
+	#newMessageEvent() {
+
+		stateManager.addEvent("newChatMessage", (msgData) => {
+			if (msgData) {
+				// console.log("New message received.\n", msgData);
+				stateManager.setState("newChatMessage", null);
+
+				const msgPanel = this.html.querySelector(".msg-panel");
+				const newMsg = document.createElement("div");
+				const timeDate = this.#getTimeDate(msgData['timestamp']);
+				newMsg.innerHTML = `
+					<msg-card 
+						sender="${msgData.owner}" 
+						message="${msgData.message}"
+						profile-photo="https://api.dicebear.com/8.x/bottts/svg?seed=Diogo"
+						time-date="${timeDate}">
+					</msg-card>
+				`
+				let scroll = this.html.querySelector(".scroll");
+				let scrollBottom = scroll.scrollHeight - scroll.scrollTop - scroll.clientHeight;
+
+				if (msgData.type == "message")
+					msgPanel.appendChild(newMsg);
+				else {
+					let firstMsg = msgPanel.querySelector("div")
+					msgPanel.insertBefore(newMsg, firstMsg);
+				}
+
+				if (scrollBottom == 0)
+					scroll.scrollTop = scroll.scrollHeight;
+			}
+		});
+	}
+
+	#chatScrollEvent() {
+		let scroll = this.html.querySelector(".scroll");
+		scroll.addEventListener("scroll", (event) => {
+			let scrollTop = scroll.scrollTop;
+			if (!scrollTop) {
+				chatWebSocket.get_messages(stateManager.getState("chatMessagesCounter"));
+				scroll.scrollTop = 1;
+			}
 		});
 	}
 }
 
 customElements.define("app-chat", AppChat);
 
-
 // just for debug
 const getFriendsFakeCall = function ()
 {
 	const data = `[
 		{
-			"id": 7,
-			"username": "candeia1",
-			"image": "https://api.dicebear.com/8.x/bottts/svg?seed=candeia"
-		},
-		{
-			"id": 8,
-			"username": "user",
-			"image": "https://api.dicebear.com/8.x/bottts/svg?seed=candeia"
-		},
-		{
 			"id": 2,
-			"username": "candeia3",
+			"username": "admin",
+			"image": "https://api.dicebear.com/8.x/bottts/svg?seed=candeia"
+		},
+		{
+			"id": 1,
+			"username": "diogo",
 			"image": "https://api.dicebear.com/8.x/bottts/svg?seed=candeia"
 		},
 		{
 			"id": 3,
-			"username": "candeia4",
+			"username": "irineu",
+			"image": "https://api.dicebear.com/8.x/bottts/svg?seed=candeia"
+		},
+		{
+			"id": 4,
+			"username": "irineu2",
 			"image": "https://api.dicebear.com/8.x/bottts/svg?seed=candeia"
 		}
 	]`;
 
 	return JSON.parse(data);
 }
-
