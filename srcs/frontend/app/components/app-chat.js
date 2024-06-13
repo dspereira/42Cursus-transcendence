@@ -24,7 +24,7 @@ const styles = `
 }
 
 .user .profile-photo {
-	width: 40px;
+	width: 50px;
 	height: auto;
 	clip-path:circle();
 }
@@ -34,6 +34,46 @@ const styles = `
 	font-weight: bold;
 }
 
+
+/* Chat Header */
+
+.chat-header {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	padding-top: 10px;
+	padding-bottom: 10px;
+	padding-right: 25px;
+}
+
+.chat-header .profile-photo {
+	width: 50px;
+	height: auto;
+	clip-path:circle();
+}
+
+.chat-header .name {
+	font-size: 16px;
+	font-weight: bold;
+	margin-left: 10px;
+}
+
+.block-mark {
+	font-size: 12px;
+    color: white;
+    background-color: red;
+    padding: 2px 4px;
+    border-radius: 5px;
+}
+
+
+.icon-play {
+	font-size: 16px;
+}
+
+.icon-ban {
+	font-size: 16px;
+}
 
 /* Chat panel */
 
@@ -52,9 +92,6 @@ const styles = `
 	/*overflow-y: scroll;*/
 	overflow-y: auto;
 }
-
-
-
 
 /* Input Form */
 
@@ -99,8 +136,30 @@ const getHtml = function(data) {
 
 		<div class="friend-list"></div>
 
-		
 		<div class="chat-panel red">
+
+			<div class="chat-header">
+				<div>
+					<img src="https://api.dicebear.com/8.x/bottts/svg?seed=Diogo" class="profile-photo" alt="profile photo chat"/>			
+					<span class="name">Chat with candeia</span>
+					<span class="block-mark">blocked</span>
+				</div>
+				<div>
+					<button type="button" class="btn btn-success">
+						Unblock
+					</button>
+					
+					<!--
+					<button type="button" class="btn btn-success">
+						<i class="icon-play bi bi-controller"></i>
+					</button>
+					<button type="button" class="btn btn-danger">
+						<i class="icon-ban bi bi-ban"></i>
+					</button>
+					-->
+					
+				</div>
+			</div>
 
 			<div class="msg-panel scroll">
 
@@ -126,19 +185,19 @@ const getHtml = function(data) {
 					timestamp="1716890582">
 				</msg-card>	
 
-			<msg-card 
-				sender="owner" 
-				message="Bacon ipsum dolor amet spare ribs swine chicken ribeye bresaola porchetta leberkas strip steak shoulder landjaeger ground round alcatra turducken. Ribeye pig pastrami turkey ham chicken shankle venison jowl. Sausage bacon tongue turducken, jerky prosciutto hamburger alcatra. Short loin alcatra biltong corned beef capicola picanha. Filet mignon rump bresaola frankfurter meatball."
-				profile-photo="https://api.dicebear.com/8.x/bottts/svg?seed=Diogo"
-				timestamp="1716890582">
-			</msg-card>
+				<msg-card 
+					sender="owner" 
+					message="Bacon ipsum dolor amet spare ribs swine chicken ribeye bresaola porchetta leberkas strip steak shoulder landjaeger ground round alcatra turducken. Ribeye pig pastrami turkey ham chicken shankle venison jowl. Sausage bacon tongue turducken, jerky prosciutto hamburger alcatra. Short loin alcatra biltong corned beef capicola picanha. Filet mignon rump bresaola frankfurter meatball."
+					profile-photo="https://api.dicebear.com/8.x/bottts/svg?seed=Diogo"
+					timestamp="1716890582">
+				</msg-card>
 
-			<msg-card
-				sender="friend" 
-				message="oi" 
-				profile-photo="https://api.dicebear.com/8.x/bottts/svg?seed=Diogo"
-				timestamp="1716890582">
-			</msg-card>
+				<msg-card
+					sender="owner" 
+					message="Bacon ipsum dolor amet spare ribs swine chicken ribeye bresaola porchetta leberkas strip steak shoulder landjaeger ground round alcatra turducken. Ribeye pig pastrami turkey ham chicken shankle venison jowl. Sausage bacon tongue turducken, jerky prosciutto hamburger alcatra. Short loin alcatra biltong corned beef capicola picanha. Filet mignon rump bresaola frankfurter meatball."
+					profile-photo="https://api.dicebear.com/8.x/bottts/svg?seed=Diogo"
+					timestamp="1716890582">
+				</msg-card>	
 
 			</div>
 
@@ -257,12 +316,7 @@ export default class AppChat extends HTMLElement {
 			chatSocket.send(JSON.stringify({
 				"message": msg,
 			}));
-
-			console.log("PASSA AQUI");
-
 			this.#clearInputMessage(input);
-
-			console.log(`msg: ${msg}`);
 		});
 	}
 

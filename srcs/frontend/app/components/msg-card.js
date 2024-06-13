@@ -17,7 +17,7 @@ const styles = `
 }
 
 .profile-photo {
-	width: 45px;
+	width: 40px;
 }
 
 .msg {
