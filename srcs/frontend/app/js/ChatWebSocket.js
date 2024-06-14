@@ -10,14 +10,7 @@ class ChatWebSocket {
 			return ChatWebSocket.instance;
 		}
 		ChatWebSocket.instance = this;
-
 		this.socket = null;
-
-		/*this.chatSocket = new WebSocket(webSockettUrl);
-		if (!this.chatSocket)
-			console.log("Failed connection chat"); // tratar falha
-		else
-			console.log(this.chatSocket);*/
 	}
 
 	open() {
@@ -31,11 +24,12 @@ class ChatWebSocket {
 	close() {
 		if (this.socket && this.socket.OPEN) {
 			this.socket.close();
+			this.socket = null;
 		}
 	}
 
 	send(msg) {
-		if (this.socket) {
+		if (this.socket && msg) {
 			this.socket.send(JSON.stringify({
 				"type": "message",
 				"message": msg,
@@ -44,7 +38,7 @@ class ChatWebSocket {
 	}
 
 	connect(friendId) {
-		if (this.socket) {
+		if (this.socket && friendId) {
 			this.socket.send(JSON.stringify({
 				"type": "connect",
 				"friend_id": friendId,
@@ -53,7 +47,7 @@ class ChatWebSocket {
 	}
 
 	get_messages(messagesCount) {
-		if (this.socket) {
+		if (this.socket && messagesCount >= 0) {
 			this.socket.send(JSON.stringify({
 				"type": "get_messages",
 				"message_count": messagesCount,
@@ -74,6 +68,7 @@ class ChatWebSocket {
 	#setSocketCallbacks() {
 		this.socket.onopen = (event) => {
 			console.log('WebSocket chat open: ', event);
+			chatWebSocket.connect(stateManager.getState("friendChatId"));
 		};
 
 		this.socket.onerror = (error) => {

@@ -11,6 +11,13 @@ stateManager.addEvent("isLoggedIn", (stateValue) => {
 		chatWebSocket.close();
 });
 
+stateManager.addEvent("refreshChatSocket", (stateValue) => {
+	if (stateValue) {
+		chatWebSocket.close();
+		chatWebSocket.open();
+	}
+});
+
 const setupLoginStateChecker  = function(intervalSeconds) {
 	setInterval(() => {
 		checkUserLoginState((state, userId) => {

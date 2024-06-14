@@ -19,5 +19,4 @@ class ChannelsAuthMiddleware(BaseMiddleware):
 				for cookie in cookies:
 					if not cookie.find("access="):
 						token = cookie.replace("access=", "")
-						print(f"Cookie: {token}")
 						return token

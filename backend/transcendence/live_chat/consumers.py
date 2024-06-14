@@ -47,7 +47,6 @@ class ChatConsumer(AsyncWebsocketConsumer):
 		data_json = json.loads(text_data)
 		data_type = data_json['type']
 		if data_type == "connect":
-			await self.__disconnect_previous_chatroom()
 			await self.__connect_to_friend_chatroom(data_json['friend_id'])
 		elif data_type == "get_messages":
 			await self.__send_chat_group_messages(data_json['message_count'])
@@ -60,13 +59,6 @@ class ChatConsumer(AsyncWebsocketConsumer):
 		if self.room:
 			self.room_group_name = self.room.name
 			await self.channel_layer.group_add(
-				self.room_group_name,
-				self.channel_name
-			)
-
-	async def __disconnect_previous_chatroom(self):
-		if self.room_group_name:
-			await self.channel_layer.group_discard(
 				self.room_group_name,
 				self.channel_name
 			)
