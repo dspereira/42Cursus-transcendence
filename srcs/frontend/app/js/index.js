@@ -11,14 +11,16 @@ stateManager.addEvent("isLoggedIn", (stateValue) => {
 		chatWebSocket.close();
 });
 
-stateManager.addEvent("refreshChatSocket", (stateValue) => {
-	if (stateValue) {
-		chatWebSocket.close();
-		if (!chatWebSocket.isOpen()) {
-			chatWebSocket.open();
-		}
+stateManager.addEvent("chatSocket", (stateValue) => {
+	console.log(`Chat socket: ${stateValue}`);
+	if (stateValue == "closed") {
+		console.log("OPEN 1");
+		chatWebSocket.open();
 	}
+	else if (stateValue == "open")
+			chatWebSocket.connect(stateManager.getState("friendChatId"));
 });
+
 
 const setupLoginStateChecker  = function(intervalSeconds) {
 	setInterval(() => {
@@ -30,6 +32,7 @@ const setupLoginStateChecker  = function(intervalSeconds) {
 			else {
 				if (state) {
 					if (!chatWebSocket.isOpen()) {
+						console.log("OPEN 2");
 						chatWebSocket.open();
 					}
 				}

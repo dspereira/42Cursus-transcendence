@@ -1,4 +1,4 @@
-const globalEvents = ["isLoggedIn", "refreshChatSocket"];
+const globalEvents = ["isLoggedIn", "chatSocket"];
 
 class StateManager {
 
@@ -15,7 +15,7 @@ class StateManager {
 			newChatMessage: null,
 			chatMessagesCounter: 0,
 			userId: null,
-			refreshChatSocket: null,
+			chatSocket: null,
 		}
 		this.stateEvents = {
 			sidePanel: [],
@@ -25,7 +25,7 @@ class StateManager {
 			newChatMessage: [],
 			chatMessagesCounter: [],
 			userId: [],
-			refreshChatSocket: [],
+			chatSocket: [],
 		}
 
 		StateManager.instance = this;

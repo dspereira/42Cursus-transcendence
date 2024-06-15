@@ -114,7 +114,6 @@ const normalizeRoute = function(route) {
 let init = true;
 export const router = function(route) {
 	stateManager.cleanEvents();
-	stateManager.setState("friendChatId", null);
 	checkUserLoginState((state, userId) => {
 		if (!route)
 			route = getCurrentRoute();
