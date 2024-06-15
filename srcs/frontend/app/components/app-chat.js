@@ -429,8 +429,13 @@ export default class AppChat extends HTMLElement {
 		return `${dateStr} ${time}`;
 	}
 
-	#newMessageEvent() {
 
+	/*
+		scroll.scrollHeight -> maximum height available for scrolling
+		scroll.scrollTop -> distance from the top of scroll to the top of the scrollbar
+		scroll.clientHeight -> size of the scroll bar
+	*/
+	#newMessageEvent() {
 		stateManager.addEvent("newChatMessage", (msgData) => {
 			if (msgData) {
 				// console.log("New message received.\n", msgData);
@@ -448,8 +453,7 @@ export default class AppChat extends HTMLElement {
 					</msg-card>
 				`
 				let scroll = this.html.querySelector(".scroll");
-				let scrollBottom = scroll.scrollHeight - scroll.scrollTop - scroll.clientHeight;
-
+				let scrollBottom = Math.floor(scroll.scrollHeight) - Math.floor(scroll.scrollTop) - Math.floor(scroll.clientHeight);
 				if (msgData.type == "message")
 					msgPanel.appendChild(newMsg);
 				else {
@@ -457,8 +461,10 @@ export default class AppChat extends HTMLElement {
 					msgPanel.insertBefore(newMsg, firstMsg);
 				}
 
-				if (scrollBottom == 0)
+				if (scrollBottom <= 1 || msgData.owner == "owner") {
 					scroll.scrollTop = scroll.scrollHeight;
+					console.log("deveria passar aqui mesmo");
+				}
 			}
 		});
 	}
