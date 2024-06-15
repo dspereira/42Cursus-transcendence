@@ -10,7 +10,7 @@ class StateManager {
 		this.states = {
 			sidePanel: "open",
 			pageReady: false,
-			isLoggedIn: false,
+			isLoggedIn: null,
 			friendChatId: null,
 			newChatMessage: null,
 			chatMessagesCounter: 0,
