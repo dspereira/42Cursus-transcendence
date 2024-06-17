@@ -397,7 +397,6 @@ export default class AppChat extends HTMLElement {
 	}
 
 	#getTimeDate(timestamp) {
-
 		const msgDate = new Date(timestamp * 1000);
 		const now = new Date();
 		const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
@@ -461,10 +460,8 @@ export default class AppChat extends HTMLElement {
 					msgPanel.insertBefore(newMsg, firstMsg);
 				}
 
-				if (scrollBottom <= 1 || msgData.owner == "owner") {
+				if (scrollBottom <= 1 || msgData.owner == "owner")
 					scroll.scrollTop = scroll.scrollHeight;
-					console.log("deveria passar aqui mesmo");
-				}
 			}
 		});
 	}
