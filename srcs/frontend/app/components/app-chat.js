@@ -145,6 +145,10 @@ form {
 	border-radius: 8px;
 }
 
+.hide {
+	display: none;
+}
+
 `;
 
 const getHtml = function(data) {
@@ -383,13 +387,23 @@ export default class AppChat extends HTMLElement {
 		}
 	}
 
+	#disableMessageInput() {
+			this.html.querySelector("#text-area").disabled = true;
+			this.html.querySelector("#send-icon").classList.add("hide");
+	}
+
+	#enableMessageInput() {
+		this.html.querySelector("#text-area").disabled = false;
+		this.html.querySelector("#send-icon").classList.remove("hide");
+	}
+
 	#sendMessage() {
 		const submitForm = this.html.querySelector("#msg-submit");
 		submitForm.addEventListener("submit", (event) => {
 			event.preventDefault();
 			let input = this.html.querySelector("#text-area");
 			const msg = this.#getMessageToSend(input);
-			this.#clearInputMessage(input);
+			this.#disableMessageInput();
 			if (!msg)
 				return ;
 			chatWebSocket.send(msg);
@@ -459,9 +473,13 @@ export default class AppChat extends HTMLElement {
 					let firstMsg = msgPanel.querySelector("div")
 					msgPanel.insertBefore(newMsg, firstMsg);
 				}
-
 				if (scrollBottom <= 1 || msgData.owner == "owner")
 					scroll.scrollTop = scroll.scrollHeight;
+				
+				if (msgData.owner == "owner") {
+					this.#clearInputMessage();
+					this.#enableMessageInput();
+				}
 			}
 		});
 	}
