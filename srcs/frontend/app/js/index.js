@@ -41,7 +41,7 @@ const setupLoginStateChecker  = function(intervalSeconds) {
 }
 
 const startApp = function() {
-	setupLoginStateChecker(500);
+	setupLoginStateChecker(5);
 	router();
 	setHistoryEvents();
 }
