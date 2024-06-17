@@ -49,7 +49,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
 		if data_type == "connect":
 			await self.__connect_to_friend_chatroom(data_json['friend_id'])
 		elif data_type == "get_messages":
-			await self.__send_chat_group_messages(data_json['message_count'])
+			await self.__send_chat_group_messages(amount_messages=data_json['message_count'], id_browser=data_json['idBrowser'])
 		elif data_type == "message":
 			new_message = await self.__save_message(data_json['message'].strip())
 			await self.__send_message(new_message)
@@ -97,7 +97,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
 			'timestamp': event['timestamp']
 		}))
 
-	async def __send_get_message(self, message):
+	async def __send_get_message(self, message, id_browser):
 		message_content = message.content
 		user_id = await sync_to_async(lambda: message.user.id)()
 		timestamp = int(datetime.fromisoformat(str(message.timestamp)).timestamp())
@@ -109,7 +109,8 @@ class ChatConsumer(AsyncWebsocketConsumer):
 					'message': message_content,
 					'id': user_id,
 					'timestamp': timestamp,
-					'requester_id': self.user.id
+					'requester_id': self.user.id,
+					'idBrowser': id_browser
 				}
 			)
 
@@ -123,7 +124,8 @@ class ChatConsumer(AsyncWebsocketConsumer):
 			'message': event['message'],
 			'owner': owner,
 			'timestamp': event['timestamp'],
-			'requester_id': event['requester_id']
+			'requester_id': event['requester_id'],
+			'idBrowser': event['idBrowser']
 		}))
 
 	def __get_messages(self, start, limit):
@@ -135,7 +137,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
 			return filter_msgs.count()
 		return 0
 
-	async def __send_chat_group_messages(self, amount_messages):
+	async def __send_chat_group_messages(self, amount_messages, id_browser):
 		message_count = await sync_to_async(self.__get_count_messages)()
 		if message_count > amount_messages and message_count > 0:
 
@@ -149,7 +151,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
 			all_chat_group_messages = await sync_to_async(self.__get_messages)(message_start, message_limit)
 			all_chat_group_messages.reverse()
 			for message in all_chat_group_messages:
-				await self.__send_get_message(message=message)
+				await self.__send_get_message(message=message, id_browser=id_browser)
 
 	async def __get_room(self, friends_id):
 		room_name_1 = f'{self.user.id}_{friends_id}'

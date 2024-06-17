@@ -41,7 +41,6 @@ class ChatWebSocket {
 			this.socket.send(JSON.stringify({
 				"type": "message",
 				"message": msg,
-				"idBrowser": stateManager.getState("idBrowser"),
 			}));
 		}
 	}
@@ -59,7 +58,8 @@ class ChatWebSocket {
 		if (this.isOpen() && messagesCount >= 0) {
 			this.socket.send(JSON.stringify({
 				"type": "get_messages",
-				"message_count": messagesCount
+				"message_count": messagesCount,
+				"idBrowser": stateManager.getState("idBrowser")
 			}));
 		}
 	}
@@ -96,13 +96,16 @@ class ChatWebSocket {
 			if (event.data) {
 				const data = JSON.parse(event.data);
 				const dataType = data['type'];
+
 				if (dataType == "message") {
 					this.#updateMessageCounterState(stateManager.getState("chatMessagesCounter"));
 					stateManager.setState("newChatMessage", data);
 				}
 				else if (dataType == "get_message" && data['requester_id'] == stateManager.getState("userId")) {
-					this.#updateMessageCounterState(stateManager.getState("chatMessagesCounter"));
-					stateManager.setState("newChatMessage", data);
+					if (data['idBrowser'] == stateManager.getState("idBrowser")) {
+						this.#updateMessageCounterState(stateManager.getState("chatMessagesCounter"));
+						stateManager.setState("newChatMessage", data);
+					}
 				}
 			}
 		};
