@@ -56,7 +56,8 @@ def login(request):
 		user = authenticate(request, email_username=username, password=password)
 		if not user:
 			return JsonResponse({"message": "Invalid credentials. Please check your username or password."}, status=401)
-		if not user.active:
+		response = user_login(JsonResponse({"message": "success", "id": user.id}), user)
+		""" if not user.active:
 			send_email_verification(user=user)
 			return JsonResponse({"message": "check_mail_box"}, status=401)
 		if not user.last_login:
@@ -65,7 +66,7 @@ def login(request):
 		if tfa_option:
 			response = user_login(JsonResponse({"message": "success", "tfa_option": tfa_option}), user)
 		else:
-			return JsonResponse({"message": "Error in Two Factor Auth"}, status=401)
+			return JsonResponse({"message": "Error in Two Factor Auth"}, status=401) """
 		return response
 	return JsonResponse({"message": "Empty request body"}, status=400)
 

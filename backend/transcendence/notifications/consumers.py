@@ -108,7 +108,7 @@ class Notifications(AsyncWebsocketConsumer):
 			print_entry("friend_request")
 			to_user = await sync_to_async(user_model.get)(username=data_json["receiver_name"])
 			if to_user and to_user.username!= self.user.username:
-				data = {"from_user": self.user, "to_user": to_user, "game": data_json["game"]}
+				data = {"from_user": self.user, "to_user": to_user}
 				friend_req_notif = await sync_to_async(create_notification)(friend_req_notification_model, data)
 				await self.channel_layer.group_send(
 					to_user.username,
