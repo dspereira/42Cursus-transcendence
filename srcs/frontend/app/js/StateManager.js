@@ -16,6 +16,7 @@ class StateManager {
 			chatMessagesCounter: 0,
 			userId: null,
 			chatSocket: null,
+			idBrowser: null,
 		}
 		this.stateEvents = {
 			sidePanel: [],
@@ -26,6 +27,7 @@ class StateManager {
 			chatMessagesCounter: [],
 			userId: [],
 			chatSocket: [],
+			idBrowser: [],
 		}
 
 		StateManager.instance = this;

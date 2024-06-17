@@ -4,6 +4,9 @@ import chatWebSocket from "./ChatWebSocket.js";
 import checkUserLoginState from "../utils/checkUserLoginState.js";
 
 // Cada vez que o estado do evento altera entre true or false deve fechar ou abrir as ligações websockets
+
+stateManager.setState("idBrowser", Math.floor(Math.random() * 100000000000));
+
 stateManager.addEvent("isLoggedIn", (stateValue) => {
 	if (stateValue)
 		chatWebSocket.open();
@@ -41,7 +44,7 @@ const setupLoginStateChecker  = function(intervalSeconds) {
 }
 
 const startApp = function() {
-	setupLoginStateChecker(5);
+	setupLoginStateChecker(50);
 	router();
 	setHistoryEvents();
 }

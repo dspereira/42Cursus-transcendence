@@ -41,6 +41,7 @@ class ChatWebSocket {
 			this.socket.send(JSON.stringify({
 				"type": "message",
 				"message": msg,
+				"idBrowser": stateManager.getState("idBrowser"),
 			}));
 		}
 	}
@@ -58,7 +59,7 @@ class ChatWebSocket {
 		if (this.isOpen() && messagesCount >= 0) {
 			this.socket.send(JSON.stringify({
 				"type": "get_messages",
-				"message_count": messagesCount,
+				"message_count": messagesCount
 			}));
 		}
 	}
