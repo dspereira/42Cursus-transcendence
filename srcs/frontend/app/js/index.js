@@ -1,99 +1,54 @@
-import PageLogin from "../page-components/page-login.js";
-import PageSignup from "../page-components/page-signup.js";
+import { router, setHistoryEvents } from "./router.js"
+import stateManager from "./StateManager.js";
+import chatWebSocket from "./ChatWebSocket.js";
+import checkUserLoginState from "../utils/checkUserLoginState.js";
 
-const routes = {
-	"/index.html"	: PageLogin.componentName, // test route for develop in liveserver vscode
-	"/login"		: PageLogin.componentName,
-	"/signup"		: PageSignup.componentName
-}
+// Cada vez que o estado do evento altera entre true or false deve fechar ou abrir as ligações websockets
 
-const getPage = function (url) {
-	return routes[url];
-}
+stateManager.setState("idBrowser", Math.floor(Math.random() * 100000000000));
 
-const render = function(page) {
-	const app = document.querySelector("#app");
-	app.innerHTML = `<${page}></${page}>`;
-}
+stateManager.addEvent("isLoggedIn", (stateValue) => {
+	if (stateValue)
+		chatWebSocket.open();
+	else
+		chatWebSocket.close();
+});
 
-const router = function(newRoute) {
-	const route = newRoute || location.pathname;
-
-	history.pushState({route: route}, null, route);
-	render(getPage(route));
-	setAllRouteEvents();
-}
-
-
-// adicionar e remover os eventos para não causar problemas de eventos repetidos
-const setAllRouteEvents = function(){
-	const link = document.querySelector('a[href]');
-	const newRoute =  link.getAttribute('href');
-
-	//link.removeEventListener('click');
-
-	link.addEventListener('click', function(event) {
-		event.preventDefault();
-		router(newRoute);
-		console.log(`new event link ${newRoute}`);
-	});
-
-	window.onpopstate = function(event)
-	{
-		console.log(`onpopstate: ${event.state.route}`);
-		if (event.state.route)
-			router(event.state.route);
-	}
-}
-
-
-/*
-const setAllRouteEvents = function(){
-	const links = document.querySelectorAll('a[href]');
-
-	links.forEach(link => {
-		const newRoute = link.innerHTML;
-		link.addEventListener('click', function(event) {
-			event.preventDefault();
-			history.pushState({route: newRoute}, null, newRoute);
-			router();
-			console.log(`new event link ${newRoute}`);
+stateManager.addEvent("chatSocket", (stateValue) => {
+	console.log(`Chat socket: ${stateValue}`);
+	if (stateValue == "closed") {
+		checkUserLoginState((state, userId) => {
+			stateManager.setState("userId", userId);
+			if (state != stateManager.getState("isLoggedIn"))
+				stateManager.setState("isLoggedIn", state);
+				if (state)
+					chatWebSocket.open();
 		});
-	});
+	}
+	else if (stateValue == "open") {
+		chatWebSocket.connect(stateManager.getState("friendChatId"));
+		let elm = document.querySelector("#text-area");
+		if (elm && elm.value)
+			chatWebSocket.send(elm.value);
+	}
+});
+
+const setupLoginStateChecker  = function(intervalSeconds) {
+	setInterval(() => {
+		checkUserLoginState((state, userId) => {
+			stateManager.setState("userId", userId);
+			if (state != stateManager.getState("isLoggedIn"))
+				stateManager.setState("isLoggedIn", state);
+		});
+	}, intervalSeconds * 1000);
 }
-*/
+
+const startApp = function() {
+	setupLoginStateChecker(50);
+	router();
+	setHistoryEvents();
+}
 
 document.addEventListener('DOMContentLoaded', () => {
-	router(location.pathname)
+	startApp();
 });
-
-
-//router
-//const router1 = function()
-//{
-//}
-
-//render("/login");
-//render("/signup");
-
-
-/*
-document.addEventListener('DOMContentLoaded', function() {
-
-	let link = document.querySelector('a[href]');
-
-	link.addEventListener('click', function(event) {
-		event.preventDefault();
-		history.pushState({route: `/sadsfsdfdfg`}, null, `/sadsfsdfdfg`);
-		console.log(`Location: ${location.pathname}`);
-		
-	});
-
-	window.onpopstate = function(event)
-	{
-		console.log(event.state.route);
-		console.log(`Location onpop: ${location.pathname}`);
-	}
-
-});
-*/

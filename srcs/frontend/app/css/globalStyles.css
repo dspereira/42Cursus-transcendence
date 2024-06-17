@@ -1,0 +1,19 @@
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+}
+
+.content-small {
+    margin: 80px 24px 0px 224px;
+    /*background-color: #dbd9d7;*/
+}
+
+
+.content-large {
+    margin: 80px 24px 0px 84px;
+    /*background-color: #dbd9d7;*/
+}

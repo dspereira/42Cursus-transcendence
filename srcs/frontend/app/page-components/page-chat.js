@@ -1,30 +1,32 @@
-import {redirect} from "../js/router.js";
+import { adjustContent } from "../utils/adjustContent.js";
 import stateManager from "../js/StateManager.js";
 
-const styles = ``;
+const styles = `
+
+`;
 
 const getHtml = function(data) {
 	const html = `
-	<!--<app-header></app-header>-->
-	<div class="row">
-	  <div class="col-md-4 offset-md-4">
-		<login-form></login-form>
-	  </div>
-	</div>
+		<app-header></app-header>
+		<side-panel selected="chat"></side-panel>
+		<div class="content content-small">
+			<app-chat></app-chat>
+		</div>
 	`;
 	return html;
 }
 
 
-const title = "Login Page";
+const title = "Chat";
 
-export default class PageLogin extends HTMLElement {
-	static #componentName = "page-login";
+export default class PageChat extends HTMLElement {
+	static #componentName = "page-chat";
 
 	constructor() {
 		super()
 		this.#initComponent();
 		this.#render();
+		this.#scripts();
 	}
 
 	static get componentName() {
@@ -58,6 +60,16 @@ export default class PageLogin extends HTMLElement {
 		this.appendChild(this.html);
 		stateManager.setState("pageReady", true);
 	}
+
+	#scripts() {
+		adjustContent(this.html.querySelector(".content"));
+		this.#resetChatStates();
+	}
+
+	#resetChatStates() {
+		stateManager.setState("friendChatId", null);
+		stateManager.setState("chatMessagesCounter", 0);
+	}
 }
 
-customElements.define(PageLogin.componentName, PageLogin);
+customElements.define(PageChat.componentName, PageChat);

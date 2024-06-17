@@ -1,30 +1,30 @@
-import {redirect} from "../js/router.js";
+import { redirect } from "../js/router.js";
 import stateManager from "../js/StateManager.js";
 
-const styles = ``;
+const styles = `
+
+`;
 
 const getHtml = function(data) {
 	const html = `
-	<!--<app-header></app-header>-->
-	<div class="row">
-	  <div class="col-md-4 offset-md-4">
-		<login-form></login-form>
-	  </div>
-	</div>
+		<h1>Initial Page</h1>
+		<br>
+		<button type="button" class="btn btn-primary" id="login">Login</button>
+		<button type="button" class="btn btn-secondary" id="signup">SignUp</button>
 	`;
 	return html;
 }
 
+const title = "initial Page";
 
-const title = "Login Page";
-
-export default class PageLogin extends HTMLElement {
-	static #componentName = "page-login";
+export default class PageInitial extends HTMLElement {
+	static #componentName = "page-initial";
 
 	constructor() {
 		super()
 		this.#initComponent();
 		this.#render();
+		this.#scripts();
 	}
 
 	static get componentName() {
@@ -58,6 +58,19 @@ export default class PageLogin extends HTMLElement {
 		this.appendChild(this.html);
 		stateManager.setState("pageReady", true);
 	}
+
+	#scripts() {
+		const login = this.html.querySelector("#login");
+		const signup = this.html.querySelector("#signup");
+
+		login.addEventListener("click", (event) => {
+			redirect("/login");
+		});
+
+		signup.addEventListener("click", (event) => {
+			redirect("/signup"); 
+		})
+	}
 }
 
-customElements.define(PageLogin.componentName, PageLogin);
+customElements.define(PageInitial.componentName, PageInitial);

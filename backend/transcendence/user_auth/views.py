@@ -59,6 +59,8 @@ def login(request):
 		user = authenticate(request, email_username=username, password=password)
 		if not user:
 			return JsonResponse({"message": "Invalid credentials. Please check your username or password."}, status=401)
+		response = user_login(JsonResponse({"message": "success", "id": user.id}), user)
+		'''
 		if not user.active:
 			send_email_verification(user=user)
 			return JsonResponse({"message": "check_mail_box"}, status=401)
@@ -69,6 +71,7 @@ def login(request):
 			response = user_login(JsonResponse({"message": "success", "tfa_option": tfa_option}), user)
 		else:
 			return JsonResponse({"message": "Error in Two Factor Auth"}, status=401)
+		'''
 		return response
 	return JsonResponse({"message": "Empty request body"}, status=400)
 
@@ -151,6 +154,76 @@ def apiGetUsersList(request):
 	response = {"message": result_print, "users_count": users_count, "users_list": users_data}
 
 	return JsonResponse(response)
+
+
+# Test views
+@accepted_methods(["GET"])
+@login_required
+def get_user_id(request):
+	user_model = ModelManager(User)
+	if request.access_data:
+		user = user_model.get(id=request.access_data.sub)
+	else:
+		user = None
+
+	if user:
+		id = user.id
+	else:
+		return JsonResponse({"message": "No data, some errors occurred"})
+		
+	res_data = {
+		"user_id": id
+	}
+	return JsonResponse(res_data)
+
+@accepted_methods(["GET"])
+@login_required
+def get_username(request):
+	user_model = ModelManager(User)
+	if request.access_data:
+		user = user_model.get(id=request.access_data.sub)
+	else:
+		user = None
+
+	if user:
+		username = user.username
+	else:
+		return JsonResponse({"message": "No data, some errors occurred"})
+		
+	res_data = {
+		"username": username
+	}
+	return JsonResponse(res_data)
+
+
+@accepted_methods(["GET"])
+@login_required
+def get_user_email(request):
+	user_model = ModelManager(User)
+	if request.access_data:
+		user = user_model.get(id=request.access_data.sub)
+	else:
+		user = None
+
+	if user:
+		email = user.email
+	else:
+		return JsonResponse({"message": "No data, some errors occurred"})
+		
+	res_data = {
+		"email": email
+	}
+	return JsonResponse(res_data)
+
+@accepted_methods(["GET"])
+def check_login_status(request):
+	if request.access_data:
+		is_logged_in = True
+		user_id = request.access_data.sub
+	else:
+		is_logged_in = False
+		user_id = None
+	return JsonResponse({"logged_in": is_logged_in, "id": user_id})
 
 @accepted_methods(["POST"])
 def validate_email(request):

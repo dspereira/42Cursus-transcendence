@@ -1,25 +1,20 @@
-import {redirect} from "../js/router.js";
 import stateManager from "../js/StateManager.js";
 
 const styles = ``;
 
 const getHtml = function(data) {
 	const html = `
-	<!--<app-header></app-header>-->
-	<div class="row">
-	  <div class="col-md-4 offset-md-4">
-		<login-form></login-form>
-	  </div>
-	</div>
+		<a href="/">Home</a>
+		<h1>404 Not Found</h1>
 	`;
 	return html;
 }
 
+const title = "404 Not Found";
 
-const title = "Login Page";
+export default class Page404 extends HTMLElement {
 
-export default class PageLogin extends HTMLElement {
-	static #componentName = "page-login";
+	static #componentName = "page-404";
 
 	constructor() {
 		super()
@@ -58,6 +53,7 @@ export default class PageLogin extends HTMLElement {
 		this.appendChild(this.html);
 		stateManager.setState("pageReady", true);
 	}
+
 }
 
-customElements.define(PageLogin.componentName, PageLogin);
+customElements.define(Page404.componentName, Page404);
