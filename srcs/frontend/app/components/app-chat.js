@@ -438,7 +438,6 @@ export default class AppChat extends HTMLElement {
 			const day = msgDate.getDate() < 10 ? '0' + msgDate.getDate() : msgDate.getDate();
 			dateStr = `${year}-${month}-${day}`;
 		}
-
 		return `${dateStr} ${time}`;
 	}
 

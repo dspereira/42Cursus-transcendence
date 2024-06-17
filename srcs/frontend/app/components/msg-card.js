@@ -24,12 +24,10 @@ const styles = `
 	max-width: 80%;
 }
 
-
 .date-text {
 	display: flex;
 	flex-direction: column;
 }
-
 
 .msg-date {
 	font-size: 14px;
@@ -40,6 +38,7 @@ const styles = `
 	padding: 5px 8px 5px 8px;
 	border-radius: 8px;
 	font-size: 16px;
+	overflow-wrap: anywhere;
 }
 
 .msg-margin-left {
