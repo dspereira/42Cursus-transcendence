@@ -9,6 +9,7 @@ from asgiref.sync import sync_to_async
 class ChannelsAuthMiddleware(BaseMiddleware):
 
 	async def __call__(self, scope, receive, send):
+
 		scope['access_data'] = JwtData(self.__getAccessToken(scope))
 		return await super().__call__(scope, receive, send)
 
