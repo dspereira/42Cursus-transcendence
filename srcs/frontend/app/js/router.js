@@ -10,6 +10,7 @@ import PageSignup from "../page-components/page-signup.js";
 import Page404 from "../page-components/page-404.js";
 import PageInitial from "../page-components/page-initial.js";
 import PageLogout from "../page-components/page-logout.js";
+import PageFriends from "../page-components/page-friends.js";
 
 // Components
 import AppTest from "../components/app-test.js";
@@ -19,6 +20,7 @@ import SignupForm from "../components/signup-form.js";
 import SidePanel from "../components/side-panel.js";
 import AppChat from "../components/app-chat.js";
 import MsgCard from "../components/msg-card.js";
+import AppFriends from "../components/app-friends.js";
 
 // Others
 import stateManager from "./StateManager.js";
@@ -38,6 +40,7 @@ const routes = {
 	"/tournaments"		: PageTournaments.componentName,
 	"/notifications"	: PageNotifications.componentName,
 	"/configurations"	: PageConfigs.componentName,
+	"/friends"			: PageFriends.componentName,
 }
 
 const publicRoutes = ["/initial", "/login", "/signup"];
