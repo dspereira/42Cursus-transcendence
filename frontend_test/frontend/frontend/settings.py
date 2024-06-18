@@ -41,6 +41,7 @@ INSTALLED_APPS = [
 	'chat',
 	'two_factor_auth',
 	'notifications',
+    'user_profile'
 ]
 
 MIDDLEWARE = [

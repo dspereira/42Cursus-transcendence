@@ -3,8 +3,8 @@ from user_auth.models import User
 from live_chat.models import ChatRoom
 
 class FriendsRequestNotification(models.Model):
-	from_user = models.ForeignKey(User, related_name='from_user_friend_req', on_delete=models.CASCADE)
-	to_user = models.ForeignKey(User, related_name='to_user_friend_req', on_delete=models.CASCADE, db_index=True)
+	from_user = models.ForeignKey(User, related_name='from_user_friend_request', on_delete=models.CASCADE)
+	to_user = models.ForeignKey(User, related_name='to_user_friend_request', on_delete=models.CASCADE, db_index=True)
 	timestamp = models.DateTimeField(auto_now_add=True)
 	read = models.BooleanField(default=False)
 

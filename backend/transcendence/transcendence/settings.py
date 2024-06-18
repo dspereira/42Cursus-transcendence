@@ -53,6 +53,8 @@ INSTALLED_APPS = [
     'user_auth',
     'live_chat',
     'channels',
+    'user_profile',
+    'friendships',
     'generate_users', # test app
     'generate_chatrooms', # test app
 ]
@@ -67,7 +69,8 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'custom_middlewares.CorsMiddleware',
     'custom_middlewares.JwtMiddleware',
-    'custom_middlewares.BlacklistTokenMiddleware'
+    'custom_middlewares.BlacklistTokenMiddleware',
+	#'custom_middlewares.DataSanitize',
 ]
 
 AUTHENTICATION_BACKENDS = [
@@ -119,7 +122,6 @@ DATABASES = {
         'PORT': '5432',
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators

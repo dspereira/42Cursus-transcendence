@@ -7,3 +7,4 @@ migrations
 .idea/
 .env
 qr_auth.png
+media/
