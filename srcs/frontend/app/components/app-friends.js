@@ -14,8 +14,7 @@ const styles = `
 }
 
 .list {
-
-
+	width:100%;
 }
 
 button {
@@ -55,13 +54,13 @@ const getHtml = function(data) {
 				<button>
 					<span>
 						<i class="icon bi bi-search"></i>
-						<span class="icon-text">search</span>
+						<span class="icon-text">Search</span>
 					</span>
 				</button>
 				<button>
 					<span>
 						<i class="icon bi bi-people"></i>
-						<span class="icon-text">My Friends</span>
+						<span class="icon-text">All Friends</span>
 					</span>
 				</button>
 				<button>
@@ -71,7 +70,9 @@ const getHtml = function(data) {
 					</span>
 				</button>
 			</div>
-			<div class="list">lista</div>
+			<div class="list">
+				<user-card></user-card>
+			</div>
 		</div>
 	`;
 	return html;
