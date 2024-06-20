@@ -25,7 +25,7 @@ const styles = `
 	font-family: innherit;
 	text-align: left;
 	width: 100%;
-	margin-bottom: 16px; 
+	/*margin-bottom: 16px;*/
 }
 
 .icon {
@@ -34,19 +34,42 @@ const styles = `
 
 .icon-text {
 	font-size: 14px;
+	white-space: nowrap;
 }
 
 .lateral-menu button > span {
 	display: flex;
 	flex-direction: row;
 	align-items: center;
-	gap: 10px;
+	gap: 15px;
 }
 
 user-card {
 	display: block;
 	margin-bottom: 20px;
 }
+
+.options {
+	padding: 5px 10px 5px 10px;
+}
+
+.options:hover {
+	background-color: red;
+	border-radius: 8px;
+	padding: 5px 10px 5px 10px;
+}
+
+.search-icon {
+	position: absolute;
+	margin-top: 6px;
+	margin-left: 15px;
+	font-size: 16px;
+}
+
+.search input {
+	padding-left: 40px;
+} 
+
 `;
 
 const getHtml = function(data) {
@@ -54,26 +77,42 @@ const getHtml = function(data) {
 	const html = `
 		<div class="friends-section">
 			<div class="lateral-menu">
-				<button>
-					<span>
-						<i class="icon bi bi-search"></i>
-						<span class="icon-text">Search</span>
-					</span>
-				</button>
-				<button>
-					<span>
-						<i class="icon bi bi-people"></i>
-						<span class="icon-text">All Friends</span>
-					</span>
-				</button>
-				<button>
-					<span>
-						<i class="icon bi bi-person-plus"></i>
-						<span class="icon-text">Requests</span>
-					</span>
-				</button>
+				<div class="options">
+					<button>
+						<span>
+							<i class="icon bi bi-search"></i>
+							<span class="icon-text">Search</span>
+						</span>
+					</button>
+				</div>
+				<div class="options">
+					<button>
+						<span>
+							<i class="icon bi bi-people"></i>
+							<span class="icon-text">All Friends</span>
+						</span>
+					</button>
+				</div>
+				<div class="options">
+					<button>
+						<span>
+							<i class="icon bi bi-person-plus"></i>
+							<span class="icon-text">Requests</span>
+						</span>
+					</button>
+				</div>
 			</div>
 			<div class="list">
+
+				<div class="search">
+					<div class="form-group">
+						<i class="search-icon bi bi-search"></i>
+						<input type="text" class="form-control form-control-md" id="search" placeholder="Search friends..." maxlength="50">
+					</div>	
+				</div>
+
+				<br>
+
 				<user-card
 					profile-photo="https://api.dicebear.com/8.x/bottts/svg?seed=asdfsadfas"
 					username="dsilveri"

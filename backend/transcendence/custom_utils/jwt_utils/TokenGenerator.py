@@ -5,7 +5,7 @@ from datetime import datetime, timedelta
 ACCESS_TOKEN = "access"
 REFRESH_TOKEN = "refresh"
 EMAIL_VERIFICATION_TOKEN = "email_verification"
-ACCESS_TOKEN_EXP_MIN = 3000
+ACCESS_TOKEN_EXP_MIN = 5
 REFRESH_TOKEN_EXP_DAY = 1
 EMAIL_VERIFICATION_TOKEN_EXP_MIN = 5
 
