@@ -9,7 +9,7 @@ const getHtml = function(data) {
 		<app-header bell="selected"></app-header>
 		<side-panel selected="friends"></side-panel>
 		<div class="content content-small">
-            <app-friends></app-friends>
+			<app-friends></app-friends>
 		</div>
 	`;
 	return html;

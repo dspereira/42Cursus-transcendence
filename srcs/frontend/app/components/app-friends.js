@@ -1,10 +1,10 @@
 const styles = `
-
 .friends-section {
 	display: flex;
 	flex-direction: row;
 	justify-content: flex-start;
 	gap: 30px;
+	padding: 0px 10px 0px 10px;
 }
 
 .lateral-menu {
@@ -17,7 +17,7 @@ const styles = `
 	width:100%;
 }
 
-button {
+.lateral-menu button {
 	display: block;
 	background : transparent;
 	border: 0;
@@ -36,14 +36,17 @@ button {
 	font-size: 14px;
 }
 
-button > span {
+.lateral-menu button > span {
 	display: flex;
 	flex-direction: row;
 	align-items: center;
 	gap: 10px;
-
 }
 
+user-card {
+	display: block;
+	margin-bottom: 20px;
+}
 `;
 
 const getHtml = function(data) {
@@ -71,7 +74,16 @@ const getHtml = function(data) {
 				</button>
 			</div>
 			<div class="list">
-				<user-card></user-card>
+				<user-card
+					profile-photo="https://api.dicebear.com/8.x/bottts/svg?seed=asdfsadfas"
+					username="dsilveri"
+					friend="true">
+				</user-card>
+				<user-card
+					profile-photo="https://api.dicebear.com/8.x/bottts/svg?seed=asdfsadfassdf"
+					username="user"
+					friend="false">
+				</user-card>
 			</div>
 		</div>
 	`;

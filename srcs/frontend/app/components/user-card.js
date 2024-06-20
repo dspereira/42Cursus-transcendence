@@ -1,6 +1,3 @@
-
-// justify-content: flex-start | flex-end | center | space-between | space-around | space-evenly | start | end | left | right ... + safe | unsafe;
-
 const styles = `
 
 .user-card {
@@ -9,18 +6,11 @@ const styles = `
 	justify-content: space-between;
 	align-items: center;
 	border-radius: 8px;
-	padding: 10px 25px 10px 25px;
+	padding: 5px 25px;
 	background-color: #A9A9A9;
 }
 
 .user {
-	display: flex;
-	flex-direction: row;
-	align-items: center;
-	gap: 20px;
-}
-
-.buttons {
 	display: flex;
 	flex-direction: row;
 	align-items: center;
@@ -36,46 +26,88 @@ const styles = `
 	font-weight: bold;
 }
 
-.buttons i {
+button > i {
 	font-size: 16px;
+}
+
+button {
+	margin-left: 5px;
 }
 
 `;
 
-const getHtml = function(data) {
 
+const getBtn = function(type) {
+	let icone = null;
+	if (type == "play")
+		icone = `bi-controller`;
+	else if (type == "chat")
+		icone = `bi-chat`;
+	else if (type == "invite")
+		icone = `bi-person-plus`;
+
+	return `
+		<button type="button" class="btn btn-success">
+			<i class="bi ${icone}"></i>
+		</button>`;
+}
+
+const getHtml = function(data) {
+	let btns = null;
+	if (data.friend == "true") {
+		btns = `
+		${getBtn("chat")} 
+		${getBtn("play")}`;
+	}
+	else {
+		btns = `
+		${getBtn("invite")}`;
+	}
 	const html = `
-	
 		<div class="user-card">
 			<div class="user">
-				<img src="https://api.dicebear.com/8.x/bottts/svg?seed=candeia" class="user-photo" alt="profile photo chat"/>
-				<span class="user-name">utilizado_test</span>
+				<img src="${data.profilePhoto}" class="user-photo" alt="profile photo chat"/>
+				<span class="user-name">${data.username}</span>
 			</div>
 			<div class="buttons">
-				<div
-					<button type="button" class="btn btn-success">
-						<i class="bi bi-controller"></i>
-					</button>
-				</div>
-				<div
-					<button type="button" class="btn btn-success">
-						<i class="bi bi-person-plus"></i>
-					</button>
-				</div>
-				<div
-					<button type="button" class="btn btn-success">
-						<i class="bi bi-chat"></i>
-					</button>
-				</div>
+				${btns}
 			</div>
 		</div>
-
 	`;
 	return html;
 }
 
+
+/*
+const getHtml = function(data) {
+
+	const invite = ``
+
+	const html = `
+		<div class="user-card">
+			<div class="user">
+				<img src="${data.profilePhoto}" class="user-photo" alt="profile photo chat"/>
+				<span class="user-name">${data.username}</span>
+			</div>
+			<div>
+					<button type="button" class="btn btn-success">
+						<i class="bi bi-controller"></i>
+					</button>
+					<button type="button" class="btn btn-success">
+						<i class="bi bi-chat"></i>
+					</button>
+					<button type="button" class="btn btn-success">
+						<i class="bi bi-person-plus"></i>
+					</button>
+			</div>
+		</div>
+	`;
+	return html;
+}
+*/
+
 export default class UserCard extends HTMLElement {
-	static observedAttributes = [];
+	static observedAttributes = ["username", "profile-photo", "friend"];
 
 	constructor() {
 		super()
@@ -89,7 +121,9 @@ export default class UserCard extends HTMLElement {
 	}
 
 	attributeChangedCallback(name, oldValue, newValue) {
-
+		if (name == "profile-photo")
+			name = "profilePhoto";
+		this.data[name] = newValue;	
 	}
 
 	#initComponent() {
