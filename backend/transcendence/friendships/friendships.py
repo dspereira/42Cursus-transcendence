@@ -36,6 +36,16 @@ def get_friend_list(user_id, side):
 			data = list(filtered_list)
 	return data
 
+def get_friends_users_list(friends, side):
+	friends_users_list = []
+	if side == "left":
+		for friend in friends:
+			friends_users_list += list(user_profile_info_model.filter(id=friend.user2.id).values('id', 'default_image_seed'))
+	else:
+		for friend in friends:
+			friends_users_list += list(user_profile_info_model.filter(id=friend.user1.id).values('id', 'default_image_seed'))
+	return friends_users_list
+
 def is_already_friend(user1, user2):
 	check_1 = friend_list_model.get(user1=user1, user2=user2)
 	if check_1:
