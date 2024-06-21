@@ -9,4 +9,5 @@ urlpatterns = [
     path('accept_request/', views.accept_friend_request, name='accept_request'),
     path('decline_request/', views.decline_friend_request, name='decline_request'),
     path('remove_friendship/', views.remove_friendship, name='remove_friendship'),
+    path('search_user_by_name/', views.search_user_by_name, name='search_user_by_name'),
 ]
