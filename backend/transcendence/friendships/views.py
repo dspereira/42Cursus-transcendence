@@ -108,11 +108,12 @@ def get_friends(request):
 		}
 	return JsonResponse(result, safe=False)
 
+@login_required
 @accepted_methods(["POST"])
 def create_friend_request(request):
 	if request.body:
 		req_data = json.loads(request.body)
-		user = user_model.get(username=req_data["user"])
+		user = user_model.get(id=request.access_data.sub)
 		requested_user = user_model.get(username=req_data["requested_user"])
 		if user and requested_user:
 			if is_already_friend(user1=user, user2=requested_user):
@@ -133,6 +134,7 @@ def create_friend_request(request):
 		return JsonResponse({"message": "Error: Empty Body!"}, status=409)
 	return JsonResponse(result, status=200)
 
+@login_required
 @accepted_methods(["POST"])
 def accept_friend_request(request):
 	if request.body:
@@ -151,6 +153,7 @@ def accept_friend_request(request):
 		return JsonResponse({"message": "Error: No request_id"}, status=409)
 	return JsonResponse(result, status=200)
 
+@login_required
 @accepted_methods(["DELETE"])
 def decline_friend_request(request):
 	if request.body:
@@ -168,11 +171,12 @@ def decline_friend_request(request):
 		return JsonResponse({"message": "Error: No request_id"}, status=409)
 	return JsonResponse(result)
 
+@login_required
 @accepted_methods(["DELETE"])
 def remove_friendship(request):
 	if request.body:
 		req_data = json.loads(request.body)
-		user = user_model.get(username=req_data["user"])
+		user = user_model.get(id=request.access_data.sub)
 		friend = user_model.get(username=req_data["friend_username"])
 
 		if user and friend:
@@ -187,6 +191,7 @@ def remove_friendship(request):
 		return JsonResponse({"message": "Error: Empty Body!"}, status=409)
 	return JsonResponse({"message": "Friendship removed with success!"}, status=200)
 
+@login_required
 @accepted_methods(["GET"])
 def search_user_by_name(request):
 	
@@ -206,22 +211,27 @@ def search_user_by_name(request):
 
 	return JsonResponse({"message": message, "users": users_values}, status=200)
 
+@login_required
 @accepted_methods(["GET"])
 def search_friend_by_name(request):
 	
 	search_username = request.GET.get('key')
-	user_id = request.GET.get('user_id')
 	friends_values = None
 
-	friends_list = get_friends_users_list(friends=get_friend_list(user_id=user_id, side="left"), side="left")
-	friends_list += get_friends_users_list(friends=get_friend_list(user_id=user_id, side="right"), side="right")
+	user = user_model.get(id=request.access_data.sub)
+	if user:
+		friends_list = get_friends_users_list(friends=get_friend_list(user_id=user.id, side="left"), side="left")
+		friends_list += get_friends_users_list(friends=get_friend_list(user_id=user.id, side="right"), side="right")
 
-	if friends_list:
-		if not search_username or search_username == "" or search_username == '""':
-			friends_values = sorted(friends_list, key=lambda x: x["default_image_seed"])
+		if friends_list:
+			if not search_username or search_username == "" or search_username == '""':
+				friends_values = sorted(friends_list, key=lambda x: x["default_image_seed"])
+			else:
+				searched_friends = [friend for friend in friends_list if search_username.lower() in friend["default_image_seed"].lower()]
+				if searched_friends:
+					friends_values = sorted(searched_friends, key=lambda x: x["default_image_seed"])
+			return JsonResponse({"message": "Friends List Returned With Success", "friends": friends_values}, status=200)
 		else:
-			searched_friends = [friend for friend in friends_list if search_username.lower() in friend["default_image_seed"].lower()]
-			if searched_friends:
-				friends_values = sorted(searched_friends, key=lambda x: x["default_image_seed"])
-		return JsonResponse({"message": "Friends List Returned With Success", "friends": friends_values}, status=200)
-	return JsonResponse({"message": "Empty Friends List", "friends": None}, status=200)
+			return JsonResponse({"message": "Empty Friends List", "friends": None}, status=200)
+
+	return JsonResponse({"message": "Error: Invalid User"}, status=401)
