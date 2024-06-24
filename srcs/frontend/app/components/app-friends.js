@@ -182,21 +182,29 @@ export default class AppFriends extends HTMLElement {
 
 	#scripts() {
 		//this.#getFriendsList();
-		this.#getUsersList("p");
+		this.#getUsersList();
 	}
 
-	#getFriendsList() {
-		callAPI("GET", "http://127.0.0.1:8000/api/friends/search/", null, (res, data) => {
-			this.#insertUsersCards(data.users, true);
-		})
+	#getFriendsList(keyToSearch) {
+		let queryParams = "";
+		if (keyToSearch)
+			queryParams = `?key=${keyToSearch}`;
+
+		callAPI("GET", `http://127.0.0.1:8000/api/friends/search/${queryParams}`, null, (res, data) => {
+			if (res.ok)
+				this.#insertUsersCards(data.users, true);
+		});
 	}
 
-	#getUsersList(key) {
-		callAPI("GET", `http://127.0.0.1:8000/api/friends/search_user_by_name/?key=${key}`, null, (res, data) => {
-			if (res.ok) {
+	#getUsersList(keyToSearch) {
+		let queryParams = "";
+		if (keyToSearch)
+			queryParams = `?key=${keyToSearch}`;
+
+		callAPI("GET", `http://127.0.0.1:8000/api/friends/search_user_by_name/${queryParams}`, null, (res, data) => {
+			if (res.ok)
 				this.#insertUsersCards(data.users, false);
-			}
-		})
+		});
 	}
 
 	#insertUsersCards(userList, friend) {
