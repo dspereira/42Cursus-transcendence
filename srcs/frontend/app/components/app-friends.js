@@ -1,3 +1,5 @@
+import { callAPI } from "../utils/callApiUtils.js";
+
 const styles = `
 .friends-section {
 	display: flex;
@@ -68,7 +70,11 @@ user-card {
 
 .search input {
 	padding-left: 40px;
-} 
+}
+
+.search {
+	margin-bottom: 25px;
+}
 
 `;
 
@@ -103,26 +109,26 @@ const getHtml = function(data) {
 				</div>
 			</div>
 			<div class="list">
-
 				<div class="search">
 					<div class="form-group">
 						<i class="search-icon bi bi-search"></i>
 						<input type="text" class="form-control form-control-md" id="search" placeholder="Search friends..." maxlength="50">
 					</div>	
 				</div>
-
-				<br>
-
-				<user-card
-					profile-photo="https://api.dicebear.com/8.x/bottts/svg?seed=asdfsadfas"
-					username="dsilveri"
-					friend="true">
-				</user-card>
-				<user-card
-					profile-photo="https://api.dicebear.com/8.x/bottts/svg?seed=asdfsadfassdf"
-					username="user"
-					friend="false">
-				</user-card>
+				<div class="user-list">
+					<!--
+					<user-card
+						profile-photo="https://api.dicebear.com/8.x/bottts/svg?seed=asdfsadfas"
+						username="dsilveri"
+						friend="true">
+					</user-card>
+					<user-card
+						profile-photo="https://api.dicebear.com/8.x/bottts/svg?seed=asdfsadfassdf"
+						username="user"
+						friend="false">
+					</user-card>
+					-->
+				</div>
 			</div>
 		</div>
 	`;
@@ -175,7 +181,38 @@ export default class AppFriends extends HTMLElement {
 	}
 
 	#scripts() {
-	
+		//this.#getFriendsList();
+		this.#getUsersList("p");
+	}
+
+	#getFriendsList() {
+		callAPI("GET", "http://127.0.0.1:8000/api/friends/search/", null, (res, data) => {
+			this.#insertUsersCards(data.users, true);
+		})
+	}
+
+	#getUsersList(key) {
+		callAPI("GET", `http://127.0.0.1:8000/api/friends/search_user_by_name/?key=${key}`, null, (res, data) => {
+			if (res.ok) {
+				this.#insertUsersCards(data.users, false);
+			}
+		})
+	}
+
+	#insertUsersCards(userList, friend) {
+		const userListHtml = this.html.querySelector(".user-list");
+		let userCard = null;
+
+		userList.forEach((elm) => {
+			userCard = document.createElement("div");
+			userCard.innerHTML = `
+			<user-card
+				profile-photo="${elm.default_profile_image_url}"
+				username="${elm.default_image_seed}"
+				friend="${friend}">
+			</user-card>`;
+			userListHtml.appendChild(userCard);
+		});
 	}
 }
 

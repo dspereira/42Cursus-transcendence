@@ -36,7 +36,6 @@ button {
 
 `;
 
-
 const getBtn = function(type) {
 	let icone = null;
 	if (type == "play")
@@ -60,8 +59,7 @@ const getHtml = function(data) {
 		${getBtn("play")}`;
 	}
 	else {
-		btns = `
-		${getBtn("invite")}`;
+		btns = `${getBtn("invite")}`;
 	}
 	const html = `
 		<div class="user-card">
@@ -76,35 +74,6 @@ const getHtml = function(data) {
 	`;
 	return html;
 }
-
-
-/*
-const getHtml = function(data) {
-
-	const invite = ``
-
-	const html = `
-		<div class="user-card">
-			<div class="user">
-				<img src="${data.profilePhoto}" class="user-photo" alt="profile photo chat"/>
-				<span class="user-name">${data.username}</span>
-			</div>
-			<div>
-					<button type="button" class="btn btn-success">
-						<i class="bi bi-controller"></i>
-					</button>
-					<button type="button" class="btn btn-success">
-						<i class="bi bi-chat"></i>
-					</button>
-					<button type="button" class="btn btn-success">
-						<i class="bi bi-person-plus"></i>
-					</button>
-			</div>
-		</div>
-	`;
-	return html;
-}
-*/
 
 export default class UserCard extends HTMLElement {
 	static observedAttributes = ["username", "profile-photo", "friend"];
