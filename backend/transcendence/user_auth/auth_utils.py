@@ -5,6 +5,8 @@ from custom_utils.models_utils import ModelManager
 from user_auth.models import BlacklistToken
 from datetime import datetime
 
+from user_profile.models import UserProfileInfo
+
 def login(response, user):
 	user.last_login = timezone.now()
 	user.save()
@@ -57,6 +59,17 @@ def get_jwt_data(token: str):
 		return JwtData(token=token)
 	return None
 
+def create_user_profile_info(user):
+	user_profile_info_model = ModelManager(UserProfileInfo)
+	user_profile_default_image = _create_user_profile_default_image(username=user.username)
+
+	user_profile = user_profile_info_model.create(
+		user_id=user,
+		default_image_seed=user.username,
+		default_profile_image_url=user_profile_default_image
+	)
+	return user_profile
+
 def _generate_tokens(user_id):
 	token_gen = TokenGenerator(user_id)
 	token_gen.generate_tokens()
@@ -83,3 +96,7 @@ def _set_cookies(response, token_gen):
 		samesite="Lax",
 		path="/api/auth"
 	)
+
+def _create_user_profile_default_image(username):
+	image_url = "https://api.dicebear.com/8.x/bottts/svg?seed=" + username
+	return image_url

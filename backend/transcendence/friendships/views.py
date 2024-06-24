@@ -191,7 +191,7 @@ def remove_friendship(request):
 		return JsonResponse({"message": "Error: Empty Body!"}, status=409)
 	return JsonResponse({"message": "Friendship removed with success!"}, status=200)
 
-@login_required
+# @login_required
 @accepted_methods(["GET"])
 def search_user_by_name(request):
 	
@@ -202,12 +202,19 @@ def search_user_by_name(request):
 		users = user_profile_info_model.all()
 		message = f"Search Username is empty!"
 	else:
-		users = user_profile_info_model.filter(default_image_seed__icontains=search_username)
+		users = user_profile_info_model.filter(default_image_seed__istartswith=search_username)
 		message = f"Search Username: [{search_username}]"
 
 	if users:
-		users_values = list(users.values('id', 'default_image_seed'))
+		users_values = list(users.values('id', 'default_image_seed', 'default_profile_image_url'))
 		users_values = sorted(users_values, key=lambda x: x["default_image_seed"])
+
+		print("----------------------------------------------------")
+		for user in users_values:
+			print(f" {user['id']} | {user['default_image_seed']}")
+			print(f" {user['default_profile_image_url']}")
+			# print(f"{user.id} | {user.default_image_seed}")
+			print("----------------------------------------------------")
 
 	return JsonResponse({"message": message, "users": users_values}, status=200)
 
