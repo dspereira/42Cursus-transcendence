@@ -40,13 +40,30 @@ def register(request):
 		user = user_model.create(username=username, email=email, password=password)
 		if not user:
 			return JsonResponse({"message": "Error creating user"}, status=500)
-		send_email_verification(user)
+		#send_email_verification(user)
 		user_info = ModelManager(UserProfileInfo)
 		user_info.create(user_id=user, default_image_seed=username)
 
 	return JsonResponse({"message": "success"})
 
 @accepted_methods(["POST"])
+def login(request):
+	if request.body:
+		req_data = json.loads(request.body)
+		username = req_data.get("username")
+		password = req_data.get("password")
+		if not username:
+			return JsonResponse({"message": "Username field cannot be empty"}, status=400)
+		if not password:
+			return JsonResponse({"message": "Password field cannot be empty"}, status=400)
+		user = authenticate(request, email_username=username, password=password)
+		if not user:
+			return JsonResponse({"message": "Invalid credentials. Please check your username or password."}, status=401)
+		response = user_login(JsonResponse({"message": "success"}), user)
+		return response
+	return JsonResponse({"message": "Empty request body"}, status=400)
+
+""" @accepted_methods(["POST"])
 def login(request):
 	if request.body:
 		req_data = json.loads(request.body)
@@ -70,7 +87,7 @@ def login(request):
 		else:
 			return JsonResponse({"message": "Error in Two Factor Auth"}, status=401)
 		return response
-	return JsonResponse({"message": "Empty request body"}, status=400)
+	return JsonResponse({"message": "Empty request body"}, status=400) """
 
 @accepted_methods(["POST"])
 def logout(request):

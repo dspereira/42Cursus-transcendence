@@ -17,6 +17,8 @@ import SignupForm from "../components/signup-form.js";
 import SidePanel from "../components/side-panel.js";
 import AppChat from "../components/app-chat.js";
 import MsgCard from "../components/msg-card.js";
+import UserProfile from "../components/user-profile.js";
+import GameCard from "../components/game-card.js";
 
 // Others
 import stateManager from "./StateManager.js";
