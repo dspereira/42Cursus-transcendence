@@ -217,8 +217,9 @@ export default class AppFriends extends HTMLElement {
 			<user-card
 				profile-photo="${elm.default_profile_image_url}"
 				username="${elm.default_image_seed}"
-				friend="${friend}">
-			</user-card>`;
+				friend="${friend}"
+				user-id="${elm.id}"
+			></user-card>`;
 			userListHtml.appendChild(userCard);
 		});
 	}

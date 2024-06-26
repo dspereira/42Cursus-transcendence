@@ -1,5 +1,4 @@
 import chatWebSocket from "../js/ChatWebSocket.js";
-import stateManager from "../js/StateManager.js";
 
 const refreshUrl = "http://127.0.0.1:8000/api/auth/refresh_token";
 const refreshMethod = "POST";
@@ -22,7 +21,7 @@ export const callAPI = async function (method, url, data, callback_sucess, callb
 		if (callback_error)
 			callback_error(resApi.error);
 		else
-			console.log(resApi.error);
+			console.log(`callAPI Error: ${resApi.error}`);
 	}		
 }
 

@@ -1,3 +1,5 @@
+import { callAPI } from "../utils/callApiUtils.js";
+
 const styles = `
 
 .user-card {
@@ -38,15 +40,20 @@ button {
 
 const getBtn = function(type) {
 	let icone = null;
+	let colorBtn = "btn-success";
 	if (type == "play")
 		icone = `bi-controller`;
 	else if (type == "chat")
 		icone = `bi-chat`;
 	else if (type == "invite")
-		icone = `bi-person-plus`;
+		icone = `bi-person-plus-fill`;
+	else if (type == "uninvite") {
+		icone = `bi-person-dash-fill`;
+		colorBtn = "btn-danger";
+	}
 
 	return `
-		<button type="button" class="btn btn-success">
+		<button type="button" class="btn ${colorBtn} ${type}">
 			<i class="bi ${icone}"></i>
 		</button>`;
 }
@@ -76,7 +83,7 @@ const getHtml = function(data) {
 }
 
 export default class UserCard extends HTMLElement {
-	static observedAttributes = ["username", "profile-photo", "friend"];
+	static observedAttributes = ["username", "profile-photo", "friend", "user-id"];
 
 	constructor() {
 		super()
@@ -92,7 +99,9 @@ export default class UserCard extends HTMLElement {
 	attributeChangedCallback(name, oldValue, newValue) {
 		if (name == "profile-photo")
 			name = "profilePhoto";
-		this.data[name] = newValue;	
+		if (name == "user-id")
+			name = "userId";
+		this.data[name] = newValue;
 	}
 
 	#initComponent() {
@@ -123,10 +132,44 @@ export default class UserCard extends HTMLElement {
 	}
 
 	#scripts() {
-	
+		this.#btnEvents();
 	}
+
+	#friendRequest(method) {
+		const body = {"requested_user": this.data.userId};
+		callAPI(method, "http://127.0.0.1:8000/api/friends/request/", body, (res) => {
+			if (res.ok) {
+				const elm = this.html.querySelector(".buttons");
+				if (elm) {
+					this.#switchBtns(elm);
+				}
+			}
+		});
+	}
+
+	#switchBtns(elm) {
+		const btn = elm.querySelector("button");
+		const i = elm.querySelector("i");
+		btn.classList.toggle("uninvite");
+		btn.classList.toggle("invite");
+		btn.classList.toggle("btn-success");
+		btn.classList.toggle("btn-danger");
+		i.classList.toggle("bi-person-plus-fill");
+		i.classList.toggle("bi-person-dash-fill");
+	}
+
+	#btnEvents() {
+		let btn = this.html.querySelectorAll(".user-card button");
+		btn.forEach((elm) => {
+			elm.addEventListener("click", (event) => {
+				if (elm.classList.contains("invite"))
+					this.#friendRequest("POST");
+				else if (elm.classList.contains("uninvite"))
+					this.#friendRequest("DELETE");
+			});
+		});
+	}
+
 }
 
 customElements.define("user-card", UserCard);
-
-
