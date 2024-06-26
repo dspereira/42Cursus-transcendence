@@ -192,14 +192,13 @@ def remove_friendship(request):
 		return JsonResponse({"message": "Error: Empty Body!"}, status=409)
 	return JsonResponse({"message": "Friendship removed with success!"}, status=200)
 
-# @login_required
+@login_required
 @accepted_methods(["GET"])
 def search_user_by_name(request):
 	
+	user = user_model.get(id=request.access_data.sub)
 	search_username = request.GET.get('key')
 	users_values = None
-	main_user = user_model.get(id=request.GET.get('user'))
-	# user = user_model.get(id=request.access_data.sub)
 
 	if not search_username or search_username == "" or search_username == '""':
 		users = user_profile_info_model.all()
@@ -210,7 +209,7 @@ def search_user_by_name(request):
 
 	if users:
 		users_values = list(users.values('id', 'default_image_seed', 'default_profile_image_url'))
-		result_users = remove_user_and_friends_from_users_list(user_id=main_user.id, users_list=users_values)
+		result_users = remove_user_and_friends_from_users_list(user_id=user.id, users_list=users_values)
 		result_users = sorted(result_users, key=lambda x: x["default_image_seed"])
 
 	return JsonResponse({"message": message, "users": result_users}, status=200)
