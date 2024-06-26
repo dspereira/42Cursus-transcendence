@@ -11,6 +11,7 @@ from friendships.friendships import get_friend_info
 from friendships.friendships import is_already_friend
 from friendships.friendships import is_request_already_maded
 from friendships.friendships import get_friends_users_list
+from friendships.friendships import remove_user_and_friends_from_users_list
 
 user_profile_info_model = ModelManager(UserProfileInfo)
 friend_requests_model = ModelManager(FriendRequests)
@@ -197,6 +198,8 @@ def search_user_by_name(request):
 	
 	search_username = request.GET.get('key')
 	users_values = None
+	main_user = user_model.get(id=request.GET.get('user'))
+	# user = user_model.get(id=request.access_data.sub)
 
 	if not search_username or search_username == "" or search_username == '""':
 		users = user_profile_info_model.all()
@@ -207,16 +210,10 @@ def search_user_by_name(request):
 
 	if users:
 		users_values = list(users.values('id', 'default_image_seed', 'default_profile_image_url'))
-		users_values = sorted(users_values, key=lambda x: x["default_image_seed"])
+		result_users = remove_user_and_friends_from_users_list(user_id=main_user.id, users_list=users_values)
+		result_users = sorted(result_users, key=lambda x: x["default_image_seed"])
 
-		print("----------------------------------------------------")
-		for user in users_values:
-			print(f" {user['id']} | {user['default_image_seed']}")
-			print(f" {user['default_profile_image_url']}")
-			# print(f"{user.id} | {user.default_image_seed}")
-			print("----------------------------------------------------")
-
-	return JsonResponse({"message": message, "users": users_values}, status=200)
+	return JsonResponse({"message": message, "users": result_users}, status=200)
 
 @login_required
 @accepted_methods(["GET"])

@@ -40,10 +40,10 @@ def get_friends_users_list(friends, side):
 	friends_users_list = []
 	if side == "left":
 		for friend in friends:
-			friends_users_list += list(user_profile_info_model.filter(id=friend.user2.id).values('id', 'default_image_seed'))
+			friends_users_list += list(user_profile_info_model.filter(id=friend.user2.id).values('id', 'default_image_seed', 'default_profile_image_url'))
 	else:
 		for friend in friends:
-			friends_users_list += list(user_profile_info_model.filter(id=friend.user1.id).values('id', 'default_image_seed'))
+			friends_users_list += list(user_profile_info_model.filter(id=friend.user1.id).values('id', 'default_image_seed', 'default_profile_image_url'))
 	return friends_users_list
 
 def is_already_friend(user1, user2):
@@ -61,3 +61,11 @@ def is_request_already_maded(user1, user2):
 	if friend_requests_model.get(from_user=user2, to_user=user1):
 		return True
 	return False
+
+def remove_user_and_friends_from_users_list(user_id, users_list):
+    friends_list = get_friends_users_list(friends=get_friend_list(user_id=user_id, side="left"), side="left")
+    friends_list += get_friends_users_list(friends=get_friend_list(user_id=user_id, side="right"), side="right")
+    friends_ids = {friend['id'] for friend in friends_list}
+    friends_ids.add(user_id)
+    result_users = [user for user in users_list if user['id'] not in friends_ids]
+    return result_users
