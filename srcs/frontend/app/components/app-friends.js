@@ -210,15 +210,15 @@ export default class AppFriends extends HTMLElement {
 	#insertUsersCards(userList, friend) {
 		const userListHtml = this.html.querySelector(".user-list");
 		let userCard = null;
-
 		userList.forEach((elm) => {
 			userCard = document.createElement("div");
 			userCard.innerHTML = `
 			<user-card
-				profile-photo="${elm.default_profile_image_url}"
-				username="${elm.default_image_seed}"
+				profile-photo="${elm.image}"
+				username="${elm.username}"
 				friend="${friend}"
 				user-id="${elm.id}"
+				friend-request-sent="${elm.friend_request_sent}"
 			></user-card>`;
 			userListHtml.appendChild(userCard);
 		});

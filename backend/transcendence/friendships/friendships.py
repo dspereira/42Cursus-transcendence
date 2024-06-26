@@ -69,3 +69,29 @@ def remove_user_and_friends_from_users_list(user_id, users_list):
     friends_ids.add(user_id)
     result_users = [user for user in users_list if user['id'] not in friends_ids]
     return result_users
+
+def get_friends_request_list(user):
+	friends_requests_list= None
+	friends_requests = friend_requests_model.filter(from_user=user)
+	if friends_requests:
+		friends_requests_list = list(friends_requests.values('to_user'))
+	return friends_requests_list
+
+def check_if_friend_request(users_list, requests_list):
+	for users in users_list:
+		users['friend_request_sent'] = False
+	if requests_list:
+		for user in users_list:
+			for req in requests_list:
+				if user['id'] == req['to_user']:
+					user['friend_request_sent'] = True
+					break
+
+def rename_result_users_keys(users):
+	old_username = 'default_image_seed'
+	old_image = 'default_profile_image_url'
+	for item in users:
+		if old_username in item:
+			item['username'] = item.pop(old_username)
+		if old_image in item:
+			item['image'] = item.pop(old_image)

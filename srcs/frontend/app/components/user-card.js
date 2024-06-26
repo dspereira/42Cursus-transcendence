@@ -66,7 +66,10 @@ const getHtml = function(data) {
 		${getBtn("play")}`;
 	}
 	else {
-		btns = `${getBtn("invite")}`;
+		if (data.friendRequestSent == "true")
+			btns = `${getBtn("uninvite")}`;
+		else
+			btns = `${getBtn("invite")}`;
 	}
 	const html = `
 		<div class="user-card">
@@ -83,7 +86,7 @@ const getHtml = function(data) {
 }
 
 export default class UserCard extends HTMLElement {
-	static observedAttributes = ["username", "profile-photo", "friend", "user-id"];
+	static observedAttributes = ["username", "profile-photo", "friend", "user-id", "friend-request-sent"];
 
 	constructor() {
 		super()
@@ -101,6 +104,8 @@ export default class UserCard extends HTMLElement {
 			name = "profilePhoto";
 		if (name == "user-id")
 			name = "userId";
+		if (name == "friend-request-sent")
+			name = "friendRequestSent";
 		this.data[name] = newValue;
 	}
 
