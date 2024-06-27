@@ -213,13 +213,14 @@ export default class AppFriends extends HTMLElement {
 	#setSearchButtonEvent() {
 		const btn = this.html.querySelector(".search-btn");
 		btn.addEventListener("click", (event) => {
-			
+			this.#createSearchPage();
 		});
 	}
 
 	#setFriendsButtonEvent() {
 		const btn = this.html.querySelector(".friends-btn");
 		btn.addEventListener("click", (event) => {
+			this.#createFriendsPage();
 		});
 	}
 
@@ -278,11 +279,17 @@ export default class AppFriends extends HTMLElement {
 
 
 	#createSearchPage() {
-		
+		const listPanel = this.html.querySelector(".list-panel");
+		listPanel.innerHTML = `<div class="user-list"></div>`;
+
+		callAPI("GET", `http://127.0.0.1:8000/api/friends/search_user_by_name/`, null, (res, data) => {
+			if (res.ok)
+				this.#insertUsersCards1(data.users, "search");
+		});
 	}
 
 	#createFriendsPage() {
-
+		console.log("Entrei na pagina dos Friends");
 	}
 
 	#createRequestsPage() {
