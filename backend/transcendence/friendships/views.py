@@ -113,40 +113,6 @@ def get_friends(request):
 	return JsonResponse(result, safe=False)
 
 @login_required
-@accepted_methods(["POST", "DELETE"])
-def friend_request(request):
-	if request.body:
-		req_data = json.loads(request.body)
-		user = user_model.get(id=request.access_data.sub)
-		requested_user = user_model.get(id=req_data["requested_user"])
-		if user and requested_user:
-			if is_already_friend(user1=user, user2=requested_user):
-				return JsonResponse({"message": "Error: Friendship Already Exists!"}, status=409)
-			if request.method == "POST":
-				if is_request_already_maded(user1=user, user2=requested_user):
-					return JsonResponse({"message": "Error: Friendship Already Requested!"}, status=409)
-				friend_request = friend_requests_model.create(from_user=user, to_user=requested_user)
-				if friend_request:
-					result = {
-						"message": "Friendhip request sent",
-						"request_id": friend_request.id
-					}
-					return JsonResponse(result, status=201)
-				else:
-					return JsonResponse({"message": "Error: Failed To Create Friend Request!"}, status=500)
-			else:
-				friend_request =  friend_requests_model.get(from_user=user, to_user=requested_user)
-				if friend_request:
-					friend_request.delete()
-					return JsonResponse({"message": "Friend request deleted with success"}, status=200)
-				else:
-					return JsonResponse({"message": "Friend request does not exist"}, status=404)
-		else:
-			return JsonResponse({"message": "Error: Invalid User or Requested User!"}, status=400)
-	else:
-		return JsonResponse({"message": "Error: Empty Body!"}, status=400)
-
-@login_required
 @accepted_methods(["POST"])
 def accept_friend_request(request):
 	if request.body:

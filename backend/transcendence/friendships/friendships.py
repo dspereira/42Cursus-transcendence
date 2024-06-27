@@ -2,9 +2,7 @@ from friendships.models import FriendList, FriendRequests
 from custom_utils.models_utils import ModelManager
 from user_profile.models import UserProfileInfo
 from user_profile.aux import get_image_url
-from django.http import JsonResponse
 from user_auth.models import User
-import json
 
 user_profile_info_model = ModelManager(UserProfileInfo)
 friend_requests_model = ModelManager(FriendRequests)
@@ -74,7 +72,14 @@ def get_friends_request_list(user):
 	friends_requests_list= None
 	friends_requests = friend_requests_model.filter(from_user=user)
 	if friends_requests:
-		friends_requests_list = list(friends_requests.values('to_user'))
+		friends_requests_list = list(friends_requests.values('id', 'from_user', 'to_user'))
+	return friends_requests_list
+
+def get_friends_request_to_user_list(user):
+	friends_requests_list= None
+	friends_requests = friend_requests_model.filter(to_user=user)
+	if friends_requests:
+		friends_requests_list = list(friends_requests.values('id', 'from_user', 'to_user'))
 	return friends_requests_list
 
 def check_if_friend_request(users_list, requests_list):
