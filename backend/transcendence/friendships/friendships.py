@@ -106,3 +106,12 @@ def rename_result_users_keys(users):
 			item['username'] = item.pop(old_username)
 		if old_image in item:
 			item['image'] = item.pop(old_image)
+
+def remove_users_with_friends_request(user, users_list):
+	friends_requests = get_friends_request_list(user=user, own=False)
+	if friends_requests:
+		for user_elm in users_list:
+			for req in friends_requests:
+				if user_elm['id'] == req['from_user']:
+					users_list.remove(user_elm)
+					break

@@ -9,12 +9,12 @@ import json
 from friendships.friendships import get_friend_list
 from friendships.friendships import get_friend_info
 from friendships.friendships import is_already_friend
-from friendships.friendships import is_request_already_maded
 from friendships.friendships import get_friends_users_list
 from friendships.friendships import remove_user_and_friends_from_users_list
 from friendships.friendships import get_friends_request_list
 from friendships.friendships import check_if_friend_request
 from friendships.friendships import rename_result_users_keys
+from friendships.friendships import remove_users_with_friends_request
 
 user_profile_info_model = ModelManager(UserProfileInfo)
 friend_requests_model = ModelManager(FriendRequests)
@@ -156,7 +156,6 @@ def remove_friendship(request):
 		req_data = json.loads(request.body)
 		user = user_model.get(id=request.access_data.sub)
 		friend = user_model.get(username=req_data["friend_username"])
-
 		if user and friend:
 			friendship = is_already_friend(user1=user, user2=friend)
 			if friendship:
@@ -187,10 +186,10 @@ def search_user_by_name(request):
 	if users:
 		users_values = list(users.values('id', 'default_image_seed', 'default_profile_image_url'))
 		result_users = remove_user_and_friends_from_users_list(user_id=user.id, users_list=users_values)
+		remove_users_with_friends_request(user=user, users_list=result_users)
 		friends_requests_list = get_friends_request_list(user=user, own=True)
 		check_if_friend_request(users_list=result_users, requests_list=friends_requests_list)
 		rename_result_users_keys(users=result_users)
-
 		result_users = sorted(result_users, key=lambda x: x["username"])
 
 	return JsonResponse({"message": message, "users": result_users}, status=200)

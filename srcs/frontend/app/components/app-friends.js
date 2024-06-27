@@ -15,7 +15,7 @@ const styles = `
 	justify-content: flex-start;
 }
 
-.list {
+.list-panel {
 	width:100%;
 }
 
@@ -68,11 +68,11 @@ user-card {
 	font-size: 16px;
 }
 
-.search input {
+.search-bar input {
 	padding-left: 40px;
 }
 
-.search {
+.search-bar {
 	margin-bottom: 25px;
 }
 
@@ -84,7 +84,7 @@ const getHtml = function(data) {
 		<div class="friends-section">
 			<div class="lateral-menu">
 				<div class="options">
-					<button>
+					<button class="search-btn">
 						<span>
 							<i class="icon bi bi-search"></i>
 							<span class="icon-text">Search</span>
@@ -92,7 +92,7 @@ const getHtml = function(data) {
 					</button>
 				</div>
 				<div class="options">
-					<button>
+					<button class="friends-btn">
 						<span>
 							<i class="icon bi bi-people"></i>
 							<span class="icon-text">All Friends</span>
@@ -100,7 +100,7 @@ const getHtml = function(data) {
 					</button>
 				</div>
 				<div class="options">
-					<button>
+					<button class="requests-btn">
 						<span>
 							<i class="icon bi bi-person-plus"></i>
 							<span class="icon-text">Requests</span>
@@ -108,27 +108,14 @@ const getHtml = function(data) {
 					</button>
 				</div>
 			</div>
-			<div class="list">
-				<div class="search">
+			<div class="list-panel">
+				<div class="search-bar">
 					<div class="form-group">
 						<i class="search-icon bi bi-search"></i>
 						<input type="text" class="form-control form-control-md" id="search" placeholder="Search friends..." maxlength="50">
 					</div>	
 				</div>
-				<div class="user-list">
-					<!--
-					<user-card
-						profile-photo="https://api.dicebear.com/8.x/bottts/svg?seed=asdfsadfas"
-						username="dsilveri"
-						friend="true">
-					</user-card>
-					<user-card
-						profile-photo="https://api.dicebear.com/8.x/bottts/svg?seed=asdfsadfassdf"
-						username="user"
-						friend="false">
-					</user-card>
-					-->
-				</div>
+				<div class="user-list"></div>
 			</div>
 		</div>
 	`;
@@ -183,6 +170,9 @@ export default class AppFriends extends HTMLElement {
 	#scripts() {
 		//this.#getFriendsList();
 		this.#getUsersList("users");
+		this.#setSearchButtonEvent();
+		this.#setFriendsButtonEvent();
+		this.#setRequestsButtonEvent();
 	}
 
 	#getUsersList(listType, keyToSearch) {
@@ -192,15 +182,16 @@ export default class AppFriends extends HTMLElement {
 			queryParams = `?key=${keyToSearch}`;
 		if (listType == "friends")
 			path = "/api/friends/search/";
-		else
+		else if (listType == "users")
 			path = "/api/friends/search_user_by_name/";
+		//else 
+		//	path = "/api/friends/friends/request/";
 
 		callAPI("GET", `http://127.0.0.1:8000${path}${queryParams}`, null, (res, data) => {
 			if (res.ok)
 				this.#insertUsersCards(data.users, false);
 		});
 	}
-
 
 	#insertUsersCards(userList, friend) {
 		const userListHtml = this.html.querySelector(".user-list");
@@ -216,6 +207,76 @@ export default class AppFriends extends HTMLElement {
 				friend-request-sent="${elm.friend_request_sent}"
 			></user-card>`;
 			userListHtml.appendChild(userCard);
+		});
+	}
+	
+	#setSearchButtonEvent() {
+		const btn = this.html.querySelector(".search-btn");
+		btn.addEventListener("click", (event) => {
+			console.log("search");
+		});
+	}
+
+	#setFriendsButtonEvent() {
+		const btn = this.html.querySelector(".friends-btn");
+		btn.addEventListener("click", (event) => {
+			console.log("friends");
+		});
+	}
+
+	#setRequestsButtonEvent() {
+		const btn = this.html.querySelector(".requests-btn");
+		btn.addEventListener("click", (event) => {
+			this.#createRequestsPage();
+		});
+	}
+
+	#createSearchPage() {
+
+	}
+
+	#createFriendsPage() {
+
+	}
+
+	#insertUsersCards1(userList) {
+		const userListHtml = this.html.querySelector(".user-list");
+		let userCard = null;
+		userList.forEach((elm) => {
+			this.#getButtonsForElement(elm);
+			userCard = document.createElement("div");
+			userCard.innerHTML = `
+			<user-card
+				profile-photo="${elm.image}"
+				username="${elm.username}"
+				user-id="${elm.id}"
+				request-id="111"
+
+				friend-request-sent-btn: true,
+				friend-request-remove-btn: true,
+				friend-request-accept-btn: true,
+				friend-request-decline-btn: true,
+
+			></user-card>`;
+			userListHtml.appendChild(userCard);
+		});
+	}
+
+	#getButtonsForElement(elm) {
+		console.log(elm);
+	}
+
+
+	#createRequestsPage() {
+		const listPanel = this.html.querySelector(".list-panel");
+		listPanel.innerHTML = `<div class="user-list"></div>`;
+
+		callAPI("GET", `http://127.0.0.1:8000/api/friends/request/`, null, (res, data) => {
+			if (res.ok)
+				this.#insertUsersCards1(data.friend_requests);
+
+			
+
 		});
 	}
 }
