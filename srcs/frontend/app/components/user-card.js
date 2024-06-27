@@ -41,6 +41,9 @@ button {
 const getBtn = function(type) {
 	let icone = null;
 	let colorBtn = "btn-success";
+
+	console.log
+
 	if (type == "play")
 		icone = `bi-controller`;
 	else if (type == "chat")
@@ -51,6 +54,12 @@ const getBtn = function(type) {
 		icone = `bi-person-dash-fill`;
 		colorBtn = "btn-danger";
 	}
+	else if (type == "requestAccept")
+		icone = "bi-check2";
+	else if (type == "requestDecline") {
+		icone = "bi-x-lg";
+		colorBtn = "btn-danger";
+	}
 
 	return `
 		<button type="button" class="btn ${colorBtn} ${type}">
@@ -59,18 +68,16 @@ const getBtn = function(type) {
 }
 
 const getHtml = function(data) {
-	let btns = null;
-	if (data.friend == "true") {
-		btns = `
-		${getBtn("chat")} 
-		${getBtn("play")}`;
-	}
-	else {
-		if (data.friendRequestSent == "true")
-			btns = `${getBtn("uninvite")}`;
-		else
-			btns = `${getBtn("invite")}`;
-	}
+	let btns = "";
+	if (data.friendRequestSentBtn == "true")
+		btns = getBtn("invite");
+	if (data.friendRequestRemoveBtn == "true")
+		btns += getBtn("uninvite");
+	if (data.friendRequestAcceptBtn == "true")
+		btns += getBtn("requestAccept");
+	if (data.friendRequestDeclineBtn == "true")
+		btns += getBtn("requestDecline");
+
 	const html = `
 		<div class="user-card">
 			<div class="user">
@@ -86,7 +93,16 @@ const getHtml = function(data) {
 }
 
 export default class UserCard extends HTMLElement {
-	static observedAttributes = ["username", "profile-photo", "friend", "user-id", "friend-request-sent"];
+	static observedAttributes = [
+		"username", 
+		"profile-photo", 
+		"friend", 
+		"user-id", 
+		"friend-request-sent-btn",
+		"friend-request-remove-btn",
+		"friend-request-accept-btn",
+		"friend-request-decline-btn"
+	];
 
 	constructor() {
 		super()
@@ -102,10 +118,18 @@ export default class UserCard extends HTMLElement {
 	attributeChangedCallback(name, oldValue, newValue) {
 		if (name == "profile-photo")
 			name = "profilePhoto";
-		if (name == "user-id")
+		else if (name == "user-id")
 			name = "userId";
-		if (name == "friend-request-sent")
+		else if (name == "friend-request-sent")
 			name = "friendRequestSent";
+		else if (name == "friend-request-sent-btn")
+			name = "friendRequestSentBtn";
+		else if (name == "friend-request-remove-btn")
+			name = "friendRequestRemoveBtn";
+		else if (name == "friend-request-accept-btn")
+			name = "friendRequestAcceptBtn";
+		else if (name == "friend-request-decline-btn")
+			name = "friendRequestDeclineBtn";
 		this.data[name] = newValue;
 	}
 

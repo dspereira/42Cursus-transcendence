@@ -213,14 +213,13 @@ export default class AppFriends extends HTMLElement {
 	#setSearchButtonEvent() {
 		const btn = this.html.querySelector(".search-btn");
 		btn.addEventListener("click", (event) => {
-			console.log("search");
+			
 		});
 	}
 
 	#setFriendsButtonEvent() {
 		const btn = this.html.querySelector(".friends-btn");
 		btn.addEventListener("click", (event) => {
-			console.log("friends");
 		});
 	}
 
@@ -231,41 +230,60 @@ export default class AppFriends extends HTMLElement {
 		});
 	}
 
-	#createSearchPage() {
-
-	}
-
-	#createFriendsPage() {
-
-	}
-
-	#insertUsersCards1(userList) {
+	#insertUsersCards1(userList, page) {
 		const userListHtml = this.html.querySelector(".user-list");
 		let userCard = null;
+		let requestId = 0;
+
 		userList.forEach((elm) => {
-			this.#getButtonsForElement(elm);
+			const cardButtons = this.#getButtonsForElement(elm, page);
 			userCard = document.createElement("div");
+
+			if (page == "request")
+				requestId = elm["request_id"];
+			
 			userCard.innerHTML = `
 			<user-card
 				profile-photo="${elm.image}"
 				username="${elm.username}"
 				user-id="${elm.id}"
-				request-id="111"
-
-				friend-request-sent-btn: true,
-				friend-request-remove-btn: true,
-				friend-request-accept-btn: true,
-				friend-request-decline-btn: true,
-
+				request-id="${requestId}"
+				friend-request-sent-btn="${cardButtons.friendRequestSentBtn}",
+				friend-request-remove-btn="${cardButtons.friendRequestRemoveBtn}",
+				friend-request-accept-btn="${cardButtons.friendRequestAcceptBtn}",
+				friend-request-decline-btn="${cardButtons.friendRequestDeclineBtn}",
 			></user-card>`;
 			userListHtml.appendChild(userCard);
 		});
 	}
 
-	#getButtonsForElement(elm) {
-		console.log(elm);
+	#getButtonsForElement(elm, page) {
+		const cardButtons = {
+			friendRequestSentBtn: false,
+			friendRequestRemoveBtn: false,
+			friendRequestAcceptBtn: false,
+			friendRequestDeclineBtn: false,
+		}
+
+		if (page == "requests") {
+			cardButtons.friendRequestAcceptBtn = true;
+			cardButtons.friendRequestDeclineBtn = true;
+		}
+		else if (page == "search") {
+			cardButtons.friendRequestSentBtn = true;
+			cardButtons.friendRequestRemoveBtn = true;
+		}
+		return cardButtons;
 	}
 
+
+	#createSearchPage() {
+		
+	}
+
+	#createFriendsPage() {
+
+	}
 
 	#createRequestsPage() {
 		const listPanel = this.html.querySelector(".list-panel");
@@ -273,10 +291,7 @@ export default class AppFriends extends HTMLElement {
 
 		callAPI("GET", `http://127.0.0.1:8000/api/friends/request/`, null, (res, data) => {
 			if (res.ok)
-				this.#insertUsersCards1(data.friend_requests);
-
-			
-
+				this.#insertUsersCards1(data.friend_requests, "requests");
 		});
 	}
 }
