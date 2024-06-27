@@ -10,6 +10,7 @@ import PageSignup from "../page-components/page-signup.js";
 import Page404 from "../page-components/page-404.js";
 import PageInitial from "../page-components/page-initial.js";
 import PageLogout from "../page-components/page-logout.js";
+import PageGame from "../page-components/page-game.js";
 
 // Components
 import AppTest from "../components/app-test.js";
@@ -38,6 +39,7 @@ const routes = {
 	"/tournaments"		: PageTournaments.componentName,
 	"/notifications"	: PageNotifications.componentName,
 	"/configurations"	: PageConfigs.componentName,
+	"/game"				: PageGame.componentName,
 }
 
 const publicRoutes = ["/initial", "/login", "/signup"];
