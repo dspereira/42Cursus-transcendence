@@ -172,7 +172,7 @@ def remove_friendship(request):
 @login_required
 @accepted_methods(["GET"])
 def search_user_by_name(request):
-	
+
 	user = user_model.get(id=request.access_data.sub)
 	search_username = request.GET.get('key')
 	users_values = None
@@ -187,7 +187,7 @@ def search_user_by_name(request):
 	if users:
 		users_values = list(users.values('id', 'default_image_seed', 'default_profile_image_url'))
 		result_users = remove_user_and_friends_from_users_list(user_id=user.id, users_list=users_values)
-		friends_requests_list = get_friends_request_list(user=user)
+		friends_requests_list = get_friends_request_list(user=user, own=True)
 		check_if_friend_request(users_list=result_users, requests_list=friends_requests_list)
 		rename_result_users_keys(users=result_users)
 

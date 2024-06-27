@@ -61,23 +61,29 @@ def is_request_already_maded(user1, user2):
 	return False
 
 def remove_user_and_friends_from_users_list(user_id, users_list):
-    friends_list = get_friends_users_list(friends=get_friend_list(user_id=user_id, side="left"), side="left")
-    friends_list += get_friends_users_list(friends=get_friend_list(user_id=user_id, side="right"), side="right")
-    friends_ids = {friend['id'] for friend in friends_list}
-    friends_ids.add(user_id)
-    result_users = [user for user in users_list if user['id'] not in friends_ids]
-    return result_users
+	friends_list = get_friends_users_list(friends=get_friend_list(user_id=user_id, side="left"), side="left")
+	friends_list += get_friends_users_list(friends=get_friend_list(user_id=user_id, side="right"), side="right")
+	friends_ids = {friend['id'] for friend in friends_list}
+	friends_ids.add(user_id)
+	result_users = [user for user in users_list if user['id'] not in friends_ids]
+	return result_users
 
-def get_friends_request_list(user):
-	friends_requests_list= None
-	friends_requests = friend_requests_model.filter(from_user=user)
-	if friends_requests:
-		friends_requests_list = list(friends_requests.values('id', 'from_user', 'to_user'))
-	return friends_requests_list
+def get_friends_request_list(user, own: bool):
+	"""
+		Get the list of friend requests.
 
-def get_friends_request_to_user_list(user):
+		If `own` is True, the function returns the list of requests made by the user to others.
+		If `own` is False, it returns the list of requests made by others to the user.
+
+		Args:
+			user: The user object for whom the friend requests are being fetched.
+			own (bool): Flag indicating whether to fetch requests made by the user or to the user.
+	"""
 	friends_requests_list= None
-	friends_requests = friend_requests_model.filter(to_user=user)
+	if own:
+		friends_requests = friend_requests_model.filter(from_user=user)
+	else:
+		friends_requests = friend_requests_model.filter(to_user=user)
 	if friends_requests:
 		friends_requests_list = list(friends_requests.values('id', 'from_user', 'to_user'))
 	return friends_requests_list

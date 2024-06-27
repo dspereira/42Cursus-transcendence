@@ -1,8 +1,8 @@
-from custom_decorators import login_required
-from friendships.models import FriendRequests
 from django.utils.decorators import method_decorator
 from custom_utils.models_utils import ModelManager
 from user_profile.models import UserProfileInfo
+from friendships.models import FriendRequests
+from custom_decorators import login_required
 from django.http import JsonResponse
 from user_auth.models import User
 from django.views import View
@@ -10,7 +10,7 @@ import json
 
 from friendships.friendships import is_already_friend
 from friendships.friendships import is_request_already_maded
-from friendships.friendships import get_friends_request_to_user_list
+from friendships.friendships import get_friends_request_list
 
 user_profile_info_model = ModelManager(UserProfileInfo)
 friend_requests_model = ModelManager(FriendRequests)
@@ -22,7 +22,7 @@ class FriendRequestView(View):
 	def get(self, request):
 		user = user_model.get(id=request.access_data.sub)
 		if user:
-			friend_requests_ids = get_friends_request_to_user_list(user=user)
+			friend_requests_ids = get_friends_request_list(user=user, own=False)
 			friend_requests = []
 			if friend_requests_ids:
 				for req in friend_requests_ids:
