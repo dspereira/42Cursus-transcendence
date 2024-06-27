@@ -24,7 +24,7 @@ const styles = `
 	.profile-picture {
 		width: 100px;
 		height: auto;
-		clip-path:circle();
+		clip-path: circle;
 	}
 
 	.button-container {

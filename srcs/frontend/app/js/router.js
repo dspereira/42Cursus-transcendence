@@ -19,6 +19,7 @@ import AppChat from "../components/app-chat.js";
 import MsgCard from "../components/msg-card.js";
 import UserProfile from "../components/user-profile.js";
 import GameCard from "../components/game-card.js";
+import GameHistory from "../components/game-history.js";
 
 // Others
 import stateManager from "./StateManager.js";

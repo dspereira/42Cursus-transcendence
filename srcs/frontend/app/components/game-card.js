@@ -3,27 +3,14 @@ import {callAPI} from "../utils/callApiUtils.js";
 
 const styles = `
 
-	.game-history{
-		height: 800px;
-		overflow-y: scroll;
-	}
-	
-	.game-history::-webkit-scrollbar {
-		background: none;
-		scrollbar-width: thin;
-	}
-
-	.game-history::-webkit-scrollbar-thumb {
-		background: #E7E7E7;
-		border-radius: 50px;
-	}
-
 	.game-grid-container {
 		display: flex;
-		gap: 20px;
-		height: 120px;
-		align-items: flex-end;
-		border-radius: 20px;
+		justify-content: space-between;
+		margin-left: 175px;
+		margin-bottom: 20px;
+		height: 80px;
+		width: 650px;
+		border-radius: 25px;
 	}
 
 	.game-win {
@@ -36,175 +23,62 @@ const styles = `
 		background-color: #FF6666;
 	}
 
-	.grid-item {
-	   /*  padding: 20px; */
-		height: 100%;
-	}
-
-	.profile-picture-container {
+	.player-container {
 		display: flex;
-		flex-direction: column;
-		justify-content: center;
 		align-items: center;
-		height: 100%;
+		margin-left: 25px;
+		margin-right: 25px;
+		gap: 50px;
 	}
 
 	.profile-picture {
-		width: 80px;
+		width: 50px;
 		height: auto;
-		clip-path:circle();
+		clip-path: circle;
 	}
 
-	.text-container {
+	.username {
+		font-size: 16px;
+	}
+
+	.score-container {
 		display: flex;
-		flex-direction: column;
-		justify-content: center;
 		align-items: center;
-		height: 100%;
 	}
 
+	.score {
+		font-size: 24px;
+	}
 `;
 
 const getHtml = function(data) {
 
+	console.log(data);
 	const html = `
-	<div class="game-history">
 		<div class="game-grid-container game-win">
-			<div class="grid-item profile-picture-container">
-				<img id="profile-picture" class="profile-picture" src="	https://api.dicebear.com/8.x/bottts/svg?seed=pcampos-" alt="Profile Picture">
+			<div class="player-container">
+				<img class="profile-picture" src=${data.player1_image}>
+				<h1 class="username">${data.player1}</h1>
 			</div>
-			<div class="grid-item text-container">
-				<h2>pcampos-</h1>
+			<div class="score-container">
+				<h1 class="score">${data.player1_score} - ${data.player2_score}</h1>
 			</div>
-			<div class="grid-item text-container">
-				<h1 class="score">7 - 3</h1>
-			</div>
-			<div class="grid-item text-container">
-				<h2>ralves-g</h1>
-			</div>
-			<div class="grid-item profile-picture-container">
-				<img id="profile-picture" class="profile-picture" src="	https://api.dicebear.com/8.x/bottts/svg?seed=ralves-g" alt="Profile Picture">
+			<div class="player-container">
+			<h1 class="username">${data.player2}</h1>
+			<img class="profile-picture" src=${data.player2_image}>
 			</div>
 		</div>
-		<br><br>
-		<div class="game-grid-container game-loss">
-			<div class="grid-item profile-picture-container">
-				<img id="profile-picture" class="profile-picture" src="	https://api.dicebear.com/8.x/bottts/svg?seed=pcampos-" alt="Profile Picture">
-			</div>
-			<div class="grid-item text-container">
-				<h2>pcampos-</h2>
-			</div>
-			<div class="grid-item text-container">
-				<h1>6 - 7</h1>
-			</div>
-			<div class="grid-item text-container">
-				<h2>ralves-g</h2>
-			</div>
-			<div class="grid-item profile-picture-container">
-				<img id="profile-picture" class="profile-picture" src="	https://api.dicebear.com/8.x/bottts/svg?seed=ralves-g" alt="Profile Picture">
-			</div>
-		</div>
-		<br><br>
-		<div class="game-grid-container game-win">
-			<div class="grid-item profile-picture-container">
-				<img id="profile-picture" class="profile-picture" src="	https://api.dicebear.com/8.x/bottts/svg?seed=pcampos-" alt="Profile Picture">
-			</div>
-			<div class="grid-item text-container">
-				<h2>pcampos-</h1>
-			</div>
-			<div class="grid-item text-container">
-				<h1 class="score">7 - 3</h1>
-			</div>
-			<div class="grid-item text-container">
-				<h2>ralves-g</h1>
-			</div>
-			<div class="grid-item profile-picture-container">
-				<img id="profile-picture" class="profile-picture" src="	https://api.dicebear.com/8.x/bottts/svg?seed=ralves-g" alt="Profile Picture">
-			</div>
-		</div>
-		<br><br>
-		<div class="game-grid-container game-win">
-			<div class="grid-item profile-picture-container">
-				<img id="profile-picture" class="profile-picture" src="	https://api.dicebear.com/8.x/bottts/svg?seed=pcampos-" alt="Profile Picture">
-			</div>
-			<div class="grid-item text-container">
-				<h2>pcampos-</h1>
-			</div>
-			<div class="grid-item text-container">
-				<h1 class="score">7 - 3</h1>
-			</div>
-			<div class="grid-item text-container">
-				<h2>ralves-g</h1>
-			</div>
-			<div class="grid-item profile-picture-container">
-				<img id="profile-picture" class="profile-picture" src="	https://api.dicebear.com/8.x/bottts/svg?seed=ralves-g" alt="Profile Picture">
-			</div>
-		</div>
-		<br><br>
-		<div class="game-grid-container game-win">
-			<div class="grid-item profile-picture-container">
-				<img id="profile-picture" class="profile-picture" src="	https://api.dicebear.com/8.x/bottts/svg?seed=pcampos-" alt="Profile Picture">
-			</div>
-			<div class="grid-item text-container">
-				<h2>pcampos-</h1>
-			</div>
-			<div class="grid-item text-container">
-				<h1 class="score">7 - 3</h1>
-			</div>
-			<div class="grid-item text-container">
-				<h2>ralves-g</h1>
-			</div>
-			<div class="grid-item profile-picture-container">
-				<img id="profile-picture" class="profile-picture" src="	https://api.dicebear.com/8.x/bottts/svg?seed=ralves-g" alt="Profile Picture">
-			</div>
-		</div>
-		<br><br>
-		<div class="game-grid-container game-win">
-			<div class="grid-item profile-picture-container">
-				<img id="profile-picture" class="profile-picture" src="	https://api.dicebear.com/8.x/bottts/svg?seed=pcampos-" alt="Profile Picture">
-			</div>
-			<div class="grid-item text-container">
-				<h2>pcampos-</h1>
-			</div>
-			<div class="grid-item text-container">
-				<h1 class="score">7 - 3</h1>
-			</div>
-			<div class="grid-item text-container">
-				<h2>ralves-g</h1>
-			</div>
-			<div class="grid-item profile-picture-container">
-				<img id="profile-picture" class="profile-picture" src="	https://api.dicebear.com/8.x/bottts/svg?seed=ralves-g" alt="Profile Picture">
-			</div>
-		</div>
-		<br><br>
-		<div class="game-grid-container game-win">
-			<div class="grid-item profile-picture-container">
-				<img id="profile-picture" class="profile-picture" src="	https://api.dicebear.com/8.x/bottts/svg?seed=pcampos-" alt="Profile Picture">
-			</div>
-			<div class="grid-item text-container">
-				<h2>pcampos-</h1>
-			</div>
-			<div class="grid-item text-container">
-				<h1 class="score">7 - 3</h1>
-			</div>
-			<div class="grid-item text-container">
-				<h2>ralves-g</h1>
-			</div>
-			<div class="grid-item profile-picture-container">
-				<img id="profile-picture" class="profile-picture" src="	https://api.dicebear.com/8.x/bottts/svg?seed=ralves-g" alt="Profile Picture">
-			</div>
-		</div>
-	</div>
 	`;
 
 	return html;
 }
 
 export default class GameCard extends HTMLElement {
-	static observedAttributes = [];
+	static observedAttributes = ["player1", "player1_image", "player1_score", "player2", "player2_image", "player2_score"];
 
 	constructor() {
 		super();
+		this.data = {};
 	}
 
 	connectedCallback() {
@@ -214,7 +88,7 @@ export default class GameCard extends HTMLElement {
 	}
 
 	attributeChangedCallback(name, oldValue, newValue) {
-		
+		this.data[name] = newValue;
 	}
 
 	#initComponent() {

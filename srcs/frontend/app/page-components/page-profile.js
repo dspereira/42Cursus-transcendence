@@ -11,6 +11,14 @@ const styles = `
 	.red {
 		border: 1px solid red;
 	}
+
+	.profile {
+		width: 30%;
+	}
+
+	.history {
+		width: 70%;
+	}
 `;
 
 const getHtml = function(data) {
@@ -19,11 +27,11 @@ const getHtml = function(data) {
 		<side-panel selected="profile"></side-panel>
 		<div class="content content-small">
 			<div class="profile-container">
-				<div>
+				<div class="profile red">
 					<user-profile></user-profile>
 				</div>
-				<div>
-					<game-card></game-card>
+				<div class="history red">
+					<game-history></game-history>
 				</div>
 			</div>
 		</div>
