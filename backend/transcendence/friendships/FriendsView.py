@@ -1,7 +1,7 @@
 from django.utils.decorators import method_decorator
 from custom_utils.models_utils import ModelManager
 from custom_decorators import login_required
-from friendships.models import FriendRequests
+from friendships.models import FriendList, FriendRequests
 from django.http import JsonResponse
 from user_auth.models import User
 from django.views import View
@@ -12,6 +12,7 @@ from friendships.friendships import get_friends_users_list
 from friendships.friendships import get_friend_list
 
 friend_requests_model = ModelManager(FriendRequests)
+friend_list_model = ModelManager(FriendList)
 user_model = ModelManager(User)
 
 class FriendsView(View):

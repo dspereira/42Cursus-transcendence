@@ -169,47 +169,12 @@ export default class AppFriends extends HTMLElement {
 
 	#scripts() {
 		//this.#getFriendsList();
-		this.#getUsersList("users");
+		this.#createSearchPage();
 		this.#setSearchButtonEvent();
 		this.#setFriendsButtonEvent();
 		this.#setRequestsButtonEvent();
 	}
 
-	#getUsersList(listType, keyToSearch) {
-		let queryParams = "";
-		let path = null;
-		if (keyToSearch)
-			queryParams = `?key=${keyToSearch}`;
-		if (listType == "friends")
-			path = "/api/friends/search/";
-		else if (listType == "users")
-			path = "/api/friends/search_user_by_name/";
-		//else 
-		//	path = "/api/friends/friends/request/";
-
-		callAPI("GET", `http://127.0.0.1:8000${path}${queryParams}`, null, (res, data) => {
-			if (res.ok)
-				this.#insertUsersCards(data.users, false);
-		});
-	}
-
-	#insertUsersCards(userList, friend) {
-		const userListHtml = this.html.querySelector(".user-list");
-		let userCard = null;
-		userList.forEach((elm) => {
-			userCard = document.createElement("div");
-			userCard.innerHTML = `
-			<user-card
-				profile-photo="${elm.image}"
-				username="${elm.username}"
-				friend="${friend}"
-				user-id="${elm.id}"
-				friend-request-sent="${elm.friend_request_sent}"
-			></user-card>`;
-			userListHtml.appendChild(userCard);
-		});
-	}
-	
 	#setSearchButtonEvent() {
 		const btn = this.html.querySelector(".search-btn");
 		btn.addEventListener("click", (event) => {
@@ -234,15 +199,17 @@ export default class AppFriends extends HTMLElement {
 	#insertUsersCards1(userList, page) {
 		const userListHtml = this.html.querySelector(".user-list");
 		let userCard = null;
+		let cardButtons = null;
 		let requestId = 0;
 
 		userList.forEach((elm) => {
-			const cardButtons = this.#getButtonsForElement(elm, page);
+			cardButtons = this.#getButtonsForElement(elm, page);
 			userCard = document.createElement("div");
+			requestId = 0;
 
-			if (page == "request")
+			if (elm["request_id"])
 				requestId = elm["request_id"];
-			
+
 			userCard.innerHTML = `
 			<user-card
 				profile-photo="${elm.image}"
@@ -271,8 +238,10 @@ export default class AppFriends extends HTMLElement {
 			cardButtons.friendRequestDeclineBtn = true;
 		}
 		else if (page == "search") {
-			cardButtons.friendRequestSentBtn = true;
-			cardButtons.friendRequestRemoveBtn = true;
+			if (elm.friend_request_sent)
+				cardButtons.friendRequestRemoveBtn = true;
+			else
+				cardButtons.friendRequestSentBtn = true;
 		}
 		return cardButtons;
 	}
@@ -297,8 +266,12 @@ export default class AppFriends extends HTMLElement {
 		listPanel.innerHTML = `<div class="user-list"></div>`;
 
 		callAPI("GET", `http://127.0.0.1:8000/api/friends/request/`, null, (res, data) => {
-			if (res.ok)
-				this.#insertUsersCards1(data.friend_requests, "requests");
+			if (res.ok) {
+				if (data.friend_requests.length)
+					this.#insertUsersCards1(data.friend_requests, "requests");
+				else 
+					listPanel.innerHTML = "<h1>Nobody wants to be your friend! Looser!</h1>";
+			}
 		});
 	}
 }

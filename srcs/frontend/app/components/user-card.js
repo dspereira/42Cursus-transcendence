@@ -98,6 +98,7 @@ export default class UserCard extends HTMLElement {
 		"profile-photo", 
 		"friend", 
 		"user-id", 
+		"request-id",
 		"friend-request-sent-btn",
 		"friend-request-remove-btn",
 		"friend-request-accept-btn",
@@ -120,6 +121,8 @@ export default class UserCard extends HTMLElement {
 			name = "profilePhoto";
 		else if (name == "user-id")
 			name = "userId";
+		else if (name == "request-id")
+			name = "requestId";
 		else if (name == "friend-request-sent")
 			name = "friendRequestSent";
 		else if (name == "friend-request-sent-btn")
@@ -165,16 +168,57 @@ export default class UserCard extends HTMLElement {
 	}
 
 	#friendRequest(method) {
-		const body = {"requested_user": this.data.userId};
-		callAPI(method, "http://127.0.0.1:8000/api/friends/request/", body, (res) => {
+		if (method == "POST") {
+			const body = {"requested_user": this.data.userId};
+			callAPI(method, "http://127.0.0.1:8000/api/friends/request/", body, (res, data) => {
+				if (res.ok) {
+					const elm = this.html.querySelector(".buttons");
+					if (elm) {
+						this.data.requestId = data.request_id;
+						this.#switchBtns(elm);
+					}
+				}
+			});
+		}
+		else if (method == "DELETE") {
+			const body = {"request_id": this.data.requestId};
+			callAPI(method, "http://127.0.0.1:8000/api/friends/request/", body, (res, data) => {
+				if (res.ok) {
+					const elm = this.html.querySelector(".buttons");
+					if (elm)
+						this.#switchBtns(elm);
+				}
+			});
+		}
+	}
+
+	#friendRequest_2(elm_class, method, body) {
+		callAPI(method, "http://127.0.0.1:8000/api/friends/request/", body, (res, data) => {
 			if (res.ok) {
 				const elm = this.html.querySelector(".buttons");
-				if (elm) {
-					this.#switchBtns(elm);
+				if (elm)
+				{
+					if (elm_class == "invite" || elm_class == "uninvite") {
+						if (method == "POST")
+							this.data.requestId = data.request_id;
+						this.#switchBtns(elm);
+					}
+					else if (elm_class == "requestDecline") {
+						console.log("Decline do friend request!");
+					}
 				}
 			}
 		});
 	}
+
+	#friendRequest_3(method, body, callback) {
+		callAPI(method, "http://127.0.0.1:8000/api/friends/request/", body, (res, data) => {
+			if (res.ok)
+				callback(data);
+		});
+	}
+
+
 
 	#switchBtns(elm) {
 		const btn = elm.querySelector("button");
@@ -192,9 +236,11 @@ export default class UserCard extends HTMLElement {
 		btn.forEach((elm) => {
 			elm.addEventListener("click", (event) => {
 				if (elm.classList.contains("invite"))
-					this.#friendRequest("POST");
+					this.#friendRequest_2("invite", "POST", {"requested_user": this.data.userId});
 				else if (elm.classList.contains("uninvite"))
-					this.#friendRequest("DELETE");
+					this.#friendRequest_2("uninvite", "DELETE", {"request_id": this.data.requestId});
+				else if (elm.classList.contains("requestDecline"))
+					this.#friendRequest_2("requestDecline", "DELETE", {"request_id": this.data.requestId});
 			});
 		});
 	}

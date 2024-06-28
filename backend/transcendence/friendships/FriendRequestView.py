@@ -11,6 +11,7 @@ import json
 from friendships.friendships import is_already_friend
 from friendships.friendships import is_request_already_maded
 from friendships.friendships import get_friends_request_list
+from friendships.friendships import get_friend_request
 
 user_profile_info_model = ModelManager(UserProfileInfo)
 friend_requests_model = ModelManager(FriendRequests)
@@ -51,7 +52,7 @@ class FriendRequestView(View):
 					return JsonResponse({"message": "Error: Friendship Already Requested!"}, status=409)
 				friend_request = friend_requests_model.create(from_user=user, to_user=requested_user)
 				if friend_request:
-					return JsonResponse({"message": "Friendhip request sent"}, status=201)
+					return JsonResponse({"message": "Friendhip request sent", "request_id": friend_request.id}, status=201)
 				else:
 					return JsonResponse({"message": "Error: Failed To Create Friend Request!"}, status=500)
 			else:
@@ -64,11 +65,9 @@ class FriendRequestView(View):
 		if request.body:
 			req_data = json.loads(request.body)
 			user = user_model.get(id=request.access_data.sub)
-			requested_user = user_model.get(id=req_data["requested_user"])
-			if user and requested_user:
-				if is_already_friend(user1=user, user2=requested_user):
-					return JsonResponse({"message": "Error: Friendship Already Exists!"}, status=409)
-				friend_request =  friend_requests_model.get(from_user=user, to_user=requested_user)
+			request_id = req_data["request_id"]
+			if user and request_id:
+				friend_request =  get_friend_request(user=user, request_id=request_id)
 				if friend_request:
 					friend_request.delete()
 					return JsonResponse({"message": "Friend request deleted with success"}, status=200)

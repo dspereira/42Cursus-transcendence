@@ -96,6 +96,7 @@ def check_if_friend_request(users_list, requests_list):
 			for req in requests_list:
 				if user['id'] == req['to_user']:
 					user['friend_request_sent'] = True
+					user['request_id'] = req['id']
 					break
 
 def rename_result_users_keys(users):
@@ -115,3 +116,9 @@ def remove_users_with_friends_request(user, users_list):
 				if user_elm['id'] == req['from_user']:
 					users_list.remove(user_elm)
 					break
+
+def get_friend_request(user, request_id):
+	friend_request = friend_requests_model.get(id=request_id, from_user=user)
+	if not friend_request:
+		friend_request = friend_requests_model.get(id=request_id, to_user=user)
+	return friend_request
