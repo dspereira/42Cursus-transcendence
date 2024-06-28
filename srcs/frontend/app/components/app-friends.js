@@ -196,7 +196,7 @@ export default class AppFriends extends HTMLElement {
 		});
 	}
 
-	#insertUsersCards1(userList, page) {
+	#insertUsersCards(userList, page) {
 		const userListHtml = this.html.querySelector(".user-list");
 		let userCard = null;
 		let cardButtons = null;
@@ -216,10 +216,12 @@ export default class AppFriends extends HTMLElement {
 				username="${elm.username}"
 				user-id="${elm.id}"
 				request-id="${requestId}"
-				friend-request-sent-btn="${cardButtons.friendRequestSentBtn}",
-				friend-request-remove-btn="${cardButtons.friendRequestRemoveBtn}",
-				friend-request-accept-btn="${cardButtons.friendRequestAcceptBtn}",
-				friend-request-decline-btn="${cardButtons.friendRequestDeclineBtn}",
+				friend-request-sent-btn="${cardButtons.friendRequestSentBtn}"
+				friend-request-remove-btn="${cardButtons.friendRequestRemoveBtn}"
+				friend-request-accept-btn="${cardButtons.friendRequestAcceptBtn}"
+				friend-request-decline-btn="${cardButtons.friendRequestDeclineBtn}"
+				chat-btn="${cardButtons.chatBtn}"
+				play-btn="${cardButtons.playBtn}"
 			></user-card>`;
 			userListHtml.appendChild(userCard);
 		});
@@ -231,6 +233,8 @@ export default class AppFriends extends HTMLElement {
 			friendRequestRemoveBtn: false,
 			friendRequestAcceptBtn: false,
 			friendRequestDeclineBtn: false,
+			chatBtn: false,
+			playBtn: false
 		}
 
 		if (page == "requests") {
@@ -243,6 +247,10 @@ export default class AppFriends extends HTMLElement {
 			else
 				cardButtons.friendRequestSentBtn = true;
 		}
+		else if (page == "friends") {
+			cardButtons.chatBtn = true;
+			cardButtons.playBtn = true;
+		}
 		return cardButtons;
 	}
 
@@ -253,12 +261,18 @@ export default class AppFriends extends HTMLElement {
 
 		callAPI("GET", `http://127.0.0.1:8000/api/friends/search_user_by_name/`, null, (res, data) => {
 			if (res.ok)
-				this.#insertUsersCards1(data.users, "search");
+				this.#insertUsersCards(data.users, "search");
 		});
 	}
 
 	#createFriendsPage() {
-		console.log("Entrei na pagina dos Friends");
+		const listPanel = this.html.querySelector(".list-panel");
+		listPanel.innerHTML = `<div class="user-list"></div>`;
+
+		callAPI("GET", `http://127.0.0.1:8000/api/friends/friendships/`, null, (res, data) => {
+			if (res.ok)
+				this.#insertUsersCards(data.friends, "friends");
+		});	
 	}
 
 	#createRequestsPage() {
@@ -268,7 +282,7 @@ export default class AppFriends extends HTMLElement {
 		callAPI("GET", `http://127.0.0.1:8000/api/friends/request/`, null, (res, data) => {
 			if (res.ok) {
 				if (data.friend_requests.length)
-					this.#insertUsersCards1(data.friend_requests, "requests");
+					this.#insertUsersCards(data.friend_requests, "requests");
 				else 
 					listPanel.innerHTML = "<h1>Nobody wants to be your friend! Looser!</h1>";
 			}

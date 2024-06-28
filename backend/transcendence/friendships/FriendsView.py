@@ -10,6 +10,7 @@ import json
 from friendships.friendships import is_already_friend
 from friendships.friendships import get_friends_users_list
 from friendships.friendships import get_friend_list
+from friendships.friendships import rename_result_users_keys
 
 friend_requests_model = ModelManager(FriendRequests)
 friend_list_model = ModelManager(FriendList)
@@ -33,6 +34,8 @@ class FriendsView(View):
 					searched_friends = [friend for friend in friends_list if search_username.lower() in friend["default_image_seed"].lower()]
 					if searched_friends:
 						friends_values = sorted(searched_friends, key=lambda x: x["default_image_seed"])
+				if friends_values:
+					rename_result_users_keys(friends_values)
 				return JsonResponse({"message": "Friends List Returned With Success", "friends": friends_values}, status=200)
 			else:
 				return JsonResponse({"message": "Empty Friends List", "friends": None}, status=200)

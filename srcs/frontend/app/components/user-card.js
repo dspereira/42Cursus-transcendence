@@ -77,6 +77,10 @@ const getHtml = function(data) {
 		btns += getBtn("requestAccept");
 	if (data.friendRequestDeclineBtn == "true")
 		btns += getBtn("requestDecline");
+	if (data.chatBtn == "true")
+		btns += getBtn("chat");
+	if (data.playBtn == "true")
+		btns += getBtn("play");
 
 	const html = `
 		<div class="user-card">
@@ -102,7 +106,9 @@ export default class UserCard extends HTMLElement {
 		"friend-request-sent-btn",
 		"friend-request-remove-btn",
 		"friend-request-accept-btn",
-		"friend-request-decline-btn"
+		"friend-request-decline-btn",
+		"chat-btn",
+		"play-btn"
 	];
 
 	constructor() {
@@ -133,6 +139,10 @@ export default class UserCard extends HTMLElement {
 			name = "friendRequestAcceptBtn";
 		else if (name == "friend-request-decline-btn")
 			name = "friendRequestDeclineBtn";
+		else if (name == "chat-btn")
+			name = "chatBtn";
+		else if (name == "play-btn")
+			name = "playBtn";	
 		this.data[name] = newValue;
 	}
 
@@ -166,10 +176,18 @@ export default class UserCard extends HTMLElement {
 	#scripts() {
 		this.#setInviteAndDeclineEvent();
 		this.#setDeclineEvent();
+		this.#setAcceptEvent();
 	}
 
 	#friendRequest(method, body, callback) {
 		callAPI(method, "http://127.0.0.1:8000/api/friends/request/", body, (res, data) => {
+			if (res.ok)
+				callback(data);
+		});
+	}
+
+	#friends(method, body, callback) {
+		callAPI(method, "http://127.0.0.1:8000/api/friends/friendships/", body, (res, data) => {
 			if (res.ok)
 				callback(data);
 		});
@@ -213,6 +231,17 @@ export default class UserCard extends HTMLElement {
 			return ;
 		btn.addEventListener("click", () => {
 			this.#friendRequest("DELETE", {"request_id": this.data.requestId}, () => {
+				this.innerHTML = "";
+			});
+		});
+	}
+
+	#setAcceptEvent() {
+		let btn = this.html.querySelector(".user-card .requestAccept");
+		if (!btn)
+			return ;
+		btn.addEventListener("click", () => {
+			this.#friends("POST", {"request_id": this.data.requestId}, () => {
 				this.innerHTML = "";
 			});
 		});
