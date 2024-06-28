@@ -64,7 +64,7 @@ class FriendsView(View):
 		if request.body:
 			req_data = json.loads(request.body)
 			user = user_model.get(id=request.access_data.sub)
-			friend = user_model.get(username=req_data["friend_username"])
+			friend = user_model.get(id=req_data["friend_id"])
 			if user and friend:
 				friendship = is_already_friend(user1=user, user2=friend)
 				if friendship:

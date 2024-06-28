@@ -222,6 +222,7 @@ export default class AppFriends extends HTMLElement {
 				friend-request-decline-btn="${cardButtons.friendRequestDeclineBtn}"
 				chat-btn="${cardButtons.chatBtn}"
 				play-btn="${cardButtons.playBtn}"
+				remove-friend-btn="${cardButtons.removeFriendBtn}"
 			></user-card>`;
 			userListHtml.appendChild(userCard);
 		});
@@ -234,7 +235,8 @@ export default class AppFriends extends HTMLElement {
 			friendRequestAcceptBtn: false,
 			friendRequestDeclineBtn: false,
 			chatBtn: false,
-			playBtn: false
+			playBtn: false,
+			removeFriendBtn: false
 		}
 
 		if (page == "requests") {
@@ -250,6 +252,7 @@ export default class AppFriends extends HTMLElement {
 		else if (page == "friends") {
 			cardButtons.chatBtn = true;
 			cardButtons.playBtn = true;
+			cardButtons.removeFriendBtn = true;
 		}
 		return cardButtons;
 	}

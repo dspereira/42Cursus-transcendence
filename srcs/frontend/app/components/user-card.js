@@ -60,6 +60,10 @@ const getBtn = function(type) {
 		icone = "bi-x-lg";
 		colorBtn = "btn-danger";
 	}
+	else if (type == "removeFriend") {
+		icone = "bi-person-dash";
+		colorBtn = "btn-danger";
+	}
 
 	return `
 		<button type="button" class="btn ${colorBtn} ${type}">
@@ -81,6 +85,8 @@ const getHtml = function(data) {
 		btns += getBtn("chat");
 	if (data.playBtn == "true")
 		btns += getBtn("play");
+	if (data.removeFriendBtn == "true")
+		btns += getBtn("removeFriend");	
 
 	const html = `
 		<div class="user-card">
@@ -108,7 +114,8 @@ export default class UserCard extends HTMLElement {
 		"friend-request-accept-btn",
 		"friend-request-decline-btn",
 		"chat-btn",
-		"play-btn"
+		"play-btn",
+		"remove-friend-btn"
 	];
 
 	constructor() {
@@ -142,7 +149,9 @@ export default class UserCard extends HTMLElement {
 		else if (name == "chat-btn")
 			name = "chatBtn";
 		else if (name == "play-btn")
-			name = "playBtn";	
+			name = "playBtn";
+		else if (name == "remove-friend-btn")
+			name= "removeFriendBtn"
 		this.data[name] = newValue;
 	}
 
@@ -177,6 +186,7 @@ export default class UserCard extends HTMLElement {
 		this.#setInviteAndDeclineEvent();
 		this.#setDeclineEvent();
 		this.#setAcceptEvent();
+		this.#setRemoveEvent();
 	}
 
 	#friendRequest(method, body, callback) {
@@ -242,6 +252,17 @@ export default class UserCard extends HTMLElement {
 			return ;
 		btn.addEventListener("click", () => {
 			this.#friends("POST", {"request_id": this.data.requestId}, () => {
+				this.innerHTML = "";
+			});
+		});
+	}
+
+	#setRemoveEvent() {
+		let btn = this.html.querySelector(".user-card .removeFriend");
+		if (!btn)
+			return ;
+		btn.addEventListener("click", () => {
+			this.#friends("DELETE", {"friend_id": this.data.userId}, () => {
 				this.innerHTML = "";
 			});
 		});
