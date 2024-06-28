@@ -164,87 +164,59 @@ export default class UserCard extends HTMLElement {
 	}
 
 	#scripts() {
-		this.#btnEvents();
+		this.#setInviteAndDeclineEvent();
+		this.#setDeclineEvent();
 	}
 
-	#friendRequest(method) {
-		if (method == "POST") {
-			const body = {"requested_user": this.data.userId};
-			callAPI(method, "http://127.0.0.1:8000/api/friends/request/", body, (res, data) => {
-				if (res.ok) {
-					const elm = this.html.querySelector(".buttons");
-					if (elm) {
-						this.data.requestId = data.request_id;
-						this.#switchBtns(elm);
-					}
-				}
-			});
-		}
-		else if (method == "DELETE") {
-			const body = {"request_id": this.data.requestId};
-			callAPI(method, "http://127.0.0.1:8000/api/friends/request/", body, (res, data) => {
-				if (res.ok) {
-					const elm = this.html.querySelector(".buttons");
-					if (elm)
-						this.#switchBtns(elm);
-				}
-			});
-		}
-	}
-
-	#friendRequest_2(elm_class, method, body) {
-		callAPI(method, "http://127.0.0.1:8000/api/friends/request/", body, (res, data) => {
-			if (res.ok) {
-				const elm = this.html.querySelector(".buttons");
-				if (elm)
-				{
-					if (elm_class == "invite" || elm_class == "uninvite") {
-						if (method == "POST")
-							this.data.requestId = data.request_id;
-						this.#switchBtns(elm);
-					}
-					else if (elm_class == "requestDecline") {
-						console.log("Decline do friend request!");
-					}
-				}
-			}
-		});
-	}
-
-	#friendRequest_3(method, body, callback) {
+	#friendRequest(method, body, callback) {
 		callAPI(method, "http://127.0.0.1:8000/api/friends/request/", body, (res, data) => {
 			if (res.ok)
 				callback(data);
 		});
 	}
 
-
-
-	#switchBtns(elm) {
-		const btn = elm.querySelector("button");
-		const i = elm.querySelector("i");
+	#switchBtns(btn) {
+		const icon = btn.querySelector("i");
 		btn.classList.toggle("uninvite");
 		btn.classList.toggle("invite");
 		btn.classList.toggle("btn-success");
 		btn.classList.toggle("btn-danger");
-		i.classList.toggle("bi-person-plus-fill");
-		i.classList.toggle("bi-person-dash-fill");
+		icon.classList.toggle("bi-person-plus-fill");
+		icon.classList.toggle("bi-person-dash-fill");
 	}
+	#setInviteAndDeclineEvent() {
+		let btn = this.html.querySelector(".user-card .invite");
+		if (!btn)
+			btn = this.html.querySelector(".user-card .uninvite");
+		if(!btn)
+			return ;
+		btn.addEventListener("click", () => {
+			console.log("addEventListener");
 
-	#btnEvents() {
-		let btn = this.html.querySelectorAll(".user-card button");
-		btn.forEach((elm) => {
-			elm.addEventListener("click", (event) => {
-				if (elm.classList.contains("invite"))
-					this.#friendRequest_2("invite", "POST", {"requested_user": this.data.userId});
-				else if (elm.classList.contains("uninvite"))
-					this.#friendRequest_2("uninvite", "DELETE", {"request_id": this.data.requestId});
-				else if (elm.classList.contains("requestDecline"))
-					this.#friendRequest_2("requestDecline", "DELETE", {"request_id": this.data.requestId});
-			});
+			if (btn.classList.contains("invite")) {
+				this.#friendRequest("POST", {"requested_user": this.data.userId}, (data) => {
+					this.data.requestId = data.request_id;
+					this.#switchBtns(btn);
+				});
+			}
+			else {
+				this.#friendRequest("DELETE", {"request_id": this.data.requestId}, () => {
+					this.#switchBtns(btn);
+				});
+			}
 		});
 	}
 
+	#setDeclineEvent() {
+		let btn = this.html.querySelector(".user-card .requestDecline");
+		if (!btn)
+			return ;
+		btn.addEventListener("click", () => {
+			this.#friendRequest("DELETE", {"request_id": this.data.requestId}, () => {
+				this.innerHTML = "";
+			});
+		});
+	}
 }
 
 customElements.define("user-card", UserCard);
