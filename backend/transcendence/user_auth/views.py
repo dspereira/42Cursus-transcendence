@@ -11,6 +11,7 @@ from .auth_utils import update_blacklist
 from .auth_utils import send_email_verification
 from .auth_utils import get_jwt_data
 from .auth_utils import add_email_token_to_blacklist
+from .auth_utils import create_user_profile_info
 
 from two_factor_auth.two_factor import setup_default_tfa_configs
 from two_factor_auth.two_factor import initiate_two_factor_authentication
@@ -41,8 +42,8 @@ def register(request):
 		if not user:
 			return JsonResponse({"message": "Error creating user"}, status=500)
 		send_email_verification(user)
-		user_info = ModelManager(UserProfileInfo)
-		user_info.create(user_id=user, default_image_seed=username)
+		if not create_user_profile_info(user=user):
+			return JsonResponse({"message": "Error creating user profile"}, status=500)
 
 	return JsonResponse({"message": "success"})
 

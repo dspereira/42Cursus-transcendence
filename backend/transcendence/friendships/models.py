@@ -17,19 +17,11 @@ class FriendRequests(models.Model):
 class FriendList(models.Model):
 	user1 = models.ForeignKey(to=User, related_name='first', on_delete=models.CASCADE, db_index=True)
 	user2 = models.ForeignKey(to=User, related_name='second', on_delete=models.CASCADE, db_index=True)
+	user1_block = models.BooleanField(default=False)
+	user2_block = models.BooleanField(default=False)
 
 	def __str__(self) -> str:
 		return f'User1: {self.user1} | User2: {self.user2}'
 	
 	class Meta:
 		db_table = 'friend_list'
-
-class BlockList(models.Model):
-	user = models.ForeignKey(to=User, related_name='blocker', on_delete=models.CASCADE)
-	blocked_user = models.ForeignKey(to=User, related_name='blocked', on_delete=models.CASCADE)
-
-	def __str__(self) -> str:
-		return f'User: {self.user1} | Blocked: {self.user2}'
-	
-	class Meta:
-		db_table = 'block_list'

@@ -28,7 +28,7 @@ while getopts ":hy" opt; do
 done
 shift $((OPTIND -1))
 
-deleted_files=$(mktemp)
+deleted_dirs=$(mktemp)
 
 confirm() {
     local prompt="$1"
@@ -53,13 +53,14 @@ confirm() {
 
 for dir in $(find backend/transcendence frontend_test/frontend -type d -name "migrations"); do
     if confirm "Do you want to check the contents of $dir?"; then
-        if $auto_confirm || confirm "Do you want to delete all files inside $dir except '__init__.py'?"; then
-            find "$dir" -type f ! -name "__init__.py" -exec rm -v {} + >> "$deleted_files"
+        if $auto_confirm || confirm "Do you want to delete the directory $dir and all its contents?"; then
+            rm -rf "$dir"
+            echo "$dir" >> "$deleted_dirs"
         fi
     fi
 done
 
-echo "Deleted files:"
-cat "$deleted_files"
+echo "Deleted directories:"
+cat "$deleted_dirs"
 
-rm -f "$deleted_files"
+rm -f "$deleted_dirs"
