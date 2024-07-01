@@ -56,7 +56,7 @@ user-card {
 }
 
 .options:hover {
-	background-color: red;
+	background-color: #dbd9d7;
 	border-radius: 8px;
 	padding: 5px 10px 5px 10px;
 }
@@ -76,6 +76,11 @@ user-card {
 	margin-bottom: 25px;
 }
 
+.selected-option {
+	background-color: #dbd9d7;
+	border-radius: 8px;
+}
+
 `;
 
 const getHtml = function(data) {
@@ -83,7 +88,7 @@ const getHtml = function(data) {
 	const html = `
 		<div class="friends-section">
 			<div class="lateral-menu">
-				<div class="options">
+				<div class="options search">
 					<button class="search-btn">
 						<span>
 							<i class="icon bi bi-search"></i>
@@ -91,7 +96,7 @@ const getHtml = function(data) {
 						</span>
 					</button>
 				</div>
-				<div class="options">
+				<div class="options friends">
 					<button class="friends-btn">
 						<span>
 							<i class="icon bi bi-people"></i>
@@ -99,7 +104,7 @@ const getHtml = function(data) {
 						</span>
 					</button>
 				</div>
-				<div class="options">
+				<div class="options requests">
 					<button class="requests-btn">
 						<span>
 							<i class="icon bi bi-person-plus"></i>
@@ -113,7 +118,7 @@ const getHtml = function(data) {
 					<div class="form-group">
 						<i class="search-icon bi bi-search"></i>
 						<input type="text" class="form-control form-control-md" id="search" placeholder="Search friends..." maxlength="50">
-					</div>	
+					</div>
 				</div>
 				<div class="user-list"></div>
 			</div>
@@ -202,6 +207,10 @@ export default class AppFriends extends HTMLElement {
 		let cardButtons = null;
 		let requestId = 0;
 
+		if (!userList || userList.length == 0)
+			return ;
+
+		userListHtml.innerHTML = "";
 		userList.forEach((elm) => {
 			cardButtons = this.#getButtonsForElement(elm, page);
 			userCard = document.createElement("div");
@@ -257,39 +266,119 @@ export default class AppFriends extends HTMLElement {
 		return cardButtons;
 	}
 
-
 	#createSearchPage() {
 		const listPanel = this.html.querySelector(".list-panel");
-		listPanel.innerHTML = `<div class="user-list"></div>`;
+		listPanel.innerHTML = "";	
+		this.#addSearchBar(listPanel, "search");
+		this.#addUserList(listPanel);
 
+		this.#setOptionSelected("search");
 		callAPI("GET", `http://127.0.0.1:8000/api/friends/search_user_by_name/`, null, (res, data) => {
 			if (res.ok)
-				this.#insertUsersCards(data.users, "search");
+				if (data.users)
+					this.#insertUsersCards(data.users, "search");
+				else
+					listPanel.innerHTML = "<h1>There are no users to search for!</h1>";
 		});
 	}
 
 	#createFriendsPage() {
 		const listPanel = this.html.querySelector(".list-panel");
-		listPanel.innerHTML = `<div class="user-list"></div>`;
+		listPanel.innerHTML = "";	
+		this.#addSearchBar(listPanel, "friends");
+		this.#addUserList(listPanel);
 
+		this.#setOptionSelected("friends");
 		callAPI("GET", `http://127.0.0.1:8000/api/friends/friendships/`, null, (res, data) => {
-			if (res.ok)
-				this.#insertUsersCards(data.friends, "friends");
+			if (res.ok) {
+				if (data.friends)
+					this.#insertUsersCards(data.friends, "friends");
+				else
+					listPanel.innerHTML = "<h1>Add friends to see them here!</h1>";
+			}
 		});	
 	}
 
 	#createRequestsPage() {
 		const listPanel = this.html.querySelector(".list-panel");
-		listPanel.innerHTML = `<div class="user-list"></div>`;
+		listPanel.innerHTML = "";
+		this.#addUserList(listPanel);
 
+		this.#setOptionSelected("requests");
 		callAPI("GET", `http://127.0.0.1:8000/api/friends/request/`, null, (res, data) => {
 			if (res.ok) {
-				if (data.friend_requests.length)
+				if (data.friend_requests)
 					this.#insertUsersCards(data.friend_requests, "requests");
 				else 
-					listPanel.innerHTML = "<h1>Nobody wants to be your friend! Looser!</h1>";
+					listPanel.innerHTML = "<h1>Your friend requests list is empty. Make the first move</h1>";
 			}
 		});
+	}
+
+	#setOptionSelected(option) {
+		const options = this.html.querySelectorAll(".options");
+
+		if (!options)
+			return ;
+		options.forEach((elm) => {
+			if (elm.classList.contains(option))
+				elm.classList.add("selected-option");
+			else
+				elm.classList.remove("selected-option");
+		});
+	}
+
+	#addSearchBar(elm, type) {
+		const searchBar = document.createElement("div");
+		searchBar.classList.add("search-bar");
+
+		let placeholder = "";
+		if (type == "friends")
+			placeholder = "Search friends...";
+		if (type == "search")
+			placeholder = "Search search...";
+
+		searchBar.innerHTML = `
+		<div class="form-group">
+			<i class="search-icon bi bi-search"></i>
+			<input type="text" class="form-control form-control-md" id="search" placeholder="${placeholder}" maxlength="50">
+		</div>`;
+
+		const inp = searchBar.querySelector("input");
+		if (!inp)
+			return ;
+
+		inp.addEventListener("input", event => this.#search(type, inp.value));
+		elm.appendChild(searchBar);
+	}
+
+	#addUserList(elm) {
+		const userList = document.createElement("div");
+		userList.classList.add("user-list");
+		elm.appendChild(userList);
+	}
+
+	#search(type, value) {
+		const userList = this.html.querySelector(".user-list");
+		let path = "";
+
+		if (type=="search")
+			path = "/api/friends/search_user_by_name/";
+		else
+			path = "/api/friends/friendships/";
+
+		callAPI("GET", `http://127.0.0.1:8000${path}?key=${value}`, null, (res, data) => {
+			if (res.ok) {
+				console.log(data);
+				if (type=="search" && data.users)
+					this.#insertUsersCards(data.users, "search");
+				else if (type=="friends" && data.friends)
+					this.#insertUsersCards(data.friends, "friends");
+				else {
+					userList.innerHTML = "<h1>Username not Found!</h1>";
+				}
+			}
+		});		
 	}
 }
 

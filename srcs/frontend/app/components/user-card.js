@@ -219,8 +219,6 @@ export default class UserCard extends HTMLElement {
 		if(!btn)
 			return ;
 		btn.addEventListener("click", () => {
-			console.log("addEventListener");
-
 			if (btn.classList.contains("invite")) {
 				this.#friendRequest("POST", {"requested_user": this.data.userId}, (data) => {
 					this.data.requestId = data.request_id;
