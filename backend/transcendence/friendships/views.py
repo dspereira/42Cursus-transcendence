@@ -1,5 +1,5 @@
 from custom_decorators import accepted_methods, login_required
-from friendships.models import FriendList, BlockList, FriendRequests
+from friendships.models import FriendList, FriendRequests
 from custom_utils.models_utils import ModelManager
 from user_profile.models import UserProfileInfo
 from django.http import JsonResponse
@@ -13,77 +13,36 @@ from friendships.friendships import get_friends_request_list
 from friendships.friendships import check_if_friend_request
 from friendships.friendships import rename_result_users_keys
 from friendships.friendships import remove_users_with_friends_request
+from friendships.friendships import get_friendship
+from friendships.friendships import update_friendship_block_status
 
 user_profile_info_model = ModelManager(UserProfileInfo)
 friend_requests_model = ModelManager(FriendRequests)
 friend_list_model = ModelManager(FriendList)
-block_list_model = ModelManager(BlockList)
 user_model = ModelManager(User)
 
 @login_required
 @accepted_methods(["POST"])
-def unblock_user(request):
+def update_block_status(request):
 	if request.body:
 		user = user_model.get(id=request.access_data.sub)
 		if user:
 			req_data = json.loads(request.body.decode('utf-8'))
-			blocked_user = user_model.get(id=req_data["blocked_user"])
-			if blocked_user:
-				unblocke_user = block_list_model.get(user=user, blocked_user=blocked_user)
-				if unblocke_user:
-					unblocke_user.delete()
-					result = {
-						"message": "User was unblocked"
-					}
+			friend = user_model.get(id=req_data["friend"])
+			status = True if req_data["status"] == "block" else False
+			if friend:
+				friendship = get_friendship(user, friend)
+				if friendship:
+					update_friendship_block_status(friendship, friend, status)
+					return JsonResponse({"message": f"Block status updated to user {friend.username}"}, status=200)
 				else:
-					result = {
-						"message": "Error: User already unblocked"
-					}
+					return JsonResponse({"message": "Error: Can't find friendship"}, status=409)
 			else:
-				result = {
-					"message": "Error: Can't find user to unblock"
-				}
+				return JsonResponse({"message": "Error: Can't find user to block"}, status=409)
 		else:
-			result = {
-				"message": "Error: Can't find user"
-			}
+			return JsonResponse({"message": "Error: Can't find user"}, status=409)
 	else:
-		result = {
-			"message": "Error: Empty Body"
-		}
-	return JsonResponse(result, safe=False)
-
-@login_required
-@accepted_methods(["POST"])
-def block_user(request):
-	if request.body:
-		user = user_model.get(id=request.access_data.sub)
-		if user:
-			req_data = json.loads(request.body.decode('utf-8'))
-			blocked_user = user_model.get(id=req_data["blocked_user"])
-			if blocked_user:
-				if not block_list_model.get(user=user, blocked_user=blocked_user):
-					block_list_model.create(user=user, blocked_user=blocked_user)
-					result = {
-						"message": "User was blocked"
-					}
-				else:
-					result = {
-						"message": "Error: User already blocked"
-					}
-			else:
-				result = {
-					"message": "Error: Can't find user to block"
-				}
-		else:
-			result = {
-				"message": "Error: Can't find user"
-			}
-	else:
-		result = {
-			"message": "Error: Empty Body"
-		}
-	return JsonResponse(result, safe=False)
+		return JsonResponse({"message": "Error: Empty Body"}, status=400)
 
 @login_required
 @accepted_methods(["GET"])
@@ -91,6 +50,7 @@ def search_user_by_name(request):
 	user = user_model.get(id=request.access_data.sub)
 	search_username = request.GET.get('key')
 	users_values = None
+	result_users = None
 	if not search_username or search_username == "" or search_username == '""':
 		users = user_profile_info_model.all()
 		message = f"Search Username is empty!"

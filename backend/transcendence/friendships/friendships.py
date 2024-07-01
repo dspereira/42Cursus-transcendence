@@ -136,3 +136,19 @@ def delete_friend_chatroom(user, friend):
 		room_2 = chatroom_model.get(name=room_name_2)
 		if room_2:
 			room_2.delete()
+
+def get_friendship(user1, user2):
+	friendship_1 = friend_list_model.get(user1=user1, user2=user2)
+	if friendship_1:
+		return friendship_1
+	friendship_2 = friend_list_model.get(user1=user2, user2=user1)
+	if friendship_2:
+		return friendship_2
+	return None
+
+def update_friendship_block_status(friendship, friend, block_status):
+	if friendship.user1.id == friend.id:
+		friendship.user1_block = block_status
+	elif friendship.user2.id == friend.id:
+		friendship.user2_block = block_status
+	friendship.save()
