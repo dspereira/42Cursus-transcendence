@@ -35,6 +35,8 @@ class FriendRequestView(View):
 							"username": friend.default_image_seed,
 							"image": friend.default_profile_image_url
 						})
+			if not len(friend_requests):
+				friend_requests = None
 			return JsonResponse({"message": "Request List Get With Success", "friend_requests": friend_requests}, status=200)
 		else:
 			return JsonResponse({"message": "Error: Invalid User!"}, status=400)
