@@ -1,12 +1,14 @@
 from friendships.models import FriendList, FriendRequests
 from custom_utils.models_utils import ModelManager
 from user_profile.models import UserProfileInfo
+from live_chat.models import ChatRoom
 from user_profile.aux import get_image_url
 from user_auth.models import User
 
 user_profile_info_model = ModelManager(UserProfileInfo)
 friend_requests_model = ModelManager(FriendRequests)
 friend_list_model = ModelManager(FriendList)
+chatroom_model = ModelManager(ChatRoom)
 user_model = ModelManager(User)
 
 def get_friend_info(friendsip, side):
@@ -122,3 +124,15 @@ def get_friend_request(user, request_id):
 	if not friend_request:
 		friend_request = friend_requests_model.get(id=request_id, to_user=user)
 	return friend_request
+
+def delete_friend_chatroom(user, friend):
+	room_name_1 = f'{user.id}_{friend.id}'
+	room_name_2 = f'{friend.id}_{user.id}'
+
+	room_1 = chatroom_model.get(name=room_name_1)
+	if room_1:
+		room_1.delete()
+	else:
+		room_2 = chatroom_model.get(name=room_name_2)
+		if room_2:
+			room_2.delete()

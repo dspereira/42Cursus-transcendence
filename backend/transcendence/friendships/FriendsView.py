@@ -1,7 +1,8 @@
+from friendships.models import FriendList, FriendRequests
 from django.utils.decorators import method_decorator
 from custom_utils.models_utils import ModelManager
 from custom_decorators import login_required
-from friendships.models import FriendList, FriendRequests
+from live_chat.models import ChatRoom
 from django.http import JsonResponse
 from user_auth.models import User
 from django.views import View
@@ -11,9 +12,11 @@ from friendships.friendships import is_already_friend
 from friendships.friendships import get_friends_users_list
 from friendships.friendships import get_friend_list
 from friendships.friendships import rename_result_users_keys
+from friendships.friendships import delete_friend_chatroom
 
 friend_requests_model = ModelManager(FriendRequests)
 friend_list_model = ModelManager(FriendList)
+chatroom_model = ModelManager(ChatRoom)
 user_model = ModelManager(User)
 
 class FriendsView(View):
@@ -48,16 +51,22 @@ class FriendsView(View):
 			request_id = req_data["request_id"]
 			friend_request = friend_requests_model.get(id=request_id)
 			if friend_request:
-				friend_list_model.create(user1=friend_request.from_user , user2=friend_request.to_user)
-				result = {
-					"message": str(friend_request.to_user.username) + " accepted your friend request.",
-				}
-				friend_request.delete()
+				friendship = friend_list_model.create(user1=friend_request.from_user , user2=friend_request.to_user)
+				if friendship:
+					friend_request.delete()
+					chat_name = str(friend_request.from_user.id) + "_" + str(friend_request.to_user.id)
+					chatroom = chatroom_model.create(name=chat_name)
+					if chatroom:
+						return JsonResponse({"message": str(friend_request.to_user.username) + " accepted your friend request."}, status=201)
+					else:
+						friendship.delete()
+						return JsonResponse({"message": "Error: Failed the criation of friend."}, status=409)
+				else:
+					return JsonResponse({"message": "Error: Failed the criation of friend."}, status=409)
 			else:
 				return JsonResponse({"message": "Error: request_id does not exist"}, status=409)
 		else:
 			return JsonResponse({"message": "Error: No request_id"}, status=409)
-		return JsonResponse(result, status=200)
 
 	@method_decorator(login_required)
 	def delete(self, request):
@@ -69,6 +78,7 @@ class FriendsView(View):
 				friendship = is_already_friend(user1=user, user2=friend)
 				if friendship:
 					friendship.delete()
+					delete_friend_chatroom(user, friend)
 				else:
 					return JsonResponse({"message": "Error: Users are not friends!"}, status=409)
 			else:
