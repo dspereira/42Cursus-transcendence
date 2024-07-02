@@ -22,6 +22,7 @@ import AppChat from "../components/app-chat.js";
 import MsgCard from "../components/msg-card.js";
 import AppFriends from "../components/app-friends.js";
 import UserCard from "../components/user-card.js";
+import ChatFriendsList from "../components/chat-friends-list.js";
 
 // Others
 import stateManager from "./StateManager.js";

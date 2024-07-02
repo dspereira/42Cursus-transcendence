@@ -6,32 +6,6 @@ const styles = `
 	display: flex;
 }
 
-.friend-list {
-	margin-right: 25px;
-}
-
-/* Friend List */
-
-.user {
-	display: flex;
-	cursor: pointer;
-	align-items: center;
-	gap: 10px;
-	margin-bottom: 20px;
-	padding: 10px;
-}
-
-.user .profile-photo {
-	width: 50px;
-	height: auto;
-	clip-path:circle();
-}
-
-.user .name {
-	font-size: 16px;
-	font-weight: bold;
-}
-
 /* Chat section */
 
 .chat-section {
@@ -140,11 +114,6 @@ form {
 	transform: scale(1.1);
 }
 
-.friend-selected {
-	background-color: #4287f5;
-	border-radius: 8px;
-}
-
 .hide {
 	display: none;
 }
@@ -159,7 +128,9 @@ const getHtml = function(data) {
 	
 	<div class="chat">
 
-		<div class="friend-list"></div>
+		<!--<div class="friend-list"></div>-->
+
+		<chat-friends-list></chat-friends-list>
 
 		<div class="chat-section">
 
@@ -216,7 +187,6 @@ export default class AppChat extends HTMLElement {
 		this.#initComponent();
 		this.#render();
 		this.#scripts();
-		//this.#socket();
     }
 
 	attributeChangedCallback(name, oldValue, newValue) {
@@ -238,9 +208,9 @@ export default class AppChat extends HTMLElement {
 	}
 
 	#styles() {
-			if (styles)
-				return `@scope (.${this.elmtId}) {${styles}}`;
-			return null;
+		if (styles)
+			return `@scope (.${this.elmtId}) {${styles}}`;
+		return null;
 	}
 
 	#html(data){
@@ -254,66 +224,11 @@ export default class AppChat extends HTMLElement {
 	}
 
 	#scripts() {
-		const friendList = getFriendsFakeCall();
-		this.#createFriendListHtml(friendList);
 		this.#resizeMessageInput();
 		this.#setSubmitEvents();
 		this.#sendMessage();
-		this.#setFriendClickEventHandler();
-		this.#setStateEvent();
 		this.#newMessageEvent();
 		this.#chatScrollEvent();
-	}
-
-	#createFriendListHtml(friendList) {
-		const friendListHtml = this.html.querySelector(".friend-list");
-		friendList.forEach((friendObj) => {
-			friendListHtml.appendChild(this.#getFriendHtml(friendObj));
-		})
-	}
-
-	#getFriendHtml(friendObj) {
-		const elm = document.createElement("div");
-		elm.classList.add("user");
-		//elm.classList.add("friend-selected");
-		elm.id = `id-${friendObj.id}`;
-		if (friendObj) {
-			elm.innerHTML = `
-			<img src="${friendObj.image}" class="profile-photo" alt="profile photo chat"/>
-			<span class="name">${friendObj.username}</span>`;
-		}
-		return elm;
-	}
-
-	#removeAllSelectedFriends(friends) {
-		friends.forEach((elm) => {
-			elm.classList.remove("friend-selected");
-		});
-	}
-
-	#setFriendClickEventHandler() {
-		const friends = this.html.querySelectorAll(".user");
-
-		friends.forEach((elm) => {
-			elm.addEventListener("click", (event) => {
-				this.#removeAllSelectedFriends(friends);
-				const id = elm.id.substring(3);
-				if (stateManager.getState("friendChatId") != id) {
-					stateManager.setState("friendChatId", id);
-				}
-				elm.classList.add("friend-selected");
-			});
-		});
-	}
-
-	#setStateEvent() {
-		stateManager.addEvent("friendChatId", (stateValue) => {
-			console.log(`friendChatId: ${stateValue}`);
-			if (stateValue) {
-				chatWebSocket.connect(stateManager.getState("friendChatId"));
-				chatWebSocket.get_messages(stateManager.getState("chatMessagesCounter"));
-			}
-		});
 	}
 
 	// this.initialScrollHeight -> Pre-calculated initial scrollHeight
@@ -496,32 +411,3 @@ export default class AppChat extends HTMLElement {
 }
 
 customElements.define("app-chat", AppChat);
-
-// just for debug
-const getFriendsFakeCall = function ()
-{
-	const data = `[
-		{
-			"id": 2,
-			"username": "admin",
-			"image": "https://api.dicebear.com/8.x/bottts/svg?seed=candeia"
-		},
-		{
-			"id": 1,
-			"username": "diogo",
-			"image": "https://api.dicebear.com/8.x/bottts/svg?seed=candeia"
-		},
-		{
-			"id": 3,
-			"username": "irineu",
-			"image": "https://api.dicebear.com/8.x/bottts/svg?seed=candeia"
-		},
-		{
-			"id": 4,
-			"username": "irineu2",
-			"image": "https://api.dicebear.com/8.x/bottts/svg?seed=candeia"
-		}
-	]`;
-
-	return JSON.parse(data);
-}
