@@ -1,3 +1,4 @@
+from asgiref.sync import sync_to_async
 from user_auth.models import User
 from django.db import models
 
@@ -19,6 +20,12 @@ class FriendList(models.Model):
 	user2 = models.ForeignKey(to=User, related_name='second', on_delete=models.CASCADE, db_index=True)
 	user1_block = models.BooleanField(default=False)
 	user2_block = models.BooleanField(default=False)
+	last_chat_interaction = models.DateTimeField(null=True)
+
+	async def async_str(self):
+		user1 = await sync_to_async(lambda: self.user1)()
+		user2 = await sync_to_async(lambda: self.user2)()
+		return f'User1: {user1} | User2: {user2}'
 
 	def __str__(self) -> str:
 		return f'User1: {self.user1} | User2: {self.user2}'

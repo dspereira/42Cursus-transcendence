@@ -69,21 +69,13 @@ def search_user_by_name(request):
 
 @login_required
 @accepted_methods(["GET"])
-def search_friend_by_name(request):
-	search_username = request.GET.get('key')
-	friends_values = None
-	user = user_model.get(id=request.access_data.sub)
+def chat_list(request):
+	user_id = request.GET.get('user')
+	user = user_model.get(id=user_id)
 	if user:
-		friends_list = get_friends_users_list(friends=get_friend_list(user_id=user.id, side="left"), side="left")
-		friends_list += get_friends_users_list(friends=get_friend_list(user_id=user.id, side="right"), side="right")
+		friends_list = get_friends_users_list(friends=get_friend_list(user=user), user_id=user.id)
 		if friends_list:
-			if not search_username or search_username == "" or search_username == '""':
-				friends_values = sorted(friends_list, key=lambda x: x["default_image_seed"])
-			else:
-				searched_friends = [friend for friend in friends_list if search_username.lower() in friend["default_image_seed"].lower()]
-				if searched_friends:
-					friends_values = sorted(searched_friends, key=lambda x: x["default_image_seed"])
-			return JsonResponse({"message": "Friends List Returned With Success", "friends": friends_values}, status=200)
+			return JsonResponse({"message": "Friends List Returned With Success", "friends": friends_list}, status=200)
 		else:
 			return JsonResponse({"message": "Empty Friends List", "friends": None}, status=200)
 	return JsonResponse({"message": "Error: Invalid User"}, status=401)

@@ -25,11 +25,9 @@ class FriendsView(View):
 	def get(self, request):
 		search_username = request.GET.get('key')
 		friends_values = None
-
 		user = user_model.get(id=request.access_data.sub)
 		if user:
-			friends_list = get_friends_users_list(friends=get_friend_list(user_id=user.id, side="left"), side="left")
-			friends_list += get_friends_users_list(friends=get_friend_list(user_id=user.id, side="right"), side="right")
+			friends_list = get_friends_users_list(friends=get_friend_list(user=user), user_id=user.id)
 			if friends_list:
 				if not search_username or search_username == "" or search_username == '""':
 					friends_values = sorted(friends_list, key=lambda x: x["default_image_seed"])

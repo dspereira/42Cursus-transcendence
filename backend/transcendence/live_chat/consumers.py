@@ -3,13 +3,17 @@ import json
 from asgiref.sync import sync_to_async
 from channels.generic.websocket import AsyncWebsocketConsumer
 from .models import ChatRoom, Message
+from user_auth.models import User
 from channels.exceptions import StopConsumer
 from .auth_utils import is_authenticated, get_authenticated_user
 from custom_utils.models_utils import ModelManager
 from datetime import datetime
 
+from friendships.friendships import get_friendship
+
 msg_model = ModelManager(Message)
 room_model = ModelManager(ChatRoom)
+user_model = ModelManager(User)
 
 MESSAGE_LIMIT_COUNT = 5
 
@@ -51,11 +55,17 @@ class ChatConsumer(AsyncWebsocketConsumer):
 		elif data_type == "get_messages":
 			await self.__send_chat_group_messages(amount_messages=data_json['message_count'], id_browser=data_json['idBrowser'])
 		elif data_type == "message":
-			new_message = await self.__save_message(data_json['message'].strip())
-			await self.__send_message(new_message)
+			if not await self.__get_block_status():
+				new_message = await self.__save_message(data_json['message'].strip())
+				await self.__send_message(new_message)
 
 	async def __connect_to_friend_chatroom(self, friends_id):
 		self.room = await self.__get_room(friends_id=friends_id)
+		self.friendship = await self.__get_friendship(friends_id=friends_id)
+
+		blocked_status = await self.__get_block_status()
+		await sync_to_async(print)(f"\n------------------------------\nBlocked Status: {blocked_status}\n------------------------------\n")
+
 		if self.room:
 			self.room_group_name = self.room.name
 			await self.channel_layer.group_add(
@@ -74,6 +84,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
 		message_content = message.content
 		user_id = await sync_to_async(lambda: message.user.id)()
 		timestamp = int(datetime.fromisoformat(str(message.timestamp)).timestamp())
+		await self.__update_last_chat_interaction(last_chat_timestamp=message.timestamp)
 		if self.room_group_name:
 			await self.channel_layer.group_send(
 				self.room_group_name,
@@ -164,3 +175,17 @@ class ChatConsumer(AsyncWebsocketConsumer):
 		if room_2:
 			return room_2
 		return None
+	
+	async def __get_friendship(self, friends_id):
+		friend = await sync_to_async(user_model.get)(id=friends_id)
+		if friend:
+			return await sync_to_async(get_friendship)(user1=self.user, user2=friend)
+
+	async def __update_last_chat_interaction(self, last_chat_timestamp):
+		self.friendship.last_chat_interaction = last_chat_timestamp
+		await sync_to_async(self.friendship.save)()	
+
+	async def __get_block_status(self):
+		if self.friendship.user1_block or self.friendship.user2_block:
+			return True
+		return False

@@ -4,6 +4,7 @@ from user_profile.models import UserProfileInfo
 from live_chat.models import ChatRoom
 from user_profile.aux import get_image_url
 from user_auth.models import User
+from django.db.models import Q
 
 user_profile_info_model = ModelManager(UserProfileInfo)
 friend_requests_model = ModelManager(FriendRequests)
@@ -24,26 +25,23 @@ def get_friend_info(friendsip, side):
 	}
 	return info
 
-def get_friend_list(user_id, side):
+def get_friend_list(user):
 	data = []
-	user = user_model.get(id=user_id)
 	if user:
-		if side == "left":
-			filtered_list = friend_list_model.filter(user1=user)
-		else:
-			filtered_list = friend_list_model.filter(user2=user)
+		filtered_list = friend_list_model.filter((Q(user1=user) | Q(user2=user)))
 		if filtered_list:
+			filtered_list = filtered_list.order_by('last_chat_interaction')
 			data = list(filtered_list)
 	return data
 
-def get_friends_users_list(friends, side):
+def get_friends_users_list(friends, user_id):
 	friends_users_list = []
-	if side == "left":
+	if friends:
 		for friend in friends:
-			friends_users_list += list(user_profile_info_model.filter(id=friend.user2.id).values('id', 'default_image_seed', 'default_profile_image_url'))
-	else:
-		for friend in friends:
-			friends_users_list += list(user_profile_info_model.filter(id=friend.user1.id).values('id', 'default_image_seed', 'default_profile_image_url'))
+			if friend.user1.id == user_id:
+				friends_users_list += list(user_profile_info_model.filter(id=friend.user2.id).values('id', 'default_image_seed', 'default_profile_image_url'))
+			else:
+				friends_users_list += list(user_profile_info_model.filter(id=friend.user1.id).values('id', 'default_image_seed', 'default_profile_image_url'))
 	return friends_users_list
 
 def is_already_friend(user1, user2):
@@ -63,8 +61,8 @@ def is_request_already_maded(user1, user2):
 	return False
 
 def remove_user_and_friends_from_users_list(user_id, users_list):
-	friends_list = get_friends_users_list(friends=get_friend_list(user_id=user_id, side="left"), side="left")
-	friends_list += get_friends_users_list(friends=get_friend_list(user_id=user_id, side="right"), side="right")
+	user = user_model.get(id=user_id)
+	friends_list = get_friends_users_list(friends=get_friend_list(user=user), user_id=user.id)
 	friends_ids = {friend['id'] for friend in friends_list}
 	friends_ids.add(user_id)
 	result_users = [user for user in users_list if user['id'] not in friends_ids]
