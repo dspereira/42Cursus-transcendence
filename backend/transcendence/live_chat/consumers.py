@@ -25,6 +25,8 @@ class ChatConsumer(AsyncWebsocketConsumer):
 		self.room = None
 		self.access_data = None
 		self.room_group_name = None
+		self.groups = []
+		self.global_group_name = "0_0"
 
 	async def connect(self):
 		await self.accept()
@@ -34,15 +36,29 @@ class ChatConsumer(AsyncWebsocketConsumer):
 		if not self.user:
 			await self.close(4000)
 			return
+		await self.channel_layer.group_add(self.global_group_name, self.channel_name)
+		self.groups.append(self.global_group_name)
+		await self.channel_layer.group_send(
+				self.global_group_name,
+				{'type': 'send_online_status', 'id': self.user.id, 'online': True,}
+			)
 
 	async def disconnect(self, close_code):
-		print(" Close code -> ", close_code)
-		if self.room_group_name:
-			await self.channel_layer.group_discard(
-				self.room_group_name,
-				self.channel_name
+		await self.channel_layer.group_send(
+				self.global_group_name,
+				{'type': 'send_online_status', 'id': self.user.id, 'online': False,}
 			)
+		for group in self.groups:
+			await self.channel_layer.group_discard(group, self.channel_name)
+		self.groups = []
 		raise StopConsumer()
+
+	async def send_online_status(self, event):
+		await self.send(text_data=json.dumps({
+			'type': 'online_status',
+			'user_id': event['id'],
+			'online': event['online']
+		}))
 
 	async def receive(self, text_data):
 		if not await sync_to_async(is_authenticated)(self.access_data):
@@ -62,8 +78,9 @@ class ChatConsumer(AsyncWebsocketConsumer):
 	async def __connect_to_friend_chatroom(self, friends_id):
 		self.room = await self.__get_room(friends_id=friends_id)
 		self.friendship = await self.__get_friendship(friends_id=friends_id)
-
 		blocked_status = await self.__get_block_status()
+
+		# PRINT APENAS PARA TESTES
 		await sync_to_async(print)(f"\n------------------------------\nBlocked Status: {blocked_status}\n------------------------------\n")
 
 		if self.room:
@@ -72,6 +89,8 @@ class ChatConsumer(AsyncWebsocketConsumer):
 				self.room_group_name,
 				self.channel_name
 			)
+			if self.room_group_name not in self.groups:
+				self.groups.append(self.room_group_name)
 
 	async def __save_message(self, message):
 		if not await sync_to_async(is_authenticated)(self.access_data):
