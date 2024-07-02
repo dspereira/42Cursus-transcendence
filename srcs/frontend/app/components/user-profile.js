@@ -6,35 +6,36 @@ const styles = `
 	.profile-grid-container {
 		display: flex;
 		flex-direction: column;
-		/* margin-right: 150px;
-		padding: 5px 10px; */
+		align-items: center;
+		margin-left: 60px;
 		border-radius: 10px;
 		background: grey;
-		width: 250px;
+		width: 300px;
 	}
 
-	.profile-picture-container {
+	.profile-info {
 		display: flex;
 		flex-direction: column;
-		justify-content: center;
 		align-items: center;
-		height: 100%;
 	}
 
 	.profile-picture {
-		width: 100px;
+		width: 80px;
 		height: auto;
 		clip-path: circle;
+		margin-top: 15px;
+	}
+
+	.username {
+		font-size: 28px;
 	}
 
 	.button-container {
 		display: flex;
-		gap: 5px;
-		/* margin-top: 5px; */
+		gap: 15px;
 	}
 
 	.button-container button {
-		/* padding: 2px 5px; */
 		border: none;
 		border-radius: 10px;
 		cursor: pointer;
@@ -46,22 +47,17 @@ const styles = `
 		color: white;
 	}
 
-	.block-user-button {
+	.play-button {
 		background-color: #f44336;
 		color: white;
 	}
 	
-	.user-info {
+	.game-stats {
 		display: flex;
 		flex-direction: column;
-		justify-content: center;
 		align-items: center;
-		height: 100%;
 		font-size: 21px;
-	}
-
-	.user-info h1{
-		font-size: 32px;
+		margin-top: 25px;
 	}
 
 	.win-rate-bar {
@@ -70,15 +66,20 @@ const styles = `
 		border-radius: 15px;
 	}
 
-	.bio-box {
+	.wins-losses {
 		display: flex;
-		justify-content: center;
+		gap: 75px;
+	}
+
+	.bio-box {
 		text-overflow: ellipsis;
-		/* padding: 7px; */
 		border: 2px solid #000;
 		border-radius: 15px;
 		background-color: #f0f0f0;
 		font-size: 21px;
+		width: 85%;
+		margin-bottom: 10px;
+		text-align: center;
 	}
 	
 `;
@@ -87,26 +88,24 @@ const getHtml = function(data) {
 
 	const html = `
 		<div class="profile-grid-container">
-			<div class="grid-item profile-picture-container">
+			<div class="profile-info">
 				<img class="profile-picture" src="" alt="Profile Picture">
+				<h1 class="username"></h1>
 				<div class="button-container">
-					<button class="add-friend-button">Add Friend</button>
-					<button class="block-user-button">Play Game</button>
+					<button class="add-friend-button">Add</button>
+					<button class="play-button">Play</button>
 				</div>
 			</div>
-			<div class="grid-item">
-				<div class="user-info">
-					<h1 class="username"></h1>
+			<div class="game-stats">
+				<div id="win-rate-bar" class="win-rate-bar"></div>
+				<div class="wins-losses">
 					<p class="wins"></p>
-						<div id="win-rate-bar" class="win-rate-bar"></div>
 					<p class="losses"></p>
-					<p class="tournements-won"></p>
 				</div>
+				<p class="tournements-won"></p>
 			</div>
-			<div class="grid-item">
-				<div class="bio-box">
-					<span class="bio">A wonderful serenity has taken possession of my entire soul, like these sweet mornings of spring which I enjoy with my whole heart. I am alone, and feel the charm of existence in this spot, which was created for the bliss of souls like mine. I am so happy</span>
-				</div>
+			<div class="bio-box">
+				<span class="bio">A wonderful serenity has taken possession of my entire soul, like these sweet mornings of spring which I enjoy with my whole heart. I am alone, and feel the charm of existence in this spot, which was created for the bliss of souls like mine. I am so happy</span>
 			</div>
 		</div>
 	`;
@@ -173,7 +172,7 @@ export default class UserProfile extends HTMLElement {
 	#updateProfile(data) {
 		this.#updateImage(data.image_url);
 		this.#updateUsername(data.username);
-		/* this.#updateBio(data.bio); */
+		this.#updateBio(data.bio);
 		this.#updateWinRate(data.victories, data.defeats, data.win_rate);
 		this.#updateTournaments(data.tournaments_won);
 	}
