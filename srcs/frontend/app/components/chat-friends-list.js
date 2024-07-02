@@ -51,6 +51,7 @@ export default class ChatFriendsList extends HTMLElement {
 
 	constructor() {
 		super()
+		this.friendListData = null;
 	}
 
 	connectedCallback() {
@@ -91,10 +92,11 @@ export default class ChatFriendsList extends HTMLElement {
 	}
 
 	#scripts() {
-		this.#setStateEvent();
+		//this.#setStateEvent();
 		this.#getChatFriendListToApi();
 	}
 
+	/*
 	#setStateEvent() {
 		stateManager.addEvent("friendChatId", (stateValue) => {
 			console.log(`friendChatId: ${stateValue}`);
@@ -104,11 +106,13 @@ export default class ChatFriendsList extends HTMLElement {
 			}
 		});
 	}
+	*/
 
 	#getChatFriendListToApi() {
 		callAPI("GET", `http://127.0.0.1:8000/api/friends/friendships/`, null, (res, data) => {
 			if (res.ok) {
 				if (data.friends) {
+					this.friendListData = data.friends;
 					data.friends.forEach(elm => {
 						this.#insertFriendToList(elm);
 					});
@@ -134,15 +138,17 @@ export default class ChatFriendsList extends HTMLElement {
 
 	#setFriendClickEventHandler() {
 		const friends = this.html.querySelectorAll(".user");
-		console.log(friends);
 
 		friends.forEach((elm) => {
 			elm.addEventListener("click", () => {
-
-				console.log("friendship");
-
 				this.#removeAllSelectedFriends(friends);
 				const id = elm.id.substring(3);
+
+				if (!stateManager.getState("chatUserData") || stateManager.getState("chatUserData").id != id) {
+					const data = this.friendListData.find(user => user.id == id);
+					if (data)
+						stateManager.setState("chatUserData", data);
+				}
 				if (stateManager.getState("friendChatId") != id) {
 					stateManager.setState("friendChatId", id);
 				}
