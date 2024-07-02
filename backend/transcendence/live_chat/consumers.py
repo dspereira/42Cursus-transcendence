@@ -4,6 +4,7 @@ from asgiref.sync import sync_to_async
 from channels.generic.websocket import AsyncWebsocketConsumer
 from .models import ChatRoom, Message
 from user_auth.models import User
+from user_profile.models import UserProfileInfo
 from channels.exceptions import StopConsumer
 from .auth_utils import is_authenticated, get_authenticated_user
 from custom_utils.models_utils import ModelManager
@@ -14,6 +15,7 @@ from friendships.friendships import get_friendship
 msg_model = ModelManager(Message)
 room_model = ModelManager(ChatRoom)
 user_model = ModelManager(User)
+user_profile_model = ModelManager(UserProfileInfo)
 
 MESSAGE_LIMIT_COUNT = 5
 
@@ -38,27 +40,14 @@ class ChatConsumer(AsyncWebsocketConsumer):
 			return
 		await self.channel_layer.group_add(self.global_group_name, self.channel_name)
 		self.groups.append(self.global_group_name)
-		await self.channel_layer.group_send(
-				self.global_group_name,
-				{'type': 'send_online_status', 'id': self.user.id, 'online': True,}
-			)
+		await self.__update_online_status(is_online=True)
 
 	async def disconnect(self, close_code):
-		await self.channel_layer.group_send(
-				self.global_group_name,
-				{'type': 'send_online_status', 'id': self.user.id, 'online': False,}
-			)
+		await self.__update_online_status(is_online=False)
 		for group in self.groups:
 			await self.channel_layer.group_discard(group, self.channel_name)
 		self.groups = []
 		raise StopConsumer()
-
-	async def send_online_status(self, event):
-		await self.send(text_data=json.dumps({
-			'type': 'online_status',
-			'user_id': event['id'],
-			'online': event['online']
-		}))
 
 	async def receive(self, text_data):
 		if not await sync_to_async(is_authenticated)(self.access_data):
@@ -208,3 +197,19 @@ class ChatConsumer(AsyncWebsocketConsumer):
 		if self.friendship.user1_block or self.friendship.user2_block:
 			return True
 		return False
+
+	async def __update_online_status(self, is_online):
+		user_profile = await sync_to_async(user_profile_model.get)(id=self.user.id)
+		user_profile.online = is_online
+		await sync_to_async(user_profile.save)()
+		await self.channel_layer.group_send(
+				self.global_group_name,
+				{'type': 'send_online_status', 'id': self.user.id, 'online': is_online}
+			)
+
+	async def send_online_status(self, event):
+		await self.send(text_data=json.dumps({
+			'type': 'online_status',
+			'user_id': event['id'],
+			'online': event['online']
+		}))
