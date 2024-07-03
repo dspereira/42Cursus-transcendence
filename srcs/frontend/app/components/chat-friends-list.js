@@ -95,7 +95,7 @@ export default class ChatFriendsList extends HTMLElement {
 	}
 
 	#getChatFriendListToApi() {
-		callAPI("GET", `http://127.0.0.1:8000/api/friends/friendships/`, null, (res, data) => {
+		callAPI("GET", `http://127.0.0.1:8000/api/friends/chat-list/`, null, (res, data) => {
 			if (res.ok) {
 				if (data.friends) {
 					this.friendListData = data.friends;

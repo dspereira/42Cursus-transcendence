@@ -18,7 +18,7 @@ def get_friend_list(user):
 	if user:
 		filtered_list = friend_list_model.filter((Q(user1=user) | Q(user2=user)))
 		if filtered_list:
-			filtered_list = filtered_list.order_by('last_chat_interaction')
+			filtered_list = filtered_list.order_by('-last_chat_interaction')
 			data = list(filtered_list)
 	return data
 
