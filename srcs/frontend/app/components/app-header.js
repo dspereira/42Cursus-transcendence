@@ -1,4 +1,5 @@
-import {redirect} from "../js/router.js";
+import { redirect } from "../js/router.js";
+import { callAPI } from "../utils/callApiUtils.js";
 
 const styles = `
 
@@ -71,7 +72,6 @@ header {
 
 const getHtml = function(data) {
 	const html = `
-	
 	<header>
 		<div class="left-side">
 			<div class= "logo">
@@ -88,7 +88,6 @@ const getHtml = function(data) {
 			<img src="https://api.dicebear.com/8.x/bottts/svg?seed=Diogo" class="profile-photo"  alt="avatar"/>
 		</div>
 	</header>
-
 	`;
 	return html;
 }
@@ -102,7 +101,10 @@ export default class AppHeader extends HTMLElement {
 	static observedAttributes = ["bell"];
 
 	constructor() {
-		super()
+		super();
+	}
+
+	connectedCallback() {
 		this.#initComponent();
 		this.#render();
 		this.#scripts();
@@ -141,6 +143,7 @@ export default class AppHeader extends HTMLElement {
 	}
 
 	#scripts() {
+		this.#getUserImage();
 		this.#addPageRedirection("notifications", "notif-bell");
 		this.#addPageRedirection("profile", "profile-photo");
 		this.#addPageRedirection("home", "logo");
@@ -158,6 +161,17 @@ export default class AppHeader extends HTMLElement {
 		if (page === "/home" || page === "home")
 			page = "";
 		elm.addEventListener("click", () => redirect(`/${page}`));		
+	}
+
+	#getUserImage() {
+		callAPI("GET", "http://127.0.0.1:8000/api/profile/image", null, (res, data) => {
+			
+			if (res.ok) {
+				const image = this.html.querySelector(".profile-photo");
+				if (image && data.image)
+					image.setAttribute("src", `${data.image}`);
+			}
+		});
 	}
 }
 

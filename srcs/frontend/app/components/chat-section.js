@@ -355,7 +355,7 @@ export default class ChatSection extends HTMLElement {
 					<msg-card 
 						sender="${msgData.owner}" 
 						message="${msgData.message}"
-						profile-photo="https://api.dicebear.com/8.x/bottts/svg?seed=Diogo"
+						profile-photo="${msgData.user_image}"
 						time-date="${timeDate}">
 					</msg-card>
 				`;
