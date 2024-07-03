@@ -304,6 +304,7 @@ export default class ChatSection extends HTMLElement {
 			if (!msg)
 				return ;
 			chatWebSocket.send(msg);
+			stateManager.setState("messageSend", true);
 		});
 	}
 

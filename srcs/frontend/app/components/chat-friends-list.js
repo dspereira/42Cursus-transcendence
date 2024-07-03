@@ -92,6 +92,7 @@ export default class ChatFriendsList extends HTMLElement {
 
 	#scripts() {
 		this.#getChatFriendListToApi();
+		this.#pushFriendToTopOnMessage();
 	}
 
 	#getChatFriendListToApi() {
@@ -171,6 +172,20 @@ export default class ChatFriendsList extends HTMLElement {
 				stateManager.setState("chatUserData", data);
 		}
 		stateManager.setState("friendChatId", friendId);
+	}
+
+	#pushFriendToTopOnMessage() {
+		stateManager.addEvent("messageSend", (stateValue) => {
+			if (stateValue) {
+				
+				console.log("Message has send");
+				const friendList = this.html.querySelector(".friend-list");
+				const firstFriend = this.html.querySelector(".friend-list .user");
+				const friendSelected = this.html.querySelector(".friend-selected");
+				if (firstFriend != friendSelected)
+					friendList.insertBefore(friendSelected, firstFriend);
+			}
+		}) 
 	}
 }
 
