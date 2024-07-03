@@ -17,7 +17,8 @@ class StateManager {
 			userId: null,
 			chatSocket: null,
 			idBrowser: null,
-			chatUserData: null
+			chatUserData: null,
+			userImage: null
 		}
 		this.stateEvents = {
 			sidePanel: [],
@@ -30,6 +31,7 @@ class StateManager {
 			chatSocket: [],
 			idBrowser: [],
 			chatUserData: [],
+			userImage: []
 		}
 
 		StateManager.instance = this;
