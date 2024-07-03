@@ -70,8 +70,7 @@ def search_user_by_name(request):
 @login_required
 @accepted_methods(["GET"])
 def chat_list(request):
-	user_id = request.GET.get('user')
-	user = user_model.get(id=user_id)
+	user = user_model.get(id=request.access_data.sub)
 	if user:
 		friends_list = get_friends_users_list(friends=get_friend_list(user=user), user_id=user.id)
 		if friends_list:
