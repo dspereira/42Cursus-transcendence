@@ -57,7 +57,7 @@ export default class AppChat extends HTMLElement {
 		this.#initComponent();
 		this.#render();
 		this.#scripts();
-    }
+	}
 
 	attributeChangedCallback(name, oldValue, newValue) {
 

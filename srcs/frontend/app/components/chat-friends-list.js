@@ -102,19 +102,10 @@ export default class ChatFriendsList extends HTMLElement {
 					data.friends.forEach(elm => {
 						this.#insertFriendToList(elm);
 					});
-					this.#setFriendClickEventHandler();
-
-					const noFriendsSelectedMsg = document.querySelector(".no-friends-selected-msg");
-					console.log(noFriendsSelectedMsg);
-
-					if (noFriendsSelectedMsg)
-						noFriendsSelectedMsg.classList.remove("hide");
+					this.#showNoFriendMsg("no-friends-selected-msg");
 				}
-				else {
-					const noFriendsMsg = document.querySelector(".no-friends-msg");
-					if (noFriendsMsg)
-						 noFriendsMsg.classList.remove("hide");
-				}
+				else
+					this.#showNoFriendMsg("no-friends-msg");
 			}
 		});        
 	}
@@ -126,37 +117,43 @@ export default class ChatFriendsList extends HTMLElement {
 		friendHtml.classList.add("user");
 		friendHtml.innerHTML = `
 		<img src="${friendObj.image}" class="profile-photo" alt="profile photo chat">
-		<span class="name">${friendObj.username}</span>
-		`
+		<span class="name">${friendObj.username}</span>`;
 		this.friendListHtml.appendChild(friendHtml);
+		this.#setFriendClickEventHandler(friendHtml);
 	}
 
-	#setFriendClickEventHandler() {
-		const friends = this.html.querySelectorAll(".user");
+	#setFriendClickEventHandler(friend) {
+		friend.addEventListener("click", () => {
+			this.#removeAllSelectedFriends();
+			const id = friend.id.substring(3);
 
-		friends.forEach((elm) => {
-			elm.addEventListener("click", () => {
-				this.#removeAllSelectedFriends(friends);
-				const id = elm.id.substring(3);
-
-				if (!stateManager.getState("chatUserData") || stateManager.getState("chatUserData").id != id) {
-					const data = this.friendListData.find(user => user.id == id);
-					if (data)
-						stateManager.setState("chatUserData", data);
-				}
-				if (stateManager.getState("friendChatId") != id) {
-					stateManager.setState("friendChatId", id);
-				}
-				elm.classList.add("friend-selected");
-			});
+			if (!stateManager.getState("chatUserData") || stateManager.getState("chatUserData").id != id) {
+				const data = this.friendListData.find(user => user.id == id);
+				if (data)
+					stateManager.setState("chatUserData", data);
+			}
+			if (stateManager.getState("friendChatId") != id) {
+				stateManager.setState("friendChatId", id);
+			}
+			friend.classList.add("friend-selected");
 		});
 	}
 
-	#removeAllSelectedFriends(friends) {
+	#removeAllSelectedFriends() {
+		const friends = this.html.querySelectorAll(".user");
+		if (!friends)
+			return ;
 		friends.forEach((elm) => {
 			elm.classList.remove("friend-selected");
 		});
 	}
+
+	#showNoFriendMsg(className) {
+		const elm = document.querySelector(`.${className}`);
+		if (elm)
+			 elm.classList.remove("hide");
+	}
+
 }
 
 customElements.define("chat-friends-list", ChatFriendsList);
