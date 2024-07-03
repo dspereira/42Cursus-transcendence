@@ -5,6 +5,7 @@ from channels.generic.websocket import AsyncWebsocketConsumer
 from .models import ChatRoom, Message
 from user_auth.models import User
 from user_profile.models import UserProfileInfo
+from user_profile.aux import get_image_url
 from channels.exceptions import StopConsumer
 from .auth_utils import is_authenticated, get_authenticated_user
 from custom_utils.models_utils import ModelManager
@@ -38,6 +39,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
 		if not self.user:
 			await self.close(4000)
 			return
+		self.user_profile = await sync_to_async(user_profile_model.get)(id=self.user.id)
 		await self.channel_layer.group_add(self.global_group_name, self.channel_name)
 		self.groups.append(self.global_group_name)
 		await self.__update_online_status(is_online=True)
@@ -101,6 +103,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
 					'message': message_content,
 					'id': user_id,
 					'timestamp': timestamp,
+					'user_image': await self.__get_user_image(user_id=user_id)
 				}
 			)
 
@@ -113,7 +116,8 @@ class ChatConsumer(AsyncWebsocketConsumer):
 			'type': 'message',
 			'message': event['message'],
 			'owner': owner,
-			'timestamp': event['timestamp']
+			'timestamp': event['timestamp'],
+			'user_image': event['user_image'],
 		}))
 
 	async def __send_get_message(self, message, id_browser):
@@ -129,7 +133,8 @@ class ChatConsumer(AsyncWebsocketConsumer):
 					'id': user_id,
 					'timestamp': timestamp,
 					'requester_id': self.user.id,
-					'idBrowser': id_browser
+					'idBrowser': id_browser,
+					'user_image': await self.__get_user_image(user_id=user_id)
 				}
 			)
 
@@ -144,7 +149,8 @@ class ChatConsumer(AsyncWebsocketConsumer):
 			'owner': owner,
 			'timestamp': event['timestamp'],
 			'requester_id': event['requester_id'],
-			'idBrowser': event['idBrowser']
+			'idBrowser': event['idBrowser'],
+			'user_image': event['user_image'],
 		}))
 
 	def __get_messages(self, start, limit):
@@ -199,9 +205,8 @@ class ChatConsumer(AsyncWebsocketConsumer):
 		return False
 
 	async def __update_online_status(self, is_online):
-		user_profile = await sync_to_async(user_profile_model.get)(id=self.user.id)
-		user_profile.online = is_online
-		await sync_to_async(user_profile.save)()
+		self.user_profile.online = is_online
+		await sync_to_async(self.user_profile.save)()
 		await self.channel_layer.group_send(
 				self.global_group_name,
 				{'type': 'send_online_status', 'id': self.user.id, 'online': is_online}
@@ -213,3 +218,8 @@ class ChatConsumer(AsyncWebsocketConsumer):
 			'user_id': event['id'],
 			'online': event['online']
 		}))
+
+	async def __get_user_image(self, user_id):
+		user_profile = await sync_to_async(user_profile_model.get)(id=user_id)
+		return await sync_to_async(get_image_url)(user=user_profile)
+	
