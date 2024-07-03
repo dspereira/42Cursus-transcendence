@@ -101,9 +101,7 @@ export default class ChatFriendsList extends HTMLElement {
 					this.friendListData = data.friends;
 					data.friends.forEach(elm => {
 						this.#insertFriendToList(elm);
-						//this.#setFriendClickEventHandler1(elm);
 					});
-					this.#setFriendClickEventHandler();
 					this.#showNoFriendMsg("no-friends-selected-msg");
 				}
 				else
@@ -121,31 +119,10 @@ export default class ChatFriendsList extends HTMLElement {
 		<img src="${friendObj.image}" class="profile-photo" alt="profile photo chat">
 		<span class="name">${friendObj.username}</span>`;
 		this.friendListHtml.appendChild(friendHtml);
-		this.#setFriendClickEventHandler1(friendHtml);
+		this.#setFriendClickEventHandler(friendHtml);
 	}
 
-	#setFriendClickEventHandler() {
-		const friends = this.html.querySelectorAll(".user");
-
-		friends.forEach((elm) => {
-			elm.addEventListener("click", () => {
-				this.#removeAllSelectedFriends(friends);
-				const id = elm.id.substring(3);
-
-				if (!stateManager.getState("chatUserData") || stateManager.getState("chatUserData").id != id) {
-					const data = this.friendListData.find(user => user.id == id);
-					if (data)
-						stateManager.setState("chatUserData", data);
-				}
-				if (stateManager.getState("friendChatId") != id) {
-					stateManager.setState("friendChatId", id);
-				}
-				elm.classList.add("friend-selected");
-			});
-		});
-	}
-
-	#setFriendClickEventHandler1(friend) {
+	#setFriendClickEventHandler(friend) {
 		friend.addEventListener("click", () => {
 			this.#removeAllSelectedFriends();
 			const id = friend.id.substring(3);
@@ -158,7 +135,7 @@ export default class ChatFriendsList extends HTMLElement {
 			if (stateManager.getState("friendChatId") != id) {
 				stateManager.setState("friendChatId", id);
 			}
-			elm.classList.add("friend-selected");
+			friend.classList.add("friend-selected");
 		});
 	}
 

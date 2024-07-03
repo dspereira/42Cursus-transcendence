@@ -72,9 +72,6 @@ header {
 `;
 
 const getHtml = function(data) {
-
-	console.log(data);
-
 	const html = `
 	<header>
 		<div class="left-side">
@@ -119,8 +116,8 @@ export default class AppHeader extends HTMLElement {
 	}
 
 	attributeChangedCallback(name, oldValue, newValue) {
-		if (name === "bell")
-			this.#changeBellIcon(newValue);
+		/*if (name === "bell")
+			this.#changeBellIcon(newValue);*/
 	}
 
 	#initComponent() {
