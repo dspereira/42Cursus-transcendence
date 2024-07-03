@@ -103,6 +103,7 @@ export default class ChatFriendsList extends HTMLElement {
 						this.#insertFriendToList(elm);
 					});
 					this.#showNoFriendMsg("no-friends-selected-msg");
+					this.#selectPreviousFriend();
 				}
 				else
 					this.#showNoFriendMsg("no-friends-msg");
@@ -154,6 +155,23 @@ export default class ChatFriendsList extends HTMLElement {
 			 elm.classList.remove("hide");
 	}
 
+	#selectPreviousFriend() {
+		const friendId = stateManager.getState("friendChatId");
+		if (!friendId)
+			return ;
+		const elm = this.html.querySelector(`#id-${friendId}`);
+		if (!elm)
+			return ;
+		elm.classList.add("friend-selected");
+
+		const friendData = stateManager.getState("chatUserData");
+		if (!friendData || friendData.id != friendId) {
+			const data = this.friendListData.find(user => user.id == friendId);
+			if (data)
+				stateManager.setState("chatUserData", data);
+		}
+		stateManager.setState("friendChatId", friendId);
+	}
 }
 
 customElements.define("chat-friends-list", ChatFriendsList);

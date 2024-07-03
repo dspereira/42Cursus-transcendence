@@ -61,7 +61,6 @@ class StateManager {
 	}
 
 	cleanEvents() {
-
 		for (const key in this.stateEvents) {
 			if (!globalEvents.includes(key))
 				this.stateEvents[key] = [];
