@@ -12,18 +12,6 @@ friend_list_model = ModelManager(FriendList)
 chatroom_model = ModelManager(ChatRoom)
 user_model = ModelManager(User)
 
-def get_friend_info(friendsip, side):
-	if side == "left":
-		user = friendsip.user1
-	else:
-		user = friendsip.user2
-	image_url = get_image_url(user_profile_info_model.get(user_id=user.id))
-	info = {
-		"id": user.id,
-		"username": user.username,
-		"image": image_url
-	}
-	return info
 
 def get_friend_list(user):
 	data = []
@@ -39,9 +27,9 @@ def get_friends_users_list(friends, user_id):
 	if friends:
 		for friend in friends:
 			if friend.user1.id == user_id:
-				friends_users_list += list(user_profile_info_model.filter(id=friend.user2.id).values('id', 'default_image_seed', 'default_profile_image_url'))
+				friends_users_list.append(get_single_user_info(user_profile_info_model.get(id=friend.user2.id)))
 			else:
-				friends_users_list += list(user_profile_info_model.filter(id=friend.user1.id).values('id', 'default_image_seed', 'default_profile_image_url'))
+				friends_users_list.append(get_single_user_info(user_profile_info_model.get(id=friend.user1.id)))
 	return friends_users_list
 
 def is_already_friend(user1, user2):
@@ -150,3 +138,24 @@ def update_friendship_block_status(friendship, friend, block_status):
 	elif friendship.user2.id == friend.id:
 		friendship.user2_block = block_status
 	friendship.save()
+
+def get_users_info(users):
+	users_info = []
+	if users:
+		for user in users:
+			info = {
+				"id": user.id,
+				"username": user.default_image_seed,
+				"image": get_image_url(user=user)
+			}
+			users_info.append(info)
+		return users_info
+	return None
+
+def get_single_user_info(user):
+	info = {
+		"id": user.id,
+		"username": user.default_image_seed,
+		"image": get_image_url(user=user)
+	}
+	return info

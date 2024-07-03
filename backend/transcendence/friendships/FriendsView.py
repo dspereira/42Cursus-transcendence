@@ -30,13 +30,11 @@ class FriendsView(View):
 			friends_list = get_friends_users_list(friends=get_friend_list(user=user), user_id=user.id)
 			if friends_list:
 				if not search_username or search_username == "" or search_username == '""':
-					friends_values = sorted(friends_list, key=lambda x: x["default_image_seed"])
+					friends_values = sorted(friends_list, key=lambda x: x["username"])
 				else:
-					searched_friends = [friend for friend in friends_list if search_username.lower() in friend["default_image_seed"].lower()]
+					searched_friends = [friend for friend in friends_list if search_username.lower() in friend["username"].lower()]
 					if searched_friends:
-						friends_values = sorted(searched_friends, key=lambda x: x["default_image_seed"])
-				if friends_values:
-					rename_result_users_keys(friends_values)
+						friends_values = sorted(searched_friends, key=lambda x: x["username"])
 				return JsonResponse({"message": "Friends List Returned With Success", "friends": friends_values}, status=200)
 			else:
 				return JsonResponse({"message": "Empty Friends List", "friends": None}, status=200)

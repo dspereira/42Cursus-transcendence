@@ -15,6 +15,7 @@ from friendships.friendships import rename_result_users_keys
 from friendships.friendships import remove_users_with_friends_request
 from friendships.friendships import get_friendship
 from friendships.friendships import update_friendship_block_status
+from friendships.friendships import get_users_info
 
 user_profile_info_model = ModelManager(UserProfileInfo)
 friend_requests_model = ModelManager(FriendRequests)
@@ -58,12 +59,11 @@ def search_user_by_name(request):
 		users = user_profile_info_model.filter(default_image_seed__istartswith=search_username)
 		message = f"Search Username: [{search_username}]"
 	if users:
-		users_values = list(users.values('id', 'default_image_seed', 'default_profile_image_url'))
+		users_values = get_users_info(users=users)
 		result_users = remove_user_and_friends_from_users_list(user_id=user.id, users_list=users_values)
 		remove_users_with_friends_request(user=user, users_list=result_users)
 		friends_requests_list = get_friends_request_list(user=user, own=True)
 		check_if_friend_request(users_list=result_users, requests_list=friends_requests_list)
-		rename_result_users_keys(users=result_users)
 		result_users = sorted(result_users, key=lambda x: x["username"])
 	return JsonResponse({"message": message, "users": result_users}, status=200)
 

@@ -3,6 +3,7 @@ from custom_utils.models_utils import ModelManager
 from user_profile.models import UserProfileInfo
 from friendships.models import FriendRequests
 from custom_decorators import login_required
+from user_profile.aux import get_image_url
 from django.http import JsonResponse
 from user_auth.models import User
 from django.views import View
@@ -33,7 +34,7 @@ class FriendRequestView(View):
 							"request_id": req['id'],
 							"id": friend.id,
 							"username": friend.default_image_seed,
-							"image": friend.default_profile_image_url
+							"image": get_image_url(user=friend)
 						})
 			if not len(friend_requests):
 				friend_requests = None
