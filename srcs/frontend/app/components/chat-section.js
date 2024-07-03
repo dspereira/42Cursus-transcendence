@@ -347,9 +347,7 @@ export default class ChatSection extends HTMLElement {
 	#newMessageEvent() {
 		stateManager.addEvent("newChatMessage", (msgData) => {
 			if (msgData) {
-				// console.log("New message received.\n", msgData);
 				stateManager.setState("newChatMessage", null);
-
 				const msgPanel = this.html.querySelector(".msg-panel");
 				const newMsg = document.createElement("div");
 				const timeDate = this.#getTimeDate(msgData['timestamp']);
@@ -360,7 +358,7 @@ export default class ChatSection extends HTMLElement {
 						profile-photo="https://api.dicebear.com/8.x/bottts/svg?seed=Diogo"
 						time-date="${timeDate}">
 					</msg-card>
-				`
+				`;
 				let scroll = this.html.querySelector(".scroll");
 				let scrollBottom = Math.floor(scroll.scrollHeight) - Math.floor(scroll.scrollTop) - Math.floor(scroll.clientHeight);
 				if (msgData.type == "message")

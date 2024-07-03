@@ -1,5 +1,6 @@
 import chatWebSocket from "../js/ChatWebSocket.js";
 import stateManager from "../js/StateManager.js";
+import { redirect } from "../js/router.js";
 
 const styles = `
 .chat {
@@ -10,16 +11,35 @@ const styles = `
 	width: 100%;
 }
 
+.hide {
+	display: none;
+}
+
+.link {
+	color: blue;
+	text-decoration: underline;
+	cursor: pointer;
+}
+
+.link:hover {
+	color: darkblue;
+}
+
 `;
 
 const getHtml = function(data) {
 	const html = `
 	<div class="chat">
+		<div class="no-friends-msg hide">
+			<span>You have no friends! Please search for friends here to start a chat!</span>
+			<div><span class="link">Find friends to chat here</span></div>
+
+		</div>
 		<div class="friends-list">
 			<chat-friends-list></chat-friends-list>
 		</div>
 		<div class="chat-area">
-			<!--<chat-section></chat-section>-->
+			<div class="no-friends-selected-msg hide"><span>You have no friend selected. Please select a friend to start a chat.</span></div>
 		</div>
 	</div>
 	`;
@@ -31,7 +51,6 @@ export default class AppChat extends HTMLElement {
 
 	constructor() {
 		super()
-
 	}
 
 	connectedCallback() {
@@ -73,6 +92,7 @@ export default class AppChat extends HTMLElement {
 
 	#scripts() {
 		this.#setStateEvent();
+		this.#setupFriendsPageRedirect();
 	}
 
 	#setStateEvent() {
@@ -100,6 +120,15 @@ export default class AppChat extends HTMLElement {
 				profile-photo="${userData.image}"
 			></chat-section>
 		`;
+	}
+
+	#setupFriendsPageRedirect() {
+		const link = this.html.querySelector(".link");
+		if (!link)
+			return ;
+		link.addEventListener("click", () => {
+			redirect("/friends");
+		});
 	}
 }
 

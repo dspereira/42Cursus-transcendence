@@ -1,6 +1,5 @@
 import { callAPI } from "../utils/callApiUtils.js";
 import stateManager from "../js/StateManager.js";
-import chatWebSocket from "../js/ChatWebSocket.js";
 
 const styles = `
 .friend-list {
@@ -92,21 +91,8 @@ export default class ChatFriendsList extends HTMLElement {
 	}
 
 	#scripts() {
-		//this.#setStateEvent();
 		this.#getChatFriendListToApi();
 	}
-
-	/*
-	#setStateEvent() {
-		stateManager.addEvent("friendChatId", (stateValue) => {
-			console.log(`friendChatId: ${stateValue}`);
-			if (stateValue) {
-				chatWebSocket.connect(stateManager.getState("friendChatId"));
-				chatWebSocket.get_messages(stateManager.getState("chatMessagesCounter"));
-			}
-		});
-	}
-	*/
 
 	#getChatFriendListToApi() {
 		callAPI("GET", `http://127.0.0.1:8000/api/friends/friendships/`, null, (res, data) => {
@@ -117,9 +103,18 @@ export default class ChatFriendsList extends HTMLElement {
 						this.#insertFriendToList(elm);
 					});
 					this.#setFriendClickEventHandler();
+
+					const noFriendsSelectedMsg = document.querySelector(".no-friends-selected-msg");
+					console.log(noFriendsSelectedMsg);
+
+					if (noFriendsSelectedMsg)
+						noFriendsSelectedMsg.classList.remove("hide");
 				}
-				else
-					console.log("No friends");
+				else {
+					const noFriendsMsg = document.querySelector(".no-friends-msg");
+					if (noFriendsMsg)
+						 noFriendsMsg.classList.remove("hide");
+				}
 			}
 		});        
 	}
