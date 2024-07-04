@@ -173,7 +173,6 @@ export default class AppFriends extends HTMLElement {
 	}
 
 	#scripts() {
-		//this.#getFriendsList();
 		this.#createSearchPage();
 		this.#setSearchButtonEvent();
 		this.#setFriendsButtonEvent();

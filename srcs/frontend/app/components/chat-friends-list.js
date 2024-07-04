@@ -182,13 +182,15 @@ export default class ChatFriendsList extends HTMLElement {
 	#pushFriendToTopOnMessage() {
 		stateManager.addEvent("messageSend", (stateValue) => {
 			if (stateValue) {
-				
-				console.log("Message has send");
 				const friendList = this.html.querySelector(".friend-list");
 				const firstFriend = this.html.querySelector(".friend-list .user");
 				const friendSelected = this.html.querySelector(".friend-selected");
-				if (firstFriend != friendSelected)
+				if (firstFriend != friendSelected) {
 					friendList.insertBefore(friendSelected, firstFriend);
+					let scroll = this.html.querySelector(".scroll");
+					if (scroll)
+						scroll.scrollTop = 0;
+				}
 			}
 		}) 
 	}
