@@ -6,11 +6,13 @@ const styles = `
 	.game-grid-container {
 		display: flex;
 		justify-content: space-between;
-		margin-left: 175px;
+		align-items: center;
+		position: relative;
+		margin-left: 30px;
+		margin-right: 30px;
 		margin-bottom: 20px;
 		height: 80px;
-		width: 650px;
-		border-radius: 25px;
+		border-radius: 10px;
 	}
 
 	.game-win {
@@ -26,24 +28,25 @@ const styles = `
 	.player-container {
 		display: flex;
 		align-items: center;
-		margin-left: 25px;
-		margin-right: 25px;
-		gap: 50px;
+		margin: 20px;
+		gap: 25px;
 	}
 
 	.profile-picture {
 		width: 50px;
-		height: auto;
-		clip-path: circle;
+		height: 50px;
+		clip-path: circle();
 	}
 
 	.username {
+		margin-top: 7px;
 		font-size: 16px;
 	}
 
 	.score-container {
-		display: flex;
-		align-items: center;
+		margin-top: 7px;
+		position: absolute;
+		left: 50%;
 	}
 
 	.score {
@@ -53,7 +56,6 @@ const styles = `
 
 const getHtml = function(data) {
 
-	console.log(data);
 	const html = `
 		<div class="game-grid-container game-win">
 			<div class="player-container">

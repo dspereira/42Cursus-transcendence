@@ -7,10 +7,8 @@ const styles = `
 		display: flex;
 		flex-direction: column;
 		align-items: center;
-		margin-left: 60px;
 		border-radius: 10px;
-		background: grey;
-		width: 300px;
+		background: #9F9F9F;
 	}
 
 	.profile-info {
@@ -20,36 +18,24 @@ const styles = `
 	}
 
 	.profile-picture {
-		width: 80px;
-		height: auto;
-		clip-path: circle;
+		width: 180px;
+		height: 180px;
+		clip-path: circle();
 		margin-top: 15px;
+		margin-bottom: 15px;
 	}
 
-	.username {
-		font-size: 28px;
-	}
-
-	.button-container {
+	.username-container {
 		display: flex;
 		gap: 15px;
 	}
 
-	.button-container button {
-		border: none;
-		border-radius: 10px;
-		cursor: pointer;
-		font-size: 14px;
+	.username {
+		font-size: 32px;
 	}
 
-	.add-friend-button {
-		background-color: #4CAF50;
-		color: white;
-	}
-
-	.play-button {
-		background-color: #f44336;
-		color: white;
+	.icon-add {
+		font-size: 16px;
 	}
 	
 	.game-stats {
@@ -75,7 +61,7 @@ const styles = `
 		text-overflow: ellipsis;
 		border: 2px solid #000;
 		border-radius: 15px;
-		background-color: #f0f0f0;
+		background-color: #E7E7E7;
 		font-size: 21px;
 		width: 85%;
 		margin-bottom: 10px;
@@ -89,11 +75,14 @@ const getHtml = function(data) {
 	const html = `
 		<div class="profile-grid-container">
 			<div class="profile-info">
-				<img class="profile-picture" src="" alt="Profile Picture">
-				<h1 class="username"></h1>
-				<div class="button-container">
-					<button class="add-friend-button">Add</button>
-					<button class="play-button">Play</button>
+				<div>
+					<img class="profile-picture" src="https://static.vecteezy.com/ti/fotos-gratis/t2/2098203-gato-malhado-prateado-sentado-no-fundo-verde-gratis-foto.jpg" alt="Profile Picture">
+				</div>
+				<div class="username-container">
+					<h1 class="username"></h1>
+					<button class="btn btn-success">
+						<i class="icon-add bi bi-person-plus"></i>
+					</button>
 				</div>
 			</div>
 			<div class="game-stats">
@@ -202,7 +191,6 @@ export default class UserProfile extends HTMLElement {
 		const winsElement = this.html.querySelector('.wins');
 		const lossesElement = this.html.querySelector('.losses');
 		const winRateBarElement = this.html.querySelector('#win-rate-bar');
-		console.log(winRateBarElement);
 
 		if (winsElement) {
 			winsElement.textContent = `W: ${wins}`;
