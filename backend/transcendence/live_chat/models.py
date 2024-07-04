@@ -5,7 +5,7 @@ class ChatRoom(models.Model):
 	name = models.CharField(max_length=20)
 
 	def __str__(self):
-		return f'{self.id} {self.name} ({self.get_online_count()})'
+		return f'{self.id} {self.name}'
 
 class Message(models.Model):
 	user = models.ForeignKey(to=User, on_delete=models.CASCADE)

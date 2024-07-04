@@ -9,6 +9,7 @@ import checkUserLoginState from "../utils/checkUserLoginState.js";
 stateManager.setState("idBrowser", Math.floor(Math.random() * 100000000000));
 
 stateManager.addEvent("isLoggedIn", (stateValue) => {
+	stateManager.cleanAllStatesAndEvents();
 	if (stateValue) {
 		chatWebSocket.open();
 		//notifyWebSocket.open();
@@ -49,7 +50,7 @@ const setupLoginStateChecker  = function(intervalSeconds) {
 }
 
 const startApp = function() {
-	setupLoginStateChecker(50);
+	setupLoginStateChecker(5);
 	router();
 	setHistoryEvents();
 }

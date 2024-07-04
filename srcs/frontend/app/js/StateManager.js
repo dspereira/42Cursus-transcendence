@@ -75,6 +75,19 @@ class StateManager {
 			console.log(`${key}: ${value}`);
 		});
 	}
+
+	cleanAllStatesAndEvents() {
+		this.states.sidePanel = "open";
+		this.states.pageReady = false,
+		this.states.friendChatId = null;
+		this.states.newChatMessage = null;
+		this.states.chatMessagesCounter = 0;
+		this.states.userId = null;
+		this.states.idBrowser = null;
+		this.states.chatUserData = null;
+		this.states.userImage =  null;
+		this.states.messageSend = null;
+	}
 }
 
 const stateManager = new StateManager();

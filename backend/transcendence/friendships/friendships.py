@@ -27,9 +27,9 @@ def get_friends_users_list(friends, user_id):
 	if friends:
 		for friend in friends:
 			if friend.user1.id == user_id:
-				friends_users_list.append(get_single_user_info(user_profile_info_model.get(id=friend.user2.id)))
+				friends_users_list.append(get_single_user_info(user_profile_info_model.get(user=friend.user2.id)))
 			else:
-				friends_users_list.append(get_single_user_info(user_profile_info_model.get(id=friend.user1.id)))
+				friends_users_list.append(get_single_user_info(user_profile_info_model.get(user=friend.user1.id)))
 	return friends_users_list
 
 def is_already_friend(user1, user2):
@@ -144,7 +144,7 @@ def get_users_info(users):
 	if users:
 		for user in users:
 			info = {
-				"id": user.id,
+				"id": user.user.id,
 				"username": user.default_image_seed,
 				"image": get_image_url(user=user)
 			}
@@ -154,7 +154,7 @@ def get_users_info(users):
 
 def get_single_user_info(user):
 	info = {
-		"id": user.id,
+		"id": user.user.id,
 		"username": user.default_image_seed,
 		"image": get_image_url(user=user)
 	}

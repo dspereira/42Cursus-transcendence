@@ -28,7 +28,7 @@ class FriendRequestView(View):
 			friend_requests = []
 			if friend_requests_ids:
 				for req in friend_requests_ids:
-					friend = user_profile_info_model.get(id=req['from_user'])
+					friend = user_profile_info_model.get(user=req['from_user'])
 					if friend:
 						friend_requests.append({
 							"request_id": req['id'],

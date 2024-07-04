@@ -33,7 +33,6 @@ const getHtml = function(data) {
 		<div class="no-friends-msg hide">
 			<span>You have no friends! Please search for friends here to start a chat!</span>
 			<div><span class="link">Find friends to chat here</span></div>
-
 		</div>
 		<div class="friends-list">
 			<chat-friends-list></chat-friends-list>

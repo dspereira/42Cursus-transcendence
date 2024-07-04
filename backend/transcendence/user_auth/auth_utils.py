@@ -63,7 +63,7 @@ def create_user_profile_info(user):
 	user_profile_info_model = ModelManager(UserProfileInfo)
 
 	user_profile = user_profile_info_model.create(
-		user_id=user,
+		user=user,
 		default_image_seed=user.username
 	)
 	return user_profile

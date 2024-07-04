@@ -39,7 +39,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
 		if not self.user:
 			await self.close(4000)
 			return
-		self.user_profile = await sync_to_async(user_profile_model.get)(id=self.user.id)
+		self.user_profile = await sync_to_async(user_profile_model.get)(user=self.user)
 		await self.channel_layer.group_add(self.global_group_name, self.channel_name)
 		self.groups.append(self.global_group_name)
 		await self.__update_online_status(is_online=True)
@@ -189,7 +189,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
 		if room_2:
 			return room_2
 		return None
-	
+
 	async def __get_friendship(self, friends_id):
 		friend = await sync_to_async(user_model.get)(id=friends_id)
 		if friend:
@@ -220,6 +220,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
 		}))
 
 	async def __get_user_image(self, user_id):
-		user_profile = await sync_to_async(user_profile_model.get)(id=user_id)
-		return await sync_to_async(get_image_url)(user=user_profile)
-	
+		user = await sync_to_async(user_model.get)(id=user_id)
+		if user:
+			user_profile = await sync_to_async(user_profile_model.get)(user=user)
+			return await sync_to_async(get_image_url)(user=user_profile)

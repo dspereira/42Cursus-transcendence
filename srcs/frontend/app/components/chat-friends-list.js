@@ -4,6 +4,7 @@ import stateManager from "../js/StateManager.js";
 const styles = `
 .friend-list {
 	margin-right: 25px;
+	max-height: 87vh;
 }
 
 .user {
@@ -36,11 +37,14 @@ const styles = `
 	border-radius: 8px;
 }
 
+.scroll {
+	overflow-y: auto;
+}
 `;
 
 const getHtml = function(data) {
 	const html = `
-		<div class="friend-list"></div>
+		<div class="friend-list scroll"></div>
 	`;
 	return html;
 }
@@ -99,6 +103,7 @@ export default class ChatFriendsList extends HTMLElement {
 		callAPI("GET", `http://127.0.0.1:8000/api/friends/chat-list/`, null, (res, data) => {
 			if (res.ok) {
 				if (data.friends) {
+					console.log(data.friends);
 					this.friendListData = data.friends;
 					data.friends.forEach(elm => {
 						this.#insertFriendToList(elm);
