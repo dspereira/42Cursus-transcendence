@@ -12,6 +12,8 @@ from custom_utils.models_utils import ModelManager
 from datetime import datetime
 
 from friendships.friendships import get_friendship
+from friendships.friendships import get_friend_list
+from friendships.friendships import get_friends_users_list
 
 msg_model = ModelManager(Message)
 room_model = ModelManager(ChatRoom)
@@ -29,7 +31,6 @@ class ChatConsumer(AsyncWebsocketConsumer):
 		self.access_data = None
 		self.room_group_name = None
 		self.groups = []
-		self.global_group_name = "0_0"
 
 	async def connect(self):
 		await self.accept()
@@ -40,8 +41,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
 			await self.close(4000)
 			return
 		self.user_profile = await sync_to_async(user_profile_model.get)(user=self.user)
-		await self.channel_layer.group_add(self.global_group_name, self.channel_name)
-		self.groups.append(self.global_group_name)
+		await self.__connect_to_friends()
 		await self.__update_online_status(is_online=True)
 
 	async def disconnect(self, close_code):
@@ -76,12 +76,12 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
 		if self.room:
 			self.room_group_name = self.room.name
-			await self.channel_layer.group_add(
-				self.room_group_name,
-				self.channel_name
-			)
 			if self.room_group_name not in self.groups:
 				self.groups.append(self.room_group_name)
+				await self.channel_layer.group_add(
+					self.room_group_name,
+					self.channel_name
+				)
 
 	async def __save_message(self, message):
 		if not await sync_to_async(is_authenticated)(self.access_data):
@@ -207,10 +207,11 @@ class ChatConsumer(AsyncWebsocketConsumer):
 	async def __update_online_status(self, is_online):
 		self.user_profile.online = is_online
 		await sync_to_async(self.user_profile.save)()
-		await self.channel_layer.group_send(
-				self.global_group_name,
-				{'type': 'send_online_status', 'id': self.user.id, 'online': is_online}
-			)
+		for group_name in self.groups:
+			await self.channel_layer.group_send(
+					group_name,
+					{'type': 'send_online_status', 'id': self.user.id, 'online': is_online}
+				)
 
 	async def send_online_status(self, event):
 		await self.send(text_data=json.dumps({
@@ -224,3 +225,13 @@ class ChatConsumer(AsyncWebsocketConsumer):
 		if user:
 			user_profile = await sync_to_async(user_profile_model.get)(user=user)
 			return await sync_to_async(get_image_url)(user=user_profile)
+
+	async def __connect_to_friends(self):
+		friend_list = await sync_to_async(get_friend_list)(user=self.user)
+		friends_users_list = await sync_to_async(get_friends_users_list)(friends=friend_list, user_id=self.user.id)
+		for friend in friends_users_list:
+			room = await self.__get_room(friends_id=friend['id'])
+			room_name = room.name
+			await self.channel_layer.group_add(room_name, self.channel_name)
+			if room_name not in self.groups:
+				self.groups.append(room_name)
