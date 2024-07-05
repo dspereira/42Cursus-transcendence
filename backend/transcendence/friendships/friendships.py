@@ -143,21 +143,28 @@ def get_users_info(users):
 	users_info = []
 	if users:
 		for user in users:
+			online = False
+			if user.online:
+				online = True
+
 			info = {
 				"id": user.user.id,
 				"username": user.default_image_seed,
 				"image": get_image_url(user=user),
-				"online": user.online
+				"online": online
 			}
 			users_info.append(info)
 		return users_info
 	return None
 
 def get_single_user_info(user):
+	online = False
+	if user.online:
+		online = True
 	info = {
 		"id": user.user.id,
 		"username": user.default_image_seed,
 		"image": get_image_url(user=user),
-		"online": user.online
+		"online": online
 	}
 	return info

@@ -12,7 +12,7 @@ class UserProfileInfo(models.Model):
 	defeats = models.IntegerField(default=0)
 	win_rate = models.IntegerField(default=0)
 	tournaments_won = models.IntegerField(default=0)
-	online = models.BooleanField(default=False)
+	online = models.IntegerField(default=0)
 
 	def __str__(self) -> str:
 		return f'User: {self.user} | Bio: {self.bio}'

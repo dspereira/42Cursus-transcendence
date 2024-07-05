@@ -205,12 +205,21 @@ class ChatConsumer(AsyncWebsocketConsumer):
 		return False
 
 	async def __update_online_status(self, is_online):
-		self.user_profile.online = is_online
+		online = False
+
+		if is_online:
+			self.user_profile.online += 1
+		else:
+			self.user_profile.online -= 1
 		await sync_to_async(self.user_profile.save)()
+
+		if self.user_profile.online:
+			online = True
+
 		for group_name in self.groups:
 			await self.channel_layer.group_send(
 					group_name,
-					{'type': 'send_online_status', 'id': self.user.id, 'online': is_online}
+					{'type': 'send_online_status', 'id': self.user.id, 'online': online}
 				)
 
 	async def send_online_status(self, event):
