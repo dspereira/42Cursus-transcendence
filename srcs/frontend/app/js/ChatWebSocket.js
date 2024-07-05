@@ -39,6 +39,7 @@ class ChatWebSocket {
 	send(msg) {
 		if (this.isOpen() && msg) {
 			this.socket.send(JSON.stringify({
+				"friend_id": stateManager.getState("friendChatId"),
 				"type": "message",
 				"message": msg,
 			}));

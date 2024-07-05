@@ -26,7 +26,7 @@ class FriendList(models.Model):
 	async def async_str(self):
 		user1 = await sync_to_async(lambda: self.user1)()
 		user2 = await sync_to_async(lambda: self.user2)()
-		return f'User1: {user1} | User2: {user2}'
+		return f'User1: {user1} | User2: {user2} | User1_Block: {self.user1_block} | User2_Block: {self.user2_block}'
 
 	def __str__(self) -> str:
 		return f'User1: {self.user1}\nUser2: {self.user2}\nUser1 Block: {self.user1_block}\nUser2 Block: {self.user2_block}\nLast Chat Interaction: {self.last_chat_interaction}'

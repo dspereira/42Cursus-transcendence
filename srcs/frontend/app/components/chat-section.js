@@ -1,5 +1,6 @@
 import chatWebSocket from "../js/ChatWebSocket.js";
 import stateManager from "../js/StateManager.js";
+import { callAPI } from "../utils/callApiUtils.js";
 
 const styles = `
 /* Chat section */
@@ -156,7 +157,7 @@ const getHtml = function(data) {
 					<button type="button" class="btn btn-success">
 						<i class="icon-play bi bi-controller"></i>
 					</button>
-					<button type="button" class="btn btn-danger">
+					<button type="button" class="btn btn-danger btn-block">
 						<i class="icon-ban bi bi-ban"></i>
 					</button>
 				</div>
@@ -236,6 +237,7 @@ export default class ChatSection extends HTMLElement {
 		this.#newMessageEvent();
 		this.#chatScrollEvent();
 		this.#changeOnlineStatus();
+		this.#setBtnBlockEvent();
 	}
 
 	// this.initialScrollHeight -> Pre-calculated initial scrollHeight
@@ -364,7 +366,6 @@ export default class ChatSection extends HTMLElement {
 		return `${dateStr} ${time}`;
 	}
 
-
 	/*
 		scroll.scrollHeight -> maximum height available for scrolling
 		scroll.scrollTop -> distance from the top of scroll to the top of the scrollbar
@@ -426,6 +427,26 @@ export default class ChatSection extends HTMLElement {
 				else
 					onlineElm.classList.add("hide");
 			}
+		});
+	}
+
+	#setBtnBlockEvent() {
+		const btn = this.querySelector(".btn-block");
+		if (!btn)
+			return ;
+
+		btn.addEventListener("click", () => {
+			const data = {
+				friend: this.data.userId,
+				status: "block"
+			};
+			callAPI("POST", `http://127.0.0.1:8000/api/friends/block-status/`, data, (res, data) => {
+				if (res.ok) {
+					console.log(res);
+					console.log(data);
+				}
+
+			});
 		});
 	}
 }

@@ -62,17 +62,13 @@ class ChatConsumer(AsyncWebsocketConsumer):
 		elif data_type == "get_messages":
 			await self.__send_chat_group_messages(amount_messages=data_json['message_count'], id_browser=data_json['idBrowser'])
 		elif data_type == "message":
-			if not await self.__get_block_status():
+			if not await self.__get_block_status(friend_id=data_json['friend_id']):
 				new_message = await self.__save_message(data_json['message'].strip())
 				await self.__send_message(new_message)
 
 	async def __connect_to_friend_chatroom(self, friends_id):
 		self.room = await self.__get_room(friends_id=friends_id)
 		self.friendship = await self.__get_friendship(friends_id=friends_id)
-		blocked_status = await self.__get_block_status()
-
-		# PRINT APENAS PARA TESTES
-		await sync_to_async(print)(f"\n------------------------------\nBlocked Status: {blocked_status}\n------------------------------\n")
 
 		if self.room:
 			self.room_group_name = self.room.name
@@ -199,7 +195,8 @@ class ChatConsumer(AsyncWebsocketConsumer):
 		self.friendship.last_chat_interaction = last_chat_timestamp
 		await sync_to_async(self.friendship.save)()	
 
-	async def __get_block_status(self):
+	async def __get_block_status(self, friend_id):
+		self.friendship = await self.__get_friendship(friends_id=friend_id)
 		if self.friendship.user1_block or self.friendship.user2_block:
 			return True
 		return False
