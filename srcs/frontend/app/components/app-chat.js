@@ -25,6 +25,10 @@ const styles = `
 	color: darkblue;
 }
 
+.friends-list {
+	width: 25%;
+}
+
 `;
 
 const getHtml = function(data) {
@@ -96,8 +100,6 @@ export default class AppChat extends HTMLElement {
 
 	#setStateEvent() {
 		stateManager.addEvent("friendChatId", (stateValue) => {
-			console.log(`friendChatId: ${stateValue}`);
-
 			if (stateValue) {
 				this.#insertChatSection();
 				chatWebSocket.connect(stateManager.getState("friendChatId"));
