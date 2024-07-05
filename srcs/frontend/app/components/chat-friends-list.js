@@ -74,6 +74,23 @@ const styles = `
 	background-color: red;
 }
 
+.status {
+	position: absolute;
+	display: inline-block;
+	width: 13px;
+	height: 13px;
+	border-radius: 50%;
+	background-color: green;
+	z-index: 2;
+	top: 33px;
+	right: 2px;
+	border: 2px solid white;
+}
+
+.profile-photo-status {
+	position: relative;
+}
+
 `;
 
 const getHtml = function(data) {
@@ -163,7 +180,11 @@ export default class ChatFriendsList extends HTMLElement {
 		friendHtml.id = `id-${friendObj.id}`;
 		friendHtml.classList.add("user");
 		friendHtml.innerHTML = `
-		<img src="${friendObj.image}" class="profile-photo" alt="profile photo chat">
+		
+		<div class="profile-photo-status">
+			<img src="${friendObj.image}" class="profile-photo" alt="profile photo chat">
+			<div class="status"></div>
+		</div>
 		<span class="name">${friendObj.username}</span>`;
 		if (list == "friend") {
 			this.friendListHtml.appendChild(friendHtml);
