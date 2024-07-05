@@ -32,7 +32,7 @@ class FriendsView(View):
 				if not search_username or search_username == "" or search_username == '""':
 					friends_values = sorted(friends_list, key=lambda x: x["username"])
 				else:
-					searched_friends = [friend for friend in friends_list if search_username.lower() in friend["username"].lower()]
+					searched_friends = [friend for friend in friends_list if friend["username"].lower().startswith(search_username.lower())]
 					if searched_friends:
 						friends_values = sorted(searched_friends, key=lambda x: x["username"])
 				return JsonResponse({"message": "Friends List Returned With Success", "friends": friends_values}, status=200)
