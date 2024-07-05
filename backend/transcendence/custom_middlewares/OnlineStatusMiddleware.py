@@ -25,3 +25,4 @@ class OnlineStatusMiddleware:
 					print("Failed to reset the online statuses of all users. Please restart the server.")
 					return
 			print("All users' online statuses have been successfully reset.")
+		print("Users list is empty no statuses to reset.")
