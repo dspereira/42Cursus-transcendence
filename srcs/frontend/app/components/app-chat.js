@@ -116,9 +116,10 @@ export default class AppChat extends HTMLElement {
 			return ;
 		chatSection.innerHTML = `
 			<chat-section
-				id="${userData.id}"
+				user-id="${userData.id}"
 				username="${userData.username}"
 				profile-photo="${userData.image}"
+				online="${userData.online}"
 			></chat-section>
 		`;
 	}

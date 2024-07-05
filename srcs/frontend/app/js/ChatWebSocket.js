@@ -107,6 +107,15 @@ class ChatWebSocket {
 						stateManager.setState("newChatMessage", data);
 					}
 				}
+				else if (dataType == "online_status") {
+					if (data.user_id == stateManager.getState("userId"))
+						return ;
+					stateManager.setState("onlineStatus", {
+						id: data.user_id,
+						online: data.online
+					});
+				}
+				
 			}
 		};
 

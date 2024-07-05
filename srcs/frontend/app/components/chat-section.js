@@ -110,18 +110,42 @@ form {
 	transform: scale(1.1);
 }
 
+.online-status {
+	position: absolute;
+	display: inline-block;
+	width: 15px;
+	height: 15px;
+	border-radius: 50%;
+	background-color: green;
+	z-index: 2;
+	top: 35px;
+	left: 35px;
+	border: 2px solid #A9A9A9;
+}
+
+.profile-photo-status {
+	position: relative;
+	display: inline-block;
+}
+
 .hide {
 	display: none;
 }
-
 `;
 
 const getHtml = function(data) {
+	let onlineVisibility = "";
+	if (data.online == "false")
+		onlineVisibility = "hide";
+
 	const html = `
 		<div class="chat-section">
 			<div class="chat-header">
 				<div>
-					<img src="${data.profilePhoto}" class="profile-photo" alt="profile photo chat"/>			
+					<div class="profile-photo-status">
+						<img src="${data.profilePhoto}" class="profile-photo" alt="profile photo chat"/>
+						<div class="online-status ${onlineVisibility}"></div>
+					</div>
 					<span class="name">${data.username}</span>
 					<span class="block-mark">blocked</span>
 				</div>
@@ -152,7 +176,7 @@ const getHtml = function(data) {
 }
 
 export default class ChatSection extends HTMLElement {
-	static observedAttributes = ["user-id", "username", "profile-photo"];
+	static observedAttributes = ["user-id", "username", "profile-photo", "online"];
 
 	constructor() {
 		super()
@@ -211,6 +235,7 @@ export default class ChatSection extends HTMLElement {
 		this.#sendMessage();
 		this.#newMessageEvent();
 		this.#chatScrollEvent();
+		this.#changeOnlineStatus();
 	}
 
 	// this.initialScrollHeight -> Pre-calculated initial scrollHeight
@@ -386,6 +411,20 @@ export default class ChatSection extends HTMLElement {
 			if (!scrollTop) {
 				chatWebSocket.get_messages(stateManager.getState("chatMessagesCounter"));
 				scroll.scrollTop = 1;
+			}
+		});
+	}
+
+	#changeOnlineStatus() {
+		stateManager.addEvent("onlineStatus", (value) => {
+			const onlineElm = this.html.querySelector(".online-status");
+			if (!onlineElm)
+				return ;
+			if (value.id == this.data.userId) {
+				if (value.online)
+					onlineElm.classList.remove("hide");
+				else
+					onlineElm.classList.add("hide");
 			}
 		});
 	}

@@ -74,7 +74,7 @@ const styles = `
 	background-color: red;
 }
 
-.status {
+.online-status {
 	position: absolute;
 	display: inline-block;
 	width: 13px;
@@ -89,6 +89,10 @@ const styles = `
 
 .profile-photo-status {
 	position: relative;
+}
+
+.hide {
+	display: none;
 }
 
 `;
@@ -155,6 +159,7 @@ export default class ChatFriendsList extends HTMLElement {
 		this.#getChatFriendListToApi();
 		this.#pushFriendToTopOnMessage();
 		this.#setSearchEvent();
+		this.#changeOnlineStatus();
 	}
 
 	#getChatFriendListToApi() {
@@ -176,14 +181,17 @@ export default class ChatFriendsList extends HTMLElement {
 
 	#insertFriendToList(friendObj, list) {
 		const friendHtml = document.createElement("div");
-		
+		let visibility = "hide";
+
 		friendHtml.id = `id-${friendObj.id}`;
 		friendHtml.classList.add("user");
+		if (friendObj.online)
+			visibility = "";
+
 		friendHtml.innerHTML = `
-		
 		<div class="profile-photo-status">
 			<img src="${friendObj.image}" class="profile-photo" alt="profile photo chat">
-			<div class="status"></div>
+			<div class="online-status ${visibility}"></div>
 		</div>
 		<span class="name">${friendObj.username}</span>`;
 		if (list == "friend") {
@@ -342,6 +350,30 @@ export default class ChatFriendsList extends HTMLElement {
 		this.searchListHtml.innerHTML = "";
 	}
 
+
+	#changeOnlineStatus() {
+		stateManager.addEvent("onlineStatus", (value) => {
+			const friendList = this.html.querySelectorAll(".friend-list .user");
+			const seachList = this.html.querySelectorAll(".search-list .user");
+			this.#updateStatusInUserList(friendList, value);
+			this.#updateStatusInUserList(seachList, value);
+		});
+	}
+
+	#updateStatusInUserList(list, value) {
+		if (!list && !value)
+			return ;
+		const elmId = `id-${value.id}`;
+		list.forEach((elm) => {
+			if (elm.id == elmId) {
+				const onlineIcon = elm.querySelector(".online-status");
+				if (value.online && onlineIcon)
+					onlineIcon.classList.remove("hide");
+				if (!value.online && onlineIcon)
+					onlineIcon.classList.add("hide");
+			}
+		});
+	}
 }
 
 customElements.define("chat-friends-list", ChatFriendsList);
