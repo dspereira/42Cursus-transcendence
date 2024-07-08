@@ -149,7 +149,7 @@ def get_users_info(users):
 
 			info = {
 				"id": user.user.id,
-				"username": user.default_image_seed,
+				"username": user.user.username,
 				"image": get_image_url(user=user),
 				"online": online
 			}
@@ -163,7 +163,7 @@ def get_single_user_info(user):
 		online = True
 	info = {
 		"id": user.user.id,
-		"username": user.default_image_seed,
+		"username": user.user.username,
 		"image": get_image_url(user=user),
 		"online": online
 	}
