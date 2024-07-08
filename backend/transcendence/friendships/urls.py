@@ -9,4 +9,5 @@ urlpatterns = [
 	path('friendships/', FriendsView.as_view(), name='friendships'),
 	path('search_user_by_name/', views.search_user_by_name, name='search_user_by_name'),
 	path('chat-list/', views.chat_list, name='chat_list'),				# Apagar depois de Testar
+	path('blocked-status/', views.blocked_status, name='blocked-status'),
 ]

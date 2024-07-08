@@ -78,3 +78,35 @@ def chat_list(request):
 		else:
 			return JsonResponse({"message": "Empty Friends List", "friends": None}, status=200)
 	return JsonResponse({"message": "Error: Invalid User"}, status=401)
+
+@login_required
+@accepted_methods(["GET"])
+def blocked_status(request):
+	user = user_model.get(id=request.access_data.sub)
+	friend = user_model.get(id=request.GET.get('friend'))
+	if user and friend:
+		friendship = get_friendship(user1=user, user2=friend)
+		if friendship:
+
+			user_blocked = False
+			friend_blocked = False
+
+			if user.id == friendship.user1.id:
+				if friendship.user1_block:
+					user_blocked = True
+				if friendship.user2_block:
+					friend_blocked = True
+			else:
+				if friendship.user2_block:
+					user_blocked = True
+				if friendship.user1_block:
+					friend_blocked = True
+
+			return JsonResponse({
+				"message": "Blocked status returned with success.",
+				"user_blocked": user_blocked,
+				"friend_blocked": friend_blocked
+			}, status=200)
+		else:
+			return JsonResponse({"message": "Error: Friendship does not exist."}, status=409)
+	return JsonResponse({"message": "Error: Invalid User or Friend"}, status=401)
