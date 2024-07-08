@@ -95,6 +95,7 @@ def blocked_status(request):
 
 		user_blocked = False
 		friend_blocked = False
+		block_status = False
 
 		if user.id == friendship.user1.id:
 			if friendship.user2_block:
@@ -107,10 +108,14 @@ def blocked_status(request):
 			if friendship.user2_block:
 				friend_blocked = True
 
+		if user_blocked or friend_blocked:
+			block_status = True
+
 		return JsonResponse({
 			"message": "Blocked status returned with success.",
 			"user_has_blocked": user_blocked,
-			"friend_has_blocked": friend_blocked
+			"friend_has_blocked": friend_blocked,
+			"status": block_status
 		}, status=200)
 
 	return JsonResponse({"message": "Error: Invalid User or Friend"}, status=401)
