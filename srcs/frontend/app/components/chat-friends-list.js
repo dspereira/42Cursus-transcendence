@@ -183,7 +183,11 @@ export default class ChatFriendsList extends HTMLElement {
 		const friendHtml = document.createElement("div");
 		let visibility = "hide";
 
-		friendHtml.id = `id-${friendObj.id}`;
+		if (list == "friend")
+			friendHtml.id = `id-${friendObj.id}`;
+		else
+			friendHtml.id = `id_${friendObj.id}`;
+
 		friendHtml.classList.add("user");
 		if (friendObj.online)
 			visibility = "";
@@ -363,13 +367,23 @@ export default class ChatFriendsList extends HTMLElement {
 	#updateUserOnlineStatusHtml(value) {
 		if (!value)
 			return ;
-		const elm = this.html.querySelector(`#id-${value.id}`);
-		if (!elm)
+
+		let friendHtml = this.html.querySelector(`#id-${value.id}`);
+		if (friendHtml)
+			this.#changeOnlineStatusFriendHtml(friendHtml, value.online);
+
+		friendHtml = this.html.querySelector(`#id_${value.id}`);
+		if (friendHtml)
+			this.#changeOnlineStatusFriendHtml(friendHtml, value.online);
+	}
+		
+	#changeOnlineStatusFriendHtml(friendHtml, onlineStatus) {
+		const onlineIcon = friendHtml.querySelector(".online-status");
+		if (!onlineIcon)
 			return ;
-		const onlineIcon = elm.querySelector(".online-status");
-		if (value.online && onlineIcon)
+		if (onlineStatus)
 			onlineIcon.classList.remove("hide");
-		if (!value.online && onlineIcon)
+		else
 			onlineIcon.classList.add("hide");
 	}
 
@@ -378,7 +392,6 @@ export default class ChatFriendsList extends HTMLElement {
 		if (data)
 			data.online = value.online;
 	}
-
 }
 
 customElements.define("chat-friends-list", ChatFriendsList);
