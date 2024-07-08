@@ -115,9 +115,6 @@ export default class AppChat extends HTMLElement {
 		if (!chatSection)
 			return ;
 
-		console.log("userData na insertChatSection para debug:");
-		console.log(userData);
-
 		chatSection.innerHTML = `
 			<chat-section
 				user-id="${userData.id}"

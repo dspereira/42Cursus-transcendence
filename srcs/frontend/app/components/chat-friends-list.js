@@ -267,19 +267,19 @@ export default class ChatFriendsList extends HTMLElement {
 		const friendId = stateManager.getState("friendChatId");
 		if (!friendId)
 			return ;
+		const data = this.friendListData.find(user => user.id == friendId);
 		const elm = this.html.querySelector(`#id-${friendId}`);
-		if (!elm)
-			return ;
-		elm.classList.add("friend-selected");
 
-		const friendData = stateManager.getState("chatUserData");
-		if (!friendData || friendData.id != friendId) {
-			const data = this.friendListData.find(user => user.id == friendId);
-			if (data)
-				stateManager.setState("chatUserData", data);
+		if (!elm || !data) {
+			stateManager.setState("friendChatId", null);
+			stateManager.setState("chatUserData", null);
+			return ;
 		}
+		elm.classList.add("friend-selected");
+		stateManager.setState("chatUserData", data);
 		stateManager.setState("friendChatId", friendId);
 	}
+
 
 	#pushFriendToTopOnMessage() {
 		stateManager.addEvent("messageSend", (stateValue) => {
@@ -355,25 +355,30 @@ export default class ChatFriendsList extends HTMLElement {
 		stateManager.addEvent("onlineStatus", (value) => {
 			const friendList = this.html.querySelectorAll(".friend-list .user");
 			const seachList = this.html.querySelectorAll(".search-list .user");
-			this.#updateStatusInUserList(friendList, value);
-			this.#updateStatusInUserList(seachList, value);
+			this.#updateUserOnlineStatusHtml(value);
+			this.#updateOnlineStatusFriendListData(value);
 		});
 	}
 
-	#updateStatusInUserList(list, value) {
-		if (!list && !value)
+	#updateUserOnlineStatusHtml(value) {
+		if (!value)
 			return ;
-		const elmId = `id-${value.id}`;
-		list.forEach((elm) => {
-			if (elm.id == elmId) {
-				const onlineIcon = elm.querySelector(".online-status");
-				if (value.online && onlineIcon)
-					onlineIcon.classList.remove("hide");
-				if (!value.online && onlineIcon)
-					onlineIcon.classList.add("hide");
-			}
-		});
+		const elm = this.html.querySelector(`#id-${value.id}`);
+		if (!elm)
+			return ;
+		const onlineIcon = elm.querySelector(".online-status");
+		if (value.online && onlineIcon)
+			onlineIcon.classList.remove("hide");
+		if (!value.online && onlineIcon)
+			onlineIcon.classList.add("hide");
 	}
+
+	#updateOnlineStatusFriendListData(value) {
+		let data = this.friendListData.find(user => user.id == value.id);
+		if (data)
+			data.online = value.online;
+	}
+
 }
 
 customElements.define("chat-friends-list", ChatFriendsList);
