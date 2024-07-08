@@ -15,6 +15,35 @@ user_profile_info_model = ModelManager(UserProfileInfo)
 
 @login_required
 @accepted_methods(["POST"])
+def set_new_configs(request):
+	user_to_alter = user_profile_info_model.get(user_id=request.access_data.sub)
+	if	user_to_alter:
+		if request.body:
+			req_data = json.loads(request.body.decode('utf-8'))
+			if req_data.get("newBio"):
+				new_bio = req_data.get("newBio")
+				user_to_alter.bio = new_bio
+				user_to_alter.save()
+				result = {
+					"message": "Bio altered to:",
+					"new_bio": new_bio
+				}
+			else:
+				result = {
+				"message": "No bio sent"
+				}
+		else:
+			result = {
+			"message": "Error: Empty Body"
+			}
+	else:
+		result = {
+		"message": "Error: Can't find user"
+		}
+	return JsonResponse(result)
+
+@login_required
+@accepted_methods(["POST"])
 def set_new_default_seed(request):
 	if request.body:
 		user = user_profile_info_model.get(user_id=request.access_data.sub)
@@ -67,16 +96,13 @@ def get_all_info(request):
 @login_required
 @accepted_methods(["GET"])
 def get_image(request):
-	if not request.body:
-		user = user_profile_info_model.get(user_id=request.access_data.sub)
-	else:
-		user = user_profile_info_model.get(user_id=request.GET.get("user_id"))
+	user = user_profile_info_model.get(user_id=request.access_data.sub)
 	if user:
 		image_url = get_image_url(user)
 		if image_url:
 			result = {
-                "image_url": image_url
-            }
+				"image_url": image_url,
+			}
 		else:
 			result = {
 				"message": "Error: Image type no supported"

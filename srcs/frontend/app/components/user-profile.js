@@ -148,7 +148,7 @@ export default class UserProfile extends HTMLElement {
 
 	#scripts() {
 
-		this.#getUserInfo()
+		this.#getUserInfo();
 
 	}
 
@@ -170,6 +170,7 @@ export default class UserProfile extends HTMLElement {
 		const htmlElement = this.html.querySelector('.profile-picture');
 		if (htmlElement) {
 			htmlElement.src = image_url;
+			console.log(htmlElement.src);
 		}
 	}
 
