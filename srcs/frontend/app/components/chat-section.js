@@ -28,9 +28,7 @@ const styles = `
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
-	padding-top: 10px;
-	padding-bottom: 10px;
-	padding-right: 25px;
+	padding: 10px;
 	border-radius: 10px 10px 0px 0px;
 	background-color: #A9A9A9;
 }
@@ -53,6 +51,7 @@ const styles = `
     background-color: red;
     padding: 2px 4px;
     border-radius: 5px;
+	margin-left: 10px;
 }
 
 
@@ -148,13 +147,13 @@ const getHtml = function(data) {
 						<div class="online-status ${onlineVisibility}"></div>
 					</div>
 					<span class="name">${data.username}</span>
-					<span class="block-mark">blocked</span>
+					<span class="block-mark hide">blocked</span>
 				</div>
 				<div>
-					<button type="button" class="btn btn-success">
+					<button type="button" class="btn btn-success btn-unblock hide">
 						Unblock
 					</button>
-					<button type="button" class="btn btn-success">
+					<button type="button" class="btn btn-success btn-play">
 						<i class="icon-play bi bi-controller"></i>
 					</button>
 					<button type="button" class="btn btn-danger btn-block">
@@ -230,6 +229,7 @@ export default class ChatSection extends HTMLElement {
 
 
 	#scripts() {
+		this.#getUserBlockStatus();
 		stateManager.setState("chatMessagesCounter", 0);
 		this.#resizeMessageInput();
 		this.#setSubmitEvents();
@@ -238,6 +238,7 @@ export default class ChatSection extends HTMLElement {
 		this.#chatScrollEvent();
 		this.#changeOnlineStatus();
 		this.#setBtnBlockEvent();
+		this.#setBtnUnblockEvent();
 	}
 
 	// this.initialScrollHeight -> Pre-calculated initial scrollHeight
@@ -448,6 +449,55 @@ export default class ChatSection extends HTMLElement {
 
 			});
 		});
+	}
+
+	#setBtnUnblockEvent() {
+		const btn = this.querySelector(".btn-unblock");
+		if (!btn)
+			return ;
+
+		btn.addEventListener("click", () => {
+			const data = {
+				friend: this.data.userId,
+				status: "unblock"
+			};
+			callAPI("POST", `http://127.0.0.1:8000/api/friends/block-status/`, data, (res, data) => {
+				if (res.ok) {
+					console.log(res);
+					console.log(data);
+				}
+
+			});
+		});
+	}
+
+	#getUserBlockStatus() {
+		callAPI("GET", `http://127.0.0.1:8000/api/friends/blocked-status/?friend=${this.data.userId}`, null, (res, data) => {	
+			if (res.ok) {
+				console.log(data);
+				if (!data.status)
+					return ;
+	
+				this.#disableMessageInput();
+				let elm = this.html.querySelector(".block-mark");
+				elm.classList.remove("hide");
+				elm = this.html.querySelector(".btn-play");
+				elm.classList.add("hide");
+
+				if (data.user_has_blocked) {
+					elm = this.html.querySelector(".btn-unblock");
+					elm.classList.remove("hide");
+					elm = this.html.querySelector(".btn-block");
+					elm.classList.add("hide");
+				}
+				else if (data.friend_has_blocked) {
+					elm = this.html.querySelector(".btn-block");
+					elm.classList.remove("hide");
+					elm = this.html.querySelector(".btn-unblock");
+					elm.classList.add("hide");
+				}
+			}
+		});		
 	}
 }
 
