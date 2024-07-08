@@ -2,16 +2,12 @@ import stateManager from "../js/StateManager.js";
 import { adjustContent } from "../utils/adjustContent.js";
 
 const styles = `
-	.game-page {
-		display: flex;
-		justify-content: center;
-		align-items: center;
-		width: 100vw;
-		height: 100vh;
+.game-page {
+	justify-content: center;
+	align-items: center;
 	}
 
 	.game-create {
-		background-color: #EEEEEE;
 		height: 100px;
 		margin: 0px 0px 20px 0px;
 		font-size: 16px;
@@ -19,32 +15,28 @@ const styles = `
 
 	.game-create {
 		display: flex;
-		height: 200px;
-		cursor: pointer;
 		border-radius: 10px;
 		height: 10%;
 		justify-content: center;
 		align-items: center;
 	}
 
-	.create-button {
+	.create-btn {
 		display: flex;
 		width: 50%;
 		height: 100px;
 		justify-content: center;
 		align-items: center;
+		margin-bottom: 20px;
 	}
 
-	.create-button:hover, .invite-button:hover {
+	.create-btn:hover, .invite-btn:hover, .invited-btn:hover {
 		background-color: #C2C2C2;
-	}
-	
-	.game-create, .friend.invites, invite.friends {
-		width: 1000px;
 	}
 
 	.friend-invites {
 		display: flex;
+		flex-direction: column;
 		justify-content: center;
 		border-radius: 10px;
 		height: 1000px;
@@ -67,26 +59,54 @@ const styles = `
 		flex-direction: column;
 		width: 18%;
 		height: 300px;
-		background-color: #EEEEEE;
 		border-radius: 10px;
 		border-style: hidden;
 		justify-content: center;
 		align-items: center;
 	}
 
-	.invite-card:hover {
-		background-color: #E0E0E0;
+	.invited-btn {
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		width: 15%;
+		height: 80%;
 	}
 
-	.invite-card:hover .invite-button, .back-button:hover{
+	.inv-decline-btn {
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		width: 10%;
+		height: 80%;
+	}
+
+	.invited-card {
+		display: flex;
+		flex-direction: row;
+		height: 10%;
+		border-radius: 10px;
+		border-style: hidden;
+		justify-content: center;
+		align-items: center;
+		margin-bottom: 10px;
+	}
+
+	.invite-card:hover .invite-btn, .back-btn:hover{
 		background-color: #C2C2C2;
 	}
 
 	.profile-photo {
 		width: 60%;
+		height: 60%;
 	}
 
-	.invite-button {
+	.pfp-invitee {
+		width: 10%;
+		height: 60%;
+	}
+
+	.invite-btn {
 		display: flex;
 		justify-content: center;
 		align-items: center;
@@ -94,23 +114,18 @@ const styles = `
 		height: 15%;
 	}
 
-	.create-button, .invite-button {
+	.create-btn, .invite-btn, .invited-btn, .back-btn, .inv-decline-btn {
 		color: white;
 		border-style: hidden;
-		background-color: #E0E0E0;
 		border-radius: 5px;
 	}
 
-	.username, .create-button, .invite-button {
+	.username, .create-btn, .invite-btn {
 		font-size: 24px;
 		font-weight: bold;
 	}
 
-	.back-button {
-		color: white;
-		background-color: #E0E0E0;
-		border: none;
-		border-radius: 5px;
+	.back-btn {
 		padding: 10px 20px;
 		font-size: 16px;
 		font-weight: bold;
@@ -119,7 +134,7 @@ const styles = `
 	}
 
 	.inv-header {
-		display:flex;
+		display:none;
 		justify-content: left;
 		margin: 0px, 0px, 10px;
 
@@ -131,24 +146,34 @@ const styles = `
 		margin-top: 20px;
 		margin-bottom: 10px;
 	}
+
+	.game-create, .invite-card, .invited-card {
+		background-color: #EEEEEE;
+	}
+
+	.create-btn, .invite-btn, .invited-btn, .back-btn {
+		background-color: #E0E0E0;
+	}
+
+	.invite-card:hover {
+		background-color: #E0E0E0;
+	}
 `;
 
 const getHtml = function(data) {
 	const html = `
 		<app-header></app-header>
 		<side-panel selected="game"></side-panel>
-		<div class="content content-small game-page">
+		<div class="content content-small">
 			<div id="game" class="game">
 				<div class="game-create">
-					<button type="button" class="create-button">
+					<button type="button" class="create-btn">
 						Create Game
 					</button>
 				</div>
-				<div class="friend-invites">
-					FRIENDS GO HERE
-				</div>
+				<div class="friend-invites"></div>
 				<div class="inv-header">
-					<button type="button" class="back-button">
+					<button type="button" class="back-btn">
 						Back
 					</button>
 					<div class="inv-header-text">
@@ -163,6 +188,8 @@ const getHtml = function(data) {
 	`;
 	return html;
 }
+
+// Need to make friend card with [name], [pfp], [timestamp], ofc a [button] to join the match, maybe [decline] and maybe a [short message]
 
 const title = "BlitzPong - Game";
 
@@ -211,11 +238,12 @@ export default class PageGame extends HTMLElement {
 	#scripts() {
 		const friendList = getFriendsFakeCall();
 		adjustContent(this.html.querySelector(".content"));
+		this.#showInvites(friendList);
 		this.#inviteFriends(friendList);
-		this.html.querySelector(".create-button").addEventListener("click", () => {
+		this.html.querySelector(".create-btn").addEventListener("click", () => {
 			this.#toggleInviteSection();
 		});
-		this.html.querySelector(".back-button").addEventListener("click", () => {
+		this.html.querySelector(".back-btn").addEventListener("click", () => {
 			this.#toggleInviteSection();
 		});
 	}
@@ -223,11 +251,11 @@ export default class PageGame extends HTMLElement {
 	#inviteFriends(friendList) {
 		const inviteFriendsHtml = this.html.querySelector(".invite-friends");
 		friendList.forEach((friend) => {
-			inviteFriendsHtml.appendChild(this.#getInviteHtml(friend));
+			inviteFriendsHtml.appendChild(this.#getFriendHtml(friend));
 		});
 	}
 
-	#getInviteHtml(friend) {
+	#getFriendHtml(friend) {
 		const elm = document.createElement("button");
 		elm.classList.add("invite-card");
 		elm.id = `id-${friend.id}`;
@@ -235,7 +263,7 @@ export default class PageGame extends HTMLElement {
 			elm.innerHTML = `
 				<img src="${friend.image}" class="profile-photo"/>
 				<span class="username">${friend.username}</span>
-				<div class="invite-button">Invite</div>`;
+				<div class="invite-btn">Invite</div>`;
 		}
 		return elm;
 	}
@@ -257,6 +285,29 @@ export default class PageGame extends HTMLElement {
 			inviteFriendsSection.style.display = "flex";
 			inviteFriendsSection2.style.display = "flex";
 		}
+	}
+
+	#showInvites(friendInvites) {
+		const friendInvitesHtml = this.html.querySelector(".friend-invites");
+		friendInvites.forEach((invite) => {
+			friendInvitesHtml.appendChild(this.#getInviteHtml(invite));
+		});
+	}
+
+	#getInviteHtml(invite) {
+		const elm = document.createElement("div");
+		elm.classList.add("invited-card");
+		elm.id = `id-${invite.id}`;
+		if (invite) {
+			elm.innerHTML = `
+				<button class="invited-btn">Join</button>
+				<img src="${invite.image}" class="pfp-invitee"/>
+				<span class="username">${invite.username}</span>
+				<div>TIME <br> ELAPSED</div>
+				<button class="inv-decline-btn">X</button>
+			`;
+		}
+		return elm;
 	}
 }
 
