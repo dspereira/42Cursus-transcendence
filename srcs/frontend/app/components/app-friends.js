@@ -173,7 +173,6 @@ export default class AppFriends extends HTMLElement {
 	}
 
 	#scripts() {
-		//this.#getFriendsList();
 		this.#createSearchPage();
 		this.#setSearchButtonEvent();
 		this.#setFriendsButtonEvent();
@@ -336,7 +335,7 @@ export default class AppFriends extends HTMLElement {
 		if (type == "friends")
 			placeholder = "Search friends...";
 		if (type == "search")
-			placeholder = "Search search...";
+			placeholder = "Search...";
 
 		searchBar.innerHTML = `
 		<div class="form-group">

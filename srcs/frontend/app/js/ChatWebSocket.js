@@ -39,8 +39,18 @@ class ChatWebSocket {
 	send(msg) {
 		if (this.isOpen() && msg) {
 			this.socket.send(JSON.stringify({
+				"friend_id": stateManager.getState("friendChatId"),
 				"type": "message",
 				"message": msg,
+			}));
+		}
+	}
+
+	updateBlockStatus(friendId) {
+		if (this.isOpen() && friendId) {
+			this.socket.send(JSON.stringify({
+				"type": "update_block_status",
+				"friend_id": friendId,
 			}));
 		}
 	}
@@ -54,6 +64,7 @@ class ChatWebSocket {
 		}
 	}
 
+	// Change name to getMessages
 	get_messages(messagesCount) {
 		if (this.isOpen() && messagesCount >= 0) {
 			this.socket.send(JSON.stringify({
@@ -106,6 +117,17 @@ class ChatWebSocket {
 						this.#updateMessageCounterState(stateManager.getState("chatMessagesCounter"));
 						stateManager.setState("newChatMessage", data);
 					}
+				}
+				else if (dataType == "online_status") {
+					if (data.user_id == stateManager.getState("userId"))
+						return ;
+					stateManager.setState("onlineStatus", {
+						id: data.user_id,
+						online: data.online
+					});
+				}
+				else if (dataType == "update_block_status") {
+					stateManager.setState("blockStatus", data.id);
 				}
 			}
 		};

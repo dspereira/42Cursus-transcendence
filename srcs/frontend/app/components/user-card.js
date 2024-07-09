@@ -239,7 +239,7 @@ export default class UserCard extends HTMLElement {
 			return ;
 		btn.addEventListener("click", () => {
 			this.#friendRequest("DELETE", {"request_id": this.data.requestId}, () => {
-				this.innerHTML = "";
+				this.remove();
 			});
 		});
 	}
@@ -250,7 +250,7 @@ export default class UserCard extends HTMLElement {
 			return ;
 		btn.addEventListener("click", () => {
 			this.#friends("POST", {"request_id": this.data.requestId}, () => {
-				this.innerHTML = "";
+				this.remove();
 			});
 		});
 	}
@@ -261,7 +261,7 @@ export default class UserCard extends HTMLElement {
 			return ;
 		btn.addEventListener("click", () => {
 			this.#friends("DELETE", {"friend_id": this.data.userId}, () => {
-				this.innerHTML = "";
+				this.remove();
 			});
 		});
 	}

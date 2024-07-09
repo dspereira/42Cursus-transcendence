@@ -11,7 +11,6 @@ import json
 from friendships.friendships import is_already_friend
 from friendships.friendships import get_friends_users_list
 from friendships.friendships import get_friend_list
-from friendships.friendships import rename_result_users_keys
 from friendships.friendships import delete_friend_chatroom
 
 friend_requests_model = ModelManager(FriendRequests)
@@ -25,20 +24,16 @@ class FriendsView(View):
 	def get(self, request):
 		search_username = request.GET.get('key')
 		friends_values = None
-
 		user = user_model.get(id=request.access_data.sub)
 		if user:
-			friends_list = get_friends_users_list(friends=get_friend_list(user_id=user.id, side="left"), side="left")
-			friends_list += get_friends_users_list(friends=get_friend_list(user_id=user.id, side="right"), side="right")
+			friends_list = get_friends_users_list(friends=get_friend_list(user=user), user_id=user.id)
 			if friends_list:
 				if not search_username or search_username == "" or search_username == '""':
-					friends_values = sorted(friends_list, key=lambda x: x["default_image_seed"])
+					friends_values = sorted(friends_list, key=lambda x: x["username"])
 				else:
-					searched_friends = [friend for friend in friends_list if search_username.lower() in friend["default_image_seed"].lower()]
+					searched_friends = [friend for friend in friends_list if friend["username"].lower().startswith(search_username.lower())]
 					if searched_friends:
-						friends_values = sorted(searched_friends, key=lambda x: x["default_image_seed"])
-				if friends_values:
-					rename_result_users_keys(friends_values)
+						friends_values = sorted(searched_friends, key=lambda x: x["username"])
 				return JsonResponse({"message": "Friends List Returned With Success", "friends": friends_values}, status=200)
 			else:
 				return JsonResponse({"message": "Empty Friends List", "friends": None}, status=200)

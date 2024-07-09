@@ -17,6 +17,11 @@ class StateManager {
 			userId: null,
 			chatSocket: null,
 			idBrowser: null,
+			chatUserData: null,
+			userImage: null,
+			messageSend: null,
+			onlineStatus: null,
+			blockStatus: null
 		}
 		this.stateEvents = {
 			sidePanel: [],
@@ -28,6 +33,11 @@ class StateManager {
 			userId: [],
 			chatSocket: [],
 			idBrowser: [],
+			chatUserData: [],
+			userImage: [],
+			messageSend: [],
+			onlineStatus: [],
+			blockStatus: [],
 		}
 
 		StateManager.instance = this;
@@ -57,7 +67,6 @@ class StateManager {
 	}
 
 	cleanEvents() {
-
 		for (const key in this.stateEvents) {
 			if (!globalEvents.includes(key))
 				this.stateEvents[key] = [];
@@ -69,6 +78,19 @@ class StateManager {
 		Object.entries(this.states).forEach(([key, value]) => {
 			console.log(`${key}: ${value}`);
 		});
+	}
+
+	cleanAllStatesAndEvents() {
+		this.states.sidePanel = "open";
+		this.states.pageReady = false,
+		this.states.friendChatId = null;
+		this.states.newChatMessage = null;
+		this.states.chatMessagesCounter = 0;
+		this.states.userId = null;
+		this.states.idBrowser = null;
+		this.states.chatUserData = null;
+		this.states.userImage =  null;
+		this.states.messageSend = null;
 	}
 }
 

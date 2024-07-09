@@ -67,7 +67,6 @@ export default class PageChat extends HTMLElement {
 	}
 
 	#resetChatStates() {
-		stateManager.setState("friendChatId", null);
 		stateManager.setState("chatMessagesCounter", 0);
 	}
 }

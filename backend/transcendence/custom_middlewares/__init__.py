@@ -3,3 +3,4 @@ from .JwtMiddleware import JwtMiddleware
 from .BlacklistTokenMiddleware import BlacklistTokenMiddleware
 from .ChannelsAuthMiddleware import ChannelsAuthMiddleware
 from .DataSanitize import DataSanitize
+from .OnlineStatusMiddleware import OnlineStatusMiddleware
