@@ -334,9 +334,9 @@ export default class ChatSection extends HTMLElement {
 			event.preventDefault();
 			let input = this.html.querySelector("#text-area");
 			const msg = this.#getMessageToSend(input);
-			this.#disableMessageInput();
 			if (!msg)
 				return ;
+			this.#disableMessageInput();
 			chatWebSocket.send(msg);
 			stateManager.setState("messageSend", true);
 		});
