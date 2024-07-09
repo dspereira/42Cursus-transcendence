@@ -87,15 +87,6 @@ def check_if_friend_request(users_list, requests_list):
 					user['request_id'] = req['id']
 					break
 
-def rename_result_users_keys(users):
-	old_username = 'default_image_seed'
-	old_image = 'default_profile_image_url'
-	for item in users:
-		if old_username in item:
-			item['username'] = item.pop(old_username)
-		if old_image in item:
-			item['image'] = item.pop(old_image)
-
 def remove_users_with_friends_request(user, users_list):
 	friends_requests = get_friends_request_list(user=user, own=False)
 	if friends_requests:

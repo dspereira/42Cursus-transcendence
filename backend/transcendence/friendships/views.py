@@ -11,39 +11,13 @@ from friendships.friendships import get_friends_users_list
 from friendships.friendships import remove_user_and_friends_from_users_list
 from friendships.friendships import get_friends_request_list
 from friendships.friendships import check_if_friend_request
-from friendships.friendships import rename_result_users_keys
 from friendships.friendships import remove_users_with_friends_request
-from friendships.friendships import get_friendship
-from friendships.friendships import update_friendship_block_status
 from friendships.friendships import get_users_info
 
 user_profile_info_model = ModelManager(UserProfileInfo)
 friend_requests_model = ModelManager(FriendRequests)
 friend_list_model = ModelManager(FriendList)
 user_model = ModelManager(User)
-
-@login_required
-@accepted_methods(["POST"])
-def update_block_status(request):
-	if request.body:
-		user = user_model.get(id=request.access_data.sub)
-		if user:
-			req_data = json.loads(request.body.decode('utf-8'))
-			friend = user_model.get(id=req_data["friend"])
-			status = True if req_data["status"] == "block" else False
-			if friend:
-				friendship = get_friendship(user, friend)
-				if friendship:
-					update_friendship_block_status(friendship, friend, status)
-					return JsonResponse({"message": f"Block status updated to user {friend.username}"}, status=200)
-				else:
-					return JsonResponse({"message": "Error: Can't find friendship"}, status=409)
-			else:
-				return JsonResponse({"message": "Error: Can't find user to block"}, status=409)
-		else:
-			return JsonResponse({"message": "Error: Can't find user"}, status=409)
-	else:
-		return JsonResponse({"message": "Error: Empty Body"}, status=400)
 
 @login_required
 @accepted_methods(["GET"])
@@ -78,44 +52,3 @@ def chat_list(request):
 		else:
 			return JsonResponse({"message": "Empty Friends List", "friends": None}, status=200)
 	return JsonResponse({"message": "Error: Invalid User"}, status=401)
-
-@login_required
-@accepted_methods(["GET"])
-def blocked_status(request):
-	user = user_model.get(id=request.access_data.sub)
-	if user:
-
-		friend = user_model.get(id=request.GET.get('id'))
-		if not friend:
-			return JsonResponse({"message": "Error: Invalid Friend ID"}, status=400)
-
-		friendship = get_friendship(user1=user, user2=friend)
-		if not friendship:
-			return JsonResponse({"message": "Error: Friendship does not exist."}, status=409)
-
-		user_blocked = False
-		friend_blocked = False
-		block_status = False
-
-		if user.id == friendship.user1.id:
-			if friendship.user2_block:
-				user_blocked = True
-			if friendship.user1_block:
-				friend_blocked = True
-		else:
-			if friendship.user1_block:
-				user_blocked = True
-			if friendship.user2_block:
-				friend_blocked = True
-
-		if user_blocked or friend_blocked:
-			block_status = True
-
-		return JsonResponse({
-			"message": "Blocked status returned with success.",
-			"user_has_blocked": user_blocked,
-			"friend_has_blocked": friend_blocked,
-			"status": block_status
-		}, status=200)
-
-	return JsonResponse({"message": "Error: Invalid User or Friend"}, status=401)

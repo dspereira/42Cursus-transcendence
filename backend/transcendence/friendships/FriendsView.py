@@ -11,7 +11,6 @@ import json
 from friendships.friendships import is_already_friend
 from friendships.friendships import get_friends_users_list
 from friendships.friendships import get_friend_list
-from friendships.friendships import rename_result_users_keys
 from friendships.friendships import delete_friend_chatroom
 
 friend_requests_model = ModelManager(FriendRequests)
