@@ -11,5 +11,5 @@ urlpatterns = [
 	path('chat-list/', views.chat_list, name='chat_list'),
 	path('block-status/', views.update_block_status, name='update_block_status'),			# Para remover
 	path('blocked-status/', views.blocked_status, name='blocked-status'),					# Para remover
-	path('block/', views.BlockStatusView.as_view(), name='block'),
+	path('block/', BlockStatusView.as_view(), name='block'),
 ]
