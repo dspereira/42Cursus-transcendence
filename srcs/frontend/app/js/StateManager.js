@@ -20,7 +20,8 @@ class StateManager {
 			chatUserData: null,
 			userImage: null,
 			messageSend: null,
-			onlineStatus: null
+			onlineStatus: null,
+			blockStatus: null
 		}
 		this.stateEvents = {
 			sidePanel: [],
@@ -36,6 +37,7 @@ class StateManager {
 			userImage: [],
 			messageSend: [],
 			onlineStatus: [],
+			blockStatus: [],
 		}
 
 		StateManager.instance = this;

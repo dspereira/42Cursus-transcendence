@@ -209,6 +209,11 @@ export default class ChatSection extends HTMLElement {
 		this.msgInputscrollHeight = 0;
 		this.msgInputscrollHeight1 = 0;
 		this.msgInputMaxRows = 4;
+
+		this.blockInfo = this.html.querySelector(".block-mark");
+		this.btnPlay = this.html.querySelector(".btn-play");
+		this.btnUnblock = this.html.querySelector(".btn-unblock");
+		this.btnBlock = this.html.querySelector(".btn-block");
 	}
 
 	#styles() {
@@ -239,6 +244,7 @@ export default class ChatSection extends HTMLElement {
 		this.#changeOnlineStatus();
 		this.#setBtnBlockEvent();
 		this.#setBtnUnblockEvent();
+		this.#setBlockStatusEvent();
 	}
 
 	// this.initialScrollHeight -> Pre-calculated initial scrollHeight
@@ -398,7 +404,7 @@ export default class ChatSection extends HTMLElement {
 				if (scrollBottom <= 1 || msgData.owner == "owner")
 					scroll.scrollTop = scroll.scrollHeight;
 				
-				if (msgData.owner == "owner") {
+				if (msgData.owner == "owner" && msgData.type == "message") {
 					this.#clearInputMessage();
 					this.#enableMessageInput();
 				}
@@ -432,72 +438,71 @@ export default class ChatSection extends HTMLElement {
 	}
 
 	#setBtnBlockEvent() {
-		const btn = this.querySelector(".btn-block");
-		if (!btn)
-			return ;
-
-		btn.addEventListener("click", () => {
-			const data = {
-				friend: this.data.userId,
-				status: "block"
-			};
-			callAPI("POST", `http://127.0.0.1:8000/api/friends/block-status/`, data, (res, data) => {
-				if (res.ok) {
-					console.log(res);
-					console.log(data);
-				}
-
-			});
+		this.btnBlock.addEventListener("click", () => {
+			this.#blockStatusCall("POST", this.data.userId, "block");
 		});
 	}
 
 	#setBtnUnblockEvent() {
-		const btn = this.querySelector(".btn-unblock");
-		if (!btn)
-			return ;
-
-		btn.addEventListener("click", () => {
-			const data = {
-				friend: this.data.userId,
-				status: "unblock"
-			};
-			callAPI("POST", `http://127.0.0.1:8000/api/friends/block-status/`, data, (res, data) => {
-				if (res.ok) {
-					console.log(res);
-					console.log(data);
-				}
-
-			});
+		this.btnUnblock .addEventListener("click", () => {
+			this.#blockStatusCall("POST", this.data.userId, "unblock");
 		});
 	}
 
 	#getUserBlockStatus() {
-		callAPI("GET", `http://127.0.0.1:8000/api/friends/blocked-status/?friend=${this.data.userId}`, null, (res, data) => {	
-			if (res.ok) {
-				console.log(data);
-				if (!data.status)
-					return ;
-	
-				this.#disableMessageInput();
-				let elm = this.html.querySelector(".block-mark");
-				elm.classList.remove("hide");
-				elm = this.html.querySelector(".btn-play");
-				elm.classList.add("hide");
+		this.#blockStatusCall("GET", this.data.userId, null);
+	}
 
-				if (data.user_has_blocked) {
-					elm = this.html.querySelector(".btn-unblock");
-					elm.classList.remove("hide");
-					elm = this.html.querySelector(".btn-block");
-					elm.classList.add("hide");
-				}
-				else if (data.friend_has_blocked) {
-					elm = this.html.querySelector(".btn-block");
-					elm.classList.remove("hide");
-					elm = this.html.querySelector(".btn-unblock");
-					elm.classList.add("hide");
-				}
+	#blockStatusCall(method, friendId, blockStatus) {
+		let queryParam = "";
+		let data = null;
+
+		if (method == "GET" && friendId)
+			queryParam = `?id=${friendId}`;
+		else if (method == "POST" && friendId && blockStatus) {
+			data = {
+				id: friendId,
+				status: blockStatus
 			}
-		});		
+		}
+		else
+			return ;
+
+		callAPI(method, `http://127.0.0.1:8000/api/friends/block/${queryParam}`, data, (res, data) => {
+			if (res.ok) {
+				this.#blockUserChat(data.status, data.user_has_blocked, data.friend_has_blocked);
+				if (method == "POST")
+					chatWebSocket.updateBlockStatus(friendId);
+			}
+		});
+	}
+
+	#blockUserChat(status, user_has_blocked, friend_has_blocked) {
+		this.blockInfo.classList.add("hide");
+		this.btnPlay.classList.add("hide");
+		this.btnBlock.classList.add("hide");
+		this.btnUnblock.classList.add("hide");
+
+		if (!status) {
+			this.btnPlay.classList.remove("hide");
+			this.btnBlock.classList.remove("hide");
+			this.#enableMessageInput();
+		}
+		else {
+			this.blockInfo.classList.remove("hide");
+			this.#disableMessageInput();
+			if (user_has_blocked)
+				this.btnUnblock.classList.remove("hide");
+			else if (friend_has_blocked)
+				this.btnBlock.classList.remove("hide");
+		}
+	}
+
+	#setBlockStatusEvent() {
+		stateManager.addEvent("blockStatus", (stateValue) => {
+			if (stateValue == this.data.userId)
+				this.#getUserBlockStatus();
+		});
 	}
 }
 

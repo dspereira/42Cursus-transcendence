@@ -20,7 +20,7 @@ room_model = ModelManager(ChatRoom)
 user_model = ModelManager(User)
 user_profile_model = ModelManager(UserProfileInfo)
 
-MESSAGE_LIMIT_COUNT = 5
+MESSAGE_LIMIT_COUNT = 20
 
 class ChatConsumer(AsyncWebsocketConsumer):
 
@@ -65,6 +65,8 @@ class ChatConsumer(AsyncWebsocketConsumer):
 			if not await self.__get_block_status(friend_id=data_json['friend_id']):
 				new_message = await self.__save_message(data_json['message'].strip())
 				await self.__send_message(new_message)
+		elif data_type == "update_block_status":
+			await self.__update_friend_block_status(friend_id=data_json['friend_id'])
 
 	async def __connect_to_friend_chatroom(self, friends_id):
 		self.room = await self.__get_room(friends_id=friends_id)
@@ -241,3 +243,23 @@ class ChatConsumer(AsyncWebsocketConsumer):
 			await self.channel_layer.group_add(room_name, self.channel_name)
 			if room_name not in self.groups:
 				self.groups.append(room_name)
+
+	async def __update_friend_block_status(self, friend_id):
+		new_friendship = await self.__get_friendship(friends_id=friend_id)
+		if self.friendship and self.friendship.id == new_friendship.id:
+			if self.friendship.user1_block != new_friendship.user1_block or self.friendship.user2_block != new_friendship.user2_block:
+				self.friendship = new_friendship
+				if self.room_group_name:
+					await self.channel_layer.group_send(
+						self.room_group_name,
+						{
+							'type': 'send_update_friend_block_status',
+							'id': self.user.id
+	   					}
+					)
+
+	async def send_update_friend_block_status(self, event):
+		await self.send(text_data=json.dumps({
+			'type': 'update_block_status',
+			'id': event['id']
+		}))
