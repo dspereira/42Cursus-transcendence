@@ -385,14 +385,14 @@ export default class ChatSection extends HTMLElement {
 				const msgPanel = this.html.querySelector(".msg-panel");
 				const newMsg = document.createElement("div");
 				const timeDate = this.#getTimeDate(msgData['timestamp']);
-				newMsg.innerHTML = `
-					<msg-card 
-						sender="${msgData.owner}" 
-						message="${msgData.message}"
-						profile-photo="${msgData.user_image}"
-						time-date="${timeDate}">
-					</msg-card>
-				`;
+
+				const msgCardElm = document.createElement("msg-card");
+				msgCardElm.setAttribute("sender", `${msgData.owner}`);
+				msgCardElm.setAttribute("message", `${msgData.message}`);
+				msgCardElm.setAttribute("profile-photo", `${msgData.user_image}`);
+				msgCardElm.setAttribute("time-date", `${timeDate}`);
+				newMsg.appendChild(msgCardElm);
+
 				let scroll = this.html.querySelector(".scroll");
 				let scrollBottom = Math.floor(scroll.scrollHeight) - Math.floor(scroll.scrollTop) - Math.floor(scroll.clientHeight);
 				if (msgData.type == "message")
