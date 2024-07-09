@@ -2,32 +2,44 @@ import stateManager from "../js/StateManager.js";
 import { adjustContent } from "../utils/adjustContent.js";
 
 const styles = `
-.game-page {
-	justify-content: center;
-	align-items: center;
-	}
-
-	.game-create {
-		height: 100px;
-		margin: 0px 0px 20px 0px;
-		font-size: 16px;
-	}
-
-	.game-create {
+	.game-page {
 		display: flex;
-		border-radius: 10px;
-		height: 10%;
+		flex-direction: column;
 		justify-content: center;
 		align-items: center;
+	}
+
+	.create-enter-game, .invite-players {
+		width: 100%;
+		flex-direction: column;
+		justify-content: center;
+		align-items: center;
+	}
+
+	.create-enter-game {
+		display: flex;
+	}
+
+	.invite-players {
+		display: none;
+	}
+
+	.separator {
+		display: flex;
+		width: 50%;
+		height: 5px;
+		border-radius: 10px;
+		justify-content: center;
+		align-items: center;
+		margin: 20px 0px 20px 0px;
 	}
 
 	.create-btn {
 		display: flex;
-		width: 50%;
-		height: 100px;
+		width: 250px;
+		height: 50px;
 		justify-content: center;
 		align-items: center;
-		margin-bottom: 20px;
 	}
 
 	.create-btn:hover, .invite-btn:hover, .invited-btn:hover {
@@ -36,20 +48,21 @@ const styles = `
 
 	.friend-invites {
 		display: flex;
+		width: 100%;
 		flex-direction: column;
 		justify-content: center;
+		align-items: center;
 		border-radius: 10px;
-		height: 1000px;
 	}
 
 	.invite-friends {
-		display: none;
+		display: flex;
 		height: 100%;
 		flex-wrap: wrap;
 		justify-content: left;
 		align-items: flex-start;
 		border-radius: 10px;
-		font-size: 32px;
+		font-size: 16px;
 		font-weight: bold;
 		gap: 10px;
 	}
@@ -57,43 +70,40 @@ const styles = `
 	.invite-card {
 		display: flex;
 		flex-direction: column;
-		width: 18%;
-		height: 300px;
+		width: 150px;
+		height: 200px;
 		border-radius: 10px;
 		border-style: hidden;
+		justify-content: center;
+		align-items: center;
+	}
+
+	.invited-btn, .inv-decline-btn {
+		display: flex;
+		height: 60%;
+		margin: 0px 20px 0px 20px;
 		justify-content: center;
 		align-items: center;
 	}
 
 	.invited-btn {
-		display: flex;
-		justify-content: center;
-		align-items: center;
-		width: 15%;
-		height: 80%;
+		width: 180px;
 	}
 
 	.inv-decline-btn {
-		display: flex;
-		justify-content: center;
-		align-items: center;
-		width: 10%;
-		height: 80%;
+		width: 60px;
 	}
 
 	.invited-card {
 		display: flex;
 		flex-direction: row;
-		height: 10%;
-		border-radius: 10px;
+		width: 80%;
+		height: 100px;
+		border-radius: 20px;
 		border-style: hidden;
-		justify-content: center;
+		justify-content: space-between;
 		align-items: center;
 		margin-bottom: 10px;
-	}
-
-	.invite-card:hover .invite-btn, .back-btn:hover{
-		background-color: #C2C2C2;
 	}
 
 	.profile-photo {
@@ -107,11 +117,11 @@ const styles = `
 	}
 
 	.invite-btn {
+		width: 80%;
+		height: 15%;
 		display: flex;
 		justify-content: center;
 		align-items: center;
-		width: 80%;
-		height: 15%;
 	}
 
 	.create-btn, .invite-btn, .invited-btn, .back-btn, .inv-decline-btn {
@@ -120,39 +130,40 @@ const styles = `
 		border-radius: 5px;
 	}
 
-	.username, .create-btn, .invite-btn {
-		font-size: 24px;
+	.username, .create-btn, .invite-btn, .back-btn, .invited-btn, .inv-decline-btn {
+		font-size: 16px;
 		font-weight: bold;
 	}
 
 	.back-btn {
+		width: 100px;
+		height: 50px;
 		padding: 10px 20px;
-		font-size: 16px;
-		font-weight: bold;
 		cursor: pointer;
 		margin-right: 10px;
 	}
 
 	.inv-header {
-		display:none;
+		display: flex;
 		justify-content: left;
-		margin: 0px, 0px, 10px;
-
+		margin: 0px 0px 20px;
 	}
 
 	.inv-header-text {
-		font-size: 32px;
+		font-size: 24px;
 		font-weight: bold;
-		margin-top: 20px;
-		margin-bottom: 10px;
 	}
 
-	.game-create, .invite-card, .invited-card {
+	.invite-card, .invited-card {
 		background-color: #EEEEEE;
 	}
 
-	.create-btn, .invite-btn, .invited-btn, .back-btn {
+	.create-btn, .invite-btn, .invited-btn, .back-btn, .inv-decline-btn, .separator {
 		background-color: #E0E0E0;
+	}
+
+	.invite-card:hover .invite-btn, .back-btn:hover, .inv-decline-btn:hover {
+		background-color: #C2C2C2;
 	}
 
 	.invite-card:hover {
@@ -165,23 +176,25 @@ const getHtml = function(data) {
 		<app-header></app-header>
 		<side-panel selected="game"></side-panel>
 		<div class="content content-small">
-			<div id="game" class="game">
-				<div class="game-create">
+			<div id="game" class="game-page">
+				<div class="create-enter-game">
 					<button type="button" class="create-btn">
 						Create Game
 					</button>
+					<div class="separator"></div>
+					<div class="friend-invites"></div>
 				</div>
-				<div class="friend-invites"></div>
-				<div class="inv-header">
-					<button type="button" class="back-btn">
-						Back
-					</button>
-					<div class="inv-header-text">
-						FRIENDS TO INVITE
+				<div class="invite-players">
+					<div class="inv-header">
+						<button type="button" class="back-btn">
+							Back
+						</button>
+						<div class="inv-header-text">
+							Invite For a Challenge!
+						</div>
 					</div>
-					<br><br>
-				</div>
-				<div class="invite-friends">
+					<div class="invite-friends">
+					</div>
 				</div>
 			</div>
 		</div>
@@ -268,22 +281,25 @@ export default class PageGame extends HTMLElement {
 		return elm;
 	}
 
-	#toggleInviteSection() {
-		const gameSection = this.html.querySelector(".game-create");
-		const gameSection2 = this.html.querySelector(".friend-invites");
-		const inviteFriendsSection = this.html.querySelector(".invite-friends");
-		const inviteFriendsSection2 = this.html.querySelector(".inv-header");
+	#searchFriends(search, friendList) {
+		if (search) {
+			let i = 0;
+			let parsedList;
 
-		if (gameSection.style.display === "none") {
-			gameSection.style.display = "flex";
-			gameSection2.style.display = "flex";
-			inviteFriendsSection.style.display = "none";
-			inviteFriendsSection2.style.display = "none";
+			while ()
+		}
+	}
+
+	#toggleInviteSection() {
+		const createEnterSection = this.html.querySelector(".create-enter-game");
+		const invitePlayersSection = this.html.querySelector(".invite-players");
+
+		if (createEnterSection.style.display === "none") {
+			createEnterSection.style.display = "flex";
+			invitePlayersSection.style.display = "none";
 		} else {
-			gameSection.style.display = "none";
-			gameSection2.style.display = "none";
-			inviteFriendsSection.style.display = "flex";
-			inviteFriendsSection2.style.display = "flex";
+			createEnterSection.style.display = "none";
+			invitePlayersSection.style.display = "flex";
 		}
 	}
 
@@ -303,6 +319,7 @@ export default class PageGame extends HTMLElement {
 				<button class="invited-btn">Join</button>
 				<img src="${invite.image}" class="pfp-invitee"/>
 				<span class="username">${invite.username}</span>
+				<div>[Message]</div>
 				<div>TIME <br> ELAPSED</div>
 				<button class="inv-decline-btn">X</button>
 			`;
