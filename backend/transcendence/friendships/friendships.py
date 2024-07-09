@@ -168,3 +168,24 @@ def get_single_user_info(user):
 		"online": online
 	}
 	return info
+
+def get_friendship_block_status(user, friendship):
+	user_blocked = False
+	friend_blocked = False
+	block_status = False
+
+	if user.id == friendship.user1.id:
+		if friendship.user2_block:
+			user_blocked = True
+		if friendship.user1_block:
+			friend_blocked = True
+	else:
+		if friendship.user1_block:
+			user_blocked = True
+		if friendship.user2_block:
+			friend_blocked = True
+
+	if user_blocked or friend_blocked:
+		block_status = True
+	
+	return {"user_has_blocked": user_blocked, "friend_has_blocked": friend_blocked, "status": block_status}

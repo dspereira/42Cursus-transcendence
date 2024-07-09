@@ -85,7 +85,7 @@ def blocked_status(request):
 	user = user_model.get(id=request.access_data.sub)
 	if user:
 
-		friend = user_model.get(id=request.GET.get('friend'))
+		friend = user_model.get(id=request.GET.get('id'))
 		if not friend:
 			return JsonResponse({"message": "Error: Invalid Friend ID"}, status=400)
 
