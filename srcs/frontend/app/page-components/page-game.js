@@ -57,14 +57,13 @@ const styles = `
 
 	.invite-friends {
 		display: flex;
-		height: 100%;
 		flex-wrap: wrap;
 		justify-content: left;
 		align-items: flex-start;
 		border-radius: 10px;
 		font-size: 16px;
 		font-weight: bold;
-		gap: 10px;
+		gap: 60px;
 	}
 
 	.invite-card {
@@ -145,7 +144,8 @@ const styles = `
 
 	.inv-header {
 		display: flex;
-		justify-content: left;
+		width: 100%;
+		justify-content: space-between;
 		margin: 0px 0px 20px;
 	}
 
@@ -154,7 +154,30 @@ const styles = `
 		font-weight: bold;
 	}
 
-	.invite-card, .invited-card {
+	.friend-search {
+		width: 200px;
+		height: 50px;
+		color: #C2C2C2;
+		text-align: center;
+		border-style: hidden;
+		border-radius: 5px;
+	}
+
+	.friend-search::placeholder {
+		color: #C2C2C2;
+	}
+
+	.friend-search:focus {
+		box-shadow: none;
+		border: none;
+		border-radius: 5px;
+	}
+
+	.friend-search:focus-visible {
+		outline: 3px solid #C2C2C2;
+	}
+
+	.invite-card, .invited-card, .friend-search {
 		background-color: #EEEEEE;
 	}
 
@@ -190,8 +213,9 @@ const getHtml = function(data) {
 							Back
 						</button>
 						<div class="inv-header-text">
-							Invite For a Challenge!
+							Invite a Friend For a Challenge!
 						</div>
+						<input class="friend-search" placeholder="Search"></input>
 					</div>
 					<div class="invite-friends">
 					</div>
@@ -201,8 +225,6 @@ const getHtml = function(data) {
 	`;
 	return html;
 }
-
-// Need to make friend card with [name], [pfp], [timestamp], ofc a [button] to join the match, maybe [decline] and maybe a [short message]
 
 const title = "BlitzPong - Game";
 
@@ -280,15 +302,7 @@ export default class PageGame extends HTMLElement {
 		}
 		return elm;
 	}
-
-	#searchFriends(search, friendList) {
-		if (search) {
-			let i = 0;
-			let parsedList;
-
-			while ()
-		}
-	}
+	//TODO add online status to the invite section
 
 	#toggleInviteSection() {
 		const createEnterSection = this.html.querySelector(".create-enter-game");
@@ -319,7 +333,6 @@ export default class PageGame extends HTMLElement {
 				<button class="invited-btn">Join</button>
 				<img src="${invite.image}" class="pfp-invitee"/>
 				<span class="username">${invite.username}</span>
-				<div>[Message]</div>
 				<div>TIME <br> ELAPSED</div>
 				<button class="inv-decline-btn">X</button>
 			`;
