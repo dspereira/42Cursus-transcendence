@@ -67,7 +67,6 @@ export default class GameHistory extends HTMLElement {
 		let game = null;
 		const gameListHtml = this.html.querySelector(".game-list");
 		gameList.forEach(elm => {
-			console.log(elm);
 			game = document.createElement("div");
 			game.innerHTML = 
 			`<game-card

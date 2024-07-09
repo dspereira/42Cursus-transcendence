@@ -19,8 +19,12 @@ const getHtml = function(data) {
 					<input type="text" class="input-padding form-control form-control-lg" id="new-bio" placeholder="New Bio" maxlength="255">
 				</div>
 				<div class="image-configs">
-					<img class="profile-picture" src="">
-					<input type="file" accept="image/jpeg, image/png, image/jpg" id="image-input">
+					<label for="newImage" class="button">
+						<i class="bi bi-camera"></i>
+					</label>
+					<input id="newImage" type="file" accept="image/jpeg, image/png, image/jpg" id="image-input" style="opacity: 0;">
+					<button id="seedButton" class="btn btn-secondary">Generate New Avatar</button>
+					<img id="imagePreview">
 				</div>
 				<button type="submit" class="btn btn-success btn-submit">Apply Changes</button>
 			</form>
@@ -70,40 +74,50 @@ export default class AppConfigs extends HTMLElement {
 		this.appendChild(this.html);
 	}
 
-	#scripts() {	
-		this.#getUserInfo();
-		this.#submit();
+	#scripts() {
+		
+		let dataForm = {
+			"newUsername": '',
+			"newBio": '',
+			"newImage": '',
+			"newSeed": ''
+		};
+		this.#submit(dataForm);
+		this.#uploadImage(dataForm);
+		this.#generateNewSeed(dataForm);
 	}
 
-	#submit() {
+	#generateNewSeed(dataForm) {
+		const seedButton = this.html.querySelector("#seedButton")
+		seedButton.addEventListener('click', (event) => {
+			event.preventDefault();
+			const newSeed = Math.random().toString(36).substring(2,7);
+			var preview = this.html.querySelector("#imagePreview");
+			preview.src = "https://api.dicebear.com/8.x/bottts/svg?seed=" + newSeed;
+			dataForm["newImage"] = '';
+			dataForm["newSeed"] = newSeed;
+		})
+	}
+
+	#uploadImage(dataForm) {
+		const uploadImage = this.html.querySelector("#newImage")
+		uploadImage.addEventListener('change', (event) => {
+			event.preventDefault();
+			var preview = this.html.querySelector("#imagePreview");
+			preview.src = URL.createObjectURL(event.target.files[0]);
+			dataForm["newImage"] = URL.createObjectURL(event.target.files[0]);
+			dataForm["newSeed"] = '';
+		})
+	}
+
+	#submit(dataForm) {
 		const settingsForm = this.html.querySelector("#settings-form");
 		settingsForm.addEventListener("submit", (event) => {
 			event.preventDefault();
-			const dataForm = {
-				newUsername: document.querySelector("#new-username").value.trim(),
-				newBio: document.querySelector("#new-bio").value.trim()
-			}
-			if (dataForm.newUsername) {
-				console.log(dataForm.newUsername);
-			}
-			if (dataForm.newBio) {
-				console.log(dataForm.newBio);
-			}
+			dataForm["newUsername"] = this.html.querySelector("#new-username").value.trim();
+			dataForm["newBio"] = this.html.querySelector("#new-bio").value.trim();
 			callAPI("POST", "http://127.0.0.1:8000/api/profile/setnewconfigs", dataForm);
 		});
-	}
-
-	#getUserInfo() {
-		callAPI("GET", "http://127.0.0.1:8000/api/profile/getimage", null, (res, data) => {
-			this.#updateImage(data.image_url);
-		});
-	}
-	
-	#updateImage(image_url) {
-		const htmlElement = this.html.querySelector('.profile-picture');
-		if (htmlElement) {
-			htmlElement.src = image_url;
-		}
 	}
 
 }

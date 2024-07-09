@@ -1,7 +1,7 @@
+from user_profile.aux import get_image_url, set_new_bio, set_new_username, set_new_default_seed
 from custom_decorators import accepted_methods, login_required
 from custom_utils.models_utils import ModelManager
 from user_profile.models import UserProfileInfo
-from user_profile.aux import get_image_url
 from user_profile.forms import ImageForm
 from django.http import JsonResponse
 from user_auth.models import User
@@ -20,18 +20,19 @@ def set_new_configs(request):
 	if	user_to_alter:
 		if request.body:
 			req_data = json.loads(request.body.decode('utf-8'))
+			result = {
+					"message": "Info changed"
+					}
+			if req_data.get("newUsername"):
+				if not set_new_username(user_model.get(id=request.access_data.sub), req_data.get("newUsername")):
+					result = {
+					"message": "Username already in use"
+					}
+					return JsonResponse(result)
 			if req_data.get("newBio"):
-				new_bio = req_data.get("newBio")
-				user_to_alter.bio = new_bio
-				user_to_alter.save()
-				result = {
-					"message": "Bio altered to:",
-					"new_bio": new_bio
-				}
-			else:
-				result = {
-				"message": "No bio sent"
-				}
+				set_new_bio(user_to_alter, req_data.get("newBio"))
+			if req_data.get("newSeed"):
+				set_new_default_seed(user_to_alter, req_data.get("newSeed"))
 		else:
 			result = {
 			"message": "Error: Empty Body"
@@ -39,28 +40,6 @@ def set_new_configs(request):
 	else:
 		result = {
 		"message": "Error: Can't find user"
-		}
-	return JsonResponse(result)
-
-@login_required
-@accepted_methods(["POST"])
-def set_new_default_seed(request):
-	if request.body:
-		user = user_profile_info_model.get(user_id=request.access_data.sub)
-		if user:
-			req_data = json.loads(request.body.decode('utf-8'))
-			user.default_image_seed = req_data["new_seed"]
-			user.save()
-			result = {
-				"new_default_seed": user.default_image_seed
-			}
-		else:
-			result = {
-				"message": "Error: No User"
-			}
-	else:
-		result = {
-			"message": "Error: Empty Body"
 		}
 	return JsonResponse(result)
 
