@@ -76,12 +76,13 @@ export default class AppConfigs extends HTMLElement {
 
 	#scripts() {
 		
-		let dataForm = {
-			"newUsername": '',
-			"newBio": '',
-			"newImage": '',
-			"newSeed": ''
-		};
+		let dataForm = new FormData();
+		dataForm.append("newUsername",'');
+		dataForm.append("newBio", '');
+		dataForm.append("newImage", '');
+		dataForm.append("newSeed", '');
+
+
 		this.#submit(dataForm);
 		this.#uploadImage(dataForm);
 		this.#generateNewSeed(dataForm);
@@ -104,8 +105,8 @@ export default class AppConfigs extends HTMLElement {
 		uploadImage.addEventListener('change', (event) => {
 			event.preventDefault();
 			var preview = this.html.querySelector("#imagePreview");
-			preview.src = URL.createObjectURL(event.target.files[0]);
-			dataForm["newImage"] = URL.createObjectURL(event.target.files[0]);
+			preview.src = URL.createObjectURL(uploadImage.files[0]);
+			dataForm["newImage"] = uploadImage.files[0];
 			dataForm["newSeed"] = '';
 		})
 	}
@@ -114,8 +115,10 @@ export default class AppConfigs extends HTMLElement {
 		const settingsForm = this.html.querySelector("#settings-form");
 		settingsForm.addEventListener("submit", (event) => {
 			event.preventDefault();
-			dataForm["newUsername"] = this.html.querySelector("#new-username").value.trim();
-			dataForm["newBio"] = this.html.querySelector("#new-bio").value.trim();
+
+			dataForm.append("newUsername", this.html.querySelector("#new-username").value.trim());
+			dataForm.append("newBio", this.html.querySelector("#new-bio").value.trim());
+
 			callAPI("POST", "http://127.0.0.1:8000/api/profile/setnewconfigs", dataForm);
 		});
 	}
