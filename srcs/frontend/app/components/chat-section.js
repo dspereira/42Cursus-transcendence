@@ -214,6 +214,7 @@ export default class ChatSection extends HTMLElement {
 		this.btnPlay = this.html.querySelector(".btn-play");
 		this.btnUnblock = this.html.querySelector(".btn-unblock");
 		this.btnBlock = this.html.querySelector(".btn-block");
+		this.textArea = this.html.querySelector("#text-area");
 	}
 
 	#styles() {
@@ -319,12 +320,13 @@ export default class ChatSection extends HTMLElement {
 	}
 
 	#disableMessageInput() {
-			this.html.querySelector("#text-area").disabled = true;
+		this.textArea.disabled = true;
 			this.html.querySelector("#send-icon").classList.add("hide");
 	}
 
-	#enableMessageInput() {
-		this.html.querySelector("#text-area").disabled = false;
+	#enableMessageInput() {		
+		this.textArea.disabled = false;
+		this.textArea.focus();
 		this.html.querySelector("#send-icon").classList.remove("hide");
 	}
 
