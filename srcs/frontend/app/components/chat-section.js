@@ -401,9 +401,10 @@ export default class ChatSection extends HTMLElement {
 					let firstMsg = msgPanel.querySelector("div")
 					msgPanel.insertBefore(newMsg, firstMsg);
 				}
-				if (scrollBottom <= 1 || msgData.owner == "owner")
+
+				if (scrollBottom <= 1 || (msgData.owner == "owner" && msgData.type == "message"))
 					scroll.scrollTop = scroll.scrollHeight;
-				
+
 				if (msgData.owner == "owner" && msgData.type == "message") {
 					this.#clearInputMessage();
 					this.#enableMessageInput();
