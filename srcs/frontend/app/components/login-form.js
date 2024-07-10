@@ -158,8 +158,8 @@ export default class LoginForm extends HTMLElement {
 		loginForm.addEventListener("submit", (event) => {
 			event.preventDefault();
 			const dataForm = {
-				username: document.querySelector('#email').value.trim(),
-				password: document.querySelector('#password').value.trim()
+				username: this.html.querySelector('#email').value.trim(),
+				password: this.html.querySelector('#password').value.trim()
 			}
 			if (!dataForm.username || !dataForm.password)
 				this.#setInvalidCredentialsStyle();
@@ -169,18 +169,18 @@ export default class LoginForm extends HTMLElement {
 	}
 
 	#apiResHandlerCalback = (res, data) => {
-		if (res.ok)
+		if (res.ok && data.message === "success")
 			redirect("/");
 		else
 			this.#setInvalidCredentialsStyle();
 	}
 
 	#setInvalidCredentialsStyle() {
-		const inputs = document.querySelectorAll('input');
+		const inputs = this.html.querySelectorAll('input');
 		inputs.forEach(input => {
 			input.classList.add("is-invalid");
 		})
-		const alert = document.querySelector(".alert");
+		const alert = this.html.querySelector(".alert");
 		if (alert.classList.contains("hide"))
 		{
 			alert.classList.add("show");

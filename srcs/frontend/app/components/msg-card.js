@@ -17,7 +17,7 @@ const styles = `
 }
 
 .profile-photo {
-	width: 45px;
+	width: 40px;
 }
 
 .msg {
@@ -38,6 +38,7 @@ const styles = `
 	padding: 5px 8px 5px 8px;
 	border-radius: 8px;
 	font-size: 16px;
+	overflow-wrap: anywhere;
 }
 
 .msg-margin-left {
@@ -81,7 +82,7 @@ const getHtml = function(data) {
 	let photoElm = "";
 	if (data.profilePhoto) {
 		photoElm = `
-			<div class="test-img">
+			<div>
 				<img src="${data.profilePhoto}" class="profile-photo" alt="profile photo chat"/>
 			</div>
 		`;
@@ -100,11 +101,13 @@ const getHtml = function(data) {
 			${photoElm && data.sender=='friend' ? photoElm : '' }
 			<div class="msg ${marginCard}">
 				<div class="date-text">
-					<span class="msg-date ${data.sender=='friend' ? 'msg-date-friend' : 'msg-date-owner'}">Today 10:34AM</span>
 					<div>
+						<span class="msg-date ${data.sender=='friend' ? 'msg-date-friend' : 'msg-date-owner'}">${data.timeDate}</span>
+					</div>
+					<div class="${data.sender=='friend' ? 'msg-date-friend' : 'msg-date-owner'}">
 						<div class="msg-text ${data.sender == 'friend' ? 'friend-color' : 'owner-color'}">${data.message}</div>
 					</div>
-				</div>		
+				</div>
 			</div>
 			${photoElm && data.sender=='owner' ? photoElm : '' }
 		</div>
@@ -113,7 +116,7 @@ const getHtml = function(data) {
 }
 
 export default class MsgCard extends HTMLElement {
-	static observedAttributes = ["sender", "message", "profile-photo", "timestamp"];
+	static observedAttributes = ["sender", "message", "profile-photo", "time-date"];
 
 	constructor() {
 		super()
@@ -129,6 +132,8 @@ export default class MsgCard extends HTMLElement {
 	attributeChangedCallback(name, oldValue, newValue) {
 		if (name == "profile-photo")
 			name = "profilePhoto";
+		if (name == "time-date")
+			name = "timeDate";
 		this.data[name] = newValue;
 	}
 

@@ -63,6 +63,11 @@ export default class PageChat extends HTMLElement {
 
 	#scripts() {
 		adjustContent(this.html.querySelector(".content"));
+		this.#resetChatStates();
+	}
+
+	#resetChatStates() {
+		stateManager.setState("chatMessagesCounter", 0);
 	}
 }
 

@@ -172,6 +172,13 @@ const getHtml = function(data) {
 							<span class="icon-text">Tournaments</span>
 						</span>
 					</button>
+					<button id="friends">
+						<span>
+							<i class="icon bi bi-people"></i>
+							<span class="icon-text">Friends</span>
+						</span>
+					</button>
+
 					<div class="bottom-buttons">
 						<button id="logout">
 							<span>
@@ -194,12 +201,16 @@ const getHtml = function(data) {
 	return html;
 }
 
+// Can be changed to object key:value
+// key -> id element   value -> pretended route
 const navigation = [
 	"home",
 	"profile",
 	"chat",
 	"tournaments",
+	"logout",
 	"configurations",
+	"friends"
 ]
 
 const selectedIcon  = {
@@ -207,7 +218,8 @@ const selectedIcon  = {
 	profile: "bi-person-fill",
 	chat: "bi-chat-fill",
 	tournaments: "bi-trophy-fill",
-	configurations: "bi-gear-fill" 
+	configurations: "bi-gear-fill",
+	friends: "bi-people-fill"
 }
 
 const deselectedIcon = {
@@ -215,7 +227,8 @@ const deselectedIcon = {
 	profile: "bi-person",
 	chat: "bi-chat",
 	tournaments: "bi-trophy",
-	configurations: "bi-gear"
+	configurations: "bi-gear",
+	friends: "bi-people"
 }
 
 export default class SidePanel extends HTMLElement {

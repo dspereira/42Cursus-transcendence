@@ -11,6 +11,7 @@ from .auth_utils import update_blacklist
 from .auth_utils import send_email_verification
 from .auth_utils import get_jwt_data
 from .auth_utils import add_email_token_to_blacklist
+from .auth_utils import create_user_profile_info
 
 from two_factor_auth.two_factor import setup_default_tfa_configs
 from two_factor_auth.two_factor import initiate_two_factor_authentication
@@ -40,9 +41,9 @@ def register(request):
 		user = user_model.create(username=username, email=email, password=password)
 		if not user:
 			return JsonResponse({"message": "Error creating user"}, status=500)
-		#send_email_verification(user)
-		user_info = ModelManager(UserProfileInfo)
-		user_info.create(user_id=user, default_image_seed=username)
+		send_email_verification(user)
+		if not create_user_profile_info(user=user):
+			return JsonResponse({"message": "Error creating user profile"}, status=500)
 
 	return JsonResponse({"message": "success"})
 
@@ -62,32 +63,6 @@ def login(request):
 		response = user_login(JsonResponse({"message": "success"}), user)
 		return response
 	return JsonResponse({"message": "Empty request body"}, status=400)
-
-""" @accepted_methods(["POST"])
-def login(request):
-	if request.body:
-		req_data = json.loads(request.body)
-		username = req_data.get("username")
-		password = req_data.get("password")
-		if not username:
-			return JsonResponse({"message": "Username field cannot be empty"}, status=400)
-		if not password:
-			return JsonResponse({"message": "Password field cannot be empty"}, status=400)
-		user = authenticate(request, email_username=username, password=password)
-		if not user:
-			return JsonResponse({"message": "Invalid credentials. Please check your username or password."}, status=401)
-		if not user.active:
-			send_email_verification(user=user)
-			return JsonResponse({"message": "check_mail_box"}, status=401)
-		if not user.last_login:
-			setup_default_tfa_configs(user)
-		tfa_option = initiate_two_factor_authentication(user)
-		if tfa_option:
-			response = user_login(JsonResponse({"message": "success", "tfa_option": tfa_option}), user)
-		else:
-			return JsonResponse({"message": "Error in Two Factor Auth"}, status=401)
-		return response
-	return JsonResponse({"message": "Empty request body"}, status=400) """
 
 @accepted_methods(["POST"])
 def logout(request):
@@ -171,6 +146,7 @@ def apiGetUsersList(request):
 
 
 # Test views
+@accepted_methods(["GET"])
 @login_required
 def get_user_id(request):
 	user_model = ModelManager(User)
@@ -189,6 +165,7 @@ def get_user_id(request):
 	}
 	return JsonResponse(res_data)
 
+@accepted_methods(["GET"])
 @login_required
 def get_username(request):
 	user_model = ModelManager(User)
@@ -208,6 +185,7 @@ def get_username(request):
 	return JsonResponse(res_data)
 
 
+@accepted_methods(["GET"])
 @login_required
 def get_user_email(request):
 	user_model = ModelManager(User)
@@ -225,6 +203,17 @@ def get_user_email(request):
 		"email": email
 	}
 	return JsonResponse(res_data)
+
+@accepted_methods(["GET"])
+def check_login_status(request):
+	if request.access_data:
+		is_logged_in = True
+		user_id = request.access_data.sub
+	else:
+		is_logged_in = False
+		user_id = None
+	return JsonResponse({"logged_in": is_logged_in, "id": user_id})
+
 @accepted_methods(["POST"])
 def validate_email(request):
 	

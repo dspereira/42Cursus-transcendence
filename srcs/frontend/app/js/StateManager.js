@@ -1,3 +1,5 @@
+const globalEvents = ["isLoggedIn", "chatSocket"];
+
 class StateManager {
 
 	constructor() {
@@ -8,10 +10,34 @@ class StateManager {
 		this.states = {
 			sidePanel: "open",
 			pageReady: false,
+			isLoggedIn: null,
+			friendChatId: null,
+			newChatMessage: null,
+			chatMessagesCounter: 0,
+			userId: null,
+			chatSocket: null,
+			idBrowser: null,
+			chatUserData: null,
+			userImage: null,
+			messageSend: null,
+			onlineStatus: null,
+			blockStatus: null
 		}
 		this.stateEvents = {
 			sidePanel: [],
-			pageReady: []
+			pageReady: [],
+			isLoggedIn: [],
+			friendChatId: [],
+			newChatMessage: [],
+			chatMessagesCounter: [],
+			userId: [],
+			chatSocket: [],
+			idBrowser: [],
+			chatUserData: [],
+			userImage: [],
+			messageSend: [],
+			onlineStatus: [],
+			blockStatus: [],
 		}
 
 		StateManager.instance = this;
@@ -22,7 +48,7 @@ class StateManager {
 	}
 
 	setState(name, value) {
-		if (this.states[name] != undefined) {
+		if (this.states.hasOwnProperty(name)) {
 			this.states[name] = value;
 			this.triggerEvent(name);
 		}
@@ -42,13 +68,34 @@ class StateManager {
 
 	cleanEvents() {
 		for (const key in this.stateEvents) {
-			this.stateEvents[key] = [];
+			if (!globalEvents.includes(key))
+				this.stateEvents[key] = [];
 		}
+	}
+
+	// DEBUG
+	showAllStates() {
+		Object.entries(this.states).forEach(([key, value]) => {
+			console.log(`${key}: ${value}`);
+		});
+	}
+
+	cleanAllStatesAndEvents() {
+		this.states.sidePanel = "open";
+		this.states.pageReady = false,
+		this.states.friendChatId = null;
+		this.states.newChatMessage = null;
+		this.states.chatMessagesCounter = 0;
+		this.states.userId = null;
+		this.states.idBrowser = null;
+		this.states.chatUserData = null;
+		this.states.userImage =  null;
+		this.states.messageSend = null;
 	}
 }
 
 const stateManager = new StateManager();
 
 // prevent to add new methods or attributes
-Object.freeze(stateManager); 
+Object.freeze(stateManager);
 export default stateManager;

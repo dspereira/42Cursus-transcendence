@@ -156,10 +156,10 @@ export default class SignupForm extends HTMLElement {
 
 	#getdInputData() {
 		const data = {
-			email: document.querySelector('#email').value.trim(),
-			username: document.querySelector('#username').value.trim(),
-			password: document.querySelector('#password').value.trim(),
-			confirmPassword: document.querySelector("#confirm-password").value.trim()
+			email: this.html.querySelector('#email').value.trim(),
+			username: this.html.querySelector('#username').value.trim(),
+			password: this.html.querySelector('#password').value.trim(),
+			confirmPassword: this.html.querySelector("#confirm-password").value.trim()
 		}
 		return data;
 	}
@@ -225,7 +225,7 @@ export default class SignupForm extends HTMLElement {
 	}
 
 	#apiResHandlerCalback = (res, data) => {
-		if (res.ok)
+		if (res.ok && data.message === "success")
 			redirect("/");
 		else
 			this.#handleApiFormErrors(res.status, data.message);
@@ -234,18 +234,18 @@ export default class SignupForm extends HTMLElement {
 	#setInvalidInputStyle(inputId) {
 		if (inputId === "confirmPassword")
 			inputId = "confirm-password";
-		document.getElementd(inputId).classList.add("is-invalid");
+		this.html.querySelector(`#${inputId}`).classList.add("is-invalid");
 	}
 
 	#removeAllInvalidInputsStyle() {
-		const inputs = document.querySelectorAll('input');
+		const inputs = this.html.querySelectorAll('input');
 		inputs.forEach(input => {
 			input.classList.remove("is-invalid");
 		})
 	}
 
 	#removeAlertMessage() {
-		const alert = document.querySelector(".alert");
+		const alert = this.html.querySelector(".alert");
 		alert.classList.remove("show");
 		alert.classList.add("hide");
 		alert.textContent = "";	
@@ -257,7 +257,7 @@ export default class SignupForm extends HTMLElement {
 	}
 
 	#showAlertMessage(message) {
-		const alert = document.querySelector(".alert");
+		const alert = this.html.querySelector(".alert");
 		alert.classList.remove("hide");
 		alert.classList.add("show");
 		if (message)
@@ -265,7 +265,7 @@ export default class SignupForm extends HTMLElement {
 	}
 
 	#updateAlertMessage(message) {
-		const alert = document.querySelector(".alert");
+		const alert = this.html.querySelector(".alert");
 		const msg = alert.textContent;
 		if (!msg)
 			alert.textContent = message;
