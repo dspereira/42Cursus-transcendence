@@ -216,7 +216,7 @@ const navigation = [
 	"tournaments",
 	"logout",
 	"configurations",
-	"friends"
+	"friends",
 	"game"
 ]
 

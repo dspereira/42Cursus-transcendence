@@ -4,21 +4,28 @@ import stateManager from "../js/StateManager.js";
 
 const styles = `
 
-	.tab-select {
+	.page-container {
 		display: flex;
 		width: 100%;
-		height: 120px;
-		background-color: #EEEEEE;
+		flex-direction: column;
 		justify-content: center;
 		align-items: center;
 	}
 
+	.tab-select {
+		display: flex;
+		width: 100%;
+		height: 50px;
+		justify-content: start;
+		align-items: start;
+	}
+
 	.tab-select-btn {
 		display: flex;
-		width: 400px;
-		height: 100px;
+		width: 600px;
+		height: 50px;
 		color: white;
-		background-color: #E0E0E0;
+		background-color: #EEEEEE;
 		border-style: hidden;
 		border-radius: 5px;
 	}
@@ -33,6 +40,7 @@ const styles = `
 		--toggled: off;
 		font-size: 16px;
 		font-weight: bold;
+		transition: .5s;
 	}
 
 	.select-left {
@@ -48,10 +56,11 @@ const styles = `
 	.active-tournaments, .past-tournaments {
 		width: 100%;
 		flex-direction: column;
-		justify-content: center;
-		align-items: center;
+		justify-content: start;
+		align-items: start;
 		border-style: hidden;
-		border-radius: 5px;
+		border-radius: 10px;
+		margin: 20px 20px 0px 20px;
 	}
 
 	.active-tournaments {
@@ -70,7 +79,7 @@ const styles = `
 		margin: 0px 0px 20px;
 		background-color: #E0E0E0;
 		border-style: hidden;
-		border-radius: 5px;
+		border-radius: 20px;
 	}
 	
 	.card-box {
@@ -82,6 +91,47 @@ const styles = `
 		margin-left: 20px;
 		margin-right: 20px;
 	}
+
+	.creation-top-bar, .creation-bottom-bar {
+		display: flex;
+		width: 100%;
+	}
+
+	.friend-selection {
+		display: flex;
+		width: 100%;
+		flex-wrap: wrap;
+	}
+
+	.friend-box[type=checkbox] + label {
+		display: flex;
+		flex-direction: column;
+		width: 150px;
+		height: 200px;
+		border-radius: 10px;
+		border-style: hidden;
+		justify-content: center;
+		align-items: center;
+		background-color: #EEEEEE;
+		margin: 10px;
+	}
+
+	.friend-box[type="checkbox"]:checked + label {
+		background-color: #C2C2C2;
+	}
+
+	.friend-box[type=checkbox] + label:hover {
+		border-color: red;
+	}
+
+	.friend-box[type=checkbox] {
+		display: none;
+	}
+
+	.username {
+		font-size: 16px;
+		font-weight: bold;
+	}
 `;
 
 const getHtml = function(data) {
@@ -89,15 +139,26 @@ const getHtml = function(data) {
 		<app-header></app-header>
 		<side-panel selected="tournaments"></side-panel>
 		<div class="content content-small">
-			<div class="tab-select">
-				<button class="tab-select-btn">
-					<div class="select-left">New/Current<br>tournament</div>
-					<div class="select-right">Past<br>Tournaments</div>
-				</button>
+		<div class="page-container">
+				<div class="tab-select">
+					<button class="tab-select-btn">
+						<div class="select-left">New/Current tournament</div>
+						<div class="select-right">Tournament History</div>
+					</button>
+				</div>
+				<div class="active-tournaments">NEW TOURNAMENTS GO HERE
+					<div class="tournament-creation">
+						<div class="creation-top-bar">
+
+						</div>
+						<div class="friend-selection"></div>
+						<div class="creation-bottom-bar">
+
+						</div>
+					</div>
+				</div>
+				<div class="past-tournaments">PAST TOURNAMENTS GO HERE</div>
 			</div>
-			
-			<div class="active-tournaments">NEW TOURNAMENTS GO HERE</div>
-			<div class="past-tournaments">PAST TOURNAMENTS GO HERE</div>
 		</div>
 	`;
 	return html;
@@ -150,9 +211,12 @@ export default class PageTournaments extends HTMLElement {
 
 	#scripts() {
 		const pastTournamentsList = getFakeTournaments();
+		const friendList = getFriendsFakeCall();
 		adjustContent(this.html.querySelector(".content"));
 		this.#toggleTabSelector();
 		this.#getPastTournaments(pastTournamentsList);
+		this.#friendSelection(friendList);
+		this.#checkboxMax();
 	}
 
 
@@ -163,22 +227,58 @@ export default class PageTournaments extends HTMLElement {
 			const newTournaments = this.html.querySelector(".active-tournaments");
 			const pastTournaments = this.html.querySelector(".past-tournaments");
 			const isToggled = leftSlct.style.getPropertyValue('--toggled') === 'on';
+			const highlight = "#C2C2C2";
+			const background = "#EEEEEE";
 			leftSlct.style.setProperty('--toggled', isToggled ? 'off' : 'on');
 			if (isToggled) {
-				leftSlct.style.backgroundColor = "#C2C2C2";
-				rightSlct.style.backgroundColor = "#E0E0E0";
+				leftSlct.style.backgroundColor = highlight;
+				rightSlct.style.backgroundColor = background;
 				leftSlct.style.color = "white";
-				rightSlct.style.color = "#C2C2C2";
+				rightSlct.style.color = highlight;
 				newTournaments.style.display = "flex";
 				pastTournaments.style.display = "none";
 			} else {
-				leftSlct.style.backgroundColor = "#E0E0E0";
-				rightSlct.style.backgroundColor = "#C2C2C2";
-				leftSlct.style.color = "#C2C2C2";
+				leftSlct.style.backgroundColor = background;
+				rightSlct.style.backgroundColor = highlight;
+				leftSlct.style.color = highlight;
 				rightSlct.style.color = "white";
 				newTournaments.style.display = "none";
 				pastTournaments.style.display = "flex";
 			}
+		});
+	}
+
+	#checkboxMax() {
+		const boxes = this.html.querySelectorAll(".friend-box[type=checkbox]").forEach((box) => {
+			box.addEventListener("click", () => {
+				console.log("click");
+				this.#maxBoxes();
+			})
+		})
+		console.log("box count", boxes);
+	}
+
+	#maxBoxes() {
+		const checkboxes = this.html.querySelectorAll('.friend-box[type=checkbox]');
+		// const submitBtn = document.getElementById("submitBtn");
+		function updateCheckboxState() {
+			const checkedCount = document.querySelectorAll('.friend-box[type=checkbox]:checked').length;
+			// submitBtn.disabled = (checkedCount !== 4);
+			console.log("checked count = ", checkedCount);
+			if (checkedCount >= 3) {
+				checkboxes.forEach(checkbox => {
+					if (!checkbox.checked) {
+						checkbox.disabled = true;
+					}
+				});
+			} else {
+				checkboxes.forEach(checkbox => {
+					checkbox.disabled = false;
+				});
+			}
+		}
+		checkboxes.forEach(checkbox => {
+			checkbox.addEventListener("change", updateCheckboxState);
 		});
 	}
 
@@ -202,11 +302,103 @@ export default class PageTournaments extends HTMLElement {
 		return elm;
 	}
 
+	#friendSelection(friendList) {
+		const inviteFriendsHtml = this.html.querySelector(".friend-selection");
+		friendList.forEach((friend) => {
+			inviteFriendsHtml.appendChild(this.#createCheckbox(friend));
+			inviteFriendsHtml.appendChild(this.#createLabel(friend));
+		});
 	}
-	
-	customElements.define(PageTournaments.componentName, PageTournaments);
-	
-	
+
+	#createCheckbox(friend) {
+		if (friend)
+		{
+			const elm = document.createElement("input");
+			elm.classList.add("friend-box");
+			elm.id = `id-${friend.id}`;
+			elm.type = "checkbox";
+			return elm;
+		}
+	}
+
+	#createLabel(friend) {
+		const elm = document.createElement("label");
+		elm.htmlFor = `id-${friend.id}`;
+		if (friend) {
+			elm.innerHTML = `
+				<img src="${friend.image}" class="profile-photo"/>
+				<span class="username">${friend.username}</span>
+			`
+		}
+		return elm;
+	}
+}
+customElements.define(PageTournaments.componentName, PageTournaments);
+
+
+// Just for debug
+const getFriendsFakeCall = function () {
+	const data = `[
+		{
+			"id": 1,
+			"username": "admin",
+			"image": "https://api.dicebear.com/8.x/bottts/svg?seed=admin"
+		},
+		{
+			"id": 2,
+			"username": "diogo",
+			"image": "https://api.dicebear.com/8.x/bottts/svg?seed=diogo"
+		},
+		{
+			"id": 3,
+			"username": "irineu",
+			"image": "https://api.dicebear.com/8.x/bottts/svg?seed=irineu"
+		},
+		{
+			"id": 4,
+			"username": "irineu2",
+			"image": "https://api.dicebear.com/8.x/bottts/svg?seed=irineu2"
+		},
+		{
+			"id": 5,
+			"username": "john",
+			"image": "https://api.dicebear.com/8.x/bottts/svg?seed=john"
+		},
+		{
+			"id": 6,
+			"username": "jane",
+			"image": "https://api.dicebear.com/8.x/bottts/svg?seed=jane"
+		},
+		{
+			"id": 7,
+			"username": "alice",
+			"image": "https://api.dicebear.com/8.x/bottts/svg?seed=alice"
+		},
+		{
+			"id": 8,
+			"username": "bob",
+			"image": "https://api.dicebear.com/8.x/bottts/svg?seed=bob"
+		},
+		{
+			"id": 9,
+			"username": "charlie",
+			"image": "https://api.dicebear.com/8.x/bottts/svg?seed=charlie"
+		},
+		{
+			"id": 10,
+			"username": "dave",
+			"image": "https://api.dicebear.com/8.x/bottts/svg?seed=dave"
+		},
+		{
+			"id": 11,
+			"username": "eve",
+			"image": "https://api.dicebear.com/8.x/bottts/svg?seed=eve"
+		}
+	]`;
+
+	return JSON.parse(data);
+}
+
 const getFakeTournaments = function () {
 	const data = `[
 	{
