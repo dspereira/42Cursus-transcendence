@@ -1,26 +1,25 @@
-import { adjustContent } from "../utils/adjustContent.js";
+import { redirect } from "../js/router.js";
 import stateManager from "../js/StateManager.js";
+import { adjustContent } from "../utils/adjustContent.js";
 
-const styles = `
-
-`;
+const styles = ``;
 
 const getHtml = function(data) {
 	const html = `
-		<app-header></app-header>
-		<side-panel selected="chat"></side-panel>
+		<app-header bell="selected"></app-header>
+		<side-panel selected="friends"></side-panel>
 		<div class="content content-small">
-			<app-chat></app-chat>
+			<app-friends></app-friends>
 		</div>
 	`;
 	return html;
 }
 
 
-const title = "Chat";
+const title = "Friends";
 
-export default class PageChat extends HTMLElement {
-	static #componentName = "page-chat";
+export default class PageFriends extends HTMLElement {
+	static #componentName = "page-friends";
 
 	constructor() {
 		super()
@@ -63,12 +62,7 @@ export default class PageChat extends HTMLElement {
 
 	#scripts() {
 		adjustContent(this.html.querySelector(".content"));
-		this.#resetChatStates();
-	}
-
-	#resetChatStates() {
-		stateManager.setState("chatMessagesCounter", 0);
 	}
 }
 
-customElements.define(PageChat.componentName, PageChat);
+customElements.define(PageFriends.componentName, PageFriends);

@@ -1,4 +1,6 @@
-import {redirect} from "../js/router.js";
+import { redirect } from "../js/router.js";
+import { callAPI } from "../utils/callApiUtils.js";
+import stateManager from "../js/StateManager.js";
 
 const styles = `
 
@@ -71,7 +73,6 @@ header {
 
 const getHtml = function(data) {
 	const html = `
-	
 	<header>
 		<div class="left-side">
 			<div class= "logo">
@@ -85,10 +86,9 @@ const getHtml = function(data) {
 				<span class="number">99</span>
 				<i class="bell bi bi-bell"></i>
 			</div>
-			<img src="https://api.dicebear.com/8.x/bottts/svg?seed=Diogo" class="profile-photo"  alt="avatar"/>
+			<img src="${data.userImage}" class="profile-photo"  alt="avatar"/>
 		</div>
 	</header>
-
 	`;
 	return html;
 }
@@ -102,20 +102,27 @@ export default class AppHeader extends HTMLElement {
 	static observedAttributes = ["bell"];
 
 	constructor() {
-		super()
+		super();
+		this.data = {};
+	}
+
+	connectedCallback() {
+		const userImage = stateManager.getState("userImage");
+		if (userImage)
+			this.data["userImage"] = userImage;
 		this.#initComponent();
 		this.#render();
 		this.#scripts();
 	}
 
 	attributeChangedCallback(name, oldValue, newValue) {
-		if (name === "bell")
-			this.#changeBellIcon(newValue);
+		/*if (name === "bell")
+			this.#changeBellIcon(newValue);*/
 	}
 
 	#initComponent() {
 		this.html = document.createElement("div");
-		this.html.innerHTML = this.#html();
+		this.html.innerHTML = this.#html(this.data);
 		if (styles) {
 			this.elmtId = `elmtId_${Math.floor(Math.random() * 100000000000)}`;
 			this.styles = document.createElement("style");
@@ -141,6 +148,7 @@ export default class AppHeader extends HTMLElement {
 	}
 
 	#scripts() {
+		this.#getUserImage();
 		this.#addPageRedirection("notifications", "notif-bell");
 		this.#addPageRedirection("profile", "profile-photo");
 		this.#addPageRedirection("home", "logo");
@@ -158,6 +166,22 @@ export default class AppHeader extends HTMLElement {
 		if (page === "/home" || page === "home")
 			page = "";
 		elm.addEventListener("click", () => redirect(`/${page}`));		
+	}
+
+	#getUserImage() {
+		callAPI("GET", "http://127.0.0.1:8000/api/profile/image", null, (res, data) => {
+			if (res.ok) {
+				const imageSaved = stateManager.getState("userImage");
+				const image = this.html.querySelector(".profile-photo");
+
+				if (image && data.image) {
+					if (imageSaved != data.image) {
+						stateManager.setState("userImage", data.image);
+						image.setAttribute("src", `${data.image}`);
+					}
+				}
+			}
+		});
 	}
 }
 

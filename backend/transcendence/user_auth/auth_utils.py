@@ -5,6 +5,8 @@ from custom_utils.models_utils import ModelManager
 from user_auth.models import BlacklistToken
 from datetime import datetime
 
+from user_profile.models import UserProfileInfo
+
 def login(response, user):
 	user.last_login = timezone.now()
 	user.save()
@@ -56,6 +58,15 @@ def get_jwt_data(token: str):
 	if is_jwt_token_valid(token=token):
 		return JwtData(token=token)
 	return None
+
+def create_user_profile_info(user):
+	user_profile_info_model = ModelManager(UserProfileInfo)
+
+	user_profile = user_profile_info_model.create(
+		user=user,
+		default_image_seed=user.username
+	)
+	return user_profile
 
 def _generate_tokens(user_id):
 	token_gen = TokenGenerator(user_id)

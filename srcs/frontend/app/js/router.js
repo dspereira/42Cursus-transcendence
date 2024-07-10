@@ -10,6 +10,7 @@ import PageSignup from "../page-components/page-signup.js";
 import Page404 from "../page-components/page-404.js";
 import PageInitial from "../page-components/page-initial.js";
 import PageLogout from "../page-components/page-logout.js";
+import PageFriends from "../page-components/page-friends.js";
 import PageGame from "../page-components/page-game.js";
 
 // Components
@@ -20,6 +21,10 @@ import SignupForm from "../components/signup-form.js";
 import SidePanel from "../components/side-panel.js";
 import AppChat from "../components/app-chat.js";
 import MsgCard from "../components/msg-card.js";
+import AppFriends from "../components/app-friends.js";
+import UserCard from "../components/user-card.js";
+import ChatFriendsList from "../components/chat-friends-list.js";
+import ChatSection from "../components/chat-section.js";
 
 // Others
 import stateManager from "./StateManager.js";
@@ -39,6 +44,7 @@ const routes = {
 	"/tournaments"		: PageTournaments.componentName,
 	"/notifications"	: PageNotifications.componentName,
 	"/configurations"	: PageConfigs.componentName,
+	"/friends"			: PageFriends.componentName,
 	"/game"				: PageGame.componentName,
 }
 

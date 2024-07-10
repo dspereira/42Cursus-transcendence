@@ -139,3 +139,13 @@ def set_bio(request):
 		"message": "Error: Can't find user"
 		}
 	return JsonResponse(result)
+
+@login_required
+@accepted_methods(["GET"])
+def get_image(request):
+	user_profile = user_profile_info_model.get(id=request.access_data.sub)
+	if user_profile:
+		user_image = get_image_url(user=user_profile)
+		return JsonResponse({"message": "User profile image getted with success.", "image": user_image}, status=200)
+	else:
+		return JsonResponse({"message": "Error: User does not Exist"}, status=409)

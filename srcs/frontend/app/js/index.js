@@ -1,6 +1,7 @@
 import { router, setHistoryEvents } from "./router.js"
 import stateManager from "./StateManager.js";
 import chatWebSocket from "./ChatWebSocket.js";
+import notifyWebSocket from "./NotifyWebSocket.js";
 import checkUserLoginState from "../utils/checkUserLoginState.js";
 
 // Cada vez que o estado do evento altera entre true or false deve fechar ou abrir as ligações websockets
@@ -8,10 +9,15 @@ import checkUserLoginState from "../utils/checkUserLoginState.js";
 stateManager.setState("idBrowser", Math.floor(Math.random() * 100000000000));
 
 stateManager.addEvent("isLoggedIn", (stateValue) => {
-	if (stateValue)
+	stateManager.cleanAllStatesAndEvents();
+	if (stateValue) {
 		chatWebSocket.open();
-	else
+		//notifyWebSocket.open();
+	}
+	else {
 		chatWebSocket.close();
+		//notifyWebSocket.close();
+	}
 });
 
 stateManager.addEvent("chatSocket", (stateValue) => {
@@ -44,7 +50,7 @@ const setupLoginStateChecker  = function(intervalSeconds) {
 }
 
 const startApp = function() {
-	setupLoginStateChecker(50);
+	setupLoginStateChecker(5);
 	router();
 	setHistoryEvents();
 }

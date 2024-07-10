@@ -1,19 +1,34 @@
 * {
-    box-sizing: border-box;
+	box-sizing: border-box;
 }
 
 body {
-    margin: 0;
-    padding: 0;
+	margin: 0;
+	padding: 0;
 }
 
+/*
 .content-small {
-    margin: 80px 24px 0px 224px;
-    /*background-color: #dbd9d7;*/
+	margin: 80px 24px 0px 224px;
+	background-color: #dbd9d7;
 }
-
 
 .content-large {
-    margin: 80px 24px 0px 84px;
-    /*background-color: #dbd9d7;*/
+	margin: 80px 24px 0px 84px;
+	background-color: #dbd9d7;
+}
+*/
+
+/*
+	56px -> header size
+	8px  -> padding top side-panel
+	8px  -> icon padding top side-panel
+*/
+
+.content-small {
+	margin: 72px 24px 0px 224px;
+}
+
+.content-large {
+	margin: 72px 24px 0px 84px;
 }

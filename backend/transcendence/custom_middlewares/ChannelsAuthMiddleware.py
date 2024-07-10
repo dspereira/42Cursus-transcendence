@@ -1,7 +1,7 @@
 from custom_utils.jwt_utils import JwtData
 from channels.middleware import BaseMiddleware
 from user_auth.models import User
-from live_chat.models import ChatRoom, ChatRoomUsers
+from live_chat.models import ChatRoom
 from custom_utils.models_utils import ModelManager
 
 from asgiref.sync import sync_to_async

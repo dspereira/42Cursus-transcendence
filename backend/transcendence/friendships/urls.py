@@ -1,9 +1,13 @@
+from .FriendRequestView import FriendRequestView
+from .BlockStatusView import BlockStatusView
+from .FriendsView import FriendsView
 from django.urls import path
 from . import views
 
 urlpatterns = [
-    path('getfriends', views.get_friends, name="getfrirends"),
-    path('blockuser', views.block_user, name='blockuser'),
-    path('unblockuser', views.unblock_user, name='unblockuser')
-    #path('forcefriends', views.force_friendship, name="getfrirends") #for testing only, will delete later
+	path('search_user_by_name/', views.search_user_by_name, name='search_user_by_name'),
+	path('friendships/', FriendsView.as_view(), name='friendships'),
+	path('request/', FriendRequestView.as_view(), name='request'),
+	path('chat-list/', views.chat_list, name='chat_list'),
+	path('block/', BlockStatusView.as_view(), name='block'),
 ]

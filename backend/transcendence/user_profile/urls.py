@@ -6,5 +6,6 @@ urlpatterns = [
     path('setbio', views.set_bio, name='editbio'),
     path('setpicture', views.set_profile_picture, name='updatepicture'),
     path('getimage', views.get_image, name='getimage'),
-    path('setnewdefaultseed', views.set_new_default_seed, name='setnewdefaultseed')
+    path('setnewdefaultseed', views.set_new_default_seed, name='setnewdefaultseed'),
+    path('image', views.get_image, name='profile_image'),
 ]

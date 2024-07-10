@@ -20,13 +20,8 @@ from pathlib import Path
 dotenv_path = Path.cwd() / '..' / '..' / 'srcs' / '.env'
 load_dotenv(dotenv_path)
 
-print("Name:", os.getenv('DB_NAME'))
-print("User:", os.getenv('DB_USER'))
-print("Pass:", os.getenv('DB_PASS'))
-
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
@@ -70,6 +65,7 @@ MIDDLEWARE = [
     'custom_middlewares.CorsMiddleware',
     'custom_middlewares.JwtMiddleware',
     'custom_middlewares.BlacklistTokenMiddleware',
+    'custom_middlewares.OnlineStatusMiddleware',
 	#'custom_middlewares.DataSanitize',
 ]
 

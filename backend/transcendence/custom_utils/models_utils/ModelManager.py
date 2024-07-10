@@ -15,9 +15,9 @@ class ModelManager:
 			print(f"ModelManager Error get: \n{e}")
 			return None
 
-	def filter(self, **kwargs):
+	def filter(self, *args, **kwargs):
 		try:
-			obj = self.model.objects.filter(**kwargs)
+			obj = self.model.objects.filter(*args, **kwargs)
 			if obj.exists():
 				return obj
 			return None

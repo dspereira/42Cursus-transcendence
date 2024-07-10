@@ -82,7 +82,7 @@ const getHtml = function(data) {
 	let photoElm = "";
 	if (data.profilePhoto) {
 		photoElm = `
-			<div class="test-img">
+			<div>
 				<img src="${data.profilePhoto}" class="profile-photo" alt="profile photo chat"/>
 			</div>
 		`;
