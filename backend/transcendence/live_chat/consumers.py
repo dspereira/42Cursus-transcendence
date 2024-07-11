@@ -74,6 +74,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
 	async def __connect_to_friend_chatroom(self, friends_id):
 		self.room = await self.__get_room(friends_id=friends_id)
 		self.friendship = await self.__get_friendship(friends_id=friends_id)
+		self.is_getting_messages = False
 
 		if self.room:
 			self.room_group_name = self.room.name
