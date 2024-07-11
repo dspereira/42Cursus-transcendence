@@ -31,6 +31,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
 		self.access_data = None
 		self.room_group_name = None
 		self.groups = []
+		self.is_getting_messages = False
 
 	async def connect(self):
 		await self.accept()
@@ -59,7 +60,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
 		data_type = data_json['type']
 		if data_type == "connect":
 			await self.__connect_to_friend_chatroom(data_json['friend_id'])
-		elif data_type == "get_messages":
+		elif data_type == "get_messages" and not self.is_getting_messages:
 			await self.__send_chat_group_messages(amount_messages=data_json['message_count'], id_browser=data_json['idBrowser'])
 		elif data_type == "message":
 			if not await self.__get_block_status(friend_id=data_json['friend_id']):
@@ -67,10 +68,13 @@ class ChatConsumer(AsyncWebsocketConsumer):
 				await self.__send_message(new_message)
 		elif data_type == "update_block_status":
 			await self.__update_friend_block_status(friend_id=data_json['friend_id'])
+		elif data_type == "last_message_received":
+			self.is_getting_messages = False
 
 	async def __connect_to_friend_chatroom(self, friends_id):
 		self.room = await self.__get_room(friends_id=friends_id)
 		self.friendship = await self.__get_friendship(friends_id=friends_id)
+		self.is_getting_messages = False
 
 		if self.room:
 			self.room_group_name = self.room.name
@@ -119,9 +123,13 @@ class ChatConsumer(AsyncWebsocketConsumer):
 		}))
 
 	async def __send_get_message(self, message, id_browser):
-		message_content = message.content
-		user_id = await sync_to_async(lambda: message.user.id)()
-		timestamp = int(datetime.fromisoformat(str(message.timestamp)).timestamp())
+		message_content = None
+		user_id = None
+		timestamp = None
+		if message:
+			message_content = message.content
+			user_id = await sync_to_async(lambda: message.user.id)()
+			timestamp = int(datetime.fromisoformat(str(message.timestamp)).timestamp())
 		if self.room_group_name:
 			await self.channel_layer.group_send(
 				self.room_group_name,
@@ -161,6 +169,8 @@ class ChatConsumer(AsyncWebsocketConsumer):
 		return 0
 
 	async def __send_chat_group_messages(self, amount_messages, id_browser):
+		self.is_getting_messages = True
+
 		message_count = await sync_to_async(self.__get_count_messages)()
 		if message_count > amount_messages and message_count > 0:
 
@@ -175,6 +185,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
 			all_chat_group_messages.reverse()
 			for message in all_chat_group_messages:
 				await self.__send_get_message(message=message, id_browser=id_browser)
+			await self.__send_get_message(message=None, id_browser=id_browser)
 
 	async def __get_room(self, friends_id):
 		room_name_1 = f'{self.user.id}_{friends_id}'
@@ -204,16 +215,15 @@ class ChatConsumer(AsyncWebsocketConsumer):
 		return False
 
 	async def __update_online_status(self, is_online):
-		online = False
-
+		self.user_profile = await sync_to_async(user_profile_model.get)(user=self.user)
+		
 		if is_online:
 			self.user_profile.online += 1
 		else:
 			self.user_profile.online -= 1
 		await sync_to_async(self.user_profile.save)()
 
-		if self.user_profile.online:
-			online = True
+		online = True if self.user_profile.online else False
 
 		for group_name in self.groups:
 			await self.channel_layer.group_send(

@@ -103,7 +103,7 @@ export default class AppChat extends HTMLElement {
 			if (stateValue) {
 				this.#insertChatSection();
 				chatWebSocket.connect(stateManager.getState("friendChatId"));
-				chatWebSocket.get_messages(stateManager.getState("chatMessagesCounter"));
+				chatWebSocket.getMessages(stateManager.getState("chatMessagesCounter"));
 			}
 		});
 	}
