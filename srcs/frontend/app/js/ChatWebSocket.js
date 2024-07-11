@@ -75,6 +75,14 @@ class ChatWebSocket {
 		}
 	}
 
+	lastMessageReceived() {
+		if (this.isOpen()) {
+			this.socket.send(JSON.stringify({
+				"type": "last_message_received",
+			}));
+		}
+	}
+
 	isOpen() {
 		if (this.socket && this.socket.readyState == this.socket.OPEN)
 			return true;

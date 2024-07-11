@@ -383,6 +383,13 @@ export default class ChatSection extends HTMLElement {
 	#newMessageEvent() {
 		stateManager.addEvent("newChatMessage", (msgData) => {
 			if (msgData) {
+
+				if (msgData.type == "get_message" && !msgData.message)
+				{
+					chatWebSocket.lastMessageReceived();
+					return ;
+				}
+
 				stateManager.setState("newChatMessage", null);
 				const msgPanel = this.html.querySelector(".msg-panel");
 				const newMsg = document.createElement("div");
