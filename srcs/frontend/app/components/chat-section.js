@@ -427,7 +427,7 @@ export default class ChatSection extends HTMLElement {
 		scroll.addEventListener("scroll", (event) => {
 			let scrollTop = scroll.scrollTop;
 			if (!scrollTop) {
-				chatWebSocket.get_messages(stateManager.getState("chatMessagesCounter"));
+				chatWebSocket.getMessages(stateManager.getState("chatMessagesCounter"));
 				scroll.scrollTop = 1;
 			}
 		});
