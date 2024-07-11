@@ -3,6 +3,6 @@ from . import views
 
 urlpatterns = [
     path('', views.get_all_info, name='info'),
-    path('getimage', views.get_image, name='getimage'),
+    path('image', views.get_image, name='image'),
     path('setnewconfigs', views.set_new_configs, name="setnewconfigs")
 ]

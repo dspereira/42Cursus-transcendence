@@ -3,15 +3,69 @@ import {callAPI} from "../utils/callApiUtils.js";
 
 const styles = `
 
+	.configs-container {
+		display: flex;
+		justify-content: space-between;
+		margin-bottom: 30px;
+	}
+
+	.text-configs {
+		display: flex;
+		flex-direction: column;
+		width: 40%;
+	}
+
+	.text-configs h1 {
+		font-size: 32px;
+	}
+
+	.hide {
+		display: none;
+	}
+
+	.show {
+		display: block;
+	}
+
+	#new-username {
+		margin-bottom: 30px;
+	}
+
+	.image-configs{
+		display: flex;
+		flex-direction: column;
+		margin-top: 20px;
+		margin-right: 20px;
+	}
+
+	image-preview {
+		width: 100px;
+		height: 100px;
+	}
+
+	.image-buttons {
+		display: flex;
+		align-items: center;
+		gap: 50px;
+	}
+
+	.input-image-icon {
+		font-size: 50px;
+		cursor: pointer;
+	}
+
+	.generate-seed-button{
+		height: 50px;
+	}
 `;
 
 const getHtml = function(data) {
 	const html = `
-		<div class="configs-container">
-			<form id="settings-form">
+		<form id="settings-form">
+			<div class="configs-container">
 				<div class="text-configs">
 					<h1>Change username</h1>
-					<div class="alert alert-danger hide" role="alert">
+					<div class="alert alert-danger error-message hide" role="alert">
 						Username already in use.
 					</div>
 					<input type="text" class="input-padding form-control form-control-lg" id="new-username" placeholder="New Username" maxlength="100">
@@ -19,16 +73,18 @@ const getHtml = function(data) {
 					<input type="text" class="input-padding form-control form-control-lg" id="new-bio" placeholder="New Bio" maxlength="255">
 				</div>
 				<div class="image-configs">
-					<label for="newImage" class="button">
-						<i class="bi bi-camera"></i>
-					</label>
-					<input id="newImage" type="file" accept="image/jpeg, image/png, image/jpg" id="image-input" style="opacity: 0;">
-					<button id="seedButton" class="btn btn-secondary">Generate New Avatar</button>
-					<img id="imagePreview">
+					<img class="image-preview">
+					<div class="image-buttons">
+						<label for="newImage">
+							<i class="bi bi-image input-image-icon""></i>
+						</label>
+						<input id="newImage" type="file" accept="image/jpeg, image/png, image/jpg" id="image-input" style="display: none;">
+						<button id="seedButton" class="btn btn-secondary generate-seed-button">Generate New Avatar</button>
+					</div>
 				</div>
-				<button type="submit" class="btn btn-success btn-submit">Apply Changes</button>
-			</form>
-		</div>
+			</div>
+			<button type="submit" class="btn btn-success btn-submit">Apply Changes</button>
+		</form>
 	`;
 	return html;
 }
@@ -41,6 +97,8 @@ export default class AppConfigs extends HTMLElement {
 		this.#initComponent();
 		this.#render();
 		this.#scripts();
+
+		this.dataForm = {};
 	}
 
 	attributeChangedCallback(name, oldValue, newValue) {
@@ -75,54 +133,65 @@ export default class AppConfigs extends HTMLElement {
 	}
 
 	#scripts() {
-		
-		let dataForm = new FormData();
-		dataForm.append("newUsername",'');
-		dataForm.append("newBio", '');
-		dataForm.append("newImage", '');
-		dataForm.append("newSeed", '');
 
-
-		this.#submit(dataForm);
-		this.#uploadImage(dataForm);
-		this.#generateNewSeed(dataForm);
+		this.#submit();
+		this.#uploadImage();
+		this.#generateNewSeed();
 	}
 
-	#generateNewSeed(dataForm) {
+	#generateNewSeed() {
 		const seedButton = this.html.querySelector("#seedButton")
 		seedButton.addEventListener('click', (event) => {
 			event.preventDefault();
 			const newSeed = Math.random().toString(36).substring(2,7);
-			var preview = this.html.querySelector("#imagePreview");
+			let preview = this.html.querySelector(".image-preview");
 			preview.src = "https://api.dicebear.com/8.x/bottts/svg?seed=" + newSeed;
-			dataForm["newImage"] = '';
-			dataForm["newSeed"] = newSeed;
+			this.dataForm.newImage = '';
+			this.dataForm.newSeed = newSeed;
 		})
 	}
 
-	#uploadImage(dataForm) {
+	#uploadImage() {
 		const uploadImage = this.html.querySelector("#newImage")
 		uploadImage.addEventListener('change', (event) => {
 			event.preventDefault();
-			var preview = this.html.querySelector("#imagePreview");
+			let preview = this.html.querySelector(".image-preview");
 			preview.src = URL.createObjectURL(uploadImage.files[0]);
-			dataForm["newImage"] = uploadImage.files[0];
-			dataForm["newSeed"] = '';
+			this.dataForm.newImage = uploadImage.files[0];
+			this.dataForm.newSeed = '';
 		})
 	}
 
-	#submit(dataForm) {
+	#submit() {
 		const settingsForm = this.html.querySelector("#settings-form");
 		settingsForm.addEventListener("submit", (event) => {
 			event.preventDefault();
 
-			dataForm.append("newUsername", this.html.querySelector("#new-username").value.trim());
-			dataForm.append("newBio", this.html.querySelector("#new-bio").value.trim());
+			this.dataForm.newUsername = this.html.querySelector("#new-username").value.trim();
+			this.dataForm.newBio = this.html.querySelector("#new-bio").value.trim();
 
-			callAPI("POST", "http://127.0.0.1:8000/api/profile/setnewconfigs", dataForm);
+			callAPI("POST", "http://127.0.0.1:8000/api/profile/setnewconfigs", this.dataForm, this.#apiResHandlerCalback);
 		});
 	}
 
+	#apiResHandlerCalback = (res, data) => {
+		if (res.ok && data.message === "success")
+			this.#hideErrorMessage();
+		else
+			this.#showErrorMessage();
+	}
+
+	#hideErrorMessage() {
+		const errorMessage = this.html.querySelector(".error-message")
+		errorMessage.classList.remove("show");
+		errorMessage.classList.add("hide");
+	}
+
+	#showErrorMessage() {
+		const errorMessage = this.html.querySelector(".error-message")
+		errorMessage.classList.remove("hide");
+		errorMessage.classList.add("show");
+	}
 }
 
 customElements.define("app-configs", AppConfigs);

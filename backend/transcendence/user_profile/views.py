@@ -21,7 +21,7 @@ def set_new_configs(request):
 		if request.body:
 			req_data = json.loads(request.body.decode('utf-8'))
 			result = {
-					"message": "Info changed"
+					"message": "success"
 					}
 			if req_data.get("newUsername"):
 				if not set_new_username(user_model.get(id=request.access_data.sub), req_data.get("newUsername")):
