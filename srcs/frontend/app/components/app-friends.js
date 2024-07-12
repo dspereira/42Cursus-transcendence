@@ -377,7 +377,7 @@ export default class AppFriends extends HTMLElement {
 					userList.innerHTML = "<h1>Username not Found!</h1>";
 				}
 			}
-		});		
+		});
 	}
 }
 

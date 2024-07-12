@@ -1,5 +1,6 @@
 import stateManager from "../js/StateManager.js";
 import { adjustContent } from "../utils/adjustContent.js";
+import { callAPI } from "../utils/callApiUtils.js";
 
 const styles = `
 	.game-page {
@@ -236,6 +237,7 @@ export default class PageGame extends HTMLElement {
 		this.#initComponent();
 		this.#render();
 		this.#scripts();
+		this.#search();
 	}
 
 	static get componentName() {
@@ -274,7 +276,7 @@ export default class PageGame extends HTMLElement {
 		const friendList = getFriendsFakeCall();
 		adjustContent(this.html.querySelector(".content"));
 		this.#showInvites(friendList);
-		this.#inviteFriends(friendList);
+		this.#searchFriends();
 		this.html.querySelector(".create-btn").addEventListener("click", () => {
 			this.#toggleInviteSection();
 		});
@@ -285,6 +287,12 @@ export default class PageGame extends HTMLElement {
 
 	#inviteFriends(friendList) {
 		const inviteFriendsHtml = this.html.querySelector(".invite-friends");
+		inviteFriendsHtml.innerHTML = "";
+		if (!friendList)
+		{
+			inviteFriendsHtml.innerHTML = "<div>No friend that matches your search!</div>";
+			return ;
+		}
 		friendList.forEach((friend) => {
 			inviteFriendsHtml.appendChild(this.#getFriendHtml(friend));
 		});
@@ -338,6 +346,30 @@ export default class PageGame extends HTMLElement {
 			`;
 		}
 		return elm;
+	}
+
+	#searchFriends() {
+		const inp = this.html.querySelector(".friend-search");
+		if (!inp)
+			return ;
+		inp.addEventListener("input", event => this.#search(inp.value));
+	}
+
+	#search(value) {
+		const userList = this.html.querySelector(".user-list");
+		let path = "/api/friends/friendships/";
+		let key;
+		if (value)
+			key = `?key=${value}`;
+		else
+			key = "";
+		console.log(key);
+		callAPI("GET", `http://127.0.0.1:8000${path}${key}`, null, (res, data) => {
+			if (res.ok) {
+				console.log(data);
+				this.#inviteFriends(data.friends);
+			}
+		});
 	}
 }
 
