@@ -178,7 +178,12 @@ const getHtml = function(data) {
 							<span class="icon-text">Friends</span>
 						</span>
 					</button>
-
+					<button id="play">
+						<span>
+							<i class="icon bi bi-dpad"></i>
+							<span class="icon-text">Play</span>
+						</span>
+					</button>
 					<div class="bottom-buttons">
 						<button id="logout">
 							<span>
@@ -210,7 +215,8 @@ const navigation = [
 	"tournaments",
 	"logout",
 	"configurations",
-	"friends"
+	"friends",
+	"play"
 ]
 
 const selectedIcon  = {
@@ -219,7 +225,8 @@ const selectedIcon  = {
 	chat: "bi-chat-fill",
 	tournaments: "bi-trophy-fill",
 	configurations: "bi-gear-fill",
-	friends: "bi-people-fill"
+	friends: "bi-people-fill",
+	play: "bi-dpad-fill"
 }
 
 const deselectedIcon = {
@@ -228,7 +235,8 @@ const deselectedIcon = {
 	chat: "bi-chat",
 	tournaments: "bi-trophy",
 	configurations: "bi-gear",
-	friends: "bi-people"
+	friends: "bi-people",
+	play: "bi-dpad"
 }
 
 export default class SidePanel extends HTMLElement {
