@@ -216,7 +216,12 @@ const getHtml = function(data) {
 						<div class="inv-header-text">
 							Invite a Friend For a Challenge!
 						</div>
-						<input class="friend-search" placeholder="Search"></input>
+						<div class="search-bar">
+							<div class="form-group">
+								<i class="search-icon bi bi-search"></i>
+								<input type="text" class="form-control form-control-md" id="search" placeholder="Search friends..." maxlength="50">
+							</div>
+						</div>
 					</div>
 					<div class="invite-friends">
 					</div>
@@ -349,7 +354,7 @@ export default class PageGame extends HTMLElement {
 	}
 
 	#searchFriends() {
-		const inp = this.html.querySelector(".friend-search");
+		const inp = this.html.querySelector(".search-bar").querySelector("input");
 		if (!inp)
 			return ;
 		inp.addEventListener("input", event => this.#search(inp.value));

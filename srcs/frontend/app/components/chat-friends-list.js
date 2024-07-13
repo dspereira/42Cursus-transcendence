@@ -301,7 +301,7 @@ export default class ChatFriendsList extends HTMLElement {
 						scroll.scrollTop = 0;
 				}
 			}
-		}) 
+		})
 	}
 
 	#searchFriends(value) {
@@ -321,14 +321,14 @@ export default class ChatFriendsList extends HTMLElement {
 					});
 				}
 			}
-		});	
+		});
 	}
 
 	#setSearchEvent() {
 		const search = this.html.querySelector(".search input");
 		if (search)
 			search.addEventListener("input", event => this.#searchFriends(search.value));
-	} 
+	}
 
 	#friendsListVisibility(type) {
 		if (this.friendListHtml && type == "hide") {

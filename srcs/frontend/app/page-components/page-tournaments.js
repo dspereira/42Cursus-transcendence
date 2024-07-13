@@ -116,7 +116,7 @@ const styles = `
 		flex-grow: 1;
 	}
 
-	.friend-box[type=checkbox] + label {
+	.friend-box {
 		display: flex;
 		flex-direction: column;
 		width: 150px;
@@ -125,20 +125,15 @@ const styles = `
 		border-style: hidden;
 		justify-content: center;
 		align-items: center;
-		background-color: #EEEEEE;
 		margin: 10px;
 	}
 
-	.friend-box[type="checkbox"]:checked + label {
+	.box-off {
+		background-color: #EEEEEE;
+	}
+
+	.box-on {
 		background-color: #C2C2C2;
-	}
-
-	.friend-box[type=checkbox] + label:hover {
-		border-color: red;
-	}
-
-	.friend-box[type=checkbox] {
-		display: none;
 	}
 
 	.username {
@@ -210,6 +205,21 @@ const styles = `
 		background-color: light-red;
 		cursor: not-allowed;
 	}
+
+	.search-icon {
+		position: absolute;
+		margin-top: 6px;
+		margin-left: 15px;
+		font-size: 16px;
+	}
+
+	.search-bar input {
+		padding-left: 40px;
+	}
+
+	.search-bar {
+		margin-bottom: 25px;
+	}
 `;
 
 const getHtml = function(data) {
@@ -228,7 +238,12 @@ const getHtml = function(data) {
 					<div class="tournament-creation">
 						<div class="creation-top-bar">
 							<input class="tournament-name" placeholder="Choose a Title"></input>
-							<input class="friend-search" placeholder="Search"></input>
+							<div class="search-bar">
+								<div class="form-group">
+									<i class="search-icon bi bi-search"></i>
+									<input type="text" class="form-control form-control-md" id="search" placeholder="Search friends..." maxlength="50">
+								</div>
+							</div>
 						</div>
 						<div class="friend-selection"></div>
 						<div class="creation-bottom-bar">
@@ -243,7 +258,6 @@ const getHtml = function(data) {
 	return html;
 }
 
-
 const title = "Tournaments";
 
 export default class PageTournaments extends HTMLElement {
@@ -251,10 +265,10 @@ export default class PageTournaments extends HTMLElement {
 
 	constructor() {
 		super()
+		this.friendBoxData = [];
 		this.#initComponent();
 		this.#render();
 		this.#scripts();
-		this.#search();
 	}
 
 	static get componentName() {
@@ -290,14 +304,12 @@ export default class PageTournaments extends HTMLElement {
 	}
 
 	#scripts() {
-		const friendList = getFriendsFakeCall();
 		const pastTournamentsList = getFakeTournaments();
 		adjustContent(this.html.querySelector(".content"));
 		this.#toggleTabSelector();
 		this.#getPastTournaments(pastTournamentsList);
-		// this.#friendSelection(friendList);
+		this.#search();
 		this.#searchFriends();
-		this.#checkboxMax(3);
 	}
 
 	#toggleTabSelector() {
@@ -325,41 +337,6 @@ export default class PageTournaments extends HTMLElement {
 				newTournaments.style.display = "none";
 				pastTournaments.style.display = "flex";
 			}
-		});
-	}
-
-	#checkboxMax(max) {
-		console.log("hi")
-		const boxes = this.html.querySelectorAll(".friend-box[type=checkbox]").forEach((box) => {
-			box.addEventListener("click", () => {
-				console.log("click");
-				this.#maxBoxes(max);
-			})
-		})
-		console.log("box count", boxes);
-	}
-
-	#maxBoxes(max) {
-		const checkboxes = this.html.querySelectorAll('.friend-box[type=checkbox]');
-		const inviteBtn = this.html.querySelector(".submit-button");
-		function updateCheckboxState() {
-			const checkedCount = document.querySelectorAll('.friend-box[type=checkbox]:checked').length;
-			inviteBtn.disabled = (checkedCount !== 4);
-			console.log("checked count = ", checkedCount);
-			if (checkedCount >= max) {
-				checkboxes.forEach(checkbox => {
-					if (!checkbox.checked) {
-						checkbox.disabled = true;
-					}
-				});
-			} else {
-				checkboxes.forEach(checkbox => {
-					checkbox.disabled = false;
-				});
-			}
-		}
-		checkboxes.forEach(checkbox => {
-			checkbox.addEventListener("change", updateCheckboxState);
 		});
 	}
 
@@ -393,42 +370,55 @@ export default class PageTournaments extends HTMLElement {
 		}
 		friendList.forEach((friend) => {
 			friendSelectionHtml.appendChild(this.#createCheckbox(friend));
-			friendSelectionHtml.appendChild(this.#createLabel(friend));
 		});
 	}
 
 	#createCheckbox(friend) {
 		if (friend)
 		{
-			const elm = document.createElement("input");
+			const elm = document.createElement("div");
 			elm.classList.add("friend-box");
 			elm.id = `id-${friend.id}`;
-			elm.type = "checkbox";
+			if (this.friendBoxData && this.friendBoxData.indexOf(elm.id) != -1)
+				elm.classList.add("box-on");
+			else
+				elm.classList.add("box-off");
+			if (friend) {
+				elm.innerHTML = `
+					<img src="${friend.image}" class="profile-photo"/>
+					<span class="username">${friend.username}</span>
+				`
+			}
+			elm.addEventListener("click", () => {
+				const inArray = this.friendBoxData.indexOf(elm.id);
+				console.log("toggle = ", inArray);
+				console.log("length = ", this.friendBoxData.length);
+				if (inArray != -1)
+					{
+						elm.classList.remove("box-on");
+						elm.classList.add("box-off");
+						this.friendBoxData.splice(inArray, 1);
+					}
+					else if (this.friendBoxData.length < 3)
+					{
+						elm.classList.add("box-on");
+						this.friendBoxData.push(elm.id);
+						elm.classList.remove("box-off");
+					}
+				console.log(this.friendBoxData);
+			});
 			return elm;
 		}
 	}
 
-	#createLabel(friend) {
-		const elm = document.createElement("label");
-		elm.htmlFor = `id-${friend.id}`;
-		if (friend) {
-			elm.innerHTML = `
-				<img src="${friend.image}" class="profile-photo"/>
-				<span class="username">${friend.username}</span>
-			`
-		}
-		return elm;
-	}
-
 	#searchFriends() {
-		const inp = this.html.querySelector(".friend-search");
+		const inp = this.html.querySelector(".search-bar").querySelector("input");
 		if (!inp)
 			return ;
 		inp.addEventListener("input", event => this.#search(inp.value));
 	}
 
 	#search(value) {
-		const userList = this.html.querySelector(".user-list");
 		let path = "/api/friends/friendships/";
 		let key;
 		if (value)
@@ -440,80 +430,11 @@ export default class PageTournaments extends HTMLElement {
 			if (res.ok) {
 				console.log(data);
 				this.#friendSelection(data.friends);
-				// if (type=="friends" && data.friends)
-				// 	//criar os cards
-				// else {
-				// 	userList.innerHTML = "<h1>Username not Found!</h1>";
-				// }
 			}
 		});
 	}
 }
 customElements.define(PageTournaments.componentName, PageTournaments);
-
-
-// Just for debug
-const getFriendsFakeCall = function () {
-	const data = `[
-		{
-			"id": 1,
-			"username": "admin",
-			"image": "https://api.dicebear.com/8.x/bottts/svg?seed=admin"
-		},
-		{
-			"id": 2,
-			"username": "diogo",
-			"image": "https://api.dicebear.com/8.x/bottts/svg?seed=diogo"
-		},
-		{
-			"id": 3,
-			"username": "irineu",
-			"image": "https://api.dicebear.com/8.x/bottts/svg?seed=irineu"
-		},
-		{
-			"id": 4,
-			"username": "irineu2",
-			"image": "https://api.dicebear.com/8.x/bottts/svg?seed=irineu2"
-		},
-		{
-			"id": 5,
-			"username": "john",
-			"image": "https://api.dicebear.com/8.x/bottts/svg?seed=john"
-		},
-		{
-			"id": 6,
-			"username": "jane",
-			"image": "https://api.dicebear.com/8.x/bottts/svg?seed=jane"
-		},
-		{
-			"id": 7,
-			"username": "alice",
-			"image": "https://api.dicebear.com/8.x/bottts/svg?seed=alice"
-		},
-		{
-			"id": 8,
-			"username": "bob",
-			"image": "https://api.dicebear.com/8.x/bottts/svg?seed=bob"
-		},
-		{
-			"id": 9,
-			"username": "charlie",
-			"image": "https://api.dicebear.com/8.x/bottts/svg?seed=charlie"
-		},
-		{
-			"id": 10,
-			"username": "dave",
-			"image": "https://api.dicebear.com/8.x/bottts/svg?seed=dave"
-		},
-		{
-			"id": 11,
-			"username": "eve",
-			"image": "https://api.dicebear.com/8.x/bottts/svg?seed=eve"
-		}
-	]`;
-
-	return JSON.parse(data);
-}
 
 const getFakeTournaments = function () {
 	const data = `[
@@ -557,6 +478,6 @@ const getFakeTournaments = function () {
 		"fourth": "Paul",
 		"date": "09/30/24"
 	}
-]`;
+	]`;
 	return JSON.parse(data);
 }
