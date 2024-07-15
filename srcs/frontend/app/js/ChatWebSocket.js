@@ -64,13 +64,20 @@ class ChatWebSocket {
 		}
 	}
 
-	// Change name to getMessages
-	get_messages(messagesCount) {
+	getMessages(messagesCount) {
 		if (this.isOpen() && messagesCount >= 0) {
 			this.socket.send(JSON.stringify({
 				"type": "get_messages",
 				"message_count": messagesCount,
 				"idBrowser": stateManager.getState("idBrowser")
+			}));
+		}
+	}
+
+	lastMessageReceived() {
+		if (this.isOpen()) {
+			this.socket.send(JSON.stringify({
+				"type": "last_message_received",
 			}));
 		}
 	}

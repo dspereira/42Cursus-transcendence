@@ -214,6 +214,8 @@ export default class ChatSection extends HTMLElement {
 		this.btnPlay = this.html.querySelector(".btn-play");
 		this.btnUnblock = this.html.querySelector(".btn-unblock");
 		this.btnBlock = this.html.querySelector(".btn-block");
+		this.textArea = this.html.querySelector("#text-area");
+		this.sendIcon = this.html.querySelector("#send-icon");
 	}
 
 	#styles() {
@@ -283,15 +285,12 @@ export default class ChatSection extends HTMLElement {
 	}
 
 	#setSubmitEvents() {
-		const icon = this.html.querySelector("#send-icon");
-		const textArea = this.html.querySelector("#text-area");
-
-		icon.addEventListener("click", (event) => {
+		this.sendIcon.addEventListener("click", (event) => {
 			event.preventDefault();
 			this.html.querySelector("#msg-submit").requestSubmit();
 		});
 
-		textArea.addEventListener("keydown", (event) => {
+		this.textArea.addEventListener("keydown", (event) => {
 			if (event.key === "Enter" && !event.shiftKey) {
 				event.preventDefault();
 				this.html.querySelector("#msg-submit").requestSubmit();
@@ -299,33 +298,24 @@ export default class ChatSection extends HTMLElement {
 		});
 	}
 
-	#getMessageToSend(elm) {
-		let msg = "";
-
-		if (!elm)
-			elm = this.html.querySelector("#text-area");
-		if (elm)
-			msg = elm.value.trim();
-		return (msg);
+	#getMessageToSend() {
+		return (this.textArea.value.trim());
 	}
 
-	#clearInputMessage(elm) {
-		if (!elm)
-			elm = this.html.querySelector("#text-area");
-		if (elm) {
-			elm.value = "";
-			elm.setAttribute("rows", "1");
-		}
+	#clearInputMessage() {
+		this.textArea.value = "";
+		this.textArea.setAttribute("rows", "1");
 	}
 
 	#disableMessageInput() {
-			this.html.querySelector("#text-area").disabled = true;
-			this.html.querySelector("#send-icon").classList.add("hide");
+		this.textArea.disabled = true;
+		this.sendIcon.classList.add("hide");
 	}
 
-	#enableMessageInput() {
-		this.html.querySelector("#text-area").disabled = false;
-		this.html.querySelector("#send-icon").classList.remove("hide");
+	#enableMessageInput() {		
+		this.textArea.disabled = false;
+		this.textArea.focus();
+		this.sendIcon.classList.remove("hide");
 	}
 
 	#sendMessage() {
@@ -333,7 +323,7 @@ export default class ChatSection extends HTMLElement {
 		submitForm.addEventListener("submit", (event) => {
 			event.preventDefault();
 			let input = this.html.querySelector("#text-area");
-			const msg = this.#getMessageToSend(input);
+			const msg = this.#getMessageToSend();
 			if (!msg)
 				return ;
 			this.#disableMessageInput();
@@ -381,6 +371,13 @@ export default class ChatSection extends HTMLElement {
 	#newMessageEvent() {
 		stateManager.addEvent("newChatMessage", (msgData) => {
 			if (msgData) {
+
+				if (msgData.type == "get_message" && !msgData.message)
+				{
+					chatWebSocket.lastMessageReceived();
+					return ;
+				}
+
 				stateManager.setState("newChatMessage", null);
 				const msgPanel = this.html.querySelector(".msg-panel");
 				const newMsg = document.createElement("div");
@@ -401,9 +398,10 @@ export default class ChatSection extends HTMLElement {
 					let firstMsg = msgPanel.querySelector("div")
 					msgPanel.insertBefore(newMsg, firstMsg);
 				}
-				if (scrollBottom <= 1 || msgData.owner == "owner")
+
+				if (scrollBottom <= 1 || (msgData.owner == "owner" && msgData.type == "message"))
 					scroll.scrollTop = scroll.scrollHeight;
-				
+
 				if (msgData.owner == "owner" && msgData.type == "message") {
 					this.#clearInputMessage();
 					this.#enableMessageInput();
@@ -417,7 +415,7 @@ export default class ChatSection extends HTMLElement {
 		scroll.addEventListener("scroll", (event) => {
 			let scrollTop = scroll.scrollTop;
 			if (!scrollTop) {
-				chatWebSocket.get_messages(stateManager.getState("chatMessagesCounter"));
+				chatWebSocket.getMessages(stateManager.getState("chatMessagesCounter"));
 				scroll.scrollTop = 1;
 			}
 		});
