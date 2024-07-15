@@ -20,30 +20,20 @@ def set_new_configs(request):
 	if	user_to_alter:
 		if request.body:
 			req_data = json.loads(request.body.decode('utf-8'))
-			result = {
-					"message": "success"
-					}
 			if req_data.get("newUsername"):
 				if not set_new_username(user_model.get(id=request.access_data.sub), req_data.get("newUsername")):
-					result = {
-					"message": "Username already in use"
-					}
-					return JsonResponse(result)
+					return JsonResponse({"message": "Username already exists"}, status=409)
 			if req_data.get("newBio"):
 				set_new_bio(user_to_alter, req_data.get("newBio"))
 			if req_data.get("newSeed"):
 				set_new_default_seed(user_to_alter, req_data.get("newSeed"))
 			if req_data.get("newImage"):
 				set_new_profile_picture(user_to_alter, req_data.get("newImage"))
+			return JsonResponse({"message": "success"})
 		else:
-			result = {
-			"message": "Error: Empty Body"
-			}
+			return JsonResponse({"message": "Bad Request: Request body is required"}, status=400)
 	else:
-		result = {
-		"message": "Error: Can't find user"
-		}
-	return JsonResponse(result)
+		return JsonResponse({"message": "User not found"}, status=404)
 
 @login_required
 @accepted_methods(["GET"])
@@ -52,27 +42,19 @@ def get_all_info(request):
 	if user:
 		image_url = get_image_url(user)
 		username = user_model.get(id=request.access_data.sub).username
-		if image_url:
-			print(image_url)
-			result = {
-				"username": username,
-				"bio": user.bio,
-				"image_url": image_url,
-				"total_games": user.total_games,
-				"victories": user.victories,
-				"defeats": user.defeats,
-				"win_rate": user.win_rate,
-				"tournaments_won": user.tournaments_won,
-			}
-		else:
-			result = {
-				"message": "Error: Image type not supported"
-			}
-	else:
-		result = {
-			"message": "Error: No User"
+		data = {
+			"username": username,
+			"bio": user.bio,
+			"image_url": image_url,
+			"total_games": user.total_games,
+			"victories": user.victories,
+			"defeats": user.defeats,
+			"win_rate": user.win_rate,
+			"tournaments_won": user.tournaments_won,
 		}
-	return JsonResponse(result)
+	else:
+		return JsonResponse({"message": "User not found"}, status=404)
+	return JsonResponse(data)
 
 @login_required
 @accepted_methods(["GET"])
@@ -80,19 +62,9 @@ def get_image(request):
 	user = user_profile_info_model.get(user_id=request.access_data.sub)
 	if user:
 		image_url = get_image_url(user)
-		if image_url:
-			result = {
-				"image_url": image_url,
-			}
-		else:
-			result = {
-				"message": "Error: Image type no supported"
-			}
+		return JsonResponse({"image": image_url})
 	else:
-		result = {
-			"message": "Error: Can't find user"
-		}
-	return JsonResponse(result)
+		return JsonResponse({"message": "User not found"}, status=404)
 
 @login_required
 @accepted_methods(["POST"])
@@ -110,15 +82,8 @@ def set_profile_picture(request):
 			user_to_alter.compressed_profile_image = compressed_image_data
 
 			user_to_alter.save()
-			result = {
-				"message": "Altered Profile Picture"
-			}
+			return JsonResponse({"message": "success"})
 		else:
-			result = {
-			"message": "Error: Can't find user"
-			}
+			return JsonResponse({"message": "User not found"}, status=404)
 	else:
-		result = {
-			"message": "Error: No Image"
-			}
-	return JsonResponse(result)
+		return JsonResponse({"message": "Bad Request: No image provided"}, status=400)

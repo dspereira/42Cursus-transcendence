@@ -5,18 +5,18 @@ const styles = `
 
 	.configs-container {
 		display: flex;
-		justify-content: space-between;
-		margin-bottom: 30px;
+		margin-bottom: 15px;
+	}
+
+	.configs-container h1 {
+		font-size: 36px;
 	}
 
 	.text-configs {
 		display: flex;
 		flex-direction: column;
-		width: 40%;
-	}
-
-	.text-configs h1 {
-		font-size: 32px;
+		width: 50%;
+		margin-right: 200px;
 	}
 
 	.hide {
@@ -33,7 +33,6 @@ const styles = `
 
 	.image-configs{
 		display: flex;
-		flex-direction: column;
 		margin-top: 20px;
 		margin-right: 20px;
 	}
@@ -45,8 +44,11 @@ const styles = `
 
 	.image-buttons {
 		display: flex;
+		flex-direction: column;
 		align-items: center;
-		gap: 50px;
+		justify-content: center;
+		gap: 15px;
+		margin-left: 10px;
 	}
 
 	.input-image-icon {
@@ -54,8 +56,31 @@ const styles = `
 		cursor: pointer;
 	}
 
-	.generate-seed-button{
+	.generate-seed-button {
 		height: 50px;
+	}
+
+	.two-factor-configs h1 {
+		font-size: 36px;
+		margin-top: 30px;
+	}
+
+	.two-factor-options {
+		display: flex;
+	}
+
+	.two-factor-options label {
+		margin-left: 5px;
+		margin-right: 20px;
+	}
+
+	.language-configs h1 {
+		font-size: 36px;
+		margin-top: 30px;
+	}
+
+	.submit-options {
+		margin-top: 30px;
 	}
 `;
 
@@ -64,13 +89,15 @@ const getHtml = function(data) {
 		<form id="settings-form">
 			<div class="configs-container">
 				<div class="text-configs">
-					<h1>Change username</h1>
+					<h1>Profile Settings</h1>
+					<hr>
+					<label for="new-username">Change Username</label>
 					<div class="alert alert-danger error-message hide" role="alert">
 						Username already in use.
 					</div>
-					<input type="text" class="input-padding form-control form-control-lg" id="new-username" placeholder="New Username" maxlength="100">
-					<h1>Change bio</h1>
-					<input type="text" class="input-padding form-control form-control-lg" id="new-bio" placeholder="New Bio" maxlength="255">
+					<input type="text" class="input-padding form-control form-control-lg" id="new-username" placeholder="New Username" maxlength="50">
+					<label for="new-username">Change Bio</label>
+					<textarea type="text" class="input-padding form-control form-control-lg" id="new-bio" placeholder="New Bio" rows="3" maxlength="255"></textarea>
 				</div>
 				<div class="image-configs">
 					<img class="image-preview">
@@ -83,7 +110,29 @@ const getHtml = function(data) {
 					</div>
 				</div>
 			</div>
-			<button type="submit" class="btn btn-success btn-submit">Apply Changes</button>
+			<div class="two-factor-configs">
+				<h1>Security Settings</h1>
+				<hr width="50%">
+				<label for="two-factor-options">Choose where to recieve your two factor authentication:</label>
+				<div class="two-factor-options">
+					<input type="checkbox" id="qrcode" name="qrcode" />
+					<label for="qrcode">QR Code</label>
+					<input type="checkbox" id="email" name="email" />
+					<label for="email">Email</label>
+					<input type="checkbox" id="phone" name="phone" />
+					<label for="phone">Phone</label>
+				</div>
+			</div>
+			<div class="language-configs">
+				<h1>Language Settings</h1>
+				<hr width="50%">
+				<label for="cars">Choose language:</label>
+				<select name="language" id="language-option">
+				  <option value="pt">Portugues 🇵🇹</option>
+				  <option value="en">English 🇬🇧</option>
+				</select>
+			</div>
+			<button type="submit" class="btn btn-success btn-submit submit-options">Apply Changes</button>
 		</form>
 	`;
 	return html;
@@ -134,6 +183,7 @@ export default class AppConfigs extends HTMLElement {
 
 	#scripts() {
 
+		this.#getUserInfo();
 		this.#submit();
 		this.#uploadImage();
 		this.#generateNewSeed();
@@ -170,6 +220,7 @@ export default class AppConfigs extends HTMLElement {
 			this.dataForm.newUsername = this.html.querySelector("#new-username").value.trim();
 			this.dataForm.newBio = this.html.querySelector("#new-bio").value.trim();
 
+			console.log(this.dataForm);
 			callAPI("POST", "http://127.0.0.1:8000/api/profile/setnewconfigs", this.dataForm, this.#apiResHandlerCalback);
 		});
 	}
@@ -192,6 +243,34 @@ export default class AppConfigs extends HTMLElement {
 		errorMessage.classList.remove("hide");
 		errorMessage.classList.add("show");
 	}
+
+	#getUserInfo() {
+		callAPI("GET", "http://127.0.0.1:8000/api/profile/", null, (res, data) => {
+			this.#loadProfile(data);
+		});
+	}
+
+	#loadProfile(data) {
+		this.#loadImage(data.image_url);
+		this.#loadUsername(data.username);
+		this.#loadBio(data.bio);
+	}
+
+	#loadImage(image_url) {
+		const htmlElement = this.html.querySelector('.image-preview');
+		htmlElement.src = image_url;
+	}
+
+	#loadUsername(username) {
+		const htmlElement = this.html.querySelector('#new-username');
+		htmlElement.value = username;
+	}
+
+	#loadBio(bio) {
+		const htmlElement = this.html.querySelector('#new-bio');
+		htmlElement.value = bio;
+	}
+
 }
 
 customElements.define("app-configs", AppConfigs);
