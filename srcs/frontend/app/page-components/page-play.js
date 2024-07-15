@@ -8,7 +8,7 @@ const getHtml = function(data) {
 		<app-header></app-header>
 		<side-panel selected="play"></side-panel>
 		<div class="content content-small">
-			<h1>Play<h1>
+			<app-game></app-game>
 		</div>
 	`;
 	return html;
