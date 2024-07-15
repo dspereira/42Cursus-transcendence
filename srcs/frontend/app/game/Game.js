@@ -13,14 +13,10 @@ export default class Game {
 	}
 
 	start() {
-		this.#drawAll();
-		// Controi novo frame com os dados do gameData
 		console.log("animacao here");
+		this.#drawAll();
 		this.animation = window.requestAnimationFrame(this.start.bind(this));
 	}
-
-
-	
 
 	stop() {
 		if (this.animation) {
@@ -30,13 +26,27 @@ export default class Game {
 	}
 
 	#drawAll() {
+		this.#drawField();
 		this.#drawBall(100, 90);
 		this.#drawPaddle(10, 100);
-		this.#drawPaddle(490, 200);
+		this.#drawPaddle(790, 200);
 	}
 
 	#drawField() {
 		// estilizar o campo
+		this.ctx.fillStyle = '#677D6A';
+		this.ctx.fillRect(0, 0, this.width, this.height);
+		this.ctx.fillRect(100, 100, this.width, 2);
+
+		this.ctx.setLineDash([5, 5]);
+		this.ctx.strokeStyle = 'white';
+		this.ctx.beginPath();
+		this.ctx.moveTo(this.width/2, 20);
+		this.ctx.lineTo(this.width/2, this.height - 20);
+		this.ctx.stroke();
+		this.ctx.setLineDash([0, 0]);
+
+		
 	}
 
 	#drawScore(data) {

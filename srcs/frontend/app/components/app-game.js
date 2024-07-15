@@ -50,7 +50,7 @@ export default class AppGame extends HTMLElement {
 		this.ctx = this.canvas.getContext("2d");
 		
 		// pode receber tamanho por parametro
-		this.canvas.width = "500";
+		this.canvas.width = "800";
 		this.canvas.height = "500";
 		this.game = new Game(this.ctx, this.canvas.width, this.canvas.height);
 	}
