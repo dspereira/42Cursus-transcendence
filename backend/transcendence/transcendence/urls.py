@@ -25,4 +25,5 @@ urlpatterns = [
 	path('api/notifications/', include('notifications.urls')),
     path('api/profile/', include('user_profile.urls')),
     path('api/friends/', include('friendships.urls')),
+    path('api/game/', include('game.urls')),
 ]
