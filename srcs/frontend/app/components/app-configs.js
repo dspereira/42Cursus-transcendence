@@ -5,6 +5,7 @@ const styles = `
 
 	.configs-container {
 		display: flex;
+		justify-content: space-between;
 		margin-bottom: 15px;
 	}
 
@@ -16,7 +17,6 @@ const styles = `
 		display: flex;
 		flex-direction: column;
 		width: 50%;
-		margin-right: 200px;
 	}
 
 	.hide {
@@ -33,22 +33,17 @@ const styles = `
 
 	.image-configs{
 		display: flex;
+		flex-direction: column;
+		align-items: center;
 		margin-top: 20px;
-		margin-right: 20px;
-	}
-
-	image-preview {
-		width: 100px;
-		height: 100px;
+		margin-right: 12.5%;
 	}
 
 	.image-buttons {
 		display: flex;
-		flex-direction: column;
-		align-items: center;
 		justify-content: center;
 		gap: 15px;
-		margin-left: 10px;
+		margin-top: 10px;
 	}
 
 	.input-image-icon {
@@ -56,8 +51,12 @@ const styles = `
 		cursor: pointer;
 	}
 
-	.generate-seed-button {
+	.image-button {
 		height: 50px;
+	}
+
+	.uploadText {
+		margin-top: 5px;
 	}
 
 	.two-factor-configs h1 {
@@ -92,21 +91,21 @@ const getHtml = function(data) {
 					<h1>Profile Settings</h1>
 					<hr>
 					<label for="new-username">Change Username</label>
-					<div class="alert alert-danger error-message hide" role="alert">
+					<div class="alert alert-danger username-error-message hide" role="alert">
 						Username already in use.
 					</div>
 					<input type="text" class="input-padding form-control form-control-lg" id="new-username" placeholder="New Username" maxlength="50">
-					<label for="new-username">Change Bio</label>
+					<label for="new-bio">Change Bio</label>
 					<textarea type="text" class="input-padding form-control form-control-lg" id="new-bio" placeholder="New Bio" rows="3" maxlength="255"></textarea>
 				</div>
 				<div class="image-configs">
-					<img class="image-preview">
+					<img class="image-preview" style="width: 300px; height: 300px; clip-path: circle();">
 					<div class="image-buttons">
-						<label for="newImage">
-							<i class="bi bi-image input-image-icon""></i>
+						<label for="newImage" class="btn btn-secondary image-button">
+							<p class="uploadText">Upload Image</p>
 						</label>
 						<input id="newImage" type="file" accept="image/jpeg, image/png, image/jpg" id="image-input" style="display: none;">
-						<button id="seedButton" class="btn btn-secondary generate-seed-button">Generate New Avatar</button>
+						<button id="seedButton" class="btn btn-secondary image-button">Generate New Avatar</button>
 					</div>
 				</div>
 			</div>
@@ -115,18 +114,18 @@ const getHtml = function(data) {
 				<hr width="50%">
 				<label for="two-factor-options">Choose where to recieve your two factor authentication:</label>
 				<div class="two-factor-options">
-					<input type="checkbox" id="qrcode" name="qrcode" />
+					<input type="checkbox" id="qrcode" name="2FAOptions" />
 					<label for="qrcode">QR Code</label>
-					<input type="checkbox" id="email" name="email" />
+					<input type="checkbox" id="email" name="2FAOptions" />
 					<label for="email">Email</label>
-					<input type="checkbox" id="phone" name="phone" />
+					<input type="checkbox" id="phone" name="2FAOptions" />
 					<label for="phone">Phone</label>
 				</div>
 			</div>
 			<div class="language-configs">
 				<h1>Language Settings</h1>
 				<hr width="50%">
-				<label for="cars">Choose language:</label>
+				<label for="language-option">Choose language:</label>
 				<select name="language" id="language-option">
 				  <option value="pt">Portugues 🇵🇹</option>
 				  <option value="en">English 🇬🇧</option>
@@ -207,7 +206,7 @@ export default class AppConfigs extends HTMLElement {
 			event.preventDefault();
 			let preview = this.html.querySelector(".image-preview");
 			preview.src = URL.createObjectURL(uploadImage.files[0]);
-			this.dataForm.newImage = uploadImage.files[0];
+			this.dataForm.newImage = URL.createObjectURL(uploadImage.files[0]);
 			this.dataForm.newSeed = '';
 		})
 	}
@@ -225,21 +224,22 @@ export default class AppConfigs extends HTMLElement {
 		});
 	}
 
+
 	#apiResHandlerCalback = (res, data) => {
 		if (res.ok && data.message === "success")
-			this.#hideErrorMessage();
+			this.#hideErrorMessage("username-error-message");
 		else
-			this.#showErrorMessage();
+			this.#showErrorMessage("username-error-message");
 	}
 
-	#hideErrorMessage() {
-		const errorMessage = this.html.querySelector(".error-message")
+	#hideErrorMessage(elementClass) {
+		const errorMessage = this.html.querySelector("." + elementClass);
 		errorMessage.classList.remove("show");
 		errorMessage.classList.add("hide");
 	}
 
-	#showErrorMessage() {
-		const errorMessage = this.html.querySelector(".error-message")
+	#showErrorMessage(elementClass) {
+		const errorMessage = this.html.querySelector("." + elementClass);
 		errorMessage.classList.remove("hide");
 		errorMessage.classList.add("show");
 	}
@@ -263,7 +263,7 @@ export default class AppConfigs extends HTMLElement {
 
 	#loadUsername(username) {
 		const htmlElement = this.html.querySelector('#new-username');
-		htmlElement.value = username;
+		htmlElement.placeholder = username;
 	}
 
 	#loadBio(bio) {
