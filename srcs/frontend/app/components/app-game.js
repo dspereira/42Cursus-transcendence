@@ -7,7 +7,6 @@ const styles = `
 `;
 
 const getHtml = function(data) {
-
 	const html = `
 		<canvas id="canvas"></canvas>
 	`;
@@ -51,7 +50,7 @@ export default class AppGame extends HTMLElement {
 		
 		// pode receber tamanho por parametro
 		this.canvas.width = "800";
-		this.canvas.height = "500";
+		this.canvas.height = "400";
 		this.game = new Game(this.ctx, this.canvas.width, this.canvas.height);
 	}
 
