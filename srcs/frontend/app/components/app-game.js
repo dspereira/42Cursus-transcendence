@@ -1,4 +1,5 @@
 import Game from "../game/Game.js";
+import gameWebSocket from "../js/GameWebSocket.js";
 
 const styles = `
 	canvas {
@@ -77,11 +78,10 @@ export default class AppGame extends HTMLElement {
 
 	#keyEvents() {
 		document.addEventListener('keydown', (event) => {
-			// send data via websocket
 			if (event.code == "ArrowDown" || event.code == "KeyS")
-				console.log(`key1: ${event.code}`);
+				gameWebSocket.send("up");
 			else if (event.code == "ArrowUp" || event.code == "KeyW")
-				console.log(`key2: ${event.code}`);
+				gameWebSocket.send("down");
 		});		
 	}
 }
