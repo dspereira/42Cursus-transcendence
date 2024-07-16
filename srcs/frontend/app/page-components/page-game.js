@@ -106,11 +106,6 @@ const styles = `
 		margin-bottom: 10px;
 	}
 
-	.profile-photo {
-		width: 60%;
-		height: 60%;
-	}
-
 	.pfp-invitee {
 		width: 10%;
 		height: 60%;
@@ -193,6 +188,32 @@ const styles = `
 	.invite-card:hover {
 		background-color: #E0E0E0;
 	}
+
+	.profile-photo {
+		width: 120px;
+		height: auto;
+	}
+
+	.profile-photo-status {
+		position: relative;
+	}
+
+	.online-status {
+		position: absolute;
+		display: inline-block;
+		width: 13px;
+		height: 13px;
+		border-radius: 50%;
+		background-color: green;
+		z-index: 2;
+		top: 33px;
+		right: 2px;
+		border: 2px solid white;
+	}
+
+	.hide {
+		display: none;
+	}
 `;
 
 const getHtml = function(data) {
@@ -242,7 +263,6 @@ export default class PageGame extends HTMLElement {
 		this.#initComponent();
 		this.#render();
 		this.#scripts();
-		this.#search();
 	}
 
 	static get componentName() {
@@ -278,6 +298,7 @@ export default class PageGame extends HTMLElement {
 	}
 
 	#scripts() {
+		this.#search();
 		const friendList = getFriendsFakeCall();
 		adjustContent(this.html.querySelector(".content"));
 		this.#showInvites(friendList);
@@ -288,6 +309,7 @@ export default class PageGame extends HTMLElement {
 		this.html.querySelector(".back-btn").addEventListener("click", () => {
 			this.#toggleInviteSection();
 		});
+		this.#changeOnlineStatus();
 	}
 
 	#inviteFriends(friendList) {
@@ -305,13 +327,20 @@ export default class PageGame extends HTMLElement {
 
 	#getFriendHtml(friend) {
 		const elm = document.createElement("button");
+		let visibility = "hide";
 		elm.classList.add("invite-card");
 		elm.id = `id-${friend.id}`;
+		if (friend.online)
+			visibility = "";
 		if (friend) {
 			elm.innerHTML = `
-				<img src="${friend.image}" class="profile-photo"/>
+				<div class="profile-photo-status">
+					<img src="${friend.image}" class="profile-photo"/>
+					<div class="online-status ${visibility}"></div>
+				</div>
 				<span class="username">${friend.username}</span>
-				<div class="invite-btn">Invite</div>`;
+				<div class="invite-btn">Invite</div>
+			`;
 		}
 		return elm;
 	}
@@ -375,6 +404,34 @@ export default class PageGame extends HTMLElement {
 				this.#inviteFriends(data.friends);
 			}
 		});
+	}
+
+	#changeOnlineStatus() {
+		stateManager.addEvent("onlineStatus", (value) => {
+			this.#updateUserOnlineStatusHtml(value);
+		});
+	}
+
+	#updateUserOnlineStatusHtml(value) {
+		if (!value)
+			return ;
+
+		let friendHtml = this.html.querySelector(".invite-friends").querySelector(`#id-${value.id}`);
+		if (friendHtml)
+			this.#changeOnlineStatusFriendHtml(friendHtml, value.online);
+		// friendHtml = this.html.querySelector(`#id_${value.id}`);
+		// if (friendHtml)
+		// 	this.#changeOnlineStatusFriendHtml(friendHtml, value.online);
+	}
+
+	#changeOnlineStatusFriendHtml(friendHtml, onlineStatus) {
+		const onlineIcon = friendHtml.querySelector(".online-status");
+		if (!onlineIcon)
+			return ;
+		if (onlineStatus)
+			onlineIcon.classList.remove("hide");
+		else
+			onlineIcon.classList.add("hide");
 	}
 }
 
