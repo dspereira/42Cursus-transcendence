@@ -13,6 +13,9 @@ from .utils import has_already_valid_game_request
 from .utils import set_exp_time
 from .utils import get_game_requests_list
 from .utils import update_game_request_status
+from .utils import has_already_games_accepted
+from .utils import GAME_REQ_STATUS_DECLINED
+from .utils import get_game_request_info
 
 game_requests_model = ModelManager(GameRequests)
 user_model = ModelManager(User)
@@ -40,14 +43,13 @@ class GameRequestView(View):
 				if is_already_friend(user1=user, user2=friend):
 					if has_already_valid_game_request(user1=user, user2=friend):
 						return JsonResponse({"message": f"Error: Has already game request!",}, status=409)
+					if has_already_games_accepted(user=user):
+						return JsonResponse({"message": f"Error: User is already playing a game!",}, status=409)
 					game_request = game_requests_model.create(from_user=user, to_user=friend)
 					set_exp_time(game_request=game_request)
 					if game_request:
-						return JsonResponse({"message": f"All Good!",
-								"method": f"{request.method}",
-								"user": f"{user}",
-								"friend": f"{friend}",
-								"game_request": f"{game_request}"
+						return JsonResponse({"message": f"Game Requested Created With Success!",
+								"game_request": get_game_request_info(game_req=game_request)
 						}, status=201)
 					else:
 						return JsonResponse({"message": f"Error: Failed to create game request in DataBase",}, status=409)
@@ -66,13 +68,13 @@ class GameRequestView(View):
 			if game_req_id:
 				game_request = game_requests_model.get(id=game_req_id)
 				if game_request:
-					update_game_request_status(game_request=game_request, new_status="decline")
+					update_game_request_status(game_request=game_request, new_status=GAME_REQ_STATUS_DECLINED)
 					return JsonResponse({"message": f"Request {game_req_id} new status = decline"}, status=200)
 			return JsonResponse({"message": "Error: Invalid Game Request ID!"}, status=400)
 		else:
 			return JsonResponse({"message": "Error: Empty Body!"}, status=400)
 
-	# @method_decorator(login_required)
+	# Remover depois de todos os testes feitos
 	def delete(self, request):
 		if request.body:
 			req_data = json.loads(request.body)
