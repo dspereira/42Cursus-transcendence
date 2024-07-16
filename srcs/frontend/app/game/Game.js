@@ -7,9 +7,6 @@ export default class Game {
 		this.scoreFont = 200;
 		this.scoreLeftPos = this.#calculateScorePosition("left");
 		this.scoreRigthPos = this.#calculateScorePosition("rigth");
-		console.log(this.scoreLeftPos);
-		console.log(this.scoreRigthPos);
-
 		this.colors = {
             paddle: "black",
             ball: "#f9e50c",
