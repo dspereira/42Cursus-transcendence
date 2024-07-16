@@ -24,35 +24,10 @@ class GameRequestView(View):
 		# user = user_model.get(id=request.access_data.sub)
 		user = user_model.get(id=request.GET.get('user'))
 		if user:
-			print()
-			print(f"Requests Count: {game_requests_model.count()}")
-
-			if game_requests_model.count():
-
-				# Apenas para ver a DB sem precisar de ir ao PgAdmin
-				game_requests = game_requests_model.all()
-				print("---------------------------------------------")
-				for req in game_requests:
-					print(req)
-					print("---------------------------------------------")
-
-				requests_list = get_game_requests_list(user=user)
-				requests_list_count = len(requests_list) if requests_list else 0
-				print()
-				print(f"Requests To User: {user}")
-				print(f"Count: {requests_list_count}")
-				print()
-
-				if requests_list:
-					print("---------------------------------------------")
-					for req_usr in requests_list:
-						print(req_usr)
-						print("---------------------------------------------")
-			print()
-
-			return JsonResponse({"message": f"All Good!", "method": f"{request.method}", "user": f"{user}"}, status=200)
+			requests_list = get_game_requests_list(user=user)
+			return JsonResponse({"message": f"Game request list retrieved with success.", "requests_list": requests_list}, status=200)
 		else:
-			return JsonResponse({"message": "Error: Invalid User or Requested User!"}, status=400)
+			return JsonResponse({"message": "Error: Invalid User!"}, status=400)
 
 	# @method_decorator(login_required)
 	def post(self, request):
@@ -73,7 +48,7 @@ class GameRequestView(View):
 								"user": f"{user}",
 								"friend": f"{friend}",
 								"game_request": f"{game_request}"
-						}, status=200)
+						}, status=201)
 					else:
 						return JsonResponse({"message": f"Error: Failed to create game request in DataBase",}, status=409)
 				else:
