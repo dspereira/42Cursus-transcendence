@@ -262,6 +262,90 @@ const styles = `
 	.friend-search::placeholder, .tournament-name::placeholder, .submit-button:not(:disabled):hover, .back-btn:hover {
 		color: #C2C2C2;
 	}
+
+	.current-tourn {
+		display: flex;
+		width: 100%;
+		flex-direction: column;
+	}
+
+	.tourn-name {
+		display: flex;
+		width: 100%;
+		max-width: 1000px;
+		background-color: #E0E0E0;
+		border-radius: 10px;
+		border-style: hidden;
+		justify-content: center;
+		align-items: center;
+		margin: 0px 10px 0px 10px;
+		font-size: 24px;
+		font-weight: bold;
+	}
+	
+	.tourn-card {
+		display: flex;
+		width: 100%;
+		height: 300px;
+		flex-direction: column;
+		background-color: #EEEEEE;
+		justify-content: center;
+		align-items: center;
+		border-radius: 10px;
+		border-style: hidden;
+	}
+
+	.tourn-div-top {
+		display: flex;
+		width: 100%;
+		height: 20%;
+		flex-direction: row;
+		justify-content: center;
+		align-items: center;
+	}
+
+	.tourn-div-mid {
+		display: flex;
+		width: 100%;
+		height: 70%;
+		flex-direction: row;
+		justify-content: center;
+		align-items: center;
+	}
+
+	.tourn-s-bar, .tourn-m-bar {
+		display: flex;
+		width: 30%;
+		height: 80%;
+		justify-content: center;
+		align-items: center;
+		margin: 20px;
+	}
+
+	.tourn-s-bar {
+		width: 20%;
+		flex-direction: column;
+	}
+
+	.tourn-m-bar {
+		width: 50%;
+		flex-direction: row;
+	}
+
+	.tourn-p-card {
+		display: flex;
+		width: 100%;
+		max-width: 300px;
+		height: 20%;
+		background-color: #E0E0E0;
+		justify-content: center;
+		align-items: center;
+		border-radius: 10px;
+		border-style: hidden;
+		margin: 5px;
+		font-size: 16px;
+		font-weight: bold;
+	}
 `;
 
 const getHtml = function(data) {
@@ -276,7 +360,6 @@ const getHtml = function(data) {
 						<div class="select-right">Tournament History</div>
 					</button>
 				</div>
-				<button class=test-change>change page</button>
 				<div class="active-tournaments"></div>
 				<div class="past-tournaments">PAST TOURNAMENTS GO HERE</div>
 			</div>
@@ -292,8 +375,10 @@ export default class PageTournaments extends HTMLElement {
 
 	constructor() {
 		super()
-		this.inTournament = false;
 		this.friendBoxData = [];
+		this.tournInfo = getFakeActiveTourn();
+		this.inTournament = this.tournInfo.inTourn;
+		console.log(this.tournInfo);
 		this.#initComponent();
 		this.#render();
 		this.#scripts();
@@ -394,14 +479,31 @@ export default class PageTournaments extends HTMLElement {
 
 	#activeTournaments() {
 		const activeTournamentsHtml = this.html.querySelector(".active-tournaments");
-		if (!this.inTournament) {
+		// console.log("inTourn", "val = ", this.tournInfo.inTourn === "true", " | ", this.tournInfo.inTourn);
+		if (this.tournInfo.inTourn !== "true") {
 			this.#createJoinTourn(activeTournamentsHtml);
 		}
 		else {
 			activeTournamentsHtml.innerHTML = `
-				<div class="current-tournament">
-					<div>
-						current tournament page goes here
+				<div class="current-tourn">
+					<div class=tourn-card>
+						<div class=tourn-div-top>
+							<div class=tourn-name>${this.tournInfo.name}</div>
+						</div>
+						<div class=tourn-div-mid>
+							<div class=tourn-s-bar>
+								<div class=tourn-p-card>${this.tournInfo.p1}</div>
+								<div class=tourn-p-card>${this.tournInfo.p2}</div>
+							</div>
+							<div class=tourn-m-bar>
+								<div class=tourn-p-card>${this.tournInfo.left}</div>
+								<div class=tourn-p-card>${this.tournInfo.right}</div>
+							</div>
+							<div class=tourn-s-bar>
+								<div class=tourn-p-card>${this.tournInfo.p3}</div>
+								<div class=tourn-p-card>${this.tournInfo.p4}</div>
+							</div>
+						</div>
 					</div>
 				</div>
 			`;
@@ -572,6 +674,21 @@ export default class PageTournaments extends HTMLElement {
 
 }
 customElements.define(PageTournaments.componentName, PageTournaments);
+
+const getFakeActiveTourn = function () {
+	const data = `{
+		"name": "Manga's Tourn",
+		"inTourn": "true",
+		"p1": "Manga",
+		"p2": "candeia",
+		"p3": "diogo",
+		"p4": "pedro",
+		"status": "ongoing",
+		"left": "none",
+		"right": "p3"
+	}`;
+	return JSON.parse(data);
+}
 
 const getFakeTournaments = function () {
 	const data = `[
