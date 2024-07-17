@@ -9,7 +9,7 @@ this.socket.CLOSED
 this.socket.CLOSING
 */
 
-const webSockettUrl = "ws://127.0.0.1:8000/rota consumer do game/";
+const webSockettUrl = "ws://127.0.0.1:8000/game/";
 
 class GameWebSocket {
 
@@ -39,6 +39,22 @@ class GameWebSocket {
 		if (this.isOpen() && msg) {
 			this.socket.send(JSON.stringify({
                 key: data
+			}));
+		}
+	}
+
+	start() {
+		if (this.isOpen()) {
+			this.socket.send(JSON.stringify({
+                "type": "start_game"
+			}));
+		}
+	}
+
+	sendTest() {
+		if (this.isOpen()) {
+			this.socket.send(JSON.stringify({
+                "type": "send_test"
 			}));
 		}
 	}

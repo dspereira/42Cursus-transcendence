@@ -1,5 +1,6 @@
 import Game from "../game/Game.js";
 import gameWebSocket from "../js/GameWebSocket.js";
+import { callAPI } from "../utils/callApiUtils.js";
 
 const styles = `
 	canvas {
@@ -52,6 +53,7 @@ export default class AppGame extends HTMLElement {
 		// pode receber tamanho por parametro
 		this.canvas.width = "800";
 		this.canvas.height = "400";
+
 		this.game = new Game(this.ctx, this.canvas.width, this.canvas.height);
 	}
 
@@ -72,8 +74,7 @@ export default class AppGame extends HTMLElement {
 	}
 
 	#scripts() {
-		this.game.start();
-		this.#keyEvents();
+		this.#initGame();
 	}
 
 	#keyEvents() {
@@ -83,6 +84,41 @@ export default class AppGame extends HTMLElement {
 			else if (event.code == "ArrowUp" || event.code == "KeyW")
 				gameWebSocket.send("down");
 		});		
+	}
+
+	async #initGame() {
+		await this.#getGameColorPallet();
+		this.game.start();
+		this.#keyEvents();
+		gameWebSocket.open();
+	}
+
+	/*
+		Color Pallets IDs
+		1: Classic Retro
+		2: Modern Neon
+		3: Ocean Vibes
+		4: Sunset Glow
+		5: Forest Retreat
+	*/
+	async #getGameColorPallet() {
+		const queryParam = `?id=${3}`;
+		let color_pallet = null;
+
+		callAPI("GET", `http://127.0.0.1:8000/api/game/color_pallet/${queryParam}`, null, (res, data) => {
+			if (res.ok) {
+				if (data && data.color_pallet) {
+					color_pallet = {
+						paddle: data.color_pallet.paddle,
+						ball: data.color_pallet.ball,
+						graund: data.color_pallet.background,
+						middleLine: data.color_pallet.middleLine,
+						score: data.color_pallet.pontuation,
+					};
+					this.game.setColorPallet(color_pallet);
+				}
+			}
+		});
 	}
 }
 

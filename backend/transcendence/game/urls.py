@@ -7,6 +7,8 @@ urlpatterns = [
 	path('request/', GameRequestView.as_view(), name='request'),
 	path('game/', GameView.as_view(), name='game'),
     
+	path('color_pallet/', views.color_pallet, name='color_pallet'),		# Verificar opinião do Pereira
+
 	# Rotas apenas para testes
 	path('test/', views.test, name='test'),
 	path('set_game_scores/', views.set_game_score_info, name='test'),

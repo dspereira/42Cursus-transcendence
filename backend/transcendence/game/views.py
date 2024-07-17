@@ -11,6 +11,23 @@ from .utils import GAME_STATUS_FINISHED
 user_model = ModelManager(User)
 game_model = ModelManager(Games)
 
+CLASSIC_RETRO = {"background": "#000000", "paddle": "#FFFFFF", "ball": "#FFD700", "pontuation": "rgba(26, 26, 26, 0.8)", "middleLine": "#FFFFFF"}
+MODERN_NEON = {"background": "#1A1A1A", "paddle": "#39FF14", "ball": "#FF1493", "pontuation": "rgba(0, 0, 0, 0.3)", "middleLine": "#39FF14"}
+OCEAN_VIBES = {"background": "#002F4F", "paddle": "#007FFF", "ball": "#00BFFF", "pontuation": "rgba(173, 216, 230, 0.1)", "middleLine": "#00BFFF"}
+SUNSET_GLOW = {"background": "#FF4500", "paddle": "#FFD700", "ball": "#FFD700", "pontuation": "rgba(255, 182, 193, 0.35)", "middleLine": "#FFD700"}
+FOREST_RETREAT = {"background": "#013220", "paddle": "#7CFC00", "ball": "#32CD32", "pontuation": "rgba(152, 251, 152, 0.1)", "middleLine": "#32CD32"}
+
+COLOR_PALLETS = [CLASSIC_RETRO, MODERN_NEON, OCEAN_VIBES, SUNSET_GLOW, FOREST_RETREAT]
+
+@login_required
+@accepted_methods(["GET"])
+def color_pallet(request):
+	if request.GET.get('id'):
+		color_id = int(request.GET.get('id'))
+		if color_id and color_id <= len(COLOR_PALLETS):
+			return JsonResponse({"message": "Color Pallet Retrieved With Success", "color_pallet": COLOR_PALLETS[color_id - 1]}, status=200)	
+	return JsonResponse({"message": "Error: Invalid color pallet id!"}, status=400)
+
 @accepted_methods(["GET"])
 def test(request):
 	user = user_model.get(id=request.GET.get('user'))
