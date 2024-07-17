@@ -86,8 +86,15 @@ export default class AppGame extends HTMLElement {
 		});		
 	}
 
-	async #initGame() {
+	/*async #initGame() {
 		await this.#getGameColorPallet();
+		this.game.start();
+		this.#keyEvents();
+		gameWebSocket.open();
+	}*/
+
+	#initGame() {
+		this.#getGameColorPallet();
 		this.game.start();
 		this.#keyEvents();
 		gameWebSocket.open();
@@ -101,22 +108,13 @@ export default class AppGame extends HTMLElement {
 		4: Sunset Glow
 		5: Forest Retreat
 	*/
-	async #getGameColorPallet() {
+	#getGameColorPallet() {
 		const queryParam = `?id=${3}`;
-		let color_pallet = null;
 
 		callAPI("GET", `http://127.0.0.1:8000/api/game/color_pallet/${queryParam}`, null, (res, data) => {
 			if (res.ok) {
-				if (data && data.color_pallet) {
-					color_pallet = {
-						paddle: data.color_pallet.paddle,
-						ball: data.color_pallet.ball,
-						graund: data.color_pallet.background,
-						middleLine: data.color_pallet.middleLine,
-						score: data.color_pallet.pontuation,
-					};
-					this.game.setColorPallet(color_pallet);
-				}
+				if (data && data.color_pallet)
+					this.game.setColorPallet(data.color_pallet);
 			}
 		});
 	}

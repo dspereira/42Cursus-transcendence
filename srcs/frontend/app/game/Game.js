@@ -1,5 +1,3 @@
-import gameWebSocket from "../js/GameWebSocket.js";
-
 export default class Game {
 	constructor(ctx, width, height) {
 		this.ctx = ctx;
@@ -11,13 +9,12 @@ export default class Game {
 		this.scoreRigthPos = this.#calculateScorePosition("rigth");
 		this.colors = {
 			paddle: "black",
-            ball: "#f9e50c",
-            graund: "#807ffb",
-            middleLine: "white",
+			ball: "#f9e50c",
+			ground: "#807ffb",
+			middleLine: "white",
 			score: "rgba(200, 200, 200, 0.5)",
 		}
 		this.gameData = {};
-		this.startGame = false;
 	}
 
 	updateState() {
@@ -29,16 +26,8 @@ export default class Game {
 	}
 
 	start() {
-		if (!this.startGame) {
-			console.log("First Time Start");
-			gameWebSocket.start();
-			this.startGame = true;
-		}
-		// gameWebSocket.sendTest();
-
-		console.log("animacao here");
-		this.#drawAll();
-		this.animation = window.requestAnimationFrame(this.start.bind(this));
+		console.log("First Time Start");
+		this.#animate();
 	}
 
 	stop() {
@@ -46,6 +35,12 @@ export default class Game {
 			window.cancelAnimationFrame(this.animation);
 			this.animation = null;
 		}
+	}
+
+	#animate() {
+		console.log("animacao here");
+		this.#drawAll();
+		this.animation = window.requestAnimationFrame(this.#animate.bind(this));
 	}
 
 	#drawAll() {
@@ -58,7 +53,7 @@ export default class Game {
 	}
 
 	#drawField() {
-		this.ctx.fillStyle = this.colors.graund;
+		this.ctx.fillStyle = this.colors.ground;
 		this.ctx.fillRect(0, 0, this.width, this.height);
 		this.ctx.fillRect(100, 100, this.width, 2);
 
