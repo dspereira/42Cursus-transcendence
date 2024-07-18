@@ -149,7 +149,7 @@ const styles = `
 		border-radius: 5px;
 	}
 
-	.box-on {
+	.box-on, .create-btn:hover, .submit-button:not(:disabled):hover, .back-btn:hover  {
 		background-color: #C2C2C2;
 	}
 
@@ -186,7 +186,7 @@ const styles = `
 		cursor: not-allowed;
 	}
 
-	.create-btn, .back-btn, .submit-button:not(disabled) {
+	.create-btn, .back-btn, .submit-button:not(disabled), .separator {
 		background-color: #E0E0E0;
 	}
 
@@ -222,7 +222,7 @@ const styles = `
 		border-radius: 50%;
 		background-color: green;
 		z-index: 2;
-		top: 33px;
+		top: 100px;
 		right: 2px;
 		border: 2px solid white;
 	}
@@ -255,11 +255,15 @@ const styles = `
 		display: none;
 	}
 
-	.create-join-tournament {
+	.create-join-tournament, .tournament-creation {
 		width: 100%;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		flex-direction: column;
 	}
 
-	.friend-search::placeholder, .tournament-name::placeholder, .submit-button:not(:disabled):hover, .back-btn:hover {
+	.friend-search::placeholder, .tournament-name::placeholder {
 		color: #C2C2C2;
 	}
 
@@ -346,6 +350,105 @@ const styles = `
 		font-size: 16px;
 		font-weight: bold;
 	}
+
+	.separator {
+		display: flex;
+		width: 50%;
+		height: 5px;
+		border-radius: 10px;
+		justify-content: center;
+		align-items: center;
+		margin: 20px 0px 20px 0px;
+	}
+
+	.friend-invites {
+		display: flex;
+		width: 100%;
+		flex-direction: column;
+		justify-content: center;
+		align-items: center;
+		border-radius: 10px;
+	}
+
+	.inv-bot {
+		display: flex;
+		width: 100%;
+		height: 30%;
+		font-size: 16px;
+		font-weight: bold;
+	}
+
+	.inv-header {
+		display: flex;
+		width: 100%;
+		height: 30%;
+		font-size: 24px;
+		font-weight: bold;
+		justify-content: center;
+		align-items: center;
+	}
+
+	.inv-players {
+		display: flex;
+		width: 60%;
+		height: 30%;
+		font-size: 16px;
+		font-weight: bold;
+	}
+
+	.inv-players, .inv-bot, inv-players {
+		flex-direction: row;
+		justify-content: space-between;
+		align-items: center;
+	}
+
+	.invited-btn, .inv-decline-btn {
+		display: flex;
+		height: 60%;
+		margin: 0px 20px 0px 20px;
+		justify-content: center;
+		align-items: center;
+	}
+
+	.invited-btn, .inv-decline-btn {
+		color: black;
+		border-style: hidden;
+		border-radius: 5px;
+	}
+
+	.invited-btn, .inv-decline-btn {
+		font-size: 16px;
+		font-weight: bold;
+	}
+
+	.invited-btn, .inv-decline-btn {
+		width: 180px;
+	}
+
+	.invited-btn, .inv-decline-btn {
+		background-color: #E0E0E0;
+	}
+
+	.invited-btn:hover, .inv-decline-btn:hover {
+		background-color: #C2C2C2;
+	}
+
+
+	.invited-card {
+		display: flex;
+		flex-direction: column;
+		width: 80%;
+		height: 300px;
+		border-radius: 20px;
+		border-style: hidden;
+		justify-content: space-between;
+		align-items: center;
+		margin-bottom: 10px;
+	}
+
+	.invited-card {
+		background-color: #EEEEEE;
+	}
 `;
 
 const getHtml = function(data) {
@@ -377,6 +480,7 @@ export default class PageTournaments extends HTMLElement {
 		super()
 		this.friendBoxData = [];
 		this.tournInfo = getFakeActiveTourn();
+		this.tournInv = getFakeTournInvites();
 		this.inTournament = this.tournInfo.inTourn;
 		console.log(this.tournInfo);
 		this.#initComponent();
@@ -467,12 +571,14 @@ export default class PageTournaments extends HTMLElement {
 		activeTournamentsHtml.innerHTML = `
 			<div class=create-join-tournament>
 				<button type="button" class="create-btn">
-						Create Game
+						Create a Tournament
 				</button>
-				Tournament invites go here
+				<div class="separator"></div>
+				<div class="friend-invites"></div>
 			</div>
 		`;
-		activeTournamentsHtml.querySelector(".create-join-tournament").addEventListener("click", () => {
+		this.#showInvites(this.tournInv);
+		activeTournamentsHtml.querySelector(".create-btn").addEventListener("click", () => {
 			this.#tournCreation(activeTournamentsHtml);
 		});
 	}
@@ -670,7 +776,31 @@ export default class PageTournaments extends HTMLElement {
 			onlineIcon.classList.add("hide");
 	}
 
+	#showInvites(friendInvites) {
+		const friendInvitesHtml = this.html.querySelector(".friend-invites");
+		friendInvites.forEach((invite) => {
+			friendInvitesHtml.appendChild(this.#getInviteHtml(invite));
+		});
+	}
 
+	#getInviteHtml(invite) {
+		const elm = document.createElement("div");
+		elm.classList.add("invited-card");
+		elm.id = `id-${invite.id}`;
+		if (invite) {
+			elm.innerHTML = `
+
+				<div class="inv-header">${invite.name}</div>
+				<div class="inv-players"><div>${invite.owner}</div><div>${invite.p1}</div><div>${invite.p2}</div></div>
+				<div class="inv-bot">
+					<button class="invited-btn">Join</button>
+					<div>TIME <br> ELAPSED</div>
+					<button class="inv-decline-btn">Decline</button>
+				</div>
+			`;
+		}
+		return elm;
+	}
 
 }
 customElements.define(PageTournaments.componentName, PageTournaments);
@@ -678,7 +808,7 @@ customElements.define(PageTournaments.componentName, PageTournaments);
 const getFakeActiveTourn = function () {
 	const data = `{
 		"name": "Manga's Tourn",
-		"inTourn": "true",
+		"inTourn": "false",
 		"p1": "Manga",
 		"p2": "candeia",
 		"p3": "diogo",
@@ -687,6 +817,25 @@ const getFakeActiveTourn = function () {
 		"left": "none",
 		"right": "p3"
 	}`;
+	return JSON.parse(data);
+}
+
+const getFakeTournInvites = function() {
+
+	const data = `[
+	{
+		"name": "Jhonny's tournament 2",
+		"owner": "Jhonny",
+		"p1": "Marth",
+		"p2": "Clara"
+	},
+	{
+		"name": "Frutinha",
+		"owner": "Morango",
+		"p1": "Manga",
+		"p2": "Diogo"
+	}
+	]`;
 	return JSON.parse(data);
 }
 
@@ -731,7 +880,6 @@ const getFakeTournaments = function () {
 		"third": "Olive",
 		"fourth": "Paul",
 		"date": "09/30/24"
-	}
-	]`;
+	}]`;
 	return JSON.parse(data);
 }

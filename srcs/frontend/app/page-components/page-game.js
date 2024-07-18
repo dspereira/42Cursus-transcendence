@@ -92,7 +92,7 @@ const styles = `
 
 	.inv-decline-btn {
 		width: 60px;
-	}
+	}	
 
 	.invited-card {
 		display: flex;
@@ -173,7 +173,7 @@ const styles = `
 		outline: 3px solid #C2C2C2;
 	}
 
-	.invite-card, .invited-card, .friend-search {
+	.invite-card, .invited-card, .friend-search, .box-off {
 		background-color: #EEEEEE;
 	}
 
@@ -181,7 +181,7 @@ const styles = `
 		background-color: #E0E0E0;
 	}
 
-	.invite-card:hover .invite-btn, .back-btn:hover, .inv-decline-btn:hover {
+	.invite-card:hover .invite-btn, .back-btn:hover, .inv-decline-btn:hover, .box-on {
 		background-color: #C2C2C2;
 	}
 
@@ -206,13 +206,25 @@ const styles = `
 		border-radius: 50%;
 		background-color: green;
 		z-index: 2;
-		top: 33px;
+		top: 100px;
 		right: 2px;
 		border: 2px solid white;
 	}
 
 	.hide {
 		display: none;
+	}
+
+	.friend-box {
+		display: flex;
+		flex-direction: column;
+		width: 150px;
+		height: 200px;
+		border-radius: 10px;
+		border-style: hidden;
+		justify-content: center;
+		align-items: center;
+		margin: 10px;
 	}
 `;
 
@@ -260,6 +272,7 @@ export default class PageGame extends HTMLElement {
 
 	constructor() {
 		super()
+		this.friendBoxData = [];
 		this.#initComponent();
 		this.#render();
 		this.#scripts();
@@ -321,30 +334,58 @@ export default class PageGame extends HTMLElement {
 			return ;
 		}
 		friendList.forEach((friend) => {
-			inviteFriendsHtml.appendChild(this.#getFriendHtml(friend));
+			inviteFriendsHtml.appendChild(this.#createCheckbox(friend));
 		});
 	}
 
-	#getFriendHtml(friend) {
-		const elm = document.createElement("button");
-		let visibility = "hide";
-		elm.classList.add("invite-card");
-		elm.id = `id-${friend.id}`;
-		if (friend.online)
-			visibility = "";
+	#createCheckbox(friend) {
 		if (friend) {
-			elm.innerHTML = `
-				<div class="profile-photo-status">
-					<img src="${friend.image}" class="profile-photo"/>
-					<div class="online-status ${visibility}"></div>
-				</div>
-				<span class="username">${friend.username}</span>
-				<div class="invite-btn">Invite</div>
-			`;
+			const elm = document.createElement("div");
+			let visibility = "hide";
+			elm.classList.add("friend-box");
+			elm.id = `id-${friend.id}`;
+			if (this.friendBoxData && this.friendBoxData.indexOf(elm.id) != -1)
+				elm.classList.add("box-on");
+			else
+				elm.classList.add("box-off");
+			// const submitBtn = document.querySelector(".submit-button");
+			if (friend.online)
+				visibility = "";
+			console.log(friend.username, " status", friend.online ? "online" : "offline");
+			// submitBtn.disabled = (this.friendBoxData.length != 3);
+			if (friend) {
+				elm.innerHTML = `
+					<div class="profile-photo-status">
+						<img src="${friend.image}" class="profile-photo"/>
+						<div class="online-status ${visibility}"></div>
+					</div>
+					<span class="username">${friend.username}</span>
+				`;
+			}
+			elm.addEventListener("click", () => {
+				const inArray = this.friendBoxData.indexOf(elm.id);
+				console.log("toggle = ", inArray);
+				console.log("length = ", this.friendBoxData.length);
+				if (inArray != -1) {
+					elm.classList.remove("box-on");
+					elm.classList.add("box-off");
+					this.friendBoxData.splice(inArray, 1);
+				}
+				else {
+					elm.classList.add("box-on");
+					this.friendBoxData.push(elm.id);
+					elm.classList.remove("box-off");
+				}
+				if ((this.friendBoxData.length == 3))
+					console.log("enabled!");
+				else
+					console.log("disabled");
+				// submitBtn.disabled = (this.friendBoxData.length != 3);
+				console.log(this.friendBoxData);
+			});
+			return elm;
 		}
-		return elm;
 	}
-	//TODO add online status to the invite section
 
 	#toggleInviteSection() {
 		const createEnterSection = this.html.querySelector(".create-enter-game");
