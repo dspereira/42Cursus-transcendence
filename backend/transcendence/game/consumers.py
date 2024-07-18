@@ -83,6 +83,8 @@ class Game(AsyncWebsocketConsumer):
 	async def send_data(self):
 		while True:
 
+			scores = self.game.get_score_values()
+
 			await self.channel_layer.group_send(
 				self.room_group_name,
 				{
@@ -91,6 +93,8 @@ class Game(AsyncWebsocketConsumer):
 						"ball": self.game.get_ball_positions(),
 						"paddle_left_pos": self.game.get_paddle_left(),
 						"paddle_right_pos": self.game.get_paddle_left(),
+						"player_1_score": scores['player_1_score'],
+						"player_2_score": scores['player_2_score'],
 					}
 				}
 			)

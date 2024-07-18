@@ -39,13 +39,17 @@ class Ball:
 			self.y = y
 			self.x = x
 
-	def is_goal(self):
+	def goal_detection(self):
 		if self.x < BALL_RADIUS or self.x > self.screen_width - BALL_RADIUS:
+			goal_info = {
+				"player_1": self.x > self.screen_width - BALL_RADIUS,
+				"player_2": self.x < BALL_RADIUS
+			}
 			self.x = self.x_start
 			self.y = self.y_start
 			self.__set_start_angle()
-			return True
-		return False
+			return goal_info
+		return None
 
 	def __get_radius(self):
 		if not self.last_time:

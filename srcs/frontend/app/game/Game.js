@@ -56,8 +56,8 @@ export default class Game {
 		this.#drawBall(this.gameData.ball.x, this.gameData.ball.y);
 		this.#drawPaddle(this.gameData.paddle_left_pos, "left");
 		this.#drawPaddle(this.gameData.paddle_right_pos, "rigth");
-		this.#drawScore(2, "left");
-		this.#drawScore(7, "rigth");
+		this.#drawScore(this.gameData.player_1_score, "left");
+		this.#drawScore(this.gameData.player_2_score, "rigth");
 	}
 
 	#drawField() {
