@@ -1,7 +1,9 @@
+from .const_vars import *
+
 class Paddle:
-	def __init__(self, screen_width, screen_heigth):
-		self.screen_height = screen_heigth
-		self.screen_width = screen_width
+	def __init__(self):
+		self.screen_height = SCREEN_HEIGHT
+		self.screen_width = SCREEN_WIDTH
 		self.height = 50
 		self.half_height = self.height / 2
 		self.step = 3

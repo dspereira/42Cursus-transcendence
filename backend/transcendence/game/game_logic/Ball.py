@@ -1,18 +1,13 @@
 from datetime import datetime
+from .const_vars import *
 import math
-
-NBR_PIXEL = 3
-NBR_MS = 10
-
-# pixel / ms
-BALL_SPEED = NBR_PIXEL / NBR_MS
 
 BALL_RADIUS = 5
 
 class Ball:
-	def __init__(self, screen_width, screen_heigth):
-		self.screen_height = screen_heigth
-		self.screen_width = screen_width
+	def __init__(self):
+		self.screen_height = SCREEN_HEIGHT
+		self.screen_width = SCREEN_WIDTH
 		self.x = self.screen_width / 2
 		self.y = self.screen_height / 2
 		self.last_time = 0

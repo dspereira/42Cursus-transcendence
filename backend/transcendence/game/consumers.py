@@ -10,7 +10,7 @@ import asyncio
 import json
 
 from datetime import datetime
-from .GameLogic import GameLogic
+from .game_logic.GameLogic import GameLogic
 
 game_model = ModelManager(Games)
 user_model = ModelManager(User)
