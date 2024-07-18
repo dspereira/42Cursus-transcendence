@@ -84,6 +84,7 @@ class Game(AsyncWebsocketConsumer):
 		while True:
 
 			scores = self.game.get_score_values()
+			game_ended = self.game.is_end_game()
 
 			await self.channel_layer.group_send(
 				self.room_group_name,
@@ -99,8 +100,11 @@ class Game(AsyncWebsocketConsumer):
 				}
 			)
 
-			self.game.update()
+			if game_ended:
+				break
 
+			self.game.update()
+			
 			await asyncio.sleep(SLEEP_TIME)
 
 	async def send_game_status(self, event):

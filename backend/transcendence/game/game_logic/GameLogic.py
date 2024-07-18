@@ -30,6 +30,12 @@ class GameLogic:
 	def get_score_values(self):
 		return {"player_1_score": self.player_1_score, "player_2_score": self.player_2_score}
 
+	def is_end_game(self):
+		if self.player_1_score == 7 or self.player_2_score == 7:
+			self.ball.set_end_game_position()
+			return True
+		return False
+
 	def __add_score(self, info):
 		if info['player_1']:
 			self.player_1_score += 1

@@ -51,6 +51,10 @@ class Ball:
 			return goal_info
 		return None
 
+	def set_end_game_position(self):
+		self.x = self.x_start
+		self.y = self.y_start
+
 	def __get_radius(self):
 		if not self.last_time:
 			self.last_time = datetime.now()
