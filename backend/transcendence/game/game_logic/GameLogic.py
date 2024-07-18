@@ -12,6 +12,8 @@ class GameLogic:
 
 	def update(self):
 		self.ball.update_position()
+		if self.ball.is_goal():
+			print("GOALLLLL")
 
 	def get_paddle_left(self):
 		return self.paddle_left.get_paddle_position()

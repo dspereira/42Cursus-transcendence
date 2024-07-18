@@ -1,5 +1,6 @@
 from datetime import datetime
 from .const_vars import *
+import random
 import math
 
 BALL_RADIUS = 5
@@ -8,10 +9,12 @@ class Ball:
 	def __init__(self):
 		self.screen_height = SCREEN_HEIGHT
 		self.screen_width = SCREEN_WIDTH
-		self.x = self.screen_width / 2
-		self.y = self.screen_height / 2
+		self.x_start = self.screen_width / 2
+		self.y_start = self.screen_height / 2
+		self.x = self.x_start
+		self.y = self.y_start
 		self.last_time = 0
-		self.angle = 60
+		self.__set_start_angle()
 
 	def get_position(self):
 		position = {
@@ -35,6 +38,14 @@ class Ball:
 		else:
 			self.y = y
 			self.x = x
+
+	def is_goal(self):
+		if self.x < BALL_RADIUS or self.x > self.screen_width - BALL_RADIUS:
+			self.x = self.x_start
+			self.y = self.y_start
+			self.__set_start_angle()
+			return True
+		return False
 
 	def __get_radius(self):
 		if not self.last_time:
@@ -69,3 +80,7 @@ class Ball:
 
 	def __set_new_reflection_angle(self):
 		self.angle = 360 - self.angle
+
+	def __set_start_angle(self):
+		chosen_interval = random.choice(ANGLES_INTERVALS)
+		self.angle = random.randint(chosen_interval[0], chosen_interval[1])
