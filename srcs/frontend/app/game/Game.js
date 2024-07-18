@@ -14,11 +14,19 @@ export default class Game {
 			middleLine: "white",
 			score: "rgba(200, 200, 200, 0.5)",
 		}
-		this.gameData = {};
+		this.gameData = {
+			ball: {
+				x:50,
+				y:50
+			},
+		};
 	}
 
-	updateState() {
+	updateState(data) {
 		// update gameData
+		// console.log("updateState");
+		// console.log(data);
+		this.gameData = data;
 	}
 
 	setColorPallet(color_pallet) {
@@ -26,7 +34,7 @@ export default class Game {
 	}
 
 	start() {
-		console.log("First Time Start");
+		// console.log("First Time Start");
 		this.#animate();
 	}
 
@@ -38,14 +46,14 @@ export default class Game {
 	}
 
 	#animate() {
-		console.log("animacao here");
+		// console.log("animacao here");
 		this.#drawAll();
 		this.animation = window.requestAnimationFrame(this.#animate.bind(this));
 	}
 
 	#drawAll() {
 		this.#drawField();
-		this.#drawBall(150, 350);
+		this.#drawBall(this.gameData.ball.x, this.gameData.ball.y);
 		this.#drawPaddle(100, "left");
 		this.#drawPaddle(200, "rigth");
 		this.#drawScore(2, "left");
@@ -101,6 +109,9 @@ export default class Game {
 	#drawBall(x, y) {
 		if (!x && !y)
 			return ;
+
+		//x = this.width / 100 * x
+		//y = this.height / 100 * y
 
 		this.ctx.strokeStyle = this.colors.ball;
 		this.ctx.fillStyle = this.colors.ball;

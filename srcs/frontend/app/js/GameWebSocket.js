@@ -77,8 +77,8 @@ class GameWebSocket {
 
 		this.socket.onmessage = (event) => {
 			if (event.data) {
-				console.log(event);
-				console.log(event.data);
+				const data = JSON.parse(event.data);
+				stateManager.setState("gameStatus", data.game_state);
 			}
 		};
 

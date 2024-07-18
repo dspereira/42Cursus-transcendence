@@ -1,6 +1,7 @@
 import Game from "../game/Game.js";
 import gameWebSocket from "../js/GameWebSocket.js";
 import { callAPI } from "../utils/callApiUtils.js";
+import stateManager from "../js/StateManager.js";
 
 const styles = `
 	canvas {
@@ -95,6 +96,7 @@ export default class AppGame extends HTMLElement {
 
 	#initGame() {
 		this.#getGameColorPallet();
+		this.#setGameStatusEvent();
 		this.game.start();
 		this.#keyEvents();
 		gameWebSocket.open();
@@ -118,6 +120,13 @@ export default class AppGame extends HTMLElement {
 			}
 		});
 	}
+
+	#setGameStatusEvent() {
+		stateManager.addEvent("gameStatus", (data) => {
+			this.game.updateState(data);
+		});
+	}
+
 }
 
 customElements.define("app-game", AppGame);

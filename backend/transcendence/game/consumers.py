@@ -10,6 +10,7 @@ import asyncio
 import json
 
 from datetime import datetime
+from .GameLogic import GameLogic
 
 game_model = ModelManager(Games)
 user_model = ModelManager(User)
@@ -42,11 +43,25 @@ class Game(AsyncWebsocketConsumer):
 			await self.close(4000)
 			return
 
+		self.game = GameLogic()
+
+		self.game.get_degrees(angle_deg=0)
+		self.game.get_degrees(angle_deg=90)
+		self.game.get_degrees(angle_deg=180)
+		self.game.get_degrees(angle_deg=270)
+		self.game.get_degrees(angle_deg=360)
+		self.game.get_degrees(angle_deg=45)
+		self.game.get_degrees(angle_deg=135)
+		self.game.get_degrees(angle_deg=225)
+		self.game.get_degrees(angle_deg=315)
+
 		self.room_group_name = str(self.user.id)
 
 		print()
 		print(f"USER: {self.user.username}")
 		print()
+
+		# self.task = asyncio.create_task(self.send_data())
 
 		await self.channel_layer.group_add(
 			self.room_group_name,
@@ -76,11 +91,22 @@ class Game(AsyncWebsocketConsumer):
 		
 		if data_type == "start_game":
 			self.task = asyncio.create_task(self.send_data())
-			pass
 
 	async def send_data(self):
 		while True:
-			print()
-			print(f"Send Data: {datetime.now()}")
-			print()
+
+			await self.channel_layer.group_send(
+				self.room_group_name,
+				{
+					'type': 'send_game_status',
+					"game_state": {"ball": self.game.get_ball_positions()}
+				}
+			)
+
 			await asyncio.sleep(SLEEP_TIME)
+
+	async def send_game_status(self, event):
+		await self.send(text_data=json.dumps({
+			'type': 'message',
+			'game_state': event['game_state']
+		}))
