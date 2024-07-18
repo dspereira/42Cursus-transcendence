@@ -54,8 +54,8 @@ export default class Game {
 	#drawAll() {
 		this.#drawField();
 		this.#drawBall(this.gameData.ball.x, this.gameData.ball.y);
-		this.#drawPaddle(100, "left");
-		this.#drawPaddle(200, "rigth");
+		this.#drawPaddle(this.gameData.paddle_left_pos, "left");
+		this.#drawPaddle(this.gameData.paddle_right_pos, "rigth");
 		this.#drawScore(2, "left");
 		this.#drawScore(7, "rigth");
 	}
@@ -109,9 +109,6 @@ export default class Game {
 	#drawBall(x, y) {
 		if (!x && !y)
 			return ;
-
-		//x = this.width / 100 * x
-		//y = this.height / 100 * y
 
 		this.ctx.strokeStyle = this.colors.ball;
 		this.ctx.fillStyle = this.colors.ball;

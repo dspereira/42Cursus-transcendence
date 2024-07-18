@@ -27,7 +27,7 @@ class Ball:
 
 	def update_position(self):
 		radius = self.__get_radius()
-		trig_values = self.__get_trig_values(angle_deg=self.angle)
+		trig_values = self.__get_trig_values()
 		x = self.x + radius * trig_values["cos_value"]
 		y = self.y + radius * trig_values["sin_value"]
 
@@ -52,8 +52,8 @@ class Ball:
 		radius = value * BALL_SPEED
 		return radius
 
-	def __get_trig_values(self, angle_deg):
-		angle_rad = math.radians(angle_deg)
+	def __get_trig_values(self):
+		angle_rad = math.radians(self.angle)
 		return {
 			"sin_value": math.sin(angle_rad) * -1,
 			"cos_value": math.cos(angle_rad)
