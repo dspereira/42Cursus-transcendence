@@ -105,6 +105,7 @@ const styles = `
 	}
 
 	.creation-bottom-bar {
+		justify-content: center;
 		position: fixed;
 		bottom: 0;
 	}
@@ -217,8 +218,8 @@ const styles = `
 	.online-status {
 		position: absolute;
 		display: inline-block;
-		width: 13px;
-		height: 13px;
+		width: 20px;
+		height: 20px;
 		border-radius: 50%;
 		background-color: green;
 		z-index: 2;
@@ -336,17 +337,38 @@ const styles = `
 		flex-direction: row;
 	}
 
+	.tourn-p-img {
+		width: 50px;
+		height: 50px;
+		margin-right: 20px;
+	}
+
 	.tourn-p-card {
 		display: flex;
 		width: 100%;
 		max-width: 300px;
-		height: 20%;
+		height: 40%;
 		background-color: #E0E0E0;
 		justify-content: center;
 		align-items: center;
 		border-radius: 10px;
 		border-style: hidden;
 		margin: 5px;
+		font-size: 16px;
+		font-weight: bold;
+	}
+
+	.tourn-inv {
+		display: flex;
+		width: 100%;
+		height: 100px;
+		justify-content: space-between;
+		align-items: center;
+		border-radius: 10px;
+		border-style: hidden;
+		background-color: #EEEEEE;
+		margin-top: 20px;
+		padding: 0px 50px 0px 50px;
 		font-size: 16px;
 		font-weight: bold;
 	}
@@ -432,7 +454,6 @@ const styles = `
 	.invited-btn:hover, .inv-decline-btn:hover {
 		background-color: #C2C2C2;
 	}
-
 
 	.invited-card {
 		display: flex;
@@ -529,7 +550,7 @@ export default class PageTournaments extends HTMLElement {
 		// this.#search();
 		// this.#searchFriends();
 		this.#changeOnlineStatus();
-		this.#testChangePage();
+		// this.#testChangePage();
 	}
 
 	#testChangePage() {
@@ -598,18 +619,54 @@ export default class PageTournaments extends HTMLElement {
 						</div>
 						<div class=tourn-div-mid>
 							<div class=tourn-s-bar>
-								<div class=tourn-p-card>${this.tournInfo.p1}</div>
-								<div class=tourn-p-card>${this.tournInfo.p2}</div>
+								<div class=tourn-p-card>
+									<img src="https://api.dicebear.com/8.x/bottts/svg?seed=${this.tournInfo.p1}" class="tourn-p-img"></img>
+									${this.tournInfo.p1}
+								</div>
+								<div class=tourn-p-card>
+									<img src="https://api.dicebear.com/8.x/bottts/svg?seed=${this.tournInfo.p2}" class="tourn-p-img"></img>
+									${this.tournInfo.p2}
+								</div>
 							</div>
 							<div class=tourn-m-bar>
 								<div class=tourn-p-card>${this.tournInfo.left}</div>
 								<div class=tourn-p-card>${this.tournInfo.right}</div>
 							</div>
 							<div class=tourn-s-bar>
-								<div class=tourn-p-card>${this.tournInfo.p3}</div>
-								<div class=tourn-p-card>${this.tournInfo.p4}</div>
+								<div class=tourn-p-card>
+									<img src="https://api.dicebear.com/8.x/bottts/svg?seed=${this.tournInfo.p3}" class="tourn-p-img"></img>
+									${this.tournInfo.p3}
+								</div>
+								<div class=tourn-p-card>
+									<img src="https://api.dicebear.com/8.x/bottts/svg?seed=${this.tournInfo.p4}" class="tourn-p-img"></img>
+									${this.tournInfo.p4}
+								</div>
 							</div>
 						</div>
+					</div>
+					<div class="tourn-inv">
+						<img src="https://api.dicebear.com/8.x/bottts/svg?seed=${this.tournInfo.p1}" class="tourn-p-img"></img>
+						${this.tournInfo.p1}
+						<div>Status</div>
+						<div>Elapsed<br>Time</div>
+					</div>
+					<div class="tourn-inv">
+						<img src="https://api.dicebear.com/8.x/bottts/svg?seed=${this.tournInfo.p2}" class="tourn-p-img"></img>
+						${this.tournInfo.p2}
+						<div>Status</div>
+						<div>Elapsed<br>Time</div>
+					</div>
+					<div class="tourn-inv">
+						<img src="https://api.dicebear.com/8.x/bottts/svg?seed=${this.tournInfo.p3}" class="tourn-p-img"></img>
+						${this.tournInfo.p3}
+						<div>Status</div>
+						<div>Elapsed<br>Time</div>
+					</div>
+					<div class="tourn-inv">
+						<img src="https://api.dicebear.com/8.x/bottts/svg?seed=${this.tournInfo.p4}" class="tourn-p-img"></img>
+						${this.tournInfo.p4}
+						<div>Status</div>
+						<div>Elapsed<br>Time</div>
 					</div>
 				</div>
 			`;
@@ -791,7 +848,10 @@ export default class PageTournaments extends HTMLElement {
 			elm.innerHTML = `
 
 				<div class="inv-header">${invite.name}</div>
-				<div class="inv-players"><div>${invite.owner}</div><div>${invite.p1}</div><div>${invite.p2}</div></div>
+				<div class="inv-players">
+					<div>${invite.owner}</div>
+					<div>${invite.p1}</div>
+					<div>${invite.p2}</div></div>
 				<div class="inv-bot">
 					<button class="invited-btn">Join</button>
 					<div>TIME <br> ELAPSED</div>
@@ -808,7 +868,7 @@ customElements.define(PageTournaments.componentName, PageTournaments);
 const getFakeActiveTourn = function () {
 	const data = `{
 		"name": "Manga's Tourn",
-		"inTourn": "false",
+		"inTourn": "true",
 		"p1": "Manga",
 		"p2": "candeia",
 		"p3": "diogo",

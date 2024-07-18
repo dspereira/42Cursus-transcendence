@@ -177,16 +177,12 @@ const styles = `
 		background-color: #EEEEEE;
 	}
 
-	.create-btn, .invite-btn, .invited-btn, .back-btn, .inv-decline-btn, .separator {
+	.create-btn, .invite-btn, .invited-btn, .back-btn, .inv-decline-btn, .separator, .submit-button:not(disabled), .invite-card:hover {
 		background-color: #E0E0E0;
 	}
 
-	.invite-card:hover .invite-btn, .back-btn:hover, .inv-decline-btn:hover, .box-on {
+	.invite-card:hover .invite-btn, .back-btn:hover, .inv-decline-btn:hover, .box-on, .submit-button:not(:disabled):hover {
 		background-color: #C2C2C2;
-	}
-
-	.invite-card:hover {
-		background-color: #E0E0E0;
 	}
 
 	.profile-photo {
@@ -201,8 +197,8 @@ const styles = `
 	.online-status {
 		position: absolute;
 		display: inline-block;
-		width: 13px;
-		height: 13px;
+		width: 20px;
+		height: 20px;
 		border-radius: 50%;
 		background-color: green;
 		z-index: 2;
@@ -225,6 +221,54 @@ const styles = `
 		justify-content: center;
 		align-items: center;
 		margin: 10px;
+	}
+
+	.search {
+		margin-right: 40px;
+		margin-bottom: 25px;
+	}
+
+	.search-icon {
+		position: absolute;
+		margin-top: 3px;
+		margin-left: 8px;
+		font-size: 16px;
+	}
+
+	.search input {
+		padding-left: 30px;
+	}
+
+	.search-bar {
+		margin-bottom: 25px;
+	}
+
+	.creation-bottom-bar {
+		display: flex;
+		justify-content: center;
+		position: fixed;
+		bottom: 0px;
+		width: 100%;
+		height: 100px;
+	}
+
+	.submit-button {
+		display: flex;
+		width: 180px;
+		height: 60%;
+		margin: 0px 20px 0px 20px;
+		justify-content: center;
+		align-items: center;
+		color: white;
+		font-size: 16px;
+		font-weight: bold;
+		border-style: hidden;
+		border-radius: 5px;
+	}
+
+	.submit-button:disabled {
+		background-color: #FFBAAB;
+		cursor: not-allowed;
 	}
 `;
 
@@ -249,14 +293,14 @@ const getHtml = function(data) {
 						<div class="inv-header-text">
 							Invite a Friend For a Challenge!
 						</div>
-						<div class="search-bar">
-							<div class="form-group">
-								<i class="search-icon bi bi-search"></i>
-								<input type="text" class="form-control form-control-md" id="search" placeholder="Search friends..." maxlength="50">
-							</div>
+						<div class="form-group search">
+							<i class="search-icon bi bi-search"></i>
+							<input type="text" class="form-control form-control-sm" id="search" placeholder="Search..." maxlength="50">
 						</div>
 					</div>
-					<div class="invite-friends">
+					<div class="invite-friends"></div>
+					<div class="creation-bottom-bar">
+						<button class="submit-button">Invite</button>
 					</div>
 				</div>
 			</div>
@@ -348,11 +392,11 @@ export default class PageGame extends HTMLElement {
 				elm.classList.add("box-on");
 			else
 				elm.classList.add("box-off");
-			// const submitBtn = document.querySelector(".submit-button");
+			const submitBtn = document.querySelector(".submit-button");
 			if (friend.online)
 				visibility = "";
 			console.log(friend.username, " status", friend.online ? "online" : "offline");
-			// submitBtn.disabled = (this.friendBoxData.length != 3);
+			submitBtn.disabled = this.friendBoxData.length < 1;
 			if (friend) {
 				elm.innerHTML = `
 					<div class="profile-photo-status">
@@ -380,7 +424,7 @@ export default class PageGame extends HTMLElement {
 					console.log("enabled!");
 				else
 					console.log("disabled");
-				// submitBtn.disabled = (this.friendBoxData.length != 3);
+				submitBtn.disabled = this.friendBoxData.length < 1;
 				console.log(this.friendBoxData);
 			});
 			return elm;
@@ -424,7 +468,7 @@ export default class PageGame extends HTMLElement {
 	}
 
 	#searchFriends() {
-		const inp = this.html.querySelector(".search-bar").querySelector("input");
+		const inp = this.html.querySelector(".search input");
 		if (!inp)
 			return ;
 		inp.addEventListener("input", event => this.#search(inp.value));
