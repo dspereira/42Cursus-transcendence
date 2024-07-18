@@ -216,10 +216,16 @@ export default class AppConfigs extends HTMLElement {
 		settingsForm.addEventListener("submit", (event) => {
 			event.preventDefault();
 
-			this.dataForm.newUsername = this.html.querySelector("#new-username").value.trim();
-			this.dataForm.newBio = this.html.querySelector("#new-bio").value.trim();
+			if (this.dataForm.newUsername = this.html.querySelector("#new-username").value.trim())
+				this.dataForm.newUsername = '';
+			else
+				this.dataForm.newUsername = this.html.querySelector("#new-username").value.trim();
+			
+			if (this.dataForm.newBio = this.html.querySelector("#new-bio").value.trim())
+				this.dataForm.newBio = '';
+			else
+				this.dataForm.newBio = this.html.querySelector("#new-bio").value.trim();
 
-			console.log(this.dataForm);
 			callAPI("POST", "http://127.0.0.1:8000/api/profile/setnewconfigs", this.dataForm, this.#apiResHandlerCalback);
 		});
 	}
@@ -263,12 +269,14 @@ export default class AppConfigs extends HTMLElement {
 
 	#loadUsername(username) {
 		const htmlElement = this.html.querySelector('#new-username');
-		htmlElement.placeholder = username;
+		htmlElement.value = username;
+		this.dataForm.newUsername = username
 	}
 
 	#loadBio(bio) {
 		const htmlElement = this.html.querySelector('#new-bio');
 		htmlElement.value = bio;
+		this.dataForm.newBio = bio;
 	}
 
 }
