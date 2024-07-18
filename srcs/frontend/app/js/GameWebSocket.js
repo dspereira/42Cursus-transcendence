@@ -36,9 +36,10 @@ class GameWebSocket {
 	}
 
 	send(data) {
-		if (this.isOpen() && msg) {
+		if (this.isOpen() && data) {
 			this.socket.send(JSON.stringify({
-                key: data
+				type: "key",
+				key: data
 			}));
 		}
 	}
@@ -46,15 +47,7 @@ class GameWebSocket {
 	start() {
 		if (this.isOpen()) {
 			this.socket.send(JSON.stringify({
-                "type": "start_game"
-			}));
-		}
-	}
-
-	sendTest() {
-		if (this.isOpen()) {
-			this.socket.send(JSON.stringify({
-                "type": "send_test"
+				type: "start_game"
 			}));
 		}
 	}
@@ -84,8 +77,8 @@ class GameWebSocket {
 
 		this.socket.onmessage = (event) => {
 			if (event.data) {
-                console.log(event);
-                console.log(event.data);
+				console.log(event);
+				console.log(event.data);
 			}
 		};
 
