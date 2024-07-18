@@ -45,23 +45,13 @@ class Game(AsyncWebsocketConsumer):
 
 		self.game = GameLogic()
 
-		self.game.get_degrees(angle_deg=0)
-		self.game.get_degrees(angle_deg=90)
-		self.game.get_degrees(angle_deg=180)
-		self.game.get_degrees(angle_deg=270)
-		self.game.get_degrees(angle_deg=360)
-		self.game.get_degrees(angle_deg=45)
-		self.game.get_degrees(angle_deg=135)
-		self.game.get_degrees(angle_deg=225)
-		self.game.get_degrees(angle_deg=315)
-
 		self.room_group_name = str(self.user.id)
 
 		print()
 		print(f"USER: {self.user.username}")
 		print()
 
-		# self.task = asyncio.create_task(self.send_data())
+		self.task = asyncio.create_task(self.send_data())
 
 		await self.channel_layer.group_add(
 			self.room_group_name,
@@ -102,6 +92,8 @@ class Game(AsyncWebsocketConsumer):
 					"game_state": {"ball": self.game.get_ball_positions()}
 				}
 			)
+
+			self.game.update()
 
 			await asyncio.sleep(SLEEP_TIME)
 
