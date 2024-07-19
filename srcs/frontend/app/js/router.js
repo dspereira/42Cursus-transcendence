@@ -11,6 +11,7 @@ import Page404 from "../page-components/page-404.js";
 import PageInitial from "../page-components/page-initial.js";
 import PageLogout from "../page-components/page-logout.js";
 import PageFriends from "../page-components/page-friends.js";
+import PageGame from "../page-components/page-game.js";
 
 // Components
 import AppTest from "../components/app-test.js";
@@ -44,6 +45,7 @@ const routes = {
 	"/notifications"	: PageNotifications.componentName,
 	"/configurations"	: PageConfigs.componentName,
 	"/friends"			: PageFriends.componentName,
+	"/game"				: PageGame.componentName,
 }
 
 const publicRoutes = ["/initial", "/login", "/signup"];
