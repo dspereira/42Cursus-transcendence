@@ -16,6 +16,11 @@ class Ball:
 		self.last_time = 0
 		self.__set_start_angle()
 
+		self.left_wall_limit = BALL_RADIUS
+		self.right_wall_limit = self.screen_width - BALL_RADIUS
+		self.top_wall_limit = BALL_RADIUS
+		self.bottom_wall_limit = self.screen_height - BALL_RADIUS
+
 	def get_position(self):
 		position = {
 			"x": self.x,
@@ -40,10 +45,12 @@ class Ball:
 			self.x = x
 
 	def goal_detection(self):
-		if self.x < BALL_RADIUS or self.x > self.screen_width - BALL_RADIUS:
+		player_1_goal = self.x >= self.right_wall_limit
+		player_2_goal = self.x <= self.left_wall_limit 
+		if player_1_goal or player_2_goal:
 			goal_info = {
-				"player_1": self.x > self.screen_width - BALL_RADIUS,
-				"player_2": self.x < BALL_RADIUS
+				"player_1": player_1_goal,
+				"player_2": player_2_goal
 			}
 			self.x = self.x_start
 			self.y = self.y_start
@@ -75,9 +82,9 @@ class Ball:
 
 	# y = mx + b
 	def __get_colision_point(self, x, y, angle_rad):
-		if y > self.screen_height - BALL_RADIUS:
-			col_y = self.screen_height - BALL_RADIUS
-		elif y < BALL_RADIUS:
+		if y > self.bottom_wall_limit:
+			col_y = self.bottom_wall_limit
+		elif y < self.top_wall_limit:
 			col_y = BALL_RADIUS
 		else:
 			return None
