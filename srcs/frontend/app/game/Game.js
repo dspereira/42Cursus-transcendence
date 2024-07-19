@@ -90,7 +90,7 @@ export default class Game {
 		if (!pos && !side)
 			return ;
 
-		const paddleWidth = 3;
+		const paddleWidth = 4;
 		const paddleHeigth = 50;
 		let x = 0;
 		if (side == "left")

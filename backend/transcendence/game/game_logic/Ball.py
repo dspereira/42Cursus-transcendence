@@ -27,21 +27,24 @@ class Ball:
 		}
 		return position
 
-	def update_position(self):
+	def update_position(self, left_paddle, right_paddle):
 		radius = self.__get_radius()
 		x = self.x + radius * self.trig_values["cos_value"]
 		y = self.y + radius * self.trig_values["sin_value"]
 
 		colision_coords = self.__get_colision_point(y)
+		paddle_colisions_coords = self.__get_paddle_colisions_coords(x, y, left_paddle, right_paddle)
 
 		if colision_coords:
 			self.x = colision_coords['x']
 			self.y = colision_coords['y']
 			self.__set_new_reflection_angle()
-			pass
+		elif paddle_colisions_coords:
+			self.x = paddle_colisions_coords['x']
+			self.y = paddle_colisions_coords['y']
 		else:
-			self.y = y
 			self.x = x
+			self.y = y
 
 	def goal_detection(self):
 		player_1_goal = self.x >= self.right_wall_limit
@@ -102,3 +105,9 @@ class Ball:
 		self.angle_deg = angle_deg
 		self.angle_rad = math.radians(angle_deg)
 		self.__set_trig_values(self.angle_rad)
+
+	def __get_paddle_colisions_coords(self, x, y, left_paddle, right_paddle):
+		new_coords = left_paddle.get_colision_point(self.x, self.y, x, y, BALL_RADIUS)
+		if not new_coords:
+			new_coords = right_paddle.get_colision_point(self.x, self.y, x, y, BALL_RADIUS)
+		return new_coords

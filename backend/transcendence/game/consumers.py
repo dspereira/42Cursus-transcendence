@@ -93,7 +93,7 @@ class Game(AsyncWebsocketConsumer):
 					"game_state": {
 						"ball": self.game.get_ball_positions(),
 						"paddle_left_pos": self.game.get_paddle_left(),
-						"paddle_right_pos": self.game.get_paddle_left(),
+						"paddle_right_pos": self.game.get_paddle_right(),
 						"player_1_score": scores['player_1_score'],
 						"player_2_score": scores['player_2_score'],
 					}

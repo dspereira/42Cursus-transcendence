@@ -4,8 +4,8 @@ from .Ball import Ball
 class GameLogic:
 	def __init__(self):
 		self.ball = Ball()
-		self.paddle_left = Paddle()
-		self.paddle_right = Paddle()
+		self.paddle_left = Paddle("left")
+		self.paddle_right = Paddle("right")
 		self.player_1_score = 0
 		self.player_2_score = 0
 
@@ -13,19 +13,20 @@ class GameLogic:
 		return self.ball.get_position()
 
 	def update(self):
-		self.ball.update_position()
+		self.ball.update_position(self.paddle_left, self.paddle_right)
 		goal_info = self.ball.goal_detection()
 		if goal_info:
 			self.__add_score(goal_info)
 
 	def get_paddle_left(self):
-		return self.paddle_left.get_paddle_position()
-	
+		return self.paddle_left.get_position()
+
 	def get_paddle_right(self):
-		return self.paddle_right.get_paddle_position()
+		return self.paddle_right.get_position()
 
 	def update_paddle(self, key):
 		self.paddle_left.update(key=key)
+		self.paddle_right.update(key=key)
 
 	def get_score_values(self):
 		return {"player_1_score": self.player_1_score, "player_2_score": self.player_2_score}
