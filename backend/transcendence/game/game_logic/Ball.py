@@ -15,7 +15,6 @@ class Ball:
 		self.y = self.y_start
 		self.last_time = 0
 		self.__set_start_angle()
-
 		self.left_wall_limit = BALL_RADIUS
 		self.right_wall_limit = self.screen_width - BALL_RADIUS
 		self.top_wall_limit = BALL_RADIUS
@@ -30,16 +29,16 @@ class Ball:
 
 	def update_position(self):
 		radius = self.__get_radius()
-		trig_values = self.__get_trig_values()
-		x = self.x + radius * trig_values["cos_value"]
-		y = self.y + radius * trig_values["sin_value"]
+		x = self.x + radius * self.trig_values["cos_value"]
+		y = self.y + radius * self.trig_values["sin_value"]
 
-		colision_coords = self.__get_colision_point(x=x, y=y, angle_rad=math.radians(self.angle))
+		colision_coords = self.__get_colision_point(y)
 
 		if colision_coords:
 			self.x = colision_coords['x']
 			self.y = colision_coords['y']
 			self.__set_new_reflection_angle()
+			pass
 		else:
 			self.y = y
 			self.x = x
@@ -73,29 +72,33 @@ class Ball:
 		radius = value * BALL_SPEED
 		return radius
 
-	def __get_trig_values(self):
-		angle_rad = math.radians(self.angle)
-		return {
+	def __set_trig_values(self, angle_rad):
+		self.trig_values = {
 			"sin_value": math.sin(angle_rad) * -1,
 			"cos_value": math.cos(angle_rad)
 		}
 
 	# y = mx + b
-	def __get_colision_point(self, x, y, angle_rad):
+	def __get_colision_point(self, y):
 		if y > self.bottom_wall_limit:
 			col_y = self.bottom_wall_limit
 		elif y < self.top_wall_limit:
 			col_y = BALL_RADIUS
 		else:
 			return None
-		m = math.tan(angle_rad)
+		m = math.tan(self.angle_rad)
 		b = self.y - m * self.x
 		col_x = (col_y - b) / m
 		return {"x": col_x, "y": col_y}
 
 	def __set_new_reflection_angle(self):
-		self.angle = 360 - self.angle
+		self.__set_angle(360 - self.angle_deg)
 
 	def __set_start_angle(self):
 		chosen_interval = random.choice(ANGLES_INTERVALS)
-		self.angle = random.randint(chosen_interval[0], chosen_interval[1])
+		self.__set_angle(random.randint(chosen_interval[0], chosen_interval[1]))
+
+	def __set_angle(self, angle_deg):
+		self.angle_deg = angle_deg
+		self.angle_rad = math.radians(angle_deg)
+		self.__set_trig_values(self.angle_rad)
