@@ -42,6 +42,7 @@ class Ball:
 		elif paddle_colisions_coords:
 			self.x = paddle_colisions_coords['x']
 			self.y = paddle_colisions_coords['y']
+			self.__set_new_paddle_angle(paddle_colisions_coords['hit_paddle_percentage'])
 		else:
 			self.x = x
 			self.y = y
@@ -102,12 +103,24 @@ class Ball:
 		self.__set_angle(random.randint(chosen_interval[0], chosen_interval[1]))
 
 	def __set_angle(self, angle_deg):
+		if angle_deg < 0:
+			angle_deg += 360
+		elif angle_deg > 360:
+			angle_deg -= 360
 		self.angle_deg = angle_deg
 		self.angle_rad = math.radians(angle_deg)
 		self.__set_trig_values(self.angle_rad)
 
 	def __get_paddle_colisions_coords(self, x, y, left_paddle, right_paddle):
-		new_coords = left_paddle.get_colision_point(self.x, self.y, x, y, BALL_RADIUS)
-		if not new_coords:
+		if self.angle_deg > 90 and self.angle_deg < 270:
+			new_coords = left_paddle.get_colision_point(self.x, self.y, x, y, BALL_RADIUS)
+		else:
 			new_coords = right_paddle.get_colision_point(self.x, self.y, x, y, BALL_RADIUS)
 		return new_coords
+
+	def __set_new_paddle_angle(self, hit_percentage):
+		if self.angle_deg > 90 and self.angle_deg < 270:
+			result_angle = 420 + (hit_percentage/100) * (300 - 420)
+		else:
+			result_angle = 120 + (hit_percentage/100) * (240 - 120)
+		self.__set_angle(result_angle)

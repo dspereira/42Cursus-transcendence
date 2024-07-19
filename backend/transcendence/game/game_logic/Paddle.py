@@ -27,24 +27,6 @@ class Paddle:
 		elif self.y < self.half_height:
 			self.y = self.half_height
 
-	""" def get_colision_point(self, old_ball_x, old_ball_y, new_ball_x, new_ball_y, ball_radius):
-		if self.side == "right" and new_ball_x + ball_radius >= self.x:
-			new_x = self.x - ball_radius
-			print("Sou right")
-		elif self.side == "left" and new_ball_x - ball_radius <= self.x:
-			new_x = self.x + ball_radius
-			print("Sou Left")
-		else:
-			return None
-		if new_ball_y >= self.y - self.half_height - 4 and new_ball_y <= self.y + self.half_height + 4:
-			m = (new_ball_y - old_ball_y) / (new_ball_x - old_ball_x)
-			b = new_ball_y - m * new_ball_x
-			new_y = m * new_x + b
-			print("Entrei aqui")
-		else:
-			return None
-		return {"x": new_x, "y": new_y} """
-
 	def get_colision_point(self, old_ball_x, old_ball_y, new_ball_x, new_ball_y, ball_radius):
 		x_colision = False
 		y_colision = False
@@ -62,7 +44,9 @@ class Paddle:
 			new_y = m * new_x + b	
 		else:
 			return None
-		return {"x": new_x, "y": new_y}
+		hit_paddle_value = self.y - self.half_height - new_y
+		hit_paddle_percentage = abs(hit_paddle_value * 100 / self.height)
+		return {"x": new_x, "y": new_y, "hit_paddle_percentage": hit_paddle_percentage}
 
 	def __get_x(self, side):
 		if side == "left":
