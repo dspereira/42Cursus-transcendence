@@ -1,5 +1,6 @@
 import {redirect} from "../js/router.js";
 import stateManager from "../js/StateManager.js";
+import {colors} from "../js/globalStyles.js"
 
 
 const styles = `
@@ -18,6 +19,7 @@ const styles = `
 		padding-top: 8px;
 		padding-left: 5px;
 		padding-right: 5px;
+		background-color: ${colors.third_background};
 	}
 
 	.side-panel > nav {
@@ -61,7 +63,7 @@ const styles = `
 	}
 
 	.list-btn .icon:hover {
-		background-color: #dbd9d7;
+		background-color: ${colors.button_background};
 		clip-path:circle();
 	}
 
@@ -73,7 +75,7 @@ const styles = `
 
 	/*** OPEN ***/
 	.open .side-panel {
-		width: 70px;
+		width: 200px;
 	}
 
 	.open .bottom-buttons {
@@ -94,9 +96,14 @@ const styles = `
 	}
 
 	.open .link-btn button:hover {
-		background-color: #dbd9d7;
+		background-color: ${colors.button_background};
+		background: solid;
 		border-radius: 6px;
 		width: 200px;
+	}
+
+	.icon {
+		color: ${colors.second_text};
 	}
 
 	/*** CLOSE ***/
@@ -110,7 +117,8 @@ const styles = `
 	}
 
 	.close #list:hover {
-		background-color: #dbd9d7;
+		background-color: ${colors.button_background};
+		background: solid;
 		clip-path:circle();
 	}
 
@@ -124,12 +132,16 @@ const styles = `
 		display: none;
 	}
 
+	.icon-text {
+		color: ${colors.second_text};
+	}
+
 	.close .link-btn button:hover {
 		background-color: transparent;
 	}
 
 	.close .link-btn .icon:hover {
-		background-color: #dbd9d7;
+		background-color: ${colors.button_background};
 		border-radius: 3px;
 	}
 `;
@@ -227,7 +239,7 @@ const selectedIcon  = {
 	tournaments: "bi-trophy-fill",
 	configurations: "bi-gear-fill",
 	friends: "bi-people-fill",
-	game: "bi-dpad"
+	game: "bi-dpad-fill"
 }
 
 const deselectedIcon = {

@@ -1,5 +1,6 @@
 import { callAPI } from "../utils/callApiUtils.js";
 import stateManager from "../js/StateManager.js";
+import { colors } from "../js/globalStyles.js"
 
 const styles = `
 .friend-list {
@@ -38,7 +39,8 @@ const styles = `
 }
 
 .friend-selected {
-	background-color: #4287f5;
+	background-color: ${colors.button_background};
+	color: ${colors.primary_text};
 	border-radius: 8px;
 }
 
@@ -47,8 +49,13 @@ const styles = `
 }
 
 .search {
+	background-color: ${colors.input_background};
 	margin-right: 40px;
 	margin-bottom: 25px;
+}
+
+.form-control {
+	background-color: ${colors.input_background};
 }
 
 .search-icon {

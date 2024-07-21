@@ -1,6 +1,7 @@
 import { redirect } from "../js/router.js";
 import { callAPI } from "../utils/callApiUtils.js";
 import stateManager from "../js/StateManager.js";
+import {colors} from "../js/globalStyles.js"
 
 const styles = `
 
@@ -12,7 +13,8 @@ header {
     align-items: center;
 	width: 100%;
 	height: 56px;
-	padding: 8px 25px 0px 20px;
+	padding: 10px 20px 10px 20px;
+	background-color: ${colors.third_background};
 }
 
 .left-side {
@@ -33,12 +35,14 @@ header {
 
 .logo-text {
 	font-size: 16px;
+	color: ${colors.second_text};
 }
 
 .right-side {
 	display: flex;
 	align-items: center;
 	gap: 30px;
+	color: ${colors.second_text};
 }
 
 .profile-photo {

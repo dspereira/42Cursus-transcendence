@@ -1,6 +1,7 @@
 import chatWebSocket from "../js/ChatWebSocket.js";
 import stateManager from "../js/StateManager.js";
 import { redirect } from "../js/router.js";
+import { colors } from "../js/globalStyles.js";
 
 const styles = `
 .chat {
@@ -27,6 +28,11 @@ const styles = `
 
 .friends-list {
 	width: 25%;
+	color: ${colors.second_text};
+}
+
+.form-control {
+	border: var(--bs-border-width) solid ${colors.primary_background};
 }
 
 `;

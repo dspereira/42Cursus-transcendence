@@ -1,6 +1,7 @@
 import stateManager from "../js/StateManager.js";
 import { adjustContent } from "../utils/adjustContent.js";
 import { callAPI } from "../utils/callApiUtils.js";
+import { colors } from "../js/globalStyles.js"
 
 const styles = `
 	.game-page {
@@ -41,10 +42,6 @@ const styles = `
 		height: 50px;
 		justify-content: center;
 		align-items: center;
-	}
-
-	.create-btn:hover, .invite-btn:hover, .invited-btn:hover {
-		background-color: #C2C2C2;
 	}
 
 	.friend-invites {
@@ -174,15 +171,15 @@ const styles = `
 	}
 
 	.invite-card, .invited-card, .friend-search, .box-off {
-		background-color: #EEEEEE;
+		background-color: ${colors.second_background};
 	}
 
 	.create-btn, .invite-btn, .invited-btn, .back-btn, .inv-decline-btn, .separator, .submit-button:not(disabled), .invite-card:hover {
-		background-color: #E0E0E0;
+		background-color: ${colors.active_background};
 	}
 
-	.invite-card:hover .invite-btn, .back-btn:hover, .inv-decline-btn:hover, .box-on, .submit-button:not(:disabled):hover {
-		background-color: #C2C2C2;
+	.invite-card:hover .invite-btn, .back-btn:hover, .inv-decline-btn:hover, .box-on, .submit-button:not(:disabled):hover, .create-btn:hover, .invite-btn:hover, .invited-btn:hover {
+		background-color: ${colors.button_background};
 	}
 
 	.profile-photo {
@@ -269,6 +266,10 @@ const styles = `
 	.submit-button:disabled {
 		background-color: #FFBAAB;
 		cursor: not-allowed;
+	}
+
+	.separator {
+		background-color: ${colors.divider};
 	}
 `;
 

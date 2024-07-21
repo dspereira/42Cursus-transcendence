@@ -1,7 +1,12 @@
 import stateManager from "../js/StateManager.js";
 import { adjustContent } from "../utils/adjustContent.js";
+import { colors } from "../js/globalStyles.js"
 
-const styles = ``;
+const styles = `
+	.text-color {
+		color: ${colors.second_text};
+	}
+`;
 
 const html = `
 
@@ -10,9 +15,9 @@ const html = `
 
 	<div class="content content-small">
 
-		<h1 class="id"></h1>
-		<h1 class="username"></h1>
-		<h1 class="email"></h1>
+		<h1 class="id text-color"></h1>
+		<h1 class="username text-color"></h1>
+		<h1 class="email text-color"></h1>
 
 		<!--<h1>Page Home</h1>
 		<p>

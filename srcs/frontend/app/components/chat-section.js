@@ -1,6 +1,7 @@
 import chatWebSocket from "../js/ChatWebSocket.js";
 import stateManager from "../js/StateManager.js";
 import { callAPI } from "../utils/callApiUtils.js";
+import { colors } from "../js/globalStyles.js";
 
 const styles = `
 /* Chat section */
@@ -15,7 +16,7 @@ const styles = `
 	display: flex;
 	justify-content: space-between;
 	flex-direction: column;
-	background-color: #C0C0C0;
+	background-color: ${colors.primary_background};
 	/*padding: 10px 10px 10px 10px;*/
 	border-radius: 0px 0px 10px 10px;
 	height: 80vh;
@@ -30,7 +31,7 @@ const styles = `
 	align-items: center;
 	padding: 10px;
 	border-radius: 10px 10px 0px 0px;
-	background-color: #A9A9A9;
+	background-color: ${colors.extra_background};
 }
 
 .chat-header .profile-photo {

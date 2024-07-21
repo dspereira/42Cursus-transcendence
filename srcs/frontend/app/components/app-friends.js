@@ -1,4 +1,5 @@
 import { callAPI } from "../utils/callApiUtils.js";
+import {colors} from "../js/globalStyles.js"
 
 const styles = `
 .friends-section {
@@ -32,11 +33,13 @@ const styles = `
 
 .icon {
 	font-size: 22px;
+	color: ${colors.primary_text};
 }
 
 .icon-text {
 	font-size: 14px;
 	white-space: nowrap;
+	color: ${colors.primary_text};
 }
 
 .lateral-menu button > span {
@@ -56,7 +59,7 @@ user-card {
 }
 
 .options:hover {
-	background-color: #dbd9d7;
+	background-color: ${colors.button_background};
 	border-radius: 8px;
 	padding: 5px 10px 5px 10px;
 }
@@ -77,7 +80,7 @@ user-card {
 }
 
 .selected-option {
-	background-color: #dbd9d7;
+	background-color: ${colors.button_background};
 	border-radius: 8px;
 }
 

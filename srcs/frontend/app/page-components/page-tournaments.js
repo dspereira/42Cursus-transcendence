@@ -2,9 +2,9 @@ import {redirect} from "../js/router.js";
 import { adjustContent } from "../utils/adjustContent.js";
 import stateManager from "../js/StateManager.js";
 import { callAPI } from "../utils/callApiUtils.js";
+import {colors} from "../js/globalStyles.js";
 
 const styles = `
-
 	.page-container {
 		display: flex;
 		width: 100%;
@@ -25,8 +25,6 @@ const styles = `
 		display: flex;
 		width: 600px;
 		height: 50px;
-		color: white;
-		background-color: #EEEEEE;
 		border-style: hidden;
 		border-radius: 5px;
 	}
@@ -46,12 +44,10 @@ const styles = `
 
 	.select-left {
 			border-radius: 5px 0px 0px 5px;
-			background-color: #C2C2C2;
 	}
 
 	.select-right {
 		border-radius: 0px 5px 5px 0px;
-		background-color: #E0E0E0;
 	}
 
 	.active-tournaments, .past-tournaments {
@@ -79,7 +75,6 @@ const styles = `
 		height: 200px;
 		justify-content: space-between;
 		margin: 0px 0px 20px;
-		background-color: #E0E0E0;
 		border-style: hidden;
 		border-radius: 20px;
 	}
@@ -150,14 +145,6 @@ const styles = `
 		border-radius: 5px;
 	}
 
-	.box-on, .create-btn:hover, .submit-button:not(:disabled):hover, .back-btn:hover  {
-		background-color: #C2C2C2;
-	}
-
-	.box-off, .friend-search, .tournament-name {
-		background-color: #EEEEEE;
-	}
-
 	.friend-search:focus, .tournament-name:focus {
 		box-shadow: none;
 		border: none;
@@ -175,7 +162,6 @@ const styles = `
 		margin: 0px 20px 0px 20px;
 		justify-content: center;
 		align-items: center;
-		color: white;
 		font-size: 16px;
 		font-weight: bold;
 		border-style: hidden;
@@ -185,10 +171,6 @@ const styles = `
 	.submit-button:disabled {
 		background-color: #FFBAAB;
 		cursor: not-allowed;
-	}
-
-	.create-btn, .back-btn, .submit-button:not(disabled), .separator {
-		background-color: #E0E0E0;
 	}
 
 	.search-icon {
@@ -278,7 +260,6 @@ const styles = `
 		display: flex;
 		width: 100%;
 		max-width: 1000px;
-		background-color: #E0E0E0;
 		border-radius: 10px;
 		border-style: hidden;
 		justify-content: center;
@@ -293,7 +274,6 @@ const styles = `
 		width: 100%;
 		height: 300px;
 		flex-direction: column;
-		background-color: #EEEEEE;
 		justify-content: center;
 		align-items: center;
 		border-radius: 10px;
@@ -340,7 +320,11 @@ const styles = `
 	.tourn-p-img {
 		width: 50px;
 		height: 50px;
-		margin-right: 20px;
+	}
+
+	.tourn-inv .tourn-p-img {
+		width: 100px;
+		height: 100px;
 	}
 
 	.tourn-p-card {
@@ -348,7 +332,6 @@ const styles = `
 		width: 100%;
 		max-width: 300px;
 		height: 40%;
-		background-color: #E0E0E0;
 		justify-content: center;
 		align-items: center;
 		border-radius: 10px;
@@ -360,17 +343,51 @@ const styles = `
 
 	.tourn-inv {
 		display: flex;
-		width: 100%;
-		height: 100px;
-		justify-content: space-between;
+		width: 400px;
+		height: 300px;
+		flex-direction: row;
+		justify-content: center;
 		align-items: center;
 		border-radius: 10px;
 		border-style: hidden;
-		background-color: #EEEEEE;
-		margin-top: 20px;
-		padding: 0px 50px 0px 50px;
+		padding: 0px 20px 0px 20px;
 		font-size: 16px;
 		font-weight: bold;
+	}
+
+	.tourn-inv-inner {
+		display: flex;
+		width: 40%;
+		height: 100%;
+		flex-direction: column;
+		margin: 20px;
+		justify-content: center;
+		align-items: center;
+		font-align: center;
+		font-size: 24px;
+		font-weight: bold;
+	}
+
+	.tourn-inv-status, .tourn-inv-time {
+		display: flex;
+		width: 100%;
+		font-size: 24px;
+		justify-content: center;
+		align-items: center;
+		text-align: center;
+	}
+
+	.tourn-inv-status {
+		color: green;
+		margin-bottom: 20px;
+	}
+
+	.tourn-inv-box {
+		display: flex;
+		width: 100%;
+		flex-direction: row;
+		justify-content: space-between;
+		padding: 0px 200px 0px 200px;
 	}
 
 	.separator {
@@ -381,6 +398,16 @@ const styles = `
 		justify-content: center;
 		align-items: center;
 		margin: 20px 0px 20px 0px;
+	}
+
+	.separator-v {
+		display: flex;
+		width: 5px;
+		height: 80%;
+		border-radius: 10px;
+		justify-content: center;
+		align-items: center;
+		margin: 0px 20px 0px 20px;
 	}
 
 	.friend-invites {
@@ -447,14 +474,6 @@ const styles = `
 		width: 180px;
 	}
 
-	.invited-btn, .inv-decline-btn {
-		background-color: #E0E0E0;
-	}
-
-	.invited-btn:hover, .inv-decline-btn:hover {
-		background-color: #C2C2C2;
-	}
-
 	.invited-card {
 		display: flex;
 		flex-direction: column;
@@ -467,9 +486,52 @@ const styles = `
 		margin-bottom: 10px;
 	}
 
-	.invited-card {
-		background-color: #EEEEEE;
+	.tourn-title-input input {
+		padding-left: 40px;
 	}
+
+	.tourn-title-input {
+		margin-bottom: 25px;
+	}
+
+	.tourn-sep {
+		display: flex;
+		width: 100%;
+		height: 100px;
+		justify-content: center;
+		align-items: center;
+	}
+
+	.tourn-name, .tab-select-btn, .test-change, .submit-button, .tourn-inv-inner {
+		color: ${colors.second_text}
+	}
+
+	 .tourn-p-card, .tourn-inv-time {
+		color: ${colors.third_text}
+	}
+
+	.box-off, .friend-search, .tournament-name, .invited-card, .tab-select-btn, .test-change, .tourn-card, .tourn-inv, .select-right {
+		background-color: ${colors.second_background};
+	}
+
+	.create-btn:hover, .submit-button:not(:disabled):hover, .back-btn:hover, .invited-btn:hover, .inv-decline-btn:hover {
+		background-color: ${colors.button_background};
+	}
+
+	.box-on, .create-btn, .back-btn, .submit-button:not(disabled), .invited-btn, .inv-decline-btn, .select-left, .past-tournament-card, .tourn-name, .tourn-p-card {
+		background-color: ${colors.active_background};
+	}
+
+	.separator {
+		background-color: ${colors.divider};
+	}
+
+	.separator-v {
+		background-color: ${colors.extra_background};
+	}
+
+
+
 `;
 
 const getHtml = function(data) {
@@ -567,12 +629,17 @@ export default class PageTournaments extends HTMLElement {
 			<div class="tournament-creation">
 				<div class="creation-top-bar">
 					<button type="button" class="back-btn">Back</button>
-					<input class="tournament-name" placeholder="Choose a Title"></input>
 					<div class="search-bar">
 						<div class="form-group">
 							<i class="search-icon bi bi-search"></i>
 							<input type="text" class="form-control form-control-md" id="search" placeholder="Search friends..." maxlength="50">
 						</div>
+					</div>
+				</div>
+				<div class=".tourn-title-input">
+					<div class="form-group">
+						<i class="search-icon bi bi-search"></i>
+						<input type="text" class="form-control form-control-md" id="search" placeholder="Search friends..." maxlength="50">
 					</div>
 				</div>
 				<div class="friend-selection"></div>
@@ -604,73 +671,89 @@ export default class PageTournaments extends HTMLElement {
 		});
 	}
 
+	#currentTourn(activeTournamentsHtml) {
+		activeTournamentsHtml.innerHTML =  `
+			<div class="current-tourn">
+				<div class=tourn-card>
+					<div class=tourn-div-top>
+						<div class=tourn-name>${this.tournInfo.name}</div>
+					</div>
+					<div class=tourn-div-mid>
+						<div class=tourn-s-bar>
+							<div class=tourn-p-card>
+								<img src="https://api.dicebear.com/8.x/bottts/svg?seed=${this.tournInfo.p1}" class="tourn-p-img"></img>
+								${this.tournInfo.p1}
+							</div>
+							<div class=tourn-p-card>
+								<img src="https://api.dicebear.com/8.x/bottts/svg?seed=${this.tournInfo.p2}" class="tourn-p-img"></img>
+								${this.tournInfo.p2}
+							</div>
+						</div>
+						<div class=tourn-m-bar>
+							<div class=tourn-p-card>${this.tournInfo.left}</div>
+							<div class=tourn-p-card>${this.tournInfo.right}</div>
+						</div>
+						<div class=tourn-s-bar>
+							<div class=tourn-p-card>
+								<img src="https://api.dicebear.com/8.x/bottts/svg?seed=${this.tournInfo.p3}" class="tourn-p-img"></img>
+								${this.tournInfo.p3}
+							</div>
+							<div class=tourn-p-card>
+								<img src="https://api.dicebear.com/8.x/bottts/svg?seed=${this.tournInfo.p4}" class="tourn-p-img"></img>
+								${this.tournInfo.p4}
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class=tourn-sep>
+					<div class=separator></div>
+				</div>
+				<div class=tourn-inv-box>
+					<div class="tourn-inv">
+						<div class=tourn-inv-inner>
+							<img src="https://api.dicebear.com/8.x/bottts/svg?seed=${this.tournInfo.p2}" class="tourn-p-img"></img>
+							${this.tournInfo.p2}
+						</div>
+						<div class=separator-v></div>
+						<div class=tourn-inv-inner>
+							<div class=tourn-inv-status>Status</div>
+							<div class=tourn-inv-time>Elapsed<br>Time</div>
+						</div>
+					</div>
+					<div class="tourn-inv">
+						<div class=tourn-inv-inner>
+							<img src="https://api.dicebear.com/8.x/bottts/svg?seed=${this.tournInfo.p3}" class="tourn-p-img"></img>
+							${this.tournInfo.p3}
+						</div>
+						<div class=separator-v></div>
+						<div class=tourn-inv-inner>
+							<div class=tourn-inv-status>Status</div>
+							<div class=tourn-inv-time>Elapsed<br>Time</div>
+						</div>
+					</div>
+					<div class="tourn-inv">
+						<div class=tourn-inv-inner>
+							<img src="https://api.dicebear.com/8.x/bottts/svg?seed=${this.tournInfo.p4}" class="tourn-p-img"></img>
+							${this.tournInfo.p4}
+						</div>
+						<div class=separator-v></div>
+						<div class=tourn-inv-inner>
+							<div class=tourn-inv-status>Status</div>
+							<div class=tourn-inv-time>Elapsed<br>Time</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		`;
+	}
+
 	#activeTournaments() {
 		const activeTournamentsHtml = this.html.querySelector(".active-tournaments");
 		// console.log("inTourn", "val = ", this.tournInfo.inTourn === "true", " | ", this.tournInfo.inTourn);
-		if (this.tournInfo.inTourn !== "true") {
+		if (this.tournInfo.inTourn !== "true")
 			this.#createJoinTourn(activeTournamentsHtml);
-		}
-		else {
-			activeTournamentsHtml.innerHTML = `
-				<div class="current-tourn">
-					<div class=tourn-card>
-						<div class=tourn-div-top>
-							<div class=tourn-name>${this.tournInfo.name}</div>
-						</div>
-						<div class=tourn-div-mid>
-							<div class=tourn-s-bar>
-								<div class=tourn-p-card>
-									<img src="https://api.dicebear.com/8.x/bottts/svg?seed=${this.tournInfo.p1}" class="tourn-p-img"></img>
-									${this.tournInfo.p1}
-								</div>
-								<div class=tourn-p-card>
-									<img src="https://api.dicebear.com/8.x/bottts/svg?seed=${this.tournInfo.p2}" class="tourn-p-img"></img>
-									${this.tournInfo.p2}
-								</div>
-							</div>
-							<div class=tourn-m-bar>
-								<div class=tourn-p-card>${this.tournInfo.left}</div>
-								<div class=tourn-p-card>${this.tournInfo.right}</div>
-							</div>
-							<div class=tourn-s-bar>
-								<div class=tourn-p-card>
-									<img src="https://api.dicebear.com/8.x/bottts/svg?seed=${this.tournInfo.p3}" class="tourn-p-img"></img>
-									${this.tournInfo.p3}
-								</div>
-								<div class=tourn-p-card>
-									<img src="https://api.dicebear.com/8.x/bottts/svg?seed=${this.tournInfo.p4}" class="tourn-p-img"></img>
-									${this.tournInfo.p4}
-								</div>
-							</div>
-						</div>
-					</div>
-					<div class="tourn-inv">
-						<img src="https://api.dicebear.com/8.x/bottts/svg?seed=${this.tournInfo.p1}" class="tourn-p-img"></img>
-						${this.tournInfo.p1}
-						<div>Status</div>
-						<div>Elapsed<br>Time</div>
-					</div>
-					<div class="tourn-inv">
-						<img src="https://api.dicebear.com/8.x/bottts/svg?seed=${this.tournInfo.p2}" class="tourn-p-img"></img>
-						${this.tournInfo.p2}
-						<div>Status</div>
-						<div>Elapsed<br>Time</div>
-					</div>
-					<div class="tourn-inv">
-						<img src="https://api.dicebear.com/8.x/bottts/svg?seed=${this.tournInfo.p3}" class="tourn-p-img"></img>
-						${this.tournInfo.p3}
-						<div>Status</div>
-						<div>Elapsed<br>Time</div>
-					</div>
-					<div class="tourn-inv">
-						<img src="https://api.dicebear.com/8.x/bottts/svg?seed=${this.tournInfo.p4}" class="tourn-p-img"></img>
-						${this.tournInfo.p4}
-						<div>Status</div>
-						<div>Elapsed<br>Time</div>
-					</div>
-				</div>
-			`;
-		}
+		else 
+			this.#currentTourn(activeTournamentsHtml);
 	}
 
 	#toggleTabSelector() {
@@ -680,8 +763,8 @@ export default class PageTournaments extends HTMLElement {
 			const newTournaments = this.html.querySelector(".active-tournaments");
 			const pastTournaments = this.html.querySelector(".past-tournaments");
 			const isToggled = leftSlct.style.getPropertyValue('--toggled') === 'on';
-			const highlight = "#C2C2C2";
-			const background = "#EEEEEE";
+			const highlight = colors.primary_background;
+			const background = colors.second_background;
 			leftSlct.style.setProperty('--toggled', isToggled ? 'off' : 'on');
 			if (isToggled) {
 				leftSlct.style.backgroundColor = highlight;
@@ -846,12 +929,12 @@ export default class PageTournaments extends HTMLElement {
 		elm.id = `id-${invite.id}`;
 		if (invite) {
 			elm.innerHTML = `
-
 				<div class="inv-header">${invite.name}</div>
 				<div class="inv-players">
 					<div>${invite.owner}</div>
 					<div>${invite.p1}</div>
-					<div>${invite.p2}</div></div>
+					<div>${invite.p2}</div>
+				</div>
 				<div class="inv-bot">
 					<button class="invited-btn">Join</button>
 					<div>TIME <br> ELAPSED</div>

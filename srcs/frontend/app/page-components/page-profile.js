@@ -1,14 +1,19 @@
 import { redirect } from "../js/router.js";
 import { adjustContent } from "../utils/adjustContent.js";
 import stateManager from "../js/StateManager.js";
+import { colors } from "../js/globalStyles.js"
 
-const styles = ``;
+const styles = `	
+	.text-color {
+		color: ${colors.second_text};
+	}`;
 
 const getHtml = function(data) {
 	const html = `
 		<app-header></app-header>
 		<side-panel selected="profile"></side-panel>
 		<div class="content content-small">
+			<div class=text-color>
 			<h1>Page Profile</h1>
 			<p>
 			Rump drumstick tri-tip alcatra. Flank ground round pastrami beef short ribs pork belly jowl. Spare ribs beef ribs andouille, frankfurter short loin shankle venison salami turducken. Beef ribs alcatra capicola shoulder pork loin sirloin biltong turkey pancetta flank pork andouille bacon. Doner hamburger shoulder tenderloin flank prosciutto corned beef. Chislic tongue doner porchetta pastrami sirloin filet mignon leberkas brisket ribeye pork chop shank cupim corned beef sausage.
@@ -16,6 +21,7 @@ const getHtml = function(data) {
 			<p>
 			Rump drumstick tri-tip alcatra. Flank ground round pastrami beef short ribs pork belly jowl. Spare ribs beef ribs andouille, frankfurter short loin shankle venison salami turducken. Beef ribs alcatra capicola shoulder pork loin sirloin biltong turkey pancetta flank pork andouille bacon. Doner hamburger shoulder tenderloin flank prosciutto corned beef. Chislic tongue doner porchetta pastrami sirloin filet mignon leberkas brisket ribeye pork chop shank cupim corned beef sausage.
 			</p>
+			</div>
 		</div>
 	`;
 	return html;
