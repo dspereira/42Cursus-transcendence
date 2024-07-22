@@ -32,6 +32,7 @@ import stateManager from "./StateManager.js";
 import checkUserLoginState from "../utils/checkUserLoginState.js";
 
 //  /user/:id devo poder configurar neste formato
+//  /play/:id devo poder configurar neste formato
 const routes = {
 	//""					: PageHome.componentName,
 	"/initial"			: PageInitial.componentName,

@@ -11,6 +11,7 @@ import json
 
 from datetime import datetime
 from .game_logic.GameLogic import GameLogic
+from .Games import games_dict
 
 game_model = ModelManager(Games)
 user_model = ModelManager(User)
@@ -18,12 +19,6 @@ user_model = ModelManager(User)
 SLEEP_TIME_MILISECONDS = 10
 SLEEP_TIME_SECONDS = 0
 SLEEP_TIME = SLEEP_TIME_SECONDS + (0 if not SLEEP_TIME_MILISECONDS else SLEEP_TIME_MILISECONDS / 1000)
-
-# Apenas para debug
-def print_entry(entry: str):
-	print("------------------------------------------------")
-	print(entry)
-	print("------------------------------------------------")
 
 class Game(AsyncWebsocketConsumer):
 
@@ -43,7 +38,11 @@ class Game(AsyncWebsocketConsumer):
 			await self.close(4000)
 			return
 
-		self.game = GameLogic()
+		print()
+		print("Game ID:", str(self.scope['game_id']))
+		print()
+
+		self.game = GameLogic(user1_id=self.user, user2_id=self.user)
 
 		self.room_group_name = str(self.user.id)
 
