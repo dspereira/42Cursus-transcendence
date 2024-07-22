@@ -50,6 +50,7 @@ INSTALLED_APPS = [
     'channels',
     'user_profile',
     'friendships',
+    'user_settings',
     'generate_users', # test app
     'generate_chatrooms', # test app
 ]

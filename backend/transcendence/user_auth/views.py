@@ -12,6 +12,7 @@ from .auth_utils import send_email_verification
 from .auth_utils import get_jwt_data
 from .auth_utils import add_email_token_to_blacklist
 from .auth_utils import create_user_profile_info
+from .auth_utils import create_user_settings
 
 from two_factor_auth.two_factor import setup_default_tfa_configs
 from two_factor_auth.two_factor import initiate_two_factor_authentication
@@ -44,6 +45,8 @@ def register(request):
 		send_email_verification(user)
 		if not create_user_profile_info(user=user):
 			return JsonResponse({"message": "Error creating user profile"}, status=500)
+		if not create_user_settings(user=user):
+			return JsonResponse({"message": "Error creating user settings"}, status=500)
 
 	return JsonResponse({"message": "success"})
 

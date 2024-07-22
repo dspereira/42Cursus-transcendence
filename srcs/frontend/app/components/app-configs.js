@@ -59,9 +59,14 @@ const styles = `
 		margin-top: 5px;
 	}
 
+	.non-profile-configs {
+		display: flex;
+		gap: 25%;
+		margin-top: 30px;
+	}
+
 	.two-factor-configs h1 {
 		font-size: 36px;
-		margin-top: 30px;
 	}
 
 	.two-factor-options {
@@ -109,27 +114,43 @@ const getHtml = function(data) {
 					</div>
 				</div>
 			</div>
-			<div class="two-factor-configs">
-				<h1>Security Settings</h1>
-				<hr width="50%">
-				<label for="two-factor-options">Choose where to recieve your two factor authentication:</label>
-				<div class="two-factor-options">
-					<input type="checkbox" id="qrcode" name="2FAOptions" />
-					<label for="qrcode">QR Code</label>
-					<input type="checkbox" id="email" name="2FAOptions" />
-					<label for="email">Email</label>
-					<input type="checkbox" id="phone" name="2FAOptions" />
-					<label for="phone">Phone</label>
+			<div class="non-profile-configs">
+				<div>
+					<div class="two-factor-configs">
+						<h1>Security Settings</h1>
+						<hr>
+						<label for="two-factor-options">Choose where to recieve your two factor authentication:</label>
+						<div class="two-factor-options">
+							<input type="checkbox" id="qrcode" name="2FAOptions" />
+							<label for="qrcode">QR Code</label>
+							<input type="checkbox" id="email" name="2FAOptions" />
+							<label for="email">Email</label>
+							<input type="checkbox" id="phone" name="2FAOptions" />
+							<label for="phone">Phone</label>
+						</div>
+					</div>
+					<div class="language-configs">
+						<h1>Language Settings</h1>
+						<hr>
+						<label for="language-option">Choose language:</label>
+						<select name="language" id="language-option">
+						<option value="en">English 🇬🇧</option>
+						<option value="pt">Portugues 🇵🇹</option>
+						</select>
+					</div>
 				</div>
-			</div>
-			<div class="language-configs">
-				<h1>Language Settings</h1>
-				<hr width="50%">
-				<label for="language-option">Choose language:</label>
-				<select name="language" id="language-option">
-				  <option value="pt">Portugues 🇵🇹</option>
-				  <option value="en">English 🇬🇧</option>
-				</select>
+				<div class="game-configs">
+					<h1>Game Settings</h1>
+					<hr>
+					<label for="theme-options">Choose the game theme:</label>
+						<select name="game-theme" id="theme-options">
+						  <option value="0">Classic Retro</option>
+						  <option value="1">Modern Neon</option>
+						  <option value="2">Ocean Vibes</option>
+						  <option value="3">Sunset Glow</option>
+						  <option value="4">Forest Retreat</option>
+						</select>
+				</div>
 			</div>
 			<button type="submit" class="btn btn-success btn-submit submit-options">Apply Changes</button>
 		</form>
@@ -146,7 +167,8 @@ export default class AppConfigs extends HTMLElement {
 		this.#render();
 		this.#scripts();
 
-		this.dataForm = {};
+		this.profileForm = {};
+		this.settingsForm = {};
 	}
 
 	attributeChangedCallback(name, oldValue, newValue) {
@@ -182,10 +204,19 @@ export default class AppConfigs extends HTMLElement {
 
 	#scripts() {
 
+		this.#getUserSettings();
 		this.#getUserInfo();
 		this.#submit();
 		this.#uploadImage();
 		this.#generateNewSeed();
+	}
+
+	#getUserSettings() {
+		callAPI("GET", "http://127.0.0.1:8000/api/settings/", null, (res, data) => {
+			console.log(data);
+			this.settingsForm.newLanguage = data.language;
+			this.settingsForm.newTheme = data.gameTheme;
+		});
 	}
 
 	#generateNewSeed() {
@@ -195,8 +226,8 @@ export default class AppConfigs extends HTMLElement {
 			const newSeed = Math.random().toString(36).substring(2,7);
 			let preview = this.html.querySelector(".image-preview");
 			preview.src = "https://api.dicebear.com/8.x/bottts/svg?seed=" + newSeed;
-			this.dataForm.newImage = '';
-			this.dataForm.newSeed = newSeed;
+			this.profileForm.newImage = '';
+			this.profileForm.newSeed = newSeed;
 		})
 	}
 
@@ -206,8 +237,8 @@ export default class AppConfigs extends HTMLElement {
 			event.preventDefault();
 			let preview = this.html.querySelector(".image-preview");
 			preview.src = URL.createObjectURL(uploadImage.files[0]);
-			this.dataForm.newImage = URL.createObjectURL(uploadImage.files[0]);
-			this.dataForm.newSeed = '';
+			this.profileForm.newImage = URL.createObjectURL(uploadImage.files[0]);
+			this.profileForm.newSeed = '';
 		})
 	}
 
@@ -216,17 +247,30 @@ export default class AppConfigs extends HTMLElement {
 		settingsForm.addEventListener("submit", (event) => {
 			event.preventDefault();
 
-			if (this.dataForm.newUsername = this.html.querySelector("#new-username").value.trim())
-				this.dataForm.newUsername = '';
+			const languageOption = this.html.querySelector("#language-option");
+			if (this.settingsForm.newLanguage == languageOption.options[languageOption.selectedIndex].value)
+				this.settingsForm.newLanguage = '';
 			else
-				this.dataForm.newUsername = this.html.querySelector("#new-username").value.trim();
-			
-			if (this.dataForm.newBio = this.html.querySelector("#new-bio").value.trim())
-				this.dataForm.newBio = '';
-			else
-				this.dataForm.newBio = this.html.querySelector("#new-bio").value.trim();
+				this.settingsForm.newLanguage = languageOption.options[languageOption.selectedIndex].value;
 
-			callAPI("POST", "http://127.0.0.1:8000/api/profile/setnewconfigs", this.dataForm, this.#apiResHandlerCalback);
+			const themeOptions = this.html.querySelector("#theme-options");
+			if (this.settingsForm.newTheme == themeOptions.options[themeOptions.selectedIndex].value)
+				this.settingsForm.newTheme = '';
+			else
+				this.settingsForm.newTheme = themeOptions.options[themeOptions.selectedIndex].value;
+
+			if (this.profileForm.newUsername == this.html.querySelector("#new-username").value.trim())
+				this.profileForm.newUsername = '';
+			else
+				this.profileForm.newUsername = this.html.querySelector("#new-username").value.trim();
+			
+			if (this.profileForm.newBio == this.html.querySelector("#new-bio").value.trim())
+				this.profileForm.newBio = '';
+			else
+				this.profileForm.newBio = this.html.querySelector("#new-bio").value.trim();
+
+			callAPI("POST", "http://127.0.0.1:8000/api/profile/setnewconfigs", this.profileForm, this.#apiResHandlerCalback);
+			callAPI("POST", "http://127.0.0.1:8000/api/settings/setnewsettings", this.settingsForm);
 		});
 	}
 
@@ -270,13 +314,13 @@ export default class AppConfigs extends HTMLElement {
 	#loadUsername(username) {
 		const htmlElement = this.html.querySelector('#new-username');
 		htmlElement.value = username;
-		this.dataForm.newUsername = username
+		this.profileForm.newUsername = username
 	}
 
 	#loadBio(bio) {
 		const htmlElement = this.html.querySelector('#new-bio');
 		htmlElement.value = bio;
-		this.dataForm.newBio = bio;
+		this.profileForm.newBio = bio;
 	}
 
 }
