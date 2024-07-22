@@ -74,11 +74,12 @@ class Game(AsyncWebsocketConsumer):
 			return
 		data_json = json.loads(text_data)
 		data_type = data_json['type']
-		
+
 		if data_type == "start_game":
 			self.task = asyncio.create_task(self.send_data())
 		elif data_type == "key":
-			self.game.update_paddle(key=data_json['key'])
+			self.game.update_paddle(key=data_json['key'], status=data_json['status'], side="left")
+			self.game.update_paddle(key=data_json['key'], status=data_json['status'], side="right")
 
 	async def send_data(self):
 		while True:
@@ -104,7 +105,7 @@ class Game(AsyncWebsocketConsumer):
 				break
 
 			self.game.update()
-			
+
 			await asyncio.sleep(SLEEP_TIME)
 
 	async def send_game_status(self, event):

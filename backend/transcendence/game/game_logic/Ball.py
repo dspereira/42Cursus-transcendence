@@ -28,7 +28,7 @@ class Ball:
 		return position
 
 	def update_position(self, left_paddle, right_paddle):
-		radius = self.__get_radius()
+		radius = self.__get_moved_distance()
 		x = self.x + radius * self.trig_values["cos_value"]
 		y = self.y + radius * self.trig_values["sin_value"]
 
@@ -65,7 +65,7 @@ class Ball:
 		self.x = self.x_start
 		self.y = self.y_start
 
-	def __get_radius(self):
+	def __get_moved_distance(self):
 		if not self.last_time:
 			self.last_time = datetime.now()
 			value = 1

@@ -17,6 +17,8 @@ class GameLogic:
 		goal_info = self.ball.goal_detection()
 		if goal_info:
 			self.__add_score(goal_info)
+		self.paddle_left.update()
+		self.paddle_right.update()
 
 	def get_paddle_left(self):
 		return self.paddle_left.get_position()
@@ -24,9 +26,11 @@ class GameLogic:
 	def get_paddle_right(self):
 		return self.paddle_right.get_position()
 
-	def update_paddle(self, key):
-		self.paddle_left.update(key=key)
-		self.paddle_right.update(key=key)
+	def update_paddle(self, key, status, side):
+		if side == "right":
+			self.paddle_right.set_state(key=key, status=status)
+		else:
+			self.paddle_left.set_state(key=key, status=status)
 
 	def get_score_values(self):
 		return {"player_1_score": self.player_1_score, "player_2_score": self.player_2_score}
@@ -34,6 +38,8 @@ class GameLogic:
 	def is_end_game(self):
 		if self.player_1_score == 7 or self.player_2_score == 7:
 			self.ball.set_end_game_position()
+			self.paddle_left.end_game_position()
+			self.paddle_right.end_game_position()
 			return True
 		return False
 
