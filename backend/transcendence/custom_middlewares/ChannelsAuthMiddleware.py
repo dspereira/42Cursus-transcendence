@@ -7,7 +7,7 @@ class ChannelsAuthMiddleware(BaseMiddleware):
 	async def __call__(self, scope, receive, send):
 		scope['access_data'] = JwtData(self.__getAccessToken(scope))
 
-		if scope['path'].startswith('/game/'):
+		if self.__isGameSocket(scope['path']):
 			scope['game_id'] = self.__getGameId(scope['path'])
 
 		return await super().__call__(scope, receive, send)
@@ -25,3 +25,6 @@ class ChannelsAuthMiddleware(BaseMiddleware):
 		match = re.search(r'/game/(?P<game_id>\d+)/', path)
 		if match:
 			return match.group('game_id')
+
+	def __isGameSocket(self, path):
+		return path.startswith('/game/')

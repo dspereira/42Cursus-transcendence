@@ -45,10 +45,10 @@ class GameWebSocket {
 		}
 	}
 
-	start() {
+	ready() {
 		if (this.isOpen()) {
 			this.socket.send(JSON.stringify({
-				type: "start_game"
+				type: "ready"
 			}));
 		}
 	}

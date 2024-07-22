@@ -16,4 +16,8 @@ class Games():
 		if game_id in self.games:
 			del self.games[game_id]
 
+	# Apenas para teste remover depois
+	def get_games(self):
+		return self.games
+
 games_dict = Games()

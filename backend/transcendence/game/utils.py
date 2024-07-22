@@ -23,6 +23,7 @@ GAME_REQ_STATUS_DECLINED = "declined"
 GAME_REQ_STATUS_PENDING = "pending"
 GAME_STATUS_FINISHED = "finished"
 GAME_STATUS_ABORTED = "aborted"
+GAME_STATUS_PLAYING = "playing"
 
 def get_user_profile(user):
 	return user_profile_model.get(user=user)

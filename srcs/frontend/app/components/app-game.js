@@ -7,11 +7,49 @@ const styles = `
 	canvas {
 		background: black;
 	}
+
+	button {
+		display: block;
+		background : transparent;
+		border: 0;
+		padding: 0;
+		font-family: innherit;
+		text-align: left;
+		width: 160px;
+	}
+
+	button:hover {
+		background-color: #dbd9d7;
+		border-radius: 6px;
+		width: 160px;
+	}
+
+	.icon {
+		display: inline-block;
+		font-size: 22px;
+		padding: 8px 14px 8px 14px;
+		text-align: center;
+	}
+
+	.icon:hover {
+		background-color: #dbd9d7;
+		clip-path:circle();
+	}
+
+	.icon-text {
+		font-size: 14px;
+	}
 `;
 
 const getHtml = function(data) {
 	const html = `
 		<canvas id="canvas"></canvas>
+		<button id="start-game">
+			<span>
+				<i class="icon bi bi-play-circle"></i>
+				<span class="icon-text">Start Game</span>
+			</span>
+		</button>
 	`;
 	return html;
 }
@@ -56,6 +94,8 @@ export default class AppGame extends HTMLElement {
 		this.canvas.height = "400";
 
 		this.game = new Game(this.ctx, this.canvas.width, this.canvas.height);
+
+		this.game_id = 27;
 	}
 
 	#styles() {
@@ -107,6 +147,7 @@ export default class AppGame extends HTMLElement {
 		this.#setGameStatusEvent();
 		this.game.start();
 		this.#keyEvents();
+		this.#readyToPlayBtnEvent();
 		gameWebSocket.open(this.$getGameId());
 	}
 
@@ -136,9 +177,15 @@ export default class AppGame extends HTMLElement {
 	}
 
 	$getGameId() {
-		const game_id = 1
-		console.log(`Game ID: ${game_id}`)
-		return game_id
+		console.log(`Game ID: ${this.game_id}`);
+		return this.game_id;
+	}
+
+	#readyToPlayBtnEvent() {
+		const btn = this.html.querySelector("#start-game");
+		btn.addEventListener('click', (event) => {
+			gameWebSocket.ready();
+		});
 	}
 
 }
