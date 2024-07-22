@@ -2,12 +2,14 @@ from .Paddle import Paddle
 from .Ball import Ball
 
 class GameLogic:
-	def __init__(self):
+	def __init__(self, user1_id, user2_id):
 		self.ball = Ball()
 		self.paddle_left = Paddle("left")
 		self.paddle_right = Paddle("right")
 		self.player_1_score = 0
 		self.player_2_score = 0
+		self.user1 = user1_id
+		self.user2 = user2_id
 
 	def get_ball_positions(self):
 		return self.ball.get_position()
@@ -26,11 +28,11 @@ class GameLogic:
 	def get_paddle_right(self):
 		return self.paddle_right.get_position()
 
-	def update_paddle(self, key, status, side):
-		if side == "right":
-			self.paddle_right.set_state(key=key, status=status)
-		else:
+	def update_paddle(self, key, status, user_id):
+		if user_id == self.user1:
 			self.paddle_left.set_state(key=key, status=status)
+		elif user_id == self.user2:
+			self.paddle_right.set_state(key=key, status=status)
 
 	def get_score_values(self):
 		return {"player_1_score": self.player_1_score, "player_2_score": self.player_2_score}

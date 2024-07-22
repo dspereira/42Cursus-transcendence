@@ -14,6 +14,7 @@ from .utils import has_already_games_accepted
 from .utils import cancel_other_invitations
 from .utils import create_game
 from .utils import get_game_info
+from .Games import games_dict
 
 game_requests_model = ModelManager(GameRequests)
 user_model = ModelManager(User)
@@ -46,6 +47,7 @@ class GameView(View):
 					cancel_other_invitations(user=games_req.from_user)
 					game = create_game(user1=games_req.from_user, user2=games_req.to_user)
 					if game:
+						games_dict.create_new_game(game.id, game.user1.id, game.user2.id)
 						return JsonResponse({"message": "Game created with success!", "game": get_game_info(game=game, user=user)}, status=200)
 					else:
 						return JsonResponse({"message": "Error: Failed to create game!"}, status=409)
