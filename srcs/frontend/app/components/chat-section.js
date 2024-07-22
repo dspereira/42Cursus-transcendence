@@ -16,7 +16,7 @@ const styles = `
 	display: flex;
 	justify-content: space-between;
 	flex-direction: column;
-	background-color: ${colors.primary_background};
+	background-color: ${colors.second_background};
 	/*padding: 10px 10px 10px 10px;*/
 	border-radius: 0px 0px 10px 10px;
 	height: 80vh;
@@ -31,7 +31,8 @@ const styles = `
 	align-items: center;
 	padding: 10px;
 	border-radius: 10px 10px 0px 0px;
-	background-color: ${colors.extra_background};
+	color: ${colors.second_text};
+	background-color: ${colors.primary_background};
 }
 
 .chat-header .profile-photo {
@@ -79,7 +80,7 @@ const styles = `
 .msg-input {
 	padding: 10px 10px 10px 10px;
 	border-radius: 0px 0px 10px 10px;
-	background-color: #A9A9A9;
+	background-color: ${colors.primary_background};
 }
 
 form {
@@ -102,7 +103,7 @@ form {
 
 .icon:hover {
 	cursor: pointer;
-	color: blue;
+	color: ${colors.button_background};
 	transform: scale(1.3);
 	transition: transform 0.3s ease, color 0.3s ease;
 }
@@ -127,6 +128,24 @@ form {
 .profile-photo-status {
 	position: relative;
 	display: inline-block;
+}
+
+.input-color {
+	background-color: ${colors.primary_background};
+	color: ${colors.second_text};
+}
+
+.input-color::placeholder {
+	color: ${colors.second_text};
+}
+
+.input-color:focus {
+	background-color: ${colors.primary_background};
+	color: ${colors.second_text};
+}
+
+.input-color:focus + .msg-input {
+	border: solid 5px ${colors.button_background};
 }
 
 .hide {
@@ -166,7 +185,7 @@ const getHtml = function(data) {
 				<div class="msg-panel scroll"></div>
 				<div class="msg-input">
 					<form id="msg-submit">
-						<textarea class="form-control text-area" id="text-area" rows="1" maxlength="2000" placeholder="Type your message here.."></textarea>
+						<textarea class="form-control text-area input-color" id="text-area" rows="1" maxlength="2000" placeholder="Type your message here.."></textarea>
 						<i class="icon bi bi-send" id="send-icon"></i>
 					</form>
 				</div>

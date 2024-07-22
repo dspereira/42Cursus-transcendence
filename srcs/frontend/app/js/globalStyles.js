@@ -1,6 +1,6 @@
 export const colors = {
 	// Background Colors
-	primary_background: "#36393F", //darkest
+	primary_background: "#36393F",
 	second_background: "#2F3136",
 	third_background: "#202225",
 	extra_background: "#292B2F",

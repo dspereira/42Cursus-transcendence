@@ -103,6 +103,15 @@ const styles = `
 		margin-bottom: 10px;
 	}
 
+	.invited-card-p {
+		display: flex;
+		width: 200px;
+		height: 100%;
+		flex-direction: row;
+		justify-content: center;
+		align-items: center;
+	}
+
 	.pfp-invitee {
 		width: 10%;
 		height: 60%;
@@ -168,18 +177,6 @@ const styles = `
 
 	.friend-search:focus-visible {
 		outline: 3px solid #C2C2C2;
-	}
-
-	.invite-card, .invited-card, .friend-search, .box-off {
-		background-color: ${colors.second_background};
-	}
-
-	.create-btn, .invite-btn, .invited-btn, .back-btn, .inv-decline-btn, .separator, .submit-button:not(disabled), .invite-card:hover {
-		background-color: ${colors.active_background};
-	}
-
-	.invite-card:hover .invite-btn, .back-btn:hover, .inv-decline-btn:hover, .box-on, .submit-button:not(:disabled):hover, .create-btn:hover, .invite-btn:hover, .invited-btn:hover {
-		background-color: ${colors.button_background};
 	}
 
 	.profile-photo {
@@ -266,6 +263,22 @@ const styles = `
 	.submit-button:disabled {
 		background-color: #FFBAAB;
 		cursor: not-allowed;
+	}
+
+	.invite-card, .invited-card, .friend-search, .box-off {
+		background-color: ${colors.second_background};
+	}
+
+	.create-btn, .invite-btn, .invited-btn, .back-btn, .inv-decline-btn, .separator, .submit-button:not(disabled), .invite-card:hover {
+		background-color: ${colors.active_background};
+	}
+
+	.invite-card:hover .invite-btn, .back-btn:hover, .inv-decline-btn:hover, .box-on, .submit-button:not(:disabled):hover, .create-btn:hover, .invite-btn:hover, .invited-btn:hover {
+		background-color: ${colors.button_background};
+	}
+
+	.invited-card, .inv-header-text, .username {
+		color: ${colors.second_text};
 	}
 
 	.separator {
@@ -459,8 +472,10 @@ export default class PageGame extends HTMLElement {
 		if (invite) {
 			elm.innerHTML = `
 				<button class="invited-btn">Join</button>
-				<img src="${invite.image}" class="pfp-invitee"/>
-				<span class="username">${invite.username}</span>
+				<div class=invited-card-p>
+					<img src="${invite.image}" class="pfp-invitee"/>
+					<span class="username">${invite.username}</span>
+				</div>
 				<div>TIME <br> ELAPSED</div>
 				<button class="inv-decline-btn">X</button>
 			`;
