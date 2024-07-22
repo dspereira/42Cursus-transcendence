@@ -35,11 +35,12 @@ class GameWebSocket {
 		}
 	}
 
-	send(data) {
-		if (this.isOpen() && data) {
+	send(key, status) {
+		if (this.isOpen() && key && status) {
 			this.socket.send(JSON.stringify({
 				type: "key",
-				key: data
+				key: key,
+				status: status
 			}));
 		}
 	}

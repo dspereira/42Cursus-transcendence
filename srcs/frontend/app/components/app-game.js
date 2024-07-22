@@ -81,10 +81,18 @@ export default class AppGame extends HTMLElement {
 	#keyEvents() {
 		document.addEventListener('keydown', (event) => {
 			if (event.code == "ArrowDown" || event.code == "KeyS")
-				gameWebSocket.send("down");
+				gameWebSocket.send("down", "pressed");
 			else if (event.code == "ArrowUp" || event.code == "KeyW")
-				gameWebSocket.send("up");
+				gameWebSocket.send("up", "pressed");
 		});
+
+		document.addEventListener('keyup', (event) => {
+			if (event.code == "ArrowDown" || event.code == "KeyS")
+				gameWebSocket.send("down", "released");
+			else if (event.code == "ArrowUp" || event.code == "KeyW")
+				gameWebSocket.send("up", "released");
+
+		})
 	}
 
 	/*async #initGame() {
