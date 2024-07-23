@@ -266,15 +266,15 @@ const styles = `
 	}
 
 	.invite-card, .invited-card, .friend-search, .box-off {
-		background-color: ${colors.second_background};
+		background-color: ${colors.second_card};
 	}
 
 	.create-btn, .invite-btn, .invited-btn, .back-btn, .inv-decline-btn, .separator, .submit-button:not(disabled), .invite-card:hover {
-		background-color: ${colors.active_background};
+		background-color: ${colors.input_background};
 	}
 
 	.invite-card:hover .invite-btn, .back-btn:hover, .inv-decline-btn:hover, .box-on, .submit-button:not(:disabled):hover, .create-btn:hover, .invite-btn:hover, .invited-btn:hover {
-		background-color: ${colors.button_background};
+		background-color: ${colors.button_hover};
 	}
 
 	.invited-card, .inv-header-text, .username {

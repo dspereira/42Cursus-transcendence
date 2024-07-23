@@ -1,6 +1,7 @@
 import { callAPI } from "../utils/callApiUtils.js";
 import stateManager from "../js/StateManager.js";
 import { colors } from "../js/globalStyles.js"
+import { chatColors } from "../js/globalStyles.js";
 
 const styles = `
 .friend-list {
@@ -39,7 +40,7 @@ const styles = `
 }
 
 .friend-selected {
-	background-color: ${colors.button_background};
+	background-color: ${colors.button_hover};
 	color: ${colors.primary_text};
 	border-radius: 8px;
 }
@@ -49,12 +50,22 @@ const styles = `
 }
 
 .search {
-	background-color: ${colors.input_background};
+	background-color: ${colors.main_card};
 	margin-right: 40px;
 	margin-bottom: 25px;
 }
 
 .form-control {
+	border-radius: 5px;
+	border-style: hidden;
+	background-color: ${colors.input_background};
+}
+
+.form-control::placeholder {
+	color: ${colors.second_text};
+}
+
+.form-control:focus {
 	background-color: ${colors.input_background};
 }
 
@@ -63,6 +74,7 @@ const styles = `
 	margin-top: 3px;
 	margin-left: 8px;
 	font-size: 16px;
+	color: ${colors.second_text};
 }
 
 .search input {

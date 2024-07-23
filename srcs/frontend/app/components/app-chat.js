@@ -27,14 +27,23 @@ const styles = `
 }
 
 .friends-list {
-	width: 25%;
+	display: flex;
+	padding: 10px;
+	max-width: 25%;
+	margin-right: 20px;
 	color: ${colors.second_text};
+	background-color: ${colors.main_card};
+	border-radius: 10px;
+	border-style: hidden;
 }
 
 .form-control {
-	border: var(--bs-border-width) solid ${colors.primary_background};
+	border: var(--bs-border-width) solid ${colors.toggle_deselected};
 }
 
+.no-friends-selected-msg {
+	color: ${colors.second_text};
+}
 `;
 
 const getHtml = function(data) {

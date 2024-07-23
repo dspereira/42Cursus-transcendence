@@ -511,7 +511,7 @@ const styles = `
 	}
 
 	.box-off, .friend-search, .tournament-name, .invited-card, .tab-select-btn, .test-change, .tourn-card, .tourn-inv, .select-right {
-		background-color: ${colors.second_background};
+		background-color: ${colors.main_card};
 	}
 
 	.create-btn:hover, .submit-button:not(:disabled):hover, .back-btn:hover, .invited-btn:hover, .inv-decline-btn:hover {
@@ -519,7 +519,7 @@ const styles = `
 	}
 
 	.box-on, .create-btn, .back-btn, .submit-button:not(disabled), .invited-btn, .inv-decline-btn, .select-left, .past-tournament-card, .tourn-name, .tourn-p-card {
-		background-color: ${colors.active_background};
+		background-color: ${colors.button};
 	}
 
 	.separator {
@@ -527,7 +527,7 @@ const styles = `
 	}
 
 	.separator-v {
-		background-color: ${colors.extra_background};
+		background-color: ${colors.page_background};
 	}
 
 
@@ -763,8 +763,8 @@ export default class PageTournaments extends HTMLElement {
 			const newTournaments = this.html.querySelector(".active-tournaments");
 			const pastTournaments = this.html.querySelector(".past-tournaments");
 			const isToggled = leftSlct.style.getPropertyValue('--toggled') === 'on';
-			const highlight = colors.primary_background;
-			const background = colors.second_background;
+			const highlight = colors.toggle_deselected;
+			const background = colors.main_card;
 			leftSlct.style.setProperty('--toggled', isToggled ? 'off' : 'on');
 			if (isToggled) {
 				leftSlct.style.backgroundColor = highlight;

@@ -1,7 +1,7 @@
 import chatWebSocket from "../js/ChatWebSocket.js";
 import stateManager from "../js/StateManager.js";
 import { callAPI } from "../utils/callApiUtils.js";
-import { colors } from "../js/globalStyles.js";
+import { chatColors, colors } from "../js/globalStyles.js";
 
 const styles = `
 /* Chat section */
@@ -16,7 +16,7 @@ const styles = `
 	display: flex;
 	justify-content: space-between;
 	flex-direction: column;
-	background-color: ${colors.second_background};
+	background-color: ${chatColors.main_card_light};
 	/*padding: 10px 10px 10px 10px;*/
 	border-radius: 0px 0px 10px 10px;
 	height: 80vh;
@@ -32,7 +32,7 @@ const styles = `
 	padding: 10px;
 	border-radius: 10px 10px 0px 0px;
 	color: ${colors.second_text};
-	background-color: ${colors.primary_background};
+	background-color: ${chatColors.header};
 }
 
 .chat-header .profile-photo {
@@ -80,7 +80,7 @@ const styles = `
 .msg-input {
 	padding: 10px 10px 10px 10px;
 	border-radius: 0px 0px 10px 10px;
-	background-color: ${colors.primary_background};
+	background-color: ${chatColors.header};
 }
 
 form {
@@ -97,13 +97,13 @@ form {
 	font-size: 22px;
 	right: 0;
 	bottom: 2px;
-
+	color: ${colors.primary_text};
 	margin-right: 20px;
 }
 
 .icon:hover {
 	cursor: pointer;
-	color: ${colors.button_background};
+	color: ${colors.button_hover};
 	transform: scale(1.3);
 	transition: transform 0.3s ease, color 0.3s ease;
 }
@@ -131,16 +131,16 @@ form {
 }
 
 .input-color {
-	background-color: ${colors.primary_background};
+	background-color: ${chatColors.header};
 	color: ${colors.second_text};
 }
 
 .input-color::placeholder {
-	color: ${colors.second_text};
+	color: ${colors.primary_text};
 }
 
 .input-color:focus {
-	background-color: ${colors.primary_background};
+	background-color: ${colors.second_card};
 	color: ${colors.second_text};
 }
 
@@ -151,6 +151,28 @@ form {
 .hide {
 	display: none;
 }
+
+::-webkit-scrollbar {
+	width: 15px;
+}
+
+::-webkit-scrollbar-track {
+	width: 15px;
+	background: ${chatColors.main_card_light};
+}
+
+::-webkit-scrollbar-thumb {
+	background: ${colors.second_card};
+	border-radius: 10px;
+	border-style: hidden;
+	border: 3px solid transparent;
+	background-clip: content-box;
+}
+
+::-webkit-scrollbar-thumb:hover {
+	background: ${colors.main_card};	
+}
+
 `;
 
 const getHtml = function(data) {

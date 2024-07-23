@@ -75,7 +75,7 @@ const styles = `
 
 	/*** OPEN ***/
 	.open .side-panel {
-		width: 200px;
+		width: 210px;
 	}
 
 	.open .bottom-buttons {

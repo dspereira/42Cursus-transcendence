@@ -1,3 +1,5 @@
+import { colors, chatColors } from "../js/globalStyles.js";
+
 const styles = `
 
 .friend-msg, .owner-msg {
@@ -27,6 +29,7 @@ const styles = `
 .date-text {
 	display: flex;
 	flex-direction: column;
+	color: ${colors.second_text};
 }
 
 .msg-date {
@@ -39,6 +42,7 @@ const styles = `
 	border-radius: 8px;
 	font-size: 16px;
 	overflow-wrap: anywhere;
+	color: ${colors.primary_text};
 }
 
 .msg-margin-left {
@@ -52,21 +56,21 @@ const styles = `
 }
 
 .friend-color {
-	background-color: #FF5733;
+	background-color: ${chatColors.chat_bubble_friend};
 }
 
 .owner-color {
-	background-color: #33FFBD;
+	background-color: ${chatColors.chat_bubble_owner};
 }
 
 .msg-date-friend {
 	display: flex;
-    justify-content: flex-start;
+	justify-content: flex-start;
 }
 
 .msg-date-owner {
 	display: flex;
-    justify-content: flex-end;
+	justify-content: flex-end;
 }
 
 `;
