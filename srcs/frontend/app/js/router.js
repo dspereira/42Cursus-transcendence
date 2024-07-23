@@ -11,6 +11,7 @@ import Page404 from "../page-components/page-404.js";
 import PageInitial from "../page-components/page-initial.js";
 import PageLogout from "../page-components/page-logout.js";
 import PageFriends from "../page-components/page-friends.js";
+import PagePlay from "../page-components/page-play.js";
 
 // Components
 import AppTest from "../components/app-test.js";
@@ -24,12 +25,14 @@ import AppFriends from "../components/app-friends.js";
 import UserCard from "../components/user-card.js";
 import ChatFriendsList from "../components/chat-friends-list.js";
 import ChatSection from "../components/chat-section.js";
+import AppGame from "../components/app-game.js";
 
 // Others
 import stateManager from "./StateManager.js";
 import checkUserLoginState from "../utils/checkUserLoginState.js";
 
 //  /user/:id devo poder configurar neste formato
+//  /play/:id devo poder configurar neste formato
 const routes = {
 	//""					: PageHome.componentName,
 	"/initial"			: PageInitial.componentName,
@@ -44,6 +47,7 @@ const routes = {
 	"/notifications"	: PageNotifications.componentName,
 	"/configurations"	: PageConfigs.componentName,
 	"/friends"			: PageFriends.componentName,
+	"/play"				: PagePlay.componentName
 }
 
 const publicRoutes = ["/initial", "/login", "/signup"];
