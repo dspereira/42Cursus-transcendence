@@ -96,6 +96,9 @@ export default class AppGame extends HTMLElement {
 		this.game = new Game(this.ctx, this.canvas.width, this.canvas.height);
 
 		this.game_id = 27;
+
+		this.keyDownStatus = "released";
+		this.keyUpStatus = "released";
 	}
 
 	#styles() {
@@ -118,21 +121,29 @@ export default class AppGame extends HTMLElement {
 		this.#initGame();
 	}
 
-	#keyEvents() {
-		document.addEventListener('keydown', (event) => {
-			if (event.code == "ArrowDown" || event.code == "KeyS")
-				gameWebSocket.send("down", "pressed");
-			else if (event.code == "ArrowUp" || event.code == "KeyW")
-				gameWebSocket.send("up", "pressed");
-		});
+    #keyEvents() {
+        document.addEventListener('keydown', (event) => {
+            if (event.code == "ArrowDown" || event.code == "KeyS")
+                this.keyDownStatus = "pressed";
+            else if (event.code == "ArrowUp" || event.code == "KeyW")
+                this.keyUpStatus = "pressed";
+			this.#sendkeyStatus();
+        });
 
-		document.addEventListener('keyup', (event) => {
-			if (event.code == "ArrowDown" || event.code == "KeyS")
-				gameWebSocket.send("down", "released");
-			else if (event.code == "ArrowUp" || event.code == "KeyW")
-				gameWebSocket.send("up", "released");
+        document.addEventListener('keyup', (event) => {
+            if (event.code == "ArrowDown" || event.code == "KeyS")
+                this.keyDownStatus = "released";
+            else if (event.code == "ArrowUp" || event.code == "KeyW")
+                this.keyUpStatus = "released";
+			this.#sendkeyStatus();
+        })
+    }
 
-		})
+	#sendkeyStatus() {
+		gameWebSocket.send("up", this.keyUpStatus);
+		gameWebSocket.send("down", this.keyDownStatus);
+		gameWebSocket.send("up", this.keyUpStatus);
+		gameWebSocket.send("down", this.keyDownStatus);
 	}
 
 	/*async #initGame() {
