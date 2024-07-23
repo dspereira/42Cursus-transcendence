@@ -48,12 +48,6 @@ class GameView(View):
 					game = create_game(user1=games_req.from_user, user2=games_req.to_user)
 					if game:
 						games_dict.create_new_game(game.id, game.user1.id, game.user2.id)
-
-						print("Game Dict:")
-						for g in games_dict.get_games():
-							print(g)
-						print()
-
 						return JsonResponse({"message": "Game created with success!", "game": get_game_info(game=game, user=user)}, status=200)
 					else:
 						return JsonResponse({"message": "Error: Failed to create game!"}, status=409)
