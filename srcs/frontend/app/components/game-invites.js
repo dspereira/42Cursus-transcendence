@@ -1,65 +1,46 @@
-import stateManager from "../js/StateManager.js";
+import { callAPI } from "../utils/callApiUtils.js";
 
 const styles = `
-	.game-create {
-		background-color: black;
-		cursor: pointer;
-		border-radius: 0px 0px 10px 10px;
-		width: 100%;
-		height: 10vh;
-	}
-
-
-	.friend-invites {
-		width: 100%;
-	}
 `;
 
 const getHtml = function(data) {
+
 	const html = `
-
-	<div class="game">
-		<div class="game-create">
-			<button type="button" class="btn btn-success">
-				Create Game
-			</button>
-		</div>
-
-		<div class="friend-invites">
-		</div>
-	</div>
-
+		<game-invite-card
+			username="dsilveri"
+			profile-photo="https://api.dicebear.com/8.x/bottts/svg?seed=dsilveri"
+		></invite-card>
 	`;
 	return html;
 }
 
-export default class AppGame extends HTMLElement {
+export default class GameInvites extends HTMLElement {
 	static observedAttributes = [];
 
 	constructor() {
 		super()
-
+		this.data = {};
 	}
 
 	connectedCallback() {
 		this.#initComponent();
 		this.#render();
 		this.#scripts();
-		//this.#socket();
+	}
+
+	attributeChangedCallback(name, oldValue, newValue) {
+
 	}
 
 	#initComponent() {
 		this.html = document.createElement("div");
-		this.html.innerHTML = this.#html();
+		this.html.innerHTML = this.#html(this.data);
 		if (styles) {
 			this.elmtId = `elmtId_${Math.floor(Math.random() * 100000000000)}`;
 			this.styles = document.createElement("style");
 			this.styles.textContent = this.#styles();
 			this.html.classList.add(`${this.elmtId}`);
 		}
-		this.msgInputscrollHeight = 0;
-		this.msgInputscrollHeight1 = 0;
-		this.msgInputMaxRows = 4;
 	}
 
 	#styles() {
@@ -79,7 +60,7 @@ export default class AppGame extends HTMLElement {
 	}
 
 	#scripts() {
-
 	}
-
 }
+
+customElements.define("game-invites", GameInvites);
