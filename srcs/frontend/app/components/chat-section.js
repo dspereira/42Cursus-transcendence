@@ -152,16 +152,16 @@ form {
 	display: none;
 }
 
-::-webkit-scrollbar {
+.scroll::-webkit-scrollbar {
 	width: 15px;
 }
 
-::-webkit-scrollbar-track {
+.scroll::-webkit-scrollbar-track {
 	width: 15px;
 	background: ${chatColors.main_card_light};
 }
 
-::-webkit-scrollbar-thumb {
+.scroll::-webkit-scrollbar-thumb {
 	background: ${colors.second_card};
 	border-radius: 10px;
 	border-style: hidden;
@@ -169,8 +169,8 @@ form {
 	background-clip: content-box;
 }
 
-::-webkit-scrollbar-thumb:hover {
-	background: ${colors.main_card};	
+.scroll::-webkit-scrollbar-thumb:hover {
+	background: ${colors.main_card};
 }
 
 `;

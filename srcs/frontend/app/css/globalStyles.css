@@ -33,3 +33,24 @@ body {
 .content-large {
 	margin: 72px 24px 0px 84px;
 }
+
+::-webkit-scrollbar {
+	width: 15px;
+}
+
+::-webkit-scrollbar-track {
+	width: 15px;
+	background: #292B2F;
+}
+
+::-webkit-scrollbar-thumb {
+	background: #4D525B;
+	border-radius: 10px;
+	border-style: hidden;
+	border: 3px solid transparent;
+	background-clip: content-box;
+}
+
+::-webkit-scrollbar-thumb:hover {
+	background: #63686F;
+}

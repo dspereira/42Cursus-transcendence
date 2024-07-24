@@ -14,6 +14,10 @@ const styles = `
 	display: flex;
 	flex-direction: column;
 	justify-content: flex-start;
+	border-radius: 5px;
+	border-style: hidden;
+	background-color: ${colors.second_card};
+	padding: 0px 10px 10px 10px;
 }
 
 .list-panel {
@@ -54,6 +58,11 @@ user-card {
 	margin-bottom: 20px;
 }
 
+.user-card {
+	background-color: ${colors.second_card};
+	color: ${colors.second_text};
+}
+
 .options {
 	padding: 5px 10px 5px 10px;
 }
@@ -69,15 +78,32 @@ user-card {
 	margin-top: 6px;
 	margin-left: 15px;
 	font-size: 16px;
+	color: ${colors.second_text};
 }
 
-.search-bar input {
+.search-bar input, .search-bar input:hover, .search-bar input:focus{
 	padding-left: 40px;
+	color:  ${colors.second_text};
 }
 
 .search-bar {
 	margin-bottom: 25px;
 }
+
+.form-control {
+	border-radius: 5px;
+	border-style: hidden;
+	background-color: ${colors.input_background};
+}
+
+.form-control::placeholder {
+	color: ${colors.second_text};
+}
+
+.form-control:focus {
+	background-color: ${colors.input_background};
+}
+
 
 .selected-option {
 	background-color: ${colors.button_background};

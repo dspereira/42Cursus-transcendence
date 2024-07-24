@@ -30,6 +30,7 @@ const styles = `
 	display: flex;
 	padding: 10px;
 	max-width: 25%;
+	min-width: 180px;
 	margin-right: 20px;
 	color: ${colors.second_text};
 	background-color: ${colors.main_card};

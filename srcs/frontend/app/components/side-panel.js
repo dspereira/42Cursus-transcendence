@@ -19,7 +19,7 @@ const styles = `
 		padding-top: 8px;
 		padding-left: 5px;
 		padding-right: 5px;
-		background-color: ${colors.third_background};
+		background-color: ${colors.side_panel_background};
 	}
 
 	.side-panel > nav {
@@ -103,7 +103,7 @@ const styles = `
 	}
 
 	.icon {
-		color: ${colors.second_text};
+		color: ${colors.primary_text};
 	}
 
 	/*** CLOSE ***/
@@ -133,7 +133,7 @@ const styles = `
 	}
 
 	.icon-text {
-		color: ${colors.second_text};
+		color: ${colors.primary_text};
 	}
 
 	.close .link-btn button:hover {

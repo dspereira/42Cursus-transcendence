@@ -173,12 +173,41 @@ const styles = `
 		cursor: not-allowed;
 	}
 
+	.search {
+		background-color: ${colors.main_card};
+	}
+
 	.search-icon {
 		position: absolute;
 		margin-top: 6px;
 		margin-left: 15px;
 		font-size: 16px;
+		color: ${colors.second_text};
 	}
+
+	.form-control {
+		border-radius: 5px;
+		border-style: hidden;
+		background-color: ${colors.input_background};
+	}
+
+	.form-control::placeholder {
+		color: ${colors.second_text};
+	}
+
+	.form-control:focus {
+		background-color: ${colors.input_background};
+		color:  ${colors.second_text};
+	}
+
+	.search input {
+		color:  ${colors.second_text};
+	}
+
+	.form-control + input:focus {
+		color:  ${colors.second_text};
+	}
+
 
 	.search-bar input {
 		padding-left: 40px;
@@ -490,7 +519,12 @@ const styles = `
 		padding-left: 40px;
 	}
 
+	.tourn-title-input .form-group {
+		display: flex;
+	}
+
 	.tourn-title-input {
+		width: 300px;
 		margin-bottom: 25px;
 	}
 
@@ -502,7 +536,11 @@ const styles = `
 		align-items: center;
 	}
 
-	.tourn-name, .tab-select-btn, .test-change, .submit-button, .tourn-inv-inner {
+	.box-on .username {
+		color: ${colors.primary_text};
+	}
+
+	.tourn-name, .tab-select-btn, .test-change, .submit-button, .tourn-inv-inner, .box-off .username {
 		color: ${colors.second_text}
 	}
 
@@ -514,11 +552,11 @@ const styles = `
 		background-color: ${colors.main_card};
 	}
 
-	.create-btn:hover, .submit-button:not(:disabled):hover, .back-btn:hover, .invited-btn:hover, .inv-decline-btn:hover {
-		background-color: ${colors.button_background};
+	.create-btn:hover, .submit-button:not(:disabled):hover, .back-btn:hover, .invited-btn:hover, .inv-decline-btn:hover, .box-on {
+		background-color: ${colors.button_hover};
 	}
 
-	.box-on, .create-btn, .back-btn, .submit-button:not(disabled), .invited-btn, .inv-decline-btn, .select-left, .past-tournament-card, .tourn-name, .tourn-p-card {
+	.create-btn, .back-btn, .submit-button:not(disabled), .invited-btn, .inv-decline-btn, .select-left, .past-tournament-card, .tourn-name, .tourn-p-card {
 		background-color: ${colors.button};
 	}
 
@@ -639,7 +677,7 @@ export default class PageTournaments extends HTMLElement {
 				<div class=".tourn-title-input">
 					<div class="form-group">
 						<i class="search-icon bi bi-search"></i>
-						<input type="text" class="form-control form-control-md" id="search" placeholder="Search friends..." maxlength="50">
+						<input type="text" class="form-control form-control-md" id="search" placeholder="Tournament title" maxlength="50">
 					</div>
 				</div>
 				<div class="friend-selection"></div>
@@ -951,7 +989,7 @@ customElements.define(PageTournaments.componentName, PageTournaments);
 const getFakeActiveTourn = function () {
 	const data = `{
 		"name": "Manga's Tourn",
-		"inTourn": "true",
+		"inTourn": "false",
 		"p1": "Manga",
 		"p2": "candeia",
 		"p3": "diogo",

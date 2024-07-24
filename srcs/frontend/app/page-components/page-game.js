@@ -100,21 +100,22 @@ const styles = `
 		border-style: hidden;
 		justify-content: space-between;
 		align-items: center;
-		margin-bottom: 10px;
+		margin-bottom: 20px;
 	}
 
 	.invited-card-p {
 		display: flex;
 		width: 200px;
 		height: 100%;
+		gap: 10px;
 		flex-direction: row;
 		justify-content: center;
 		align-items: center;
 	}
 
 	.pfp-invitee {
-		width: 10%;
-		height: 60%;
+		width: 60px;
+		height: 60px;
 	}
 
 	.invite-btn {
@@ -218,6 +219,7 @@ const styles = `
 	}
 
 	.search {
+		background-color: ${colors.main_card};
 		margin-right: 40px;
 		margin-bottom: 25px;
 	}
@@ -227,14 +229,35 @@ const styles = `
 		margin-top: 3px;
 		margin-left: 8px;
 		font-size: 16px;
+		color: ${colors.second_text};
 	}
 
 	.search input {
 		padding-left: 30px;
+		color: ${colors.second_text};
+	}
+
+	.form-control + input:focus {
+		color: ${colors.second_text};
 	}
 
 	.search-bar {
 		margin-bottom: 25px;
+	}
+
+	.form-control {
+		border-radius: 5px;
+		border-style: hidden;
+		background-color: ${colors.input_background};
+	}
+
+	.form-control::placeholder {
+		color: ${colors.second_text};
+	}
+
+	.form-control:focus {
+		background-color: ${colors.input_background};
+		color:  ${colors.second_text};
 	}
 
 	.creation-bottom-bar {
@@ -269,6 +292,10 @@ const styles = `
 		background-color: ${colors.second_card};
 	}
 
+	.box-on .username {
+		color: ${colors.primary_text};
+	}
+
 	.create-btn, .invite-btn, .invited-btn, .back-btn, .inv-decline-btn, .separator, .submit-button:not(disabled), .invite-card:hover {
 		background-color: ${colors.input_background};
 	}
@@ -277,7 +304,7 @@ const styles = `
 		background-color: ${colors.button_hover};
 	}
 
-	.invited-card, .inv-header-text, .username {
+	.invited-card, .inv-header-text, .username, .box-off .username{
 		color: ${colors.second_text};
 	}
 

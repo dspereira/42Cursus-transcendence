@@ -3,10 +3,11 @@ export const colors = {
 	main_card: "#2F3136",  //second_background
 	button: "#32353B", //hover_background and active_background
 	button_hover: "#5865F2", //button_background
-	third_background: "#202225",
+	side_panel_background: "#202225",
 	page_background: "#292B2F", //extra_background
 	second_card: "#36393F", //primary_background
 	input_background: "#40444B",
+	scroll_hover: "#63686F",
 	// Divider Colors
 	divider: "#2E3338",
 	// Text Colors

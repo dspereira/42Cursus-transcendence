@@ -5,7 +5,7 @@ import { chatColors } from "../js/globalStyles.js";
 
 const styles = `
 .friend-list {
-	margin-right: 25px;
+	margin-right: 0px;
 	max-height: 87vh;
 }
 
@@ -51,7 +51,8 @@ const styles = `
 
 .search {
 	background-color: ${colors.main_card};
-	margin-right: 40px;
+	width: 100%;
+	margin-right: 0px;
 	margin-bottom: 25px;
 }
 
@@ -79,7 +80,13 @@ const styles = `
 
 .search input {
 	padding-left: 30px;
+	color:  ${colors.second_text};
 }
+
+.form-control + input:focus {
+	color:  ${colors.second_text};
+}
+
 
 .search-bar {
 	margin-bottom: 25px;
