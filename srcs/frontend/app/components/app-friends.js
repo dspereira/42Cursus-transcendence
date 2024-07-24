@@ -21,6 +21,7 @@ const styles = `
 }
 
 .list-panel {
+	color: ${colors.second_text};
 	width:100%;
 }
 

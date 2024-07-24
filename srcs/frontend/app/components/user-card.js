@@ -1,4 +1,5 @@
 import { callAPI } from "../utils/callApiUtils.js";
+import { colors } from "../js/globalStyles.js";
 
 const styles = `
 
@@ -9,7 +10,7 @@ const styles = `
 	align-items: center;
 	border-radius: 8px;
 	padding: 5px 25px;
-	background-color: #A9A9A9;
+	background-color: ${colors.second_card};
 }
 
 .user {
