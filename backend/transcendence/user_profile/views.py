@@ -149,3 +149,11 @@ def get_image(request):
 		return JsonResponse({"message": "User profile image getted with success.", "image": user_image}, status=200)
 	else:
 		return JsonResponse({"message": "Error: User does not Exist"}, status=409)
+
+
+#this view is only for testing, later will have the full view in another app
+
+@login_required
+@accepted_methods(["GET"])
+def get_language(request):
+	return JsonResponse({"language": "en"})

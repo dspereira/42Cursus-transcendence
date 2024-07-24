@@ -1,4 +1,6 @@
 import { callAPI } from "../utils/callApiUtils.js";
+import { enAppFriendsDict } from "../utils/enLangDict.js";
+import { ptAppFriendsDict } from "../utils/ptLangDict.js";
 
 const styles = `
 .friends-section {
@@ -92,7 +94,7 @@ const getHtml = function(data) {
 					<button class="search-btn">
 						<span>
 							<i class="icon bi bi-search"></i>
-							<span class="icon-text">Search</span>
+							<span class="icon-text">${data.langDict.search_button}</span>
 						</span>
 					</button>
 				</div>
@@ -100,7 +102,7 @@ const getHtml = function(data) {
 					<button class="friends-btn">
 						<span>
 							<i class="icon bi bi-people"></i>
-							<span class="icon-text">All Friends</span>
+							<span class="icon-text">${data.langDict.all_friends_button}</span>
 						</span>
 					</button>
 				</div>
@@ -108,7 +110,7 @@ const getHtml = function(data) {
 					<button class="requests-btn">
 						<span>
 							<i class="icon bi bi-person-plus"></i>
-							<span class="icon-text">Requests</span>
+							<span class="icon-text">${data.langDict.requests_button}</span>
 						</span>
 					</button>
 				</div>
@@ -117,7 +119,7 @@ const getHtml = function(data) {
 				<div class="search-bar">
 					<div class="form-group">
 						<i class="search-icon bi bi-search"></i>
-						<input type="text" class="form-control form-control-md" id="search" placeholder="Search friends..." maxlength="50">
+						<input type="text" class="form-control form-control-md" id="search" placeholder="Search Friends..." maxlength="50">
 					</div>
 				</div>
 				<div class="user-list"></div>
@@ -128,7 +130,7 @@ const getHtml = function(data) {
 }
 
 export default class AppFriends extends HTMLElement {
-	static observedAttributes = [];
+	static observedAttributes = ["language"];
 
 	constructor() {
 		super()
@@ -142,7 +144,19 @@ export default class AppFriends extends HTMLElement {
 	}
 
 	attributeChangedCallback(name, oldValue, newValue) {
+		if (name == "language") {
+			this.data.langDict = this.#getLanguage(newValue);
+		}
+	}
 
+	#getLanguage(language) {
+		switch (language) {
+			case "en":
+				return enAppFriendsDict
+			case "pt":
+				return ptAppFriendsDict
+			default:
+		}
 	}
 
 	#initComponent() {
@@ -293,7 +307,7 @@ export default class AppFriends extends HTMLElement {
 				if (data.friends)
 					this.#insertUsersCards(data.friends, "friends");
 				else
-					listPanel.innerHTML = "<h1>Add friends to see them here!</h1>";
+					listPanel.innerHTML = `<h1>${this.data.langDict.create_friends_no_friends}</h1>`;
 			}
 		});	
 	}
@@ -309,7 +323,7 @@ export default class AppFriends extends HTMLElement {
 				if (data.friend_requests)
 					this.#insertUsersCards(data.friend_requests, "requests");
 				else 
-					listPanel.innerHTML = "<h1>Your friend requests list is empty. Make the first move</h1>";
+					listPanel.innerHTML = `<h1>${this.data.langDict.create_requests_no_requests}</h1>`;
 			}
 		});
 	}
@@ -333,9 +347,9 @@ export default class AppFriends extends HTMLElement {
 
 		let placeholder = "";
 		if (type == "friends")
-			placeholder = "Search friends...";
+			placeholder = this.data.langDict.search_bar_placeholder_friends;
 		if (type == "search")
-			placeholder = "Search...";
+			placeholder = this.data.langDict.search_bar_placeholder_search;
 
 		searchBar.innerHTML = `
 		<div class="form-group">

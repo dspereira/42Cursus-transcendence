@@ -8,4 +8,5 @@ urlpatterns = [
     path('getimage', views.get_image, name='getimage'),
     path('setnewdefaultseed', views.set_new_default_seed, name='setnewdefaultseed'),
     path('image', views.get_image, name='profile_image'),
+    path('getlanguage', views.get_language, name='getlanguage') #this view is only for testing, later will have the full view in another app
 ]
