@@ -25,7 +25,7 @@ import AppFriends from "../components/app-friends.js";
 import UserCard from "../components/user-card.js";
 import ChatFriendsList from "../components/chat-friends-list.js";
 import ChatSection from "../components/chat-section.js";
-import AppGame from "../components/app-game.js";
+import AppPlay from "../components/app-play.js";
 
 // Others
 import stateManager from "./StateManager.js";

@@ -54,7 +54,7 @@ const getHtml = function(data) {
 	return html;
 }
 
-export default class AppGame extends HTMLElement {
+export default class AppPlay extends HTMLElement {
 	static observedAttributes = [];
 
 	constructor() {
@@ -201,4 +201,4 @@ export default class AppGame extends HTMLElement {
 
 }
 
-customElements.define("app-game", AppGame);
+customElements.define("app-play", AppPlay);
