@@ -1,7 +1,6 @@
 import { callAPI } from "../utils/callApiUtils.js";
 
 const styles = `
-
 .card-container {
 	display: inline-block;
 	background-color: #EEEDEB;
@@ -26,10 +25,6 @@ const styles = `
 	width: 40px;
 	height: 40px;
 }
-
-
-
-
 
 .username-section {
 	margin-bottom: 15px;

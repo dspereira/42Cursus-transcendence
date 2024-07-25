@@ -1,28 +1,50 @@
 import { callAPI } from "../utils/callApiUtils.js";
 
 const styles = `
+
+	.create-game {
+		text-align: center;
+	}
+
+	.div-border {
+		display: inline-block;
+		text-align: center;
+		border-bottom: 3px solid #EEEDEB;
+		width: 60%;
+		margin-bottom: 25px;
+	}
+
+	.create-game-btn {
+		padding: 10px 70px 10px 70px;
+		margin-bottom: 25px;
+	}
+
 	h3 {
-		margin-left: 150px;
 		margin-bottom: 20px;
+		font-size: 22px;
+		text-align: center;
 	}
 
 	.requests-list {
 		display: flex;
 		flex-wrap: wrap;
 		gap: 30px;
-		justify-content: flex-start;
+		justify-content: center;
+		flex: 1 1 calc(33.33% - 30px);
 	}
-
 `;
 
 const getHtml = function(data) {
 
 	const html = `
-		<h3>Game Invites</h3>
-		<div class="requests-list">
-		
+		<div class="create-game">
+			<button type="button" class="btn btn-primary create-game-btn">Create Game</button>
+			<div></div>
+			<div class="div-border"></div>
 		</div>
 
+		<h3>Game Invites</h3>
+		<div class="requests-list"></div>
 	`;
 	return html;
 }
