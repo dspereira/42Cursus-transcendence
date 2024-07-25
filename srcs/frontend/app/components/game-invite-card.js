@@ -2,36 +2,24 @@ import { callAPI } from "../utils/callApiUtils.js";
 
 const styles = `
 
+.card-container {
+	display: inline-block;
+	background-color: #EEEDEB;
+	border-radius: 8px;
+	padding: 20px 30px 20px 30px;
+}
+
 .invite-card {
 	display: flex;
-	justify-content: space-between;
+	flex-direction: column;
+	justify-content: center;
 	align-items: center;
-	background-color: #EEEDEB;
-	margin-left: 150px;
-	margin-right: 150px;
-	padding: 10px 20px 10px 20px;
-	border-radius: 8px;
-
-	margin-bottom: 15px;
-}
-
-.user-photo{
-	width: 60px;
-}
-
-.username {
-	font-size: 20px;
-	font-weight: bold;
-	margin-left: 10px;
 }
 
 .join-btn {
 	width: 100px;
 	height: 40px;
-
-	/*padding-left: 30px;
-	padding-right: 30px;*/
-
+	margin-right: 3px;
 }
 
 .decline-btn {
@@ -40,57 +28,27 @@ const styles = `
 }
 
 
-.btn-test {
-	display: flex;
-	gap: 50px;
-	align-items: center;
-}
-
-/****************************************/
-
-.test {
-	display: inline-block;
-	background-color: #EEEDEB;
-	border-radius: 8px;
-	padding: 20px 30px 20px 30px;
-}
-
-.invite-card1 {
-	display: flex;
-	flex-direction: column;
-	justify-content: center;
-	/*gap: 10px;*/
-	align-items: center;
-	/*background-color: #EEEDEB;
-	margin-left: 150px;
-	margin-right: 150px;
-	padding: 10px 20px 10px 20px;
-	border-radius: 8px;*/
-	/*width: 200px*/
 
 
-}
 
-.join-btn1 {
-	margin-right: 3px;
-	
-}
-
-.username1 {
-	font-size: 22px;
-	font-weight: bold;
-	
-}
-
-.username-div {
+.username-section {
 	margin-bottom: 15px;
 }
 
-.user-photo1 {
-	width: 70px;
+.username {
+	font-size: 18px;
+	font-weight: bold;
 }
 
-.expires {
+.profile-photo-section {
+	margin-bottom: 5px;
+}
+
+.profile-photo {
+	width: 60px;
+}
+
+.expires-date {
 	margin-bottom: 5px;
 }
 
@@ -98,97 +56,24 @@ const styles = `
 	font-size: 18px;
 }
 
-.cont {
-
-	display: flex;
-	justify-content: space-evenly;
-
-	margin-left: 150px;
-	margin-right: 150px;
-}
 `;
 
 const getHtml = function(data) {
 	const html = `
-	<div class="invite-card">
-		<div class="user">
-			<img src="${data.profilePhoto}" class="user-photo" alt="profile photo chat"/>
-			<span class="username">${data.username}</span>
-		</div>
-		
-		<div>
-			<span class="date">Today 11:16AM</span>
-		</div>
-		
-		<div class="buttons">
-			<button type="button" class="btn btn-success join-btn">
-				Join
-			</button>
-			<button type="button" class="btn btn-danger decline-btn">
-				<i class="bi bi-x-lg"></i>
-			</button>
-		</div>
-	</div>
-
-	<div class="invite-card">
-		<div class="user">
-			<img src="${data.profilePhoto}" class="user-photo" alt="profile photo chat"/>
-			<span class="username">${data.username}</span>
-		</div>
-		
-		<div>
-			<span class="date">Today 11:16AM</span>
-		</div>
-		
-		<div class="buttons">
-			<button type="button" class="btn btn-success join-btn">
-				Join
-			</button>
-			<button type="button" class="btn btn-danger decline-btn">
-				<i class="bi bi-x-lg"></i>
-			</button>
-		</div>
-	</div>
-
-	<br><br><br>
-
-
-	<div class="invite-card">
-		<div class="user">
-			<img src="${data.profilePhoto}" class="user-photo" alt="profile photo"/>
-			<span class="username">${data.username}</span>
-		</div>
-		
-
-		
-		<div class="buttons btn-test">
-			<div>
-				<span class="date">Today 11:16AM</span>
-			</div>
-			<div>
-				<button type="button" class="btn btn-success join-btn">
-					Join
-				</button>
-				<button type="button" class="btn btn-danger decline-btn">
-					<i class="bi bi-x-lg"></i>
-				</button>
-			</div>
-		</div>
-	</div>
-
+	<div class="card-container">
 		<div class="invite-card">
-		<div class="user">
-			<img src="${data.profilePhoto}" class="user-photo" alt="profile photo"/>
-			<span class="username">${data.username}</span>
-		</div>
-		
-
-		
-		<div class="buttons btn-test">
-			<div>
-				<span class="date">Today 11:16AM</span>
+			<div class="profile-photo-section">
+				<img src="${data.profilePhoto}" class="profile-photo" alt="profile photo chat"/>
 			</div>
-			<div>
+			<div class="username-section">
+				<span class="username">${data.username}</span>
+			</div>
+			
+			<div class="expires-date">
+				<span class="date"> 5 min left</span>
+			</div>
+			
+			<div class="buttons">
 				<button type="button" class="btn btn-success join-btn">
 					Join
 				</button>
@@ -198,160 +83,6 @@ const getHtml = function(data) {
 			</div>
 		</div>
 	</div>
-
-	<br><br><br>
-
-
-	<div class="invite-card">
-		<div>
-			<button type="button" class="btn btn-success join-btn">Join</button>
-		</div>
-
-		<div class="user">
-			<img src="${data.profilePhoto}" class="user-photo" alt="profile photo chat"/>
-			<span class="username">${data.username}</span>
-		</div>
-
-		<div>
-			<span class="date">Today 11:16AM</span>
-		</div>
-
-		<div>
-			<button type="button" class="btn btn-danger decline-btn">
-				<i class="bi bi-x-lg"></i>
-			</button>
-		</div>
-	</div>
-
-	<div class="invite-card">
-		<div>
-			<button type="button" class="btn btn-success join-btn">Join</button>
-		</div>
-
-		<div class="user">
-			<img src="${data.profilePhoto}" class="user-photo" alt="profile photo chat"/>
-			<span class="username">${data.username}</span>
-		</div>
-
-		<div>
-			<span class="date">Today 11:16AM</span>
-		</div>
-
-		<div>
-			<button type="button" class="btn btn-danger decline-btn">
-				<i class="bi bi-x-lg"></i>
-			</button>
-		</div>
-	</div>
-
-	<br><br><br>
-
-	<div class="cont">
-
-	<div class="test">
-		<div class="invite-card1">
-			<div class="user">
-				<img src="${data.profilePhoto}" class="user-photo1" alt="profile photo chat"/>
-			</div>
-
-			<div class="username-div">
-				<span class="username1">${data.username}</span>
-			</div>
-			
-			<div class="expires">
-				<span class="date">Today 11:16AM</span>
-			</div>
-			
-			<div class="buttons">
-				<button type="button" class="btn btn-success join-btn join-btn1">
-					Join
-				</button>
-				<button type="button" class="btn btn-danger decline-btn">
-					<i class="bi bi-x-lg"></i>
-				</button>
-			</div>
-		</div>
-	</div>
-
-
-	<div class="test">
-		<div class="invite-card1">
-			<div class="user">
-				<img src="${data.profilePhoto}" class="user-photo1" alt="profile photo chat"/>
-			</div>
-
-			<div class="username-div">
-				<span class="username1">${data.username}</span>
-			</div>
-			
-			<div class="expires">
-				<span class="date">Today 11:16AM</span>
-			</div>
-			
-			<div class="buttons">
-				<button type="button" class="btn btn-success join-btn join-btn1">
-					Join
-				</button>
-				<button type="button" class="btn btn-danger decline-btn">
-					<i class="bi bi-x-lg"></i>
-				</button>
-			</div>
-		</div>
-	</div>
-
-	<div class="test">
-		<div class="invite-card1">
-			<div class="user">
-				<img src="${data.profilePhoto}" class="user-photo1" alt="profile photo chat"/>
-			</div>
-
-			<div class="username-div">
-				<span class="username1">${data.username}</span>
-			</div>
-			
-			<div class="expires">
-				<span class="date">Today 11:16AM</span>
-			</div>
-			
-			<div class="buttons">
-				<button type="button" class="btn btn-success join-btn join-btn1">
-					Join
-				</button>
-				<button type="button" class="btn btn-danger decline-btn">
-					<i class="bi bi-x-lg"></i>
-				</button>
-			</div>
-		</div>
-	</div>
-
-	<div class="test">
-		<div class="invite-card1">
-			<div class="user">
-				<img src="${data.profilePhoto}" class="user-photo1" alt="profile photo chat"/>
-			</div>
-
-			<div class="username-div">
-				<span class="username1">${data.username}</span>
-			</div>
-			
-			<div class="expires">
-				<span class="date">Today 11:16AM</span>
-			</div>
-			
-			<div class="buttons">
-				<button type="button" class="btn btn-success join-btn join-btn1">
-					Join
-				</button>
-				<button type="button" class="btn btn-danger decline-btn">
-					<i class="bi bi-x-lg"></i>
-				</button>
-			</div>
-		</div>
-	</div>	
-
-
-	</div>
-
 	`;
 	return html;
 }

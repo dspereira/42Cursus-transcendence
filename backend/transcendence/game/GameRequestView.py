@@ -22,22 +22,60 @@ user_model = ModelManager(User)
 
 class GameRequestView(View):
 
-	# @method_decorator(login_required)
+	@method_decorator(login_required)
 	def get(self, request):
-		# user = user_model.get(id=request.access_data.sub)
-		user = user_model.get(id=request.GET.get('user'))
+		user = user_model.get(id=request.access_data.sub)
+		#user = user_model.get(id=request.GET.get('user'))
 		if user:
-			requests_list = get_game_requests_list(user=user)
+			# requests_list = get_game_requests_list(user=user)
+			requests_list = [
+				{
+					"req_id": 1,
+					"id": 1,
+					"username": "user_1",
+					"image": "https://api.dicebear.com/8.x/bottts/svg?seed=user_1" 
+				},
+				{
+					"req_id": 2,
+					"id": 2,
+					"username": "user_2",
+					"image": "https://api.dicebear.com/8.x/bottts/svg?seed=user_2" 
+				},
+				{
+					"req_id": 3,
+					"id": 3,
+					"username": "user_3",
+					"image": "https://api.dicebear.com/8.x/bottts/svg?seed=user_3" 
+				},
+				{
+					"req_id": 4,
+					"id": 4,
+					"username": "user_4",
+					"image": "https://api.dicebear.com/8.x/bottts/svg?seed=user_4" 
+				},
+				{
+					"req_id": 5,
+					"id": 5,
+					"username": "user_5",
+					"image": "https://api.dicebear.com/8.x/bottts/svg?seed=user_5"
+				},
+				{
+					"req_id": 6,
+					"id": 6,
+					"username": "user_2",
+					"image": "https://api.dicebear.com/8.x/bottts/svg?seed=user_6" 
+				}
+			]
 			return JsonResponse({"message": f"Game request list retrieved with success.", "requests_list": requests_list}, status=200)
 		else:
 			return JsonResponse({"message": "Error: Invalid User!"}, status=400)
 
-	# @method_decorator(login_required)
+	@method_decorator(login_required)
 	def post(self, request):
 		if request.body:
 			req_data = json.loads(request.body)
-			# user = user_model.get(id=request.access_data.sub)
-			user = user_model.get(id=req_data["user"])
+			user = user_model.get(id=request.access_data.sub)
+			#user = user_model.get(id=req_data["user"])
 			friend = user_model.get(id=req_data["id"])
 			if user and friend and user.id != friend.id:
 				if is_already_friend(user1=user, user2=friend):
@@ -60,7 +98,7 @@ class GameRequestView(View):
 		else:
 			return JsonResponse({"message": "Error: Empty Body!"}, status=400)
 
-	# @method_decorator(login_required)
+	@method_decorator(login_required)
 	def patch(self, request):
 		if request.body:
 			req_data = json.loads(request.body)
