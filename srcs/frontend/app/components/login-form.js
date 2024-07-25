@@ -1,15 +1,35 @@
 import {redirect} from "../js/router.js";
 import {callAPI} from "../utils/callApiUtils.js";
+import { colors } from "../js/globalStyles.js"
 
 const styles = `
 form {
 	position: relative;
 }
 
+.card-background {
+	background-color: ${colors.main_card};
+	color: ${colors.primary_text};
+}
+
+.card-background:focus {
+	background-color: ${colors.main_card};
+	color: ${colors.primary_text};
+}
+
+input:-internal-autofill-selected {
+	background-color: ${colors.second_card};
+}
+
+.highlight-text {
+	color: ${colors.primary_text};
+}
+
 .icon {
 	position: absolute;
 	margin-top: 3px;
 	font-size: 28px;
+	color: ${colors.second_text};
 }
 
 .right-icon {
@@ -51,29 +71,43 @@ h1 {
 .btn-submit {
 	width: 100%;
 	margin-top: 30px;
+	color: ${colors.second_text};
+	background-color: ${colors.button_hover};
+}
+
+.btn-submit:hover {
+	background-color: ${colors.button_hover};
+	color: ${colors.primary_text};
 }
 
 .btn-signup {
 	width: 100%;
+	border: 2px solid ${colors.button_hover};
+	color: ${colors.button_hover};
+}
+
+.btn-signup:hover {
+	background-color: ${colors.button_hover};
+	color: ${colors.primary_text};
 }
 
 `;
 
 const getHtml = function(data) {
 	const html = `
-		<h1>Sign in</h1>
+		<h1 class="highlight-text">Sign in</h1>
 		<form id="login-form">
 			<div class="alert alert-danger hide" role="alert">
 				Invalid authentication credentials.
 			</div>
 			<div class="form-group">
 				<i class="icon left-icon bi-person"></i>
-				<input type="text" class="input-padding form-control form-control-lg" id="email" placeholder="Email / Username" maxlength="100">
+				<input type="text" class="input-padding form-control form-control-lg card-background" id="email" placeholder="Email / Username" maxlength="100">
 			</div>
 			<div class="form-group">
 				<i class="icon left-icon bi bi-key"></i>
 				<i class="icon right-icon bi bi-eye-slash eye-icon"></i>
-				<input type="password" class="input-padding form-control form-control-lg" id="password" placeholder="Password" maxlength="128">
+				<input type="password" class="input-padding form-control form-control-lg card-background" id="password" placeholder="Password" maxlength="128">
 			</div>
 			<div>
 				<button type="submit" class="btn btn-primary btn-submit">Sign In</button>

@@ -29,8 +29,8 @@ const styles = `
 	.bottom-buttons {
 		position: fixed;
 		bottom: 0;
-		border-top: 1px #dbd9d7 solid;
-		padding-bottom: 8px;
+		border-top: 1px ${colors.second_text} solid;
+		padding: 10px 0px 10px 0px;
 	}
 
 	button {
@@ -49,6 +49,11 @@ const styles = `
 
 	.link-btn button {
 		margin-bottom: 10px;
+	}
+
+	.list-btn button:hover {
+		background-color: ${colors.button_hover};
+		border-radius: 5px;
 	}
 
 	.list-btn {
@@ -96,9 +101,9 @@ const styles = `
 	}
 
 	.open .link-btn button:hover {
-		background-color: ${colors.button_background};
+		background-color: ${colors.button_hover};
 		background: solid;
-		border-radius: 6px;
+		border-radius: 5px;
 		width: 200px;
 	}
 
@@ -117,7 +122,7 @@ const styles = `
 	}
 
 	.close #list:hover {
-		background-color: ${colors.button_background};
+		background-color: ${colors.button_active};
 		background: solid;
 		clip-path:circle();
 	}
@@ -138,11 +143,13 @@ const styles = `
 
 	.close .link-btn button:hover {
 		background-color: transparent;
+		background-color: ${colors.button_hover};
+		border-radius: 5px;
 	}
 
 	.close .link-btn .icon:hover {
-		background-color: ${colors.button_background};
-		border-radius: 3px;
+		background-color: ${colors.button_hover};
+		border-radius: 5px;
 	}
 `;
 

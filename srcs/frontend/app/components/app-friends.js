@@ -17,7 +17,7 @@ const styles = `
 	border-radius: 5px;
 	border-style: hidden;
 	background-color: ${colors.second_card};
-	padding: 0px 10px 10px 10px;
+	padding: 10px 10px 10px 10px;
 }
 
 .list-panel {
@@ -107,8 +107,9 @@ user-card {
 
 
 .selected-option {
-	background-color: ${colors.button_background};
-	border-radius: 8px;
+	background-color: ${colors.button_hover};
+	border-radius: 5px;
+	transition: 0.5s;
 }
 
 `;

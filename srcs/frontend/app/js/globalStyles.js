@@ -32,7 +32,7 @@ export const chatColors = {
 	main_card_light: "#40444B",
 	header: "#4D525B",
 	chat_bubble_owner: "#5865F2", 
-	chat_bubble_friend: "#4D525B",
+	chat_bubble_friend: "#DC5A3E", //#FF5733 > bright red,  #4D525B > gray
 	button_light: "#4A4E55",
 	third_background_light: "#303337",
 	divider_light: "#3A3F44",

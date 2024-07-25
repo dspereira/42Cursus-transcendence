@@ -35,14 +35,14 @@ const styles = `
 }
 
 .user:hover {
-	background-color: #4287f5;
+	background-color: ${colors.button_hover};
 	border-radius: 8px;
 }
 
 .friend-selected {
 	background-color: ${colors.button_hover};
 	color: ${colors.primary_text};
-	border-radius: 8px;
+	border-radius: 5px;
 }
 
 .scroll {
@@ -68,6 +68,7 @@ const styles = `
 
 .form-control:focus {
 	background-color: ${colors.input_background};
+	color: ${colors.second_text};
 }
 
 .search-icon {

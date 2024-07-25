@@ -1,8 +1,13 @@
 import { redirect } from "../js/router.js";
 import stateManager from "../js/StateManager.js";
 import { adjustContent } from "../utils/adjustContent.js";
+import { colors } from "../js/globalStyles.js";
 
 const styles = `
+
+.text-color {
+	color: ${colors.second_text};
+}
 
 `;
 
@@ -10,7 +15,7 @@ const getHtml = function(data) {
 	const html = `
 		<app-header></app-header>
 		<side-panel selected="configurations"></side-panel>
-		<div class="content content-small">
+		<div class="content content-small text-color">
 
 		<h1>Page Configurations</h1>
 		<p>

@@ -140,7 +140,7 @@ form {
 }
 
 .input-color:focus {
-	background-color: ${colors.second_card};
+	background-color: ${chatColors.header};
 	color: ${colors.second_text};
 }
 
@@ -173,6 +173,25 @@ form {
 	background: ${colors.main_card};
 }
 
+
+
+
+.msg-input ::-webkit-scrollbar {
+	width: 15px;
+}
+
+.msg-input ::-webkit-scrollbar-track {
+	width: 15px;
+	background: ${chatColors.header};
+}
+
+.msg-input ::-webkit-scrollbar-thumb {
+	background: ${colors.main_card};
+	border-radius: 10px;
+	border-style: hidden;
+	border: 3px solid transparent;
+	background-clip: content-box;
+}
 `;
 
 const getHtml = function(data) {

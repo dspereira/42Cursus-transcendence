@@ -10,6 +10,7 @@ const styles = `
 
 .chat-area {
 	width: 100%;
+	text-align: center;
 }
 
 .hide {
@@ -53,12 +54,12 @@ const getHtml = function(data) {
 		<div class="no-friends-msg hide">
 			<span>You have no friends! Please search for friends here to start a chat!</span>
 			<div><span class="link">Find friends to chat here</span></div>
-		</div>
+		</div>	
 		<div class="friends-list">
 			<chat-friends-list></chat-friends-list>
 		</div>
 		<div class="chat-area">
-			<div class="no-friends-selected-msg hide"><span>You have no friend selected. Please select a friend to start a chat.</span></div>
+			<div class="no-friends-selected-msg hide"><span>You have no friends selected. Please select a friend to start a chat.</span></div>
 		</div>
 	</div>
 	`;

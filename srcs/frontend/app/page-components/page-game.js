@@ -304,7 +304,7 @@ const styles = `
 		background-color: ${colors.button_hover};
 	}
 
-	.invited-card, .inv-header-text, .username, .box-off .username{
+	.invited-card, .inv-header-text, .username, .box-off .username, .invite-friends{
 		color: ${colors.second_text};
 	}
 

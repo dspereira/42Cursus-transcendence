@@ -1,17 +1,38 @@
 import {redirect} from "../js/router.js";
 import stateManager from "../js/StateManager.js";
 import { callAPI } from "../utils/callApiUtils.js";
+import { colors } from "../js/globalStyles.js";
 
-const styles = ``;
+const styles = `
+
+.text-color {
+	color: ${colors.primary_text};
+
+}
+
+.logout-btn {
+	border-style: hidden;
+	width: 100px;
+	height: 50px;
+	background-color: ${colors.button};
+	color: ${colors.second_text};
+}
+
+.logout-btn:hover {
+	background-color: ${colors.button_hover};
+	color: ${colors.primary_text};
+}
+
+`;
 
 const getHtml = function(data) {
 	const html = `
 	<app-header></app-header>
 	<side-panel selected="logout"></side-panel>
 
-	<div class="content content-small">
-		<h1>logout</h1>
-			<button type="button" class="btn btn-primary" id="logout-submit">Logout</button>
+	<div class="content content-small text-color">
+		<h1>Logout</h1>
+			<button type="button" class="btn btn-primary logout-btn" id="logout-submit">Logout</button>
 
 	</div>
 	`;

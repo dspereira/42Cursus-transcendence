@@ -110,6 +110,7 @@ const styles = `
 		width: 100%;
 		flex-wrap: wrap;
 		flex-grow: 1;
+		margin-top: 20px;
 	}
 
 	.friend-box {
@@ -189,6 +190,7 @@ const styles = `
 		border-radius: 5px;
 		border-style: hidden;
 		background-color: ${colors.input_background};
+		color: ${colors.second_text};
 	}
 
 	.form-control::placeholder {
@@ -439,6 +441,16 @@ const styles = `
 		margin: 0px 20px 0px 20px;
 	}
 
+	.separator-v-light {
+		display: flex;
+		width: 5px;
+		height: 80%;
+		border-radius: 10px;
+		justify-content: center;
+		align-items: center;
+		margin: 0px 20px 0px 20px;
+	}
+
 	.friend-invites {
 		display: flex;
 		width: 100%;
@@ -482,8 +494,7 @@ const styles = `
 
 	.invited-btn, .inv-decline-btn {
 		display: flex;
-		height: 60%;
-		margin: 0px 20px 0px 20px;
+		height: 80%;
 		justify-content: center;
 		align-items: center;
 	}
@@ -506,13 +517,15 @@ const styles = `
 	.invited-card {
 		display: flex;
 		flex-direction: column;
+		min-width: 400px;
 		width: 80%;
 		height: 300px;
 		border-radius: 20px;
 		border-style: hidden;
 		justify-content: space-between;
 		align-items: center;
-		margin-bottom: 10px;
+		margin-bottom: 20px;
+		padding: 20px;
 	}
 
 	.tourn-title-input input {
@@ -527,7 +540,7 @@ const styles = `
 		width: 300px;
 		margin-bottom: 25px;
 	}
-
+	
 	.tourn-sep {
 		display: flex;
 		width: 100%;
@@ -536,11 +549,34 @@ const styles = `
 		align-items: center;
 	}
 
-	.box-on .username {
+	.text-centered {
+		justify-content: center;
+		align-items: center;
+		text-align: center;
+		width: 100%;
+	}
+
+	.tourn-inv-bubble {
+		display: flex;
+		width: 100%;
+		height: 65%;
+		flex-direction: column;
+		border-radius: 10px;
+		border-style: hidden;
+		justify-content: center;
+		align-items: center;
+		gap: 20px;
+	}
+
+	.box-on .username, .inv-header, .invited-btn, .inv-decline-btn, .select-left {
 		color: ${colors.primary_text};
 	}
 
-	.tourn-name, .tab-select-btn, .test-change, .submit-button, .tourn-inv-inner, .box-off .username {
+	.select-right {
+		color: ${colors.second_card};
+	}
+
+	.tourn-name, .tab-select-btn, .test-change, .submit-button, .tourn-inv-inner, .box-off .username, .friend-selection, .inv-players, .inv-bot {
 		color: ${colors.second_text}
 	}
 
@@ -548,15 +584,19 @@ const styles = `
 		color: ${colors.third_text}
 	}
 
-	.box-off, .friend-search, .tournament-name, .invited-card, .tab-select-btn, .test-change, .tourn-card, .tourn-inv, .select-right {
+	.box-off, .friend-search, .tournament-name, .tourn-inv-bubble, .tab-select-btn, .test-change, .tourn-card, .tourn-inv, .select-right {
 		background-color: ${colors.main_card};
+	}
+
+	.select-left, .invited-card {
+		background-color: ${colors.second_card};
 	}
 
 	.create-btn:hover, .submit-button:not(:disabled):hover, .back-btn:hover, .invited-btn:hover, .inv-decline-btn:hover, .box-on {
 		background-color: ${colors.button_hover};
 	}
 
-	.create-btn, .back-btn, .submit-button:not(disabled), .invited-btn, .inv-decline-btn, .select-left, .past-tournament-card, .tourn-name, .tourn-p-card {
+	.create-btn, .back-btn, .submit-button:not(disabled), .invited-btn, .inv-decline-btn, .past-tournament-card, .tourn-name, .tourn-p-card {
 		background-color: ${colors.button};
 	}
 
@@ -567,9 +607,6 @@ const styles = `
 	.separator-v {
 		background-color: ${colors.page_background};
 	}
-
-
-
 `;
 
 const getHtml = function(data) {
@@ -674,7 +711,7 @@ export default class PageTournaments extends HTMLElement {
 						</div>
 					</div>
 				</div>
-				<div class=".tourn-title-input">
+				<div class="tourn-title-input">
 					<div class="form-group">
 						<i class="search-icon bi bi-search"></i>
 						<input type="text" class="form-control form-control-md" id="search" placeholder="Tournament title" maxlength="50">
@@ -801,7 +838,7 @@ export default class PageTournaments extends HTMLElement {
 			const newTournaments = this.html.querySelector(".active-tournaments");
 			const pastTournaments = this.html.querySelector(".past-tournaments");
 			const isToggled = leftSlct.style.getPropertyValue('--toggled') === 'on';
-			const highlight = colors.toggle_deselected;
+			const highlight = colors.second_card;
 			const background = colors.main_card;
 			leftSlct.style.setProperty('--toggled', isToggled ? 'off' : 'on');
 			if (isToggled) {
@@ -846,7 +883,8 @@ export default class PageTournaments extends HTMLElement {
 		const friendSelectionHtml = this.html.querySelector(".friend-selection");
 		friendSelectionHtml.innerHTML = "";
 		if (!friendList) {
-			friendSelectionHtml.innerHTML = "<div>No friend that matches your search!<div>";
+			friendSelectionHtml.innerHTML = "<div class=text-centered>No friend that matches your search!<div>";
+			friendSelectionHtml.styles.
 			return ;
 		}
 		friendList.forEach((friend) => {
@@ -967,11 +1005,13 @@ export default class PageTournaments extends HTMLElement {
 		elm.id = `id-${invite.id}`;
 		if (invite) {
 			elm.innerHTML = `
-				<div class="inv-header">${invite.name}</div>
-				<div class="inv-players">
-					<div>${invite.owner}</div>
-					<div>${invite.p1}</div>
-					<div>${invite.p2}</div>
+				<div class="tourn-inv-bubble">
+					<div class="inv-header">${invite.name}</div>
+					<div class="inv-players">
+						<div>${invite.owner}</div>
+						<div>${invite.p1}</div>
+						<div>${invite.p2}</div>
+					</div>
 				</div>
 				<div class="inv-bot">
 					<button class="invited-btn">Join</button>
