@@ -22,19 +22,73 @@ const styles = `
 		gap: 30px;
 		justify-content: center;
 	}
+
+	.send-invite-section {
+		display: flex;
+		gap: 30px;
+	}
+	
+	.friend-section {
+		width: 80%;
+		padding: 20px;
+		border-radius: 5px;
+		height: 90vh;
+		background-color: #D3D3D3;
+	}
+
+	.selcted-list-section {
+		width: 20%;
+		padding: 20px;
+		border-radius: 5px;
+		height: 90vh;
+		background-color: #D3D3D3;
+	}
+		
+	.friend-right-list {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		margin-bottom: 10px;
+	}
+	
+	.friend-right-list span {
+		font-size: 20px;
+		font-weight: bold;
+	}
+
+	.cross-icon {
+		color: red;
+		font-size: 24px;
+		cursor: pointer;
+	}
+
+	.cross-icon:hover {
+		color: blue; /* outra cor igual mas mais carregada */
+	}
+
+	.hide {
+		display: none;
+	}
+
+}
 `;
 
 const getHtml = function(data) {
 	const html = `
 	<!--<h3>Invite a Friend For a Challenge!</h3>-->
 
-	<div class="search-bar">
-		<div class="form-group">
-			<i class="search-icon bi bi-search"></i>
-			<input type="text" class="form-control form-control-md" id="search" placeholder="Search friends..." maxlength="50">
+	<div class="send-invite-section">
+		<div class="friend-section">
+			<div class="search-bar">
+				<div class="form-group">
+					<i class="search-icon bi bi-search"></i>
+					<input type="text" class="form-control form-control-md" id="search" placeholder="Search friends..." maxlength="50">
+				</div>
+			</div>
+			<div class="friend-list"></div>
 		</div>
+		<div class="selcted-list-section"></div>
 	</div>
-	<div class="friend-list"></div>
 	`;
 	return html;
 }
@@ -69,6 +123,8 @@ export default class GameInviteSend extends HTMLElement {
 			this.styles.textContent = this.#styles();
 			this.html.classList.add(`${this.elmtId}`);
 		}
+
+		this.rightFriendListElm = this.html.querySelector(".selcted-list-section");
 	}
 
 	#styles() {
@@ -143,9 +199,44 @@ export default class GameInviteSend extends HTMLElement {
 					elm.setAttribute("selected", "true");
 					this.selectedElm.push(elm.id);
 				}
+				this.#fillRightListOfSelectedFriends();
 			});
 		});
 	}
+
+	#fillRightListOfSelectedFriends() {
+		this.rightFriendListElm.innerHTML = "";
+		console.log(this.selectedElm);
+		this.selectedElm.forEach(elm => {
+			this.rightFriendListElm.appendChild(this.#getFriendHtmlForRightList(elm))
+		});
+	}
+
+	#getFriendHtmlForRightList(elmId) {
+		const elm = document.createElement("div");
+		const friendElm = this.html.querySelector(`#${elmId}`);
+		if (!friendElm)
+			return ;
+		const name = friendElm.getAttribute("username");
+
+		elm.classList.add("friend-right-list");
+		elm.innerHTML = `
+		<div><span>${name}</span></div>
+		<div class="cross-icon"><i class="bi bi-x-lg"></i></div>
+		`;
+
+		this.#addCrossIconEvent(elm.querySelector(".cross-icon"))
+		return elm;
+	}
+
+	#addCrossIconEvent(elmHtml) {
+		if (!elmHtml)
+			return ;
+		elmHtml.addEventListener("click", () => {
+			//elmHtml.classList.add("hide");
+		});
+	}
+
 }
 
 customElements.define("game-invite-send", GameInviteSend);
