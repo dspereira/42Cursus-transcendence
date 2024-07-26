@@ -12,8 +12,8 @@ from .utils import update_game_request_status
 from .utils import get_games_list
 from .utils import has_already_games_accepted
 from .utils import cancel_other_invitations
-from .utils import create_game
 from .utils import get_game_info
+from .utils import add_user_to_game
 from .Games import games_dict
 
 game_requests_model = ModelManager(GameRequests)
@@ -22,22 +22,22 @@ games_model = ModelManager(Games)
 
 class GameView(View):
 
-	# @method_decorator(login_required)
+	@method_decorator(login_required)
 	def get(self, request):
-		# user = user_model.get(id=request.access_data.sub)
-		user = user_model.get(id=request.GET.get('user'))
+		user = user_model.get(id=request.access_data.sub)
+		# user = user_model.get(id=request.GET.get('user'))
 		if user:
 			games_list = get_games_list(user=user)
 			return JsonResponse({"message": f"Game request list retrieved with success.", "games_list": games_list}, status=200)
 		else:
 			return JsonResponse({"message": "Error: Invalid User!"}, status=400)
 
-	# @method_decorator(login_required)
-	def post(self, request):
+	@method_decorator(login_required)
+	def update(self, request):
 		if request.body:
 			req_data = json.loads(request.body)
-			# user = user_model.get(id=request.access_data.sub)
-			user = user_model.get(id=req_data["user"])
+			user = user_model.get(id=request.access_data.sub)
+			# user = user_model.get(id=req_data["user"])
 			games_req = game_requests_model.get(id=req_data["id"])
 			if user:
 				if not games_req or games_req.to_user.id != user.id:
@@ -45,8 +45,9 @@ class GameView(View):
 				if not has_already_games_accepted(user=user):
 					update_game_request_status(game_request=games_req, new_status=GAME_REQ_STATUS_ACCEPTED)
 					cancel_other_invitations(user=games_req.from_user)
-					game = create_game(user1=games_req.from_user, user2=games_req.to_user)
+					game = games_model.get(id=games_req.game_id)
 					if game:
+						add_user_to_game(game, games_req.to_user)
 						games_dict.create_new_game(game.id, game.user1.id, game.user2.id)
 						return JsonResponse({"message": "Game created with success!", "game": get_game_info(game=game, user=user)}, status=200)
 					else:

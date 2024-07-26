@@ -134,5 +134,6 @@ def cancel_other_invitations(user):
 			req.status = GAME_REQ_STATUS_DECLINED
 			req.save()
 
-def create_game(user1, user2, user1_alias=None, user2_alias=None):
-	return games_model.create(user1=user1, user2=user2, user1_alias=user1_alias, user2_alias=user2_alias)
+def add_user_to_game(game, user2):
+	game.user2 = user2
+	game.save()

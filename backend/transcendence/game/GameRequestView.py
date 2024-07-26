@@ -3,7 +3,7 @@ from custom_utils.models_utils import ModelManager
 from custom_decorators import login_required
 from django.http import JsonResponse
 from user_auth.models import User
-from .models import GameRequests
+from .models import GameRequests, Games
 from django.views import View
 import json
 
@@ -18,6 +18,7 @@ from .utils import GAME_REQ_STATUS_DECLINED
 from .utils import get_game_request_info
 
 game_requests_model = ModelManager(GameRequests)
+game_model = ModelManager(Games)
 user_model = ModelManager(User)
 
 class GameRequestView(View):
@@ -76,23 +77,28 @@ class GameRequestView(View):
 			req_data = json.loads(request.body)
 			user = user_model.get(id=request.access_data.sub)
 			#user = user_model.get(id=req_data["user"])
-			friend = user_model.get(id=req_data["id"])
-			if user and friend and user.id != friend.id:
-				if is_already_friend(user1=user, user2=friend):
-					if has_already_valid_game_request(user1=user, user2=friend):
-						return JsonResponse({"message": f"Error: Has already game request!",}, status=409)
-					if has_already_games_accepted(user=user):
-						return JsonResponse({"message": f"Error: User is already playing a game!",}, status=409)
-					game_request = game_requests_model.create(from_user=user, to_user=friend)
-					set_exp_time(game_request=game_request)
-					if game_request:
-						return JsonResponse({"message": f"Game Requested Created With Success!",
-								"game_request": get_game_request_info(game_req=game_request)
-						}, status=201)
+			invites_list = req_data["invites_list"]
+			if user:
+				if has_already_games_accepted(user=user):
+					return JsonResponse({"message": f"Error: User is already playing a game!",}, status=409)
+				new_game = game_model(user1=user)
+				if not new_game:
+					return JsonResponse({"message": f"Error: Failed to create new game!",}, status=409)
+				for friend in invites_list:
+					user2 = user_model.get(id=friend['id'])
+					if is_already_friend(user1=user, user2=user2):
+						if has_already_valid_game_request(user1=user, user2=user2):
+							return JsonResponse({"message": f"Error: Has already game request!",}, status=409)
+						game_request = game_requests_model.create(from_user=user, to_user=user2, game_id=new_game.id)
+						set_exp_time(game_request=game_request)
+						if game_request:
+							return JsonResponse({"message": f"Game Requested Created With Success!",
+									"game_request": get_game_request_info(game_req=game_request)
+							}, status=201)
+						else:
+							return JsonResponse({"message": f"Error: Failed to create game request in DataBase",}, status=409)
 					else:
-						return JsonResponse({"message": f"Error: Failed to create game request in DataBase",}, status=409)
-				else:
-					return JsonResponse({"message": "Error: Users are not friends!"}, status=409)
+						return JsonResponse({"message": "Error: Users are not friends!"}, status=409)
 			else:
 				return JsonResponse({"message": "Error: Invalid User, Requested Friend!"}, status=400)
 		else:
