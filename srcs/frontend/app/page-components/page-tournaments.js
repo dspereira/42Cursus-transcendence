@@ -868,7 +868,7 @@ customElements.define(PageTournaments.componentName, PageTournaments);
 const getFakeActiveTourn = function () {
 	const data = `{
 		"name": "Manga's Tourn",
-		"inTourn": "true",
+		"inTourn": "false",
 		"p1": "Manga",
 		"p2": "candeia",
 		"p3": "diogo",

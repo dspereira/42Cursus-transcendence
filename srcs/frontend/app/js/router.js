@@ -27,8 +27,10 @@ import UserCard from "../components/user-card.js";
 import ChatFriendsList from "../components/chat-friends-list.js";
 import ChatSection from "../components/chat-section.js";
 import AppPlay from "../components/app-play.js";
-import GameInvites from "../components/game-invites.js";
+import GameInviteRequest from "../components/game-invite-request.js";
 import GameInviteCard from "../components/game-invite-card.js";
+import GameInviteSend from "../components/game-invite-send.js";
+import GameInviteCard1 from "../components/game-invite-card1.js";
 
 // Others
 import stateManager from "./StateManager.js";
@@ -51,7 +53,7 @@ const routes = {
 	"/configurations"	: PageConfigs.componentName,
 	"/friends"			: PageFriends.componentName,
 	"/play"				: PagePlay.componentName,
-	"/game"				: PageGame.componentName
+	"/game"				: PageGame.componentName,
 }
 
 const publicRoutes = ["/initial", "/login", "/signup"];
