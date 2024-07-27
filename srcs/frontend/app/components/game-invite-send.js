@@ -65,11 +65,6 @@ const styles = `
 	.cross-icon:hover {
 		color: blue; /* outra cor igual mas mais carregada */
 	}
-
-	.hide {
-		display: none;
-	}
-
 }
 `;
 
@@ -123,7 +118,6 @@ export default class GameInviteSend extends HTMLElement {
 			this.styles.textContent = this.#styles();
 			this.html.classList.add(`${this.elmtId}`);
 		}
-
 		this.rightFriendListElm = this.html.querySelector(".selcted-list-section");
 	}
 
@@ -191,40 +185,54 @@ export default class GameInviteSend extends HTMLElement {
 
 		friendList.forEach(elm => {
 			elm.addEventListener("click", () => {
-				if (elm.getAttribute("selected") == "true") {
-					elm.setAttribute("selected", "false");
-					this.selectedElm.pop(elm.id);
-				}
-				else {
-					elm.setAttribute("selected", "true");
-					this.selectedElm.push(elm.id);
-				}
-				this.#fillRightListOfSelectedFriends();
+				if (elm.getAttribute("selected") == "true")
+					this.#unselectFriend(elm.id);
+				else
+					this.#selectFriend(elm);
 			});
 		});
 	}
 
-	#fillRightListOfSelectedFriends() {
-		this.rightFriendListElm.innerHTML = "";
-		console.log(this.selectedElm);
-		this.selectedElm.forEach(elm => {
-			this.rightFriendListElm.appendChild(this.#getFriendHtmlForRightList(elm))
-		});
+	#selectFriend(friendCard) {
+		const rightListFriendHtml = this.#getFriendHtmlForRightList(friendCard.id);
+		const listLength = this.rightFriendListElm.length;
+
+		if (!listLength)
+			this.rightFriendListElm.appendChild(rightListFriendHtml);
+		else
+			this.rightFriendListElm.insertBefore(this.rightFriendListElm[listLength - 1], rightListFriendHtml);
+		
+		friendCard.setAttribute("selected", "true");
+		this.selectedElm.push(friendCard.id);
+	}
+
+	#unselectFriend(elmId) {
+		const friendCard = this.html.querySelector(`#${elmId}`);
+		const friendRightList = this.rightFriendListElm.querySelector(`.${elmId}`);
+
+		if (!friendCard && !friendRightList)
+			return ;
+		friendCard.setAttribute("selected", "false");
+		this.rightFriendListElm.removeChild(friendRightList);
+		const index = this.selectedElm.indexOf(elmId);
+		if (index > -1)
+			this.selectedElm.splice(index, 1);
 	}
 
 	#getFriendHtmlForRightList(elmId) {
 		const elm = document.createElement("div");
+
 		const friendElm = this.html.querySelector(`#${elmId}`);
 		if (!friendElm)
 			return ;
 		const name = friendElm.getAttribute("username");
 
 		elm.classList.add("friend-right-list");
+		elm.classList.add(`${elmId}`);
 		elm.innerHTML = `
-		<div><span>${name}</span></div>
-		<div class="cross-icon"><i class="bi bi-x-lg"></i></div>
+			<div><span>${name}</span></div>
+			<div class="cross-icon ${elmId}" ><i class="bi bi-x-lg"></i></div>
 		`;
-
 		this.#addCrossIconEvent(elm.querySelector(".cross-icon"))
 		return elm;
 	}
@@ -232,9 +240,7 @@ export default class GameInviteSend extends HTMLElement {
 	#addCrossIconEvent(elmHtml) {
 		if (!elmHtml)
 			return ;
-		elmHtml.addEventListener("click", () => {
-			//elmHtml.classList.add("hide");
-		});
+		elmHtml.addEventListener("click", () => this.#unselectFriend(elmHtml.classList[1]));
 	}
 
 }
