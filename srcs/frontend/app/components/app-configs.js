@@ -134,8 +134,8 @@ const getHtml = function(data) {
 						<hr>
 						<label for="language-option">Choose language:</label>
 						<select name="language" id="language-option">
-						<option value="en">English 🇬🇧</option>
-						<option value="pt">Portugues 🇵🇹</option>
+							<option value="en">English 🇬🇧</option>
+							<option value="pt">Portugues 🇵🇹</option>
 						</select>
 					</div>
 				</div>
@@ -216,7 +216,14 @@ export default class AppConfigs extends HTMLElement {
 			console.log(data);
 			this.settingsForm.newLanguage = data.language;
 			this.settingsForm.newTheme = data.gameTheme;
+			this.#setSelectOptions("language-option" ,this.settingsForm.newLanguage);
+			this.#setSelectOptions("theme-options" ,this.settingsForm.newTheme);
 		});
+	}
+
+	#setSelectOptions(selector, data) {
+		const elem = this.html.querySelector(`#${selector}`);
+		elem.value = data;
 	}
 
 	#generateNewSeed() {
