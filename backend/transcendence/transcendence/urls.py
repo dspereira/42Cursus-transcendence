@@ -26,4 +26,5 @@ urlpatterns = [
     path('api/profile/', include('user_profile.urls')),
     path('api/friends/', include('friendships.urls')),
     path('api/settings/', include('user_settings.urls')),
+    path('api/game/', include('game.urls')),
 ]

@@ -357,8 +357,6 @@ export default class ChatFriendsList extends HTMLElement {
 
 	#changeOnlineStatus() {
 		stateManager.addEvent("onlineStatus", (value) => {
-			const friendList = this.html.querySelectorAll(".friend-list .user");
-			const seachList = this.html.querySelectorAll(".search-list .user");
 			this.#updateUserOnlineStatusHtml(value);
 			this.#updateOnlineStatusFriendListData(value);
 		});
