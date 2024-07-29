@@ -84,8 +84,8 @@ class GameRequestView(View):
 				new_game = game_model(user1=user)
 				if not new_game:
 					return JsonResponse({"message": f"Error: Failed to create new game!",}, status=409)
-				for friend in invites_list:
-					user2 = user_model.get(id=friend['id'])
+				for friend_id in invites_list:
+					user2 = user_model.get(id=friend_id)
 					if is_already_friend(user1=user, user2=user2):
 						if has_already_valid_game_request(user1=user, user2=user2):
 							return JsonResponse({"message": f"Error: Has already game request!",}, status=409)
