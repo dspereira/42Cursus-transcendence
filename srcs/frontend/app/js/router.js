@@ -25,6 +25,10 @@ import AppFriends from "../components/app-friends.js";
 import UserCard from "../components/user-card.js";
 import ChatFriendsList from "../components/chat-friends-list.js";
 import ChatSection from "../components/chat-section.js";
+import AppPastTourn from "../components/app-past-tournaments.js";
+import CurrentTournament from "../components/current-tournament.js";
+import CreateJoinTourn from "../components/create-join-tournaments.js";
+import AppBackground from "../components/app-background.js";
 
 // Others
 import stateManager from "./StateManager.js";

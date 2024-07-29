@@ -1,16 +1,41 @@
 import { redirect } from "../js/router.js";
 import stateManager from "../js/StateManager.js";
+import {colors} from "../js/globalStyles.js";
 
 const styles = `
+	.login-box {
+		position: absolute;
+		display: flex;
+		width: 50%;
+		height: 40%;
+		border-style: hidden;
+		border-radius: 10px;
+		z-index:100;
+		left: 50%;
+		top: 50%;
+		transform: translate(-50%, -40%);
+		justify-content: center;
+		align-items: center;
+		color: ${colors.primary_text};
+		background: rgba(20, 20, 20, 0.5);
+	}
 
+	app-background {
+		position: absolute;
+		width:100%;
+		z-index:1;
+	}
 `;
 
 const getHtml = function(data) {
 	const html = `
 		<h1>Initial Page</h1>
 		<br>
-		<button type="button" class="btn btn-primary" id="login">Login</button>
-		<button type="button" class="btn btn-secondary" id="signup">SignUp</button>
+		<div class=login-box>
+			<button type="button" class="btn btn-primary" id="login">Login</button>
+			<button type="button" class="btn btn-secondary" id="signup">SignUp</button>
+		</div>
+		<app-background></app-background>
 	`;
 	return html;
 }

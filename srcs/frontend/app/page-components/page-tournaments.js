@@ -5,6 +5,11 @@ import { callAPI } from "../utils/callApiUtils.js";
 import {colors} from "../js/globalStyles.js";
 
 const styles = `
+
+	create-join-tourn, app-past-tourn, current-tournament {
+		width: 100%;
+	}
+
 	.page-container {
 		display: flex;
 		width: 100%;
@@ -64,31 +69,6 @@ const styles = `
 		display: flex;
 	}
 
-	.past-tournaments {
-		display: none;
-		overflow-y: auto;
-	}
-
-	.past-tournament-card {
-		display: flex;
-		width: 80%;
-		height: 200px;
-		justify-content: space-between;
-		margin: 0px 0px 20px;
-		border-style: hidden;
-		border-radius: 20px;
-	}
-	
-	.card-box {
-		display: flex;
-		width: 150px;
-		height: 80%;
-		justify-content: center;
-		align-items: center;
-		margin-left: 20px;
-		margin-right: 20px;
-	}
-
 	.creation-top-bar, .creation-bottom-bar {
 		display: flex;
 		width: 100%;
@@ -103,31 +83,6 @@ const styles = `
 		justify-content: center;
 		position: fixed;
 		bottom: 0;
-	}
-
-	.friend-selection {
-		display: flex;
-		width: 100%;
-		flex-wrap: wrap;
-		flex-grow: 1;
-		margin-top: 20px;
-	}
-
-	.friend-box {
-		display: flex;
-		flex-direction: column;
-		width: 150px;
-		height: 200px;
-		border-radius: 10px;
-		border-style: hidden;
-		justify-content: center;
-		align-items: center;
-		margin: 10px;
-	}
-
-	.username {
-		font-size: 16px;
-		font-weight: bold;
 	}
 
 	.friend-search; {
@@ -528,47 +483,7 @@ const styles = `
 		padding: 20px;
 	}
 
-	.tourn-title-input input {
-		padding-left: 40px;
-	}
-
-	.tourn-title-input .form-group {
-		display: flex;
-	}
-
-	.tourn-title-input {
-		width: 300px;
-		margin-bottom: 25px;
-	}
-	
-	.tourn-sep {
-		display: flex;
-		width: 100%;
-		height: 100px;
-		justify-content: center;
-		align-items: center;
-	}
-
-	.text-centered {
-		justify-content: center;
-		align-items: center;
-		text-align: center;
-		width: 100%;
-	}
-
-	.tourn-inv-bubble {
-		display: flex;
-		width: 100%;
-		height: 65%;
-		flex-direction: column;
-		border-radius: 10px;
-		border-style: hidden;
-		justify-content: center;
-		align-items: center;
-		gap: 20px;
-	}
-
-	.box-on .username, .inv-header, .invited-btn, .inv-decline-btn, .select-left {
+	.inv-header, .invited-btn, .inv-decline-btn, .select-left {
 		color: ${colors.primary_text};
 	}
 
@@ -576,15 +491,15 @@ const styles = `
 		color: ${colors.second_card};
 	}
 
-	.tourn-name, .tab-select-btn, .test-change, .submit-button, .tourn-inv-inner, .box-off .username, .friend-selection, .inv-players, .inv-bot {
-		color: ${colors.second_text}
+	.tourn-name, .tab-select-btn, .test-change, .submit-button, .tourn-inv-inner, .inv-players, .inv-bot {
+		color: ${colors.second_text};
 	}
 
 	 .tourn-p-card, .tourn-inv-time {
-		color: ${colors.third_text}
+		color: ${colors.third_text};
 	}
 
-	.box-off, .friend-search, .tournament-name, .tourn-inv-bubble, .tab-select-btn, .test-change, .tourn-card, .tourn-inv, .select-right {
+	.box-off, .friend-search, .tournament-name, .tab-select-btn, .test-change, .tourn-card, .tourn-inv, .select-right {
 		background-color: ${colors.main_card};
 	}
 
@@ -596,7 +511,7 @@ const styles = `
 		background-color: ${colors.button_hover};
 	}
 
-	.create-btn, .back-btn, .submit-button:not(disabled), .invited-btn, .inv-decline-btn, .past-tournament-card, .tourn-name, .tourn-p-card {
+	.create-btn, .back-btn, .submit-button:not(disabled), .invited-btn, .inv-decline-btn, .tourn-name, .tourn-p-card {
 		background-color: ${colors.button};
 	}
 
@@ -606,6 +521,10 @@ const styles = `
 
 	.separator-v {
 		background-color: ${colors.page_background};
+	}
+
+	.hide {
+		display: none;
 	}
 `;
 
@@ -621,8 +540,11 @@ const getHtml = function(data) {
 						<div class="select-right">Tournament History</div>
 					</button>
 				</div>
-				<div class="active-tournaments"></div>
-				<div class="past-tournaments">PAST TOURNAMENTS GO HERE</div>
+				<div class="active-tournaments">
+					<current-tournament></current-tournament>
+					<create-join-tourn></create-join-tourn>
+				</div>
+				<app-past-tourn class="hide"></app-past-tourn>
 			</div>
 		</div>
 	`;
@@ -679,147 +601,25 @@ export default class PageTournaments extends HTMLElement {
 	}
 
 	#scripts() {
-		const pastTournamentsList = getFakeTournaments();
+		// const pastTournamentsList = getFakeTournaments();
 		adjustContent(this.html.querySelector(".content"));
 		this.#toggleTabSelector();
 		this.#activeTournaments();
-		this.#getPastTournaments(pastTournamentsList);
-		// this.#search();
-		// this.#searchFriends();
-		this.#changeOnlineStatus();
 		// this.#testChangePage();
 	}
 
-	#testChangePage() {
-		const changeHtml = this.html.querySelector(".test-change");
-		changeHtml.addEventListener("click", () => {
-			this.inTournament = !this.inTournament;
-			this.#activeTournaments();
-			this.#search();
-		});
-	}
-
-	#tournCreation(activeTournamentsHtml) {
-		activeTournamentsHtml.innerHTML = `
-			<div class="tournament-creation">
-				<div class="creation-top-bar">
-					<button type="button" class="back-btn">Back</button>
-					<div class="search-bar">
-						<div class="form-group">
-							<i class="search-icon bi bi-search"></i>
-							<input type="text" class="form-control form-control-md" id="search" placeholder="Search friends..." maxlength="50">
-						</div>
-					</div>
-				</div>
-				<div class="tourn-title-input">
-					<div class="form-group">
-						<i class="search-icon bi bi-search"></i>
-						<input type="text" class="form-control form-control-md" id="search" placeholder="Tournament title" maxlength="50">
-					</div>
-				</div>
-				<div class="friend-selection"></div>
-				<div class="creation-bottom-bar">
-					<button class="submit-button">submit</button>
-				</div>
-			</div>
-		`;
-		this.#search();
-		this.#searchFriends();
-		activeTournamentsHtml.querySelector(".back-btn").addEventListener("click", () => {
-			this.#createJoinTourn(activeTournamentsHtml);
-		});
-	}
-
 	#createJoinTourn(activeTournamentsHtml) {
-		activeTournamentsHtml.innerHTML = `
-			<div class=create-join-tournament>
-				<button type="button" class="create-btn">
-						Create a Tournament
-				</button>
-				<div class="separator"></div>
-				<div class="friend-invites"></div>
-			</div>
-		`;
-		this.#showInvites(this.tournInv);
-		activeTournamentsHtml.querySelector(".create-btn").addEventListener("click", () => {
-			this.#tournCreation(activeTournamentsHtml);
-		});
+		const currentTournHtml = activeTournamentsHtml.querySelector("current-tournament");
+		currentTournHtml.classList.add("hide");
+		const createJoinHtml = activeTournamentsHtml.querySelector("create-join-tourn");
+		createJoinHtml.classList.remove("hide");
 	}
 
 	#currentTourn(activeTournamentsHtml) {
-		activeTournamentsHtml.innerHTML =  `
-			<div class="current-tourn">
-				<div class=tourn-card>
-					<div class=tourn-div-top>
-						<div class=tourn-name>${this.tournInfo.name}</div>
-					</div>
-					<div class=tourn-div-mid>
-						<div class=tourn-s-bar>
-							<div class=tourn-p-card>
-								<img src="https://api.dicebear.com/8.x/bottts/svg?seed=${this.tournInfo.p1}" class="tourn-p-img"></img>
-								${this.tournInfo.p1}
-							</div>
-							<div class=tourn-p-card>
-								<img src="https://api.dicebear.com/8.x/bottts/svg?seed=${this.tournInfo.p2}" class="tourn-p-img"></img>
-								${this.tournInfo.p2}
-							</div>
-						</div>
-						<div class=tourn-m-bar>
-							<div class=tourn-p-card>${this.tournInfo.left}</div>
-							<div class=tourn-p-card>${this.tournInfo.right}</div>
-						</div>
-						<div class=tourn-s-bar>
-							<div class=tourn-p-card>
-								<img src="https://api.dicebear.com/8.x/bottts/svg?seed=${this.tournInfo.p3}" class="tourn-p-img"></img>
-								${this.tournInfo.p3}
-							</div>
-							<div class=tourn-p-card>
-								<img src="https://api.dicebear.com/8.x/bottts/svg?seed=${this.tournInfo.p4}" class="tourn-p-img"></img>
-								${this.tournInfo.p4}
-							</div>
-						</div>
-					</div>
-				</div>
-				<div class=tourn-sep>
-					<div class=separator></div>
-				</div>
-				<div class=tourn-inv-box>
-					<div class="tourn-inv">
-						<div class=tourn-inv-inner>
-							<img src="https://api.dicebear.com/8.x/bottts/svg?seed=${this.tournInfo.p2}" class="tourn-p-img"></img>
-							${this.tournInfo.p2}
-						</div>
-						<div class=separator-v></div>
-						<div class=tourn-inv-inner>
-							<div class=tourn-inv-status>Status</div>
-							<div class=tourn-inv-time>Elapsed<br>Time</div>
-						</div>
-					</div>
-					<div class="tourn-inv">
-						<div class=tourn-inv-inner>
-							<img src="https://api.dicebear.com/8.x/bottts/svg?seed=${this.tournInfo.p3}" class="tourn-p-img"></img>
-							${this.tournInfo.p3}
-						</div>
-						<div class=separator-v></div>
-						<div class=tourn-inv-inner>
-							<div class=tourn-inv-status>Status</div>
-							<div class=tourn-inv-time>Elapsed<br>Time</div>
-						</div>
-					</div>
-					<div class="tourn-inv">
-						<div class=tourn-inv-inner>
-							<img src="https://api.dicebear.com/8.x/bottts/svg?seed=${this.tournInfo.p4}" class="tourn-p-img"></img>
-							${this.tournInfo.p4}
-						</div>
-						<div class=separator-v></div>
-						<div class=tourn-inv-inner>
-							<div class=tourn-inv-status>Status</div>
-							<div class=tourn-inv-time>Elapsed<br>Time</div>
-						</div>
-					</div>
-				</div>
-			</div>
-		`;
+		const currentTournHtml = activeTournamentsHtml.querySelector("current-tournament");
+		currentTournHtml.classList.remove("hide");
+		const createJoinHtml = activeTournamentsHtml.querySelector("create-join-tourn");
+		createJoinHtml.classList.add("hide");
 	}
 
 	#activeTournaments() {
@@ -836,7 +636,7 @@ export default class PageTournaments extends HTMLElement {
 			const leftSlct = this.html.querySelector(".select-left");
 			const rightSlct = this.html.querySelector(".select-right");
 			const newTournaments = this.html.querySelector(".active-tournaments");
-			const pastTournaments = this.html.querySelector(".past-tournaments");
+			const pastTournaments = this.html.querySelector("app-past-tourn");
 			const isToggled = leftSlct.style.getPropertyValue('--toggled') === 'on';
 			const highlight = colors.second_card;
 			const background = colors.main_card;
@@ -847,189 +647,24 @@ export default class PageTournaments extends HTMLElement {
 				leftSlct.style.color = "white";
 				rightSlct.style.color = highlight;
 				newTournaments.style.display = "flex";
-				pastTournaments.style.display = "none";
+				pastTournaments.classList.add("hide");
 			} else {
 				leftSlct.style.backgroundColor = background;
 				rightSlct.style.backgroundColor = highlight;
 				leftSlct.style.color = highlight;
 				rightSlct.style.color = "white";
 				newTournaments.style.display = "none";
-				pastTournaments.style.display = "flex";
+				pastTournaments.classList.remove("hide");
 			}
 		});
 	}
-
-	#getPastTournaments(pastTournaments) {
-		const pastTournamentsHtml = this.html.querySelector(".past-tournaments");
-		pastTournaments.forEach((tournament) => {
-			pastTournamentsHtml.appendChild(this.#pastTournamentCard(tournament));
-		});
-	}
-
-	#pastTournamentCard(tournament) {
-		const elm = document.createElement("div");
-		elm.classList.add("past-tournament-card");
-		if (tournament) {
-			elm.innerHTML = `
-				<div class="card-box" style="font-size:24px">${tournament.name}</div>
-				<div class="card-box"">1st: ${tournament.first}<br>2nd: ${tournament.second}<br>3rd: ${tournament.third}<br>4th: ${tournament.fourth}</div>
-				<div class="card-box"">${tournament.date}</div>
-			`;
-		}
-		return elm;
-	}
-
-	#friendSelection(friendList) {
-		const friendSelectionHtml = this.html.querySelector(".friend-selection");
-		friendSelectionHtml.innerHTML = "";
-		if (!friendList) {
-			friendSelectionHtml.innerHTML = "<div class=text-centered>No friend that matches your search!<div>";
-			friendSelectionHtml.styles.
-			return ;
-		}
-		friendList.forEach((friend) => {
-			friendSelectionHtml.appendChild(this.#createCheckbox(friend));
-		});
-	}
-
-	#createCheckbox(friend) {
-		if (friend) {
-			const elm = document.createElement("div");
-			let visibility = "hide";
-			elm.classList.add("friend-box");
-			elm.id = `id-${friend.id}`;
-			if (this.friendBoxData && this.friendBoxData.indexOf(elm.id) != -1)
-				elm.classList.add("box-on");
-			else
-				elm.classList.add("box-off");
-			const submitBtn = document.querySelector(".submit-button");
-			if (friend.online)
-				visibility = "";
-			console.log(friend.username, " status", friend.online ? "online" : "offline");
-			submitBtn.disabled = (this.friendBoxData.length != 3);
-			if (friend) {
-				elm.innerHTML = `
-					<div class="profile-photo-status">
-						<img src="${friend.image}" class="profile-photo"/>
-						<div class="online-status ${visibility}"></div>
-					</div>
-					<span class="username">${friend.username}</span>
-				`;
-			}
-			elm.addEventListener("click", () => {
-				const inArray = this.friendBoxData.indexOf(elm.id);
-				console.log("toggle = ", inArray);
-				console.log("length = ", this.friendBoxData.length);
-				if (inArray != -1) {
-					elm.classList.remove("box-on");
-					elm.classList.add("box-off");
-					this.friendBoxData.splice(inArray, 1);
-				}
-				else if (this.friendBoxData.length < 3) {
-					elm.classList.add("box-on");
-					this.friendBoxData.push(elm.id);
-					elm.classList.remove("box-off");
-				}
-				if ((this.friendBoxData.length == 3))
-					console.log("enabled!");
-				else
-					console.log("disabled");
-				submitBtn.disabled = (this.friendBoxData.length != 3);
-				console.log(this.friendBoxData);
-			});
-			return elm;
-		}
-	}
-
-	#searchFriends() {
-		const inp = this.html.querySelector(".search-bar").querySelector("input");
-		if (!inp)
-			return ;
-		inp.addEventListener("input", event => this.#search(inp.value));
-	}
-
-	#search(value) {
-		let path = "/api/friends/friendships/";
-		let key;
-		if (value)
-			key = `?key=${value}`;
-		else
-			key = "";
-		console.log(key);
-		callAPI("GET", `http://127.0.0.1:8000${path}${key}`, null, (res, data) => {
-			if (res.ok) {
-				console.log(data);
-				this.#friendSelection(data.friends);
-			}
-		});
-	}
-
-	#changeOnlineStatus() {
-		stateManager.addEvent("onlineStatus", (value) => {
-			this.#updateUserOnlineStatusHtml(value);
-		});
-	}
-
-	#updateUserOnlineStatusHtml(value) {
-		if (!value)
-			return ;
-
-		let friendHtml = this.html.querySelector(`#id-${value.id}`);
-		if (friendHtml)
-			this.#changeOnlineStatusFriendHtml(friendHtml, value.online);
-		// friendHtml = this.html.querySelector(`#id_${value.id}`);
-		// if (friendHtml)
-		// 	this.#changeOnlineStatusFriendHtml(friendHtml, value.online);
-	}
-		
-	#changeOnlineStatusFriendHtml(friendHtml, onlineStatus) {
-		const onlineIcon = friendHtml.querySelector(".online-status");
-		if (!onlineIcon)
-			return ;
-		if (onlineStatus)
-			onlineIcon.classList.remove("hide");
-		else
-			onlineIcon.classList.add("hide");
-	}
-
-	#showInvites(friendInvites) {
-		const friendInvitesHtml = this.html.querySelector(".friend-invites");
-		friendInvites.forEach((invite) => {
-			friendInvitesHtml.appendChild(this.#getInviteHtml(invite));
-		});
-	}
-
-	#getInviteHtml(invite) {
-		const elm = document.createElement("div");
-		elm.classList.add("invited-card");
-		elm.id = `id-${invite.id}`;
-		if (invite) {
-			elm.innerHTML = `
-				<div class="tourn-inv-bubble">
-					<div class="inv-header">${invite.name}</div>
-					<div class="inv-players">
-						<div>${invite.owner}</div>
-						<div>${invite.p1}</div>
-						<div>${invite.p2}</div>
-					</div>
-				</div>
-				<div class="inv-bot">
-					<button class="invited-btn">Join</button>
-					<div>TIME <br> ELAPSED</div>
-					<button class="inv-decline-btn">Decline</button>
-				</div>
-			`;
-		}
-		return elm;
-	}
-
 }
 customElements.define(PageTournaments.componentName, PageTournaments);
 
 const getFakeActiveTourn = function () {
 	const data = `{
 		"name": "Manga's Tourn",
-		"inTourn": "false",
+		"inTourn": "true",
 		"p1": "Manga",
 		"p2": "candeia",
 		"p3": "diogo",
@@ -1057,50 +692,5 @@ const getFakeTournInvites = function() {
 		"p2": "Diogo"
 	}
 	]`;
-	return JSON.parse(data);
-}
-
-const getFakeTournaments = function () {
-	const data = `[
-	{
-		"name": "Jhonny's tournament",
-		"first": "Jhonny",
-		"second": "Clara",
-		"third": "Arthur",
-		"fourth": "Marth",
-		"date": "05/07/24"
-	},
-	{
-		"name": "Summer Bash",
-		"first": "Alice",
-		"second": "Bob",
-		"third": "Charlie",
-		"fourth": "Diana",
-		"date": "06/15/24"
-	},
-	{
-		"name": "Winter Cup",
-		"first": "Eve",
-		"second": "Frank",
-		"third": "Grace",
-		"fourth": "Hank",
-		"date": "12/10/24"
-	},
-	{
-		"name": "Spring Showdown",
-		"first": "Ivy",
-		"second": "Jack",
-		"third": "Karen",
-		"fourth": "Leo",
-		"date": "03/21/24"
-	},
-	{
-		"name": "Autumn Clash",
-		"first": "Mona",
-		"second": "Nate",
-		"third": "Olive",
-		"fourth": "Paul",
-		"date": "09/30/24"
-	}]`;
 	return JSON.parse(data);
 }
