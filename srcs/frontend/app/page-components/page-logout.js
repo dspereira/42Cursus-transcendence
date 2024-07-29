@@ -7,7 +7,7 @@ const styles = ``;
 const getHtml = function(data) {
 	const html = `
 	<app-header></app-header>
-	<side-panel selected="logout"></side-panel>
+	<side-panel selected="logout" language=${data.language}></side-panel>
 
 	<div class="content content-small">
 		<h1>logout</h1>
@@ -26,6 +26,24 @@ export default class PageLogout extends HTMLElement {
 
 	constructor() {
 		super()
+
+		this.data = {};
+		this.#loadInitialData();
+	}
+
+	static get componentName() {
+		return this.#componentName;
+	}
+
+	async #loadInitialData() {
+		await callAPI("GET", "http://127.0.0.1:8000/api/profile/getlanguage", null, (res, data) => {
+			if (res.ok) {
+				if (data && data.language){
+					this.data.language = data.language;
+				}
+		}
+		});
+
 		this.#initComponent();
 		this.#render();
 		this.#scripts();

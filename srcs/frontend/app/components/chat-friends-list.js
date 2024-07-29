@@ -1,5 +1,7 @@
 import { callAPI } from "../utils/callApiUtils.js";
 import stateManager from "../js/StateManager.js";
+import { enChatFriendListDict } from "../lang-dicts/enLangDict.js";
+import { ptChatFriendListDict } from "../lang-dicts/ptLangDict.js";
 
 const styles = `
 .friend-list {
@@ -101,7 +103,7 @@ const getHtml = function(data) {
 	const html = `
 		<div class="form-group search">
 			<i class="search-icon bi bi-search"></i>
-			<input type="text" class="form-control form-control-sm" id="search" placeholder="Search..." maxlength="50">
+			<input type="text" class="form-control form-control-sm" id="search" placeholder="${data.langDict.search_bar_placeholder_search}" maxlength="50">
 		</div>
 		<div class="search-list scroll hide"></div>
 		<div class="friend-list scroll"></div>
@@ -110,11 +112,12 @@ const getHtml = function(data) {
 }
 
 export default class ChatFriendsList extends HTMLElement {
-	static observedAttributes = [];
+	static observedAttributes = ["language"];
 
 	constructor() {
 		super()
 		this.friendListData = null;
+		this.data = {};
 	}
 
 	connectedCallback() {
@@ -124,12 +127,24 @@ export default class ChatFriendsList extends HTMLElement {
 	}
 
 	attributeChangedCallback(name, oldValue, newValue) {
-
+		if (name == "language") {
+			this.data.langDict = this.#getLanguage(newValue);
+		}
+	}
+	z
+	#getLanguage(language) {
+		switch (language) {
+			case "en":
+				return enChatFriendListDict;
+			case "pt":
+				return ptChatFriendListDict;
+			default:
+		}
 	}
 
 	#initComponent() {
 		this.html = document.createElement("div");
-		this.html.innerHTML = this.#html();
+		this.html.innerHTML = this.#html(this.data);
 		if (styles) {
 			this.elmtId = `elmtId_${Math.floor(Math.random() * 100000000000)}`;
 			this.styles = document.createElement("style");

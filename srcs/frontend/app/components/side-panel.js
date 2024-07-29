@@ -1,6 +1,7 @@
 import {redirect} from "../js/router.js";
 import stateManager from "../js/StateManager.js";
-
+import { enSidePanelDict } from "../lang-dicts/enLangDict.js";
+import { ptSidePanelDict } from "../lang-dicts/ptLangDict.js";
 
 const styles = `
 
@@ -151,50 +152,50 @@ const getHtml = function(data) {
 					<button id="home">
 						<span>
 							<i class="icon bi bi-house-door"></i>
-							<span class="icon-text">Home</span>
+							<span class="icon-text">${data.langDict.home}</span>
 						</span>
 					</button>
 					<button id="profile">
 						<span>
 							<i class="icon bi bi-person"></i>
-							<span class="icon-text">Profile</span>
+							<span class="icon-text">${data.langDict.profile}</span>
 						</span>
 					</button>
 					<button id="chat">
 						<span>
 							<i class="icon bi bi-chat"></i>
-							<span class="icon-text">Chat</span>
+							<span class="icon-text">${data.langDict.chat}</span>
 						</span>
 					</button>
 					<button id="tournaments">
 						<span>
 							<i class="icon bi bi-trophy"></i>
-							<span class="icon-text">Tournaments</span>
+							<span class="icon-text">${data.langDict.tournaments}</span>
 						</span>
 					</button>
 					<button id="friends">
 						<span>
 							<i class="icon bi bi-people"></i>
-							<span class="icon-text">Friends</span>
+							<span class="icon-text">${data.langDict.friends}</span>
 						</span>
 					</button>
 					<button id="play">
 						<span>
 							<i class="icon bi bi-dpad"></i>
-							<span class="icon-text">Play</span>
+							<span class="icon-text">${data.langDict.play}</span>
 						</span>
 					</button>
 					<div class="bottom-buttons">
 						<button id="logout">
 							<span>
 								<i class="icon bi bi-power"></i>
-								<span class="icon-text">Logout</span>
+								<span class="icon-text">${data.langDict.logout}</span>
 							</span>
 						</button>
 						<button id="configurations">
 							<span>
 								<i class="icon bi bi-gear"></i>
-								<span class="icon-text">Configurations</span>
+								<span class="icon-text">${data.langDict.configurations}</span>
 							</span>
 						</button>
 					</div>
@@ -240,10 +241,15 @@ const deselectedIcon = {
 }
 
 export default class SidePanel extends HTMLElement {
-	static observedAttributes = ["selected", "state"];
+	static observedAttributes = ["selected", "state", "language"];
 
 	constructor() {
 		super()
+		
+		this.data = {};
+	}
+
+	connectedCallback() {
 		this.#initComponent();
 		this.#render();
 		this.#scripts();
@@ -254,11 +260,26 @@ export default class SidePanel extends HTMLElement {
 			this.#changeSelectedPage(oldValue, newValue);
 		else if (name === "state")
 			this.#changeState(newValue);
+		if (name == "language") {
+			this.data.langDict = this.#getLanguage(newValue);
+			this.data.language = newValue;
+		}
+	}
+
+	#getLanguage(language) {
+		switch (language) {
+			case "en":
+				return enSidePanelDict;
+			case "pt":
+				return ptSidePanelDict;
+			default:
+		}
 	}
 
 	#initComponent() {
 		this.html = document.createElement("div");
-		this.html.innerHTML = this.#html({state: stateManager.getState("sidePanel")});
+		this.data.state = stateManager.getState("sidePanel");
+		this.html.innerHTML = this.#html(this.data);
 		if (styles) {
 			this.elmtId = `elmtId_${Math.floor(Math.random() * 100000000000)}`;
 			this.styles = document.createElement("style");
@@ -319,7 +340,7 @@ export default class SidePanel extends HTMLElement {
 		})
 	}
 
-	#changeSelectedPage(oldValue, newValue) {		
+	#changeSelectedPage(oldValue, newValue) {
 		const newPage = navigation.find((elem) => elem === newValue);
 		const oldPage = navigation.find((elem) => elem === oldValue);
 		if (newPage === oldPage)

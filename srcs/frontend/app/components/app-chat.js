@@ -1,6 +1,8 @@
 import chatWebSocket from "../js/ChatWebSocket.js";
 import stateManager from "../js/StateManager.js";
 import { redirect } from "../js/router.js";
+import { enAppChatDict } from "../lang-dicts/enLangDict.js";
+import { ptAppChatDict } from "../lang-dicts/ptLangDict.js";
 
 const styles = `
 .chat {
@@ -35,14 +37,14 @@ const getHtml = function(data) {
 	const html = `
 	<div class="chat">
 		<div class="no-friends-msg hide">
-			<span>You have no friends! Please search for friends here to start a chat!</span>
-			<div><span class="link">Find friends to chat here</span></div>
+			<span>${data.langDict.no_friends_msg}</span>
+			<div><span class="link">${data.langDict.find_friends_msg}</span></div>
 		</div>
 		<div class="friends-list">
-			<chat-friends-list></chat-friends-list>
+			<chat-friends-list language=${data.language}></chat-friends-list>
 		</div>
 		<div class="chat-area">
-			<div class="no-friends-selected-msg hide"><span>You have no friend selected. Please select a friend to start a chat.</span></div>
+			<div class="no-friends-selected-msg hide"><span>${data.langDict.no_friend_selected}</span></div>
 		</div>
 	</div>
 	`;
@@ -50,10 +52,11 @@ const getHtml = function(data) {
 }
 
 export default class AppChat extends HTMLElement {
-	static observedAttributes = [];
+	static observedAttributes = ["language"];
 
 	constructor() {
 		super()
+		this.data = {};
 	}
 
 	connectedCallback() {
@@ -63,12 +66,25 @@ export default class AppChat extends HTMLElement {
 	}
 
 	attributeChangedCallback(name, oldValue, newValue) {
+		if (name == "language") {
+			this.data.langDict = this.#getLanguage(newValue);
+			this.data.language = newValue;
+		}
+	}
 
+	#getLanguage(language) {
+		switch (language) {
+			case "en":
+				return enAppChatDict;
+			case "pt":
+				return ptAppChatDict;
+			default:
+		}
 	}
 
 	#initComponent() {
 		this.html = document.createElement("div");
-		this.html.innerHTML = this.#html();
+		this.html.innerHTML = this.#html(this.data);
 		if (styles) {
 			this.elmtId = `elmtId_${Math.floor(Math.random() * 100000000000)}`;
 			this.styles = document.createElement("style");
@@ -121,6 +137,7 @@ export default class AppChat extends HTMLElement {
 				username="${userData.username}"
 				profile-photo="${userData.image}"
 				online="${userData.online}"
+				language="${this.data.language}"
 			></chat-section>
 		`;
 	}

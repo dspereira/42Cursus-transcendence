@@ -1,6 +1,6 @@
 import { callAPI } from "../utils/callApiUtils.js";
-import { enAppFriendsDict } from "../utils/enLangDict.js";
-import { ptAppFriendsDict } from "../utils/ptLangDict.js";
+import { enAppFriendsDict } from "../lang-dicts/enLangDict.js";
+import { ptAppFriendsDict } from "../lang-dicts/ptLangDict.js";
 
 const styles = `
 .friends-section {
