@@ -83,6 +83,7 @@ const getHtml = function(data) {
 			<div class="friend-list"></div>
 		</div>
 		<div class="selcted-list-section"></div>
+		<div><button type="button" class="btn btn-primary" id="submit-invite">Invite</button><div>
 	</div>
 	`;
 	return html;
@@ -140,6 +141,7 @@ export default class GameInviteSend extends HTMLElement {
 	#scripts() {
 		this.#getFriendsCallApi();
 		this.#setFriendsSearchEvent();
+		this.#setInviteSubmitEvent();
 	}
 
 	#setFriendsSearchEvent() {
@@ -241,6 +243,26 @@ export default class GameInviteSend extends HTMLElement {
 		if (!elmHtml)
 			return ;
 		elmHtml.addEventListener("click", () => this.#unselectFriend(elmHtml.classList[1]));
+	}
+
+	#setInviteSubmitEvent() {
+		const btn = this.html.querySelector("#submit-invite");
+		if (!btn)
+			return ;
+		btn.addEventListener("click", () => {
+			const data = {
+				invites_list: []
+			};
+			this.selectedElm.forEach((elm) => {
+				data.invites_list.push(elm.substring(3));
+			});
+			callAPI("POST", "http://127.0.0.1:8000/api/game/request/", data, (res, data) => {
+				if (res.ok) {
+					console.log(res);
+					console.log(data);
+				}
+			});
+		});
 	}
 
 }
