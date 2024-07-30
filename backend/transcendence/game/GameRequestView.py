@@ -91,14 +91,11 @@ class GameRequestView(View):
 							return JsonResponse({"message": f"Error: Has already game request!",}, status=409)
 						game_request = game_requests_model.create(from_user=user, to_user=user2, game_id=new_game.id)
 						set_exp_time(game_request=game_request)
-						if game_request:
-							return JsonResponse({"message": f"Game Requested Created With Success!",
-									"game_request": get_game_request_info(game_req=game_request)
-							}, status=201)
-						else:
+						if not game_request:
 							return JsonResponse({"message": f"Error: Failed to create game request in DataBase",}, status=409)
 					else:
 						return JsonResponse({"message": "Error: Users are not friends!"}, status=409)
+				return JsonResponse({"message": f"Game Requested Created With Success!"}, status=201)
 			else:
 				return JsonResponse({"message": "Error: Invalid User, Requested Friend!"}, status=400)
 		else:
