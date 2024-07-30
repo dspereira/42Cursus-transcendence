@@ -3,21 +3,102 @@ import stateManager from "../js/StateManager.js";
 import {colors} from "../js/globalStyles.js";
 
 const styles = `
-	.login-box {
+
+	.paddle {
+		position: absolute;
+		width: 25px;
+		height: 250px;
+		background-color: white;
+	}
+
+	#right {
+		left: 20px;
+		top: 30%;
+	}
+
+	#left {
+		right: 30px;
+		top: 40%;
+	}
+
+	.ball {
+		position: absolute;
+		height: 25px;
+		width: 25px;
+		border-style: hidden;
+		border-radius: 50%;
+		left: 30%;
+		top: 20%;
+		background-color: white;
+	}
+
+	.main-container {
 		position: absolute;
 		display: flex;
-		width: 50%;
-		height: 40%;
-		border-style: hidden;
-		border-radius: 10px;
-		z-index:100;
+		flex-direction: column;
+		width: 900px;
+		height: 600px;
+		justify-content: center;
+		align-items: center;
+		gap: 100px;
 		left: 50%;
 		top: 50%;
 		transform: translate(-50%, -40%);
-		justify-content: center;
-		align-items: center;
+
+		border-style: hidden;
+		border-radius: 20px;
 		color: ${colors.primary_text};
-		background: rgba(20, 20, 20, 0.5);
+	}
+
+	.title-container {
+		display: flex;
+		flex-direction: column;
+		width: 50%;
+	}
+
+	.button-container {
+		display: flex;
+		width: 100%;
+		height: 100px;
+		flex-direction: row;
+		gap: 200px;
+		padding: 0px 20px 0px 20px;
+	}
+
+	.logo-img {
+		width: 100%;
+		height: auto;
+	}
+
+	#login, #signup {
+		font-size: 24px;
+		font-weight: bold;
+	}
+
+	#login {
+		width: 100%;
+		border: 2px solid ${colors.primary_text};
+		color: ${colors.primary_text};
+		background-color: rgba(0, 0, 0, 0);
+	}
+
+	#login:hover {
+		border: 2px solid ${colors.button_hover};
+		background-color: ${colors.button_hover};
+		color: ${colors.primary_text};
+	}
+
+	#signup {
+		width: 100%;
+		border: 2px solid ${colors.primary_text};>
+		color: ${colors.primary_text};
+		background-color: rgba(0, 0, 0, 0);
+	}
+
+	#signup:hover {
+		border: 2px solid ${colors.button_hover};
+		background-color: ${colors.button_hover};
+		color: ${colors.primary_text};
 	}
 
 	app-background {
@@ -26,16 +107,23 @@ const styles = `
 		z-index:1;
 	}
 `;
+//font: workbench
 
 const getHtml = function(data) {
 	const html = `
-		<h1>Initial Page</h1>
-		<br>
-		<div class=login-box>
-			<button type="button" class="btn btn-primary" id="login">Login</button>
-			<button type="button" class="btn btn-secondary" id="signup">SignUp</button>
+		<div class=main-container>
+			<div class=title-container>
+				<img src="../img/logo_white.png" class=logo-img>
+			</div>
+			<div class=button-container>
+				<button type="button" class="btn btn-primary" id="login">Login</button>
+				<button type="button" class="btn btn-secondary" id="signup">SignUp</button>
+			</div>
 		</div>
-		<app-background></app-background>
+		<div class=paddle id=left></div>
+		<div class=paddle id=right></div>
+		<!--<div class=ball></div>-->
+
 	`;
 	return html;
 }
