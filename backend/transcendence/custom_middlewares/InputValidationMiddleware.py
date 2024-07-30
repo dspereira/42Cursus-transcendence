@@ -1,5 +1,4 @@
 from custom_utils.input_checker import InputChecker
-from django.http import HttpResponse
 import json
 
 class InputValidationMiddleware:
@@ -9,55 +8,31 @@ class InputValidationMiddleware:
 
 	def __call__(self, request):
 
-		flag = True
-
 		if request.method == 'POST':
-			querry_params = request.POST
+			request.POST = self.__get_query_params_correct(request.POST)
 		elif request.method == 'GET':
-			querry_params = request.GET
-		
-		body = json.loads(request.body) if request.body else None
+			request.GET = self.__get_query_params_correct(request.GET)
 
-		print("\n--------------------------------------")
-		print("Request Method:", request.method)
-		print('URL:', request)
-		print("Querry Params:")
-		if querry_params:
-			print(querry_params)
-			if not self.__is_querry_params_correct(querry_params):
-				flag = False
-		else:
-			print("Empty")
-		print('Body:')
-		if body:
-			print(body)
-			if not self.__is_body_correct(body):
-				flag = False
-		else:
-			print('Empty')
-		print("--------------------------------------\n")
+		if request.body:
+			body = self.__get_body_correct(body=json.loads(request.body))
+			request._body = json.dumps(body).encode('utf-8')
 
-		if flag:
-			response = self.get_response(request)
-			return response
-		else:
-			return HttpResponse(status=400)
+		response = self.get_response(request)
+		return response
 
-	def __is_querry_params_correct(self, querry_params):
-		print("\n--------------------------------------")
-		for key, values in querry_params.lists():
-			print(f"[{key}]: [{values}]")
+	def __get_query_params_correct(self, query_params):
+		if not query_params:
+			return query_params
+		new_query_params = query_params.copy()
+		for key, values in query_params.lists():
 			for value in values:
-				if not self.input_checker.is_valid_input(value):
-					return False
-		print("--------------------------------------\n")
-		return True
+				new_value = self.input_checker.get_valid_input(value)
+				new_query_params.setlist(key, new_value)
+		return new_query_params
 
-	def __is_body_correct(self, body):
-		print("\n--------------------------------------")
+	def __get_body_correct(self, body):
+		new_body = body.copy()
 		for key, value in body.items():
-			print(f"[{key}]: [{value}]")
-			if not self.input_checker.is_valid_input(value):
-				return False
-		print("--------------------------------------\n")
-		return True
+			valid_value = self.input_checker.get_valid_input(value)
+			new_body[key] = valid_value
+		return new_body
