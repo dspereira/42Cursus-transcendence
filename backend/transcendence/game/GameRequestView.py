@@ -21,55 +21,13 @@ from .Lobby import Lobby, lobby_dict
 game_requests_model = ModelManager(GameRequests)
 user_model = ModelManager(User)
 
-def get_test_requests_list():
-	requests_list = [
-		{
-			"req_id": 1,
-			"id": 1,
-			"username": "user_1",
-			"image": "https://api.dicebear.com/8.x/bottts/svg?seed=user_1" 
-		},
-		{
-			"req_id": 2,
-			"id": 2,
-			"username": "user_2",
-			"image": "https://api.dicebear.com/8.x/bottts/svg?seed=user_2" 
-		},
-		{
-			"req_id": 3,
-			"id": 3,
-			"username": "user_3",
-			"image": "https://api.dicebear.com/8.x/bottts/svg?seed=user_3" 
-		},
-		{
-			"req_id": 4,
-			"id": 4,
-			"username": "user_4",
-			"image": "https://api.dicebear.com/8.x/bottts/svg?seed=user_4" 
-		},
-		{
-			"req_id": 5,
-			"id": 5,
-			"username": "user_5",
-			"image": "https://api.dicebear.com/8.x/bottts/svg?seed=user_5"
-		},
-		{
-			"req_id": 6,
-			"id": 6,
-			"username": "user_2",
-			"image": "https://api.dicebear.com/8.x/bottts/svg?seed=user_6" 
-		}
-	]
-	return requests_list
-
 class GameRequestView(View):
 
 	@method_decorator(login_required)
 	def get(self, request):
 		user = user_model.get(id=request.access_data.sub)
 		if user:
-			# requests_list = get_game_requests_list(user=user)
-			requests_list = get_test_requests_list()
+			requests_list = get_game_requests_list(user=user)
 			return JsonResponse({"message": f"Game request list retrieved with success.", "requests_list": requests_list}, status=200)
 		else:
 			return JsonResponse({"message": "Error: Invalid User!"}, status=400)
@@ -91,7 +49,7 @@ class GameRequestView(View):
 					if is_already_friend(user1=user, user2=user2):
 						if has_already_valid_game_request(user1=user, user2=user2):
 							return JsonResponse({"message": f"Error: Has already game request!",}, status=409)
-						game_request = game_requests_model.create(from_user=user, to_user=user2, game_id=new_game.id)
+						game_request = game_requests_model.create(from_user=user, to_user=user2)
 						set_exp_time(game_request=game_request)
 						if not game_request:
 							return JsonResponse({"message": f"Error: Failed to create game request in DataBase",}, status=409)

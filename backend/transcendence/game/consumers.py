@@ -38,12 +38,17 @@ class Game(AsyncWebsocketConsumer):
 		self.access_data = self.scope['access_data']
 		if await sync_to_async(is_authenticated)(self.access_data):
 			self.user = await sync_to_async(get_authenticated_user)(self.access_data.sub)
+		if not self.user:
+			await self.close(4000)
+			return
 
-		if lobby_dict[self.user.id]:
+		game_request_id = int(self.scope['url_route']['kwargs']['game_request_id'])
+
+		if game_request_id:
+			await sync_to_async(print)(f"Request ID: {game_request_id}")
+		else:
 			self.lobby = lobby_dict[self.user.id]
 			self.room_group_name = "game_lobby_" + str(self.user.id)
-		else:
-			pass
 
 		if self.room_group_name:
 			await self.channel_layer.group_add(

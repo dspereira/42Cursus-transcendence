@@ -21,9 +21,13 @@ class GameWebSocket {
 		this.socket = null;
 	}
 
-	open(game_id) {
+	open(gameRequestId) {
+		if (!gameRequestId)
+			gameRequestId = "";
+		const url = `${webSockettUrl}${gameRequestId}/`;
+
 		if (this.isClose()) {
-			this.socket = new WebSocket(webSockettUrl + game_id + "/");
+			this.socket = new WebSocket(url);
 			if (this.socket)
 				this.#setSocketCallbacks();
 		}

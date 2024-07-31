@@ -18,7 +18,6 @@ class GameRequests(models.Model):
 	created = models.DateTimeField(auto_now_add=True)
 	exp = models.DateTimeField(auto_now_add=True)
 	status = models.CharField(default="pending")
-	game_id = models.IntegerField()
 
 	def __str__(self) -> str:
 		return f'ID: {self.id}\nFrom_User: {self.from_user}\nTo_User:   {self.to_user}\nCreated:   {self.created}\nExp:       {self.exp}\nStatus:    {self.status}'

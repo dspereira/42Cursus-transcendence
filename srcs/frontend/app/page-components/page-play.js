@@ -93,7 +93,9 @@ export default class PagePlay extends HTMLElement {
 		const content = this.html.querySelector(".content");
 		if (!btn && !page1 && !content)
 			return ;
-		btn.addEventListener("click", () => {	
+		btn.addEventListener("click", () => {
+
+			// api/game/game
 			content.removeChild(page1);
 			content.innerHTML = "<game-invite-send></game-invite-send>";
 		});

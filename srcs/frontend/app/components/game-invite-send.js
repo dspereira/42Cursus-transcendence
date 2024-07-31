@@ -258,13 +258,12 @@ export default class GameInviteSend extends HTMLElement {
 			});
 			callAPI("POST", "http://127.0.0.1:8000/api/game/request/", data, (res, data) => {
 				if (res.ok) {
-					console.log(res);
-					console.log(data);
+					const contentElm = document.querySelector(".content");
+					contentElm.innerHTML = `<app-lobby game-request-id="0"></app-lobby>`;
 				}
 			});
 		});
 	}
-
 }
 
 customElements.define("game-invite-send", GameInviteSend);

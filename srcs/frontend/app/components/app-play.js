@@ -159,7 +159,7 @@ export default class AppPlay extends HTMLElement {
 		this.game.start();
 		this.#keyEvents();
 		this.#readyToPlayBtnEvent();
-		gameWebSocket.open(this.$getGameId());
+		gameWebSocket.open();
 	}
 
 	/*
@@ -185,11 +185,6 @@ export default class AppPlay extends HTMLElement {
 		stateManager.addEvent("gameStatus", (data) => {
 			this.game.updateState(data);
 		});
-	}
-
-	$getGameId() {
-		console.log(`Game ID: ${this.game_id}`);
-		return this.game_id;
 	}
 
 	#readyToPlayBtnEvent() {

@@ -31,6 +31,7 @@ import GameInviteRequest from "../components/game-invite-request.js";
 import GameInviteCard from "../components/game-invite-card.js";
 import GameInviteSend from "../components/game-invite-send.js";
 import GameInviteCard1 from "../components/game-invite-card1.js";
+import AppLobby from "../components/app-lobby.js";
 
 // Others
 import stateManager from "./StateManager.js";

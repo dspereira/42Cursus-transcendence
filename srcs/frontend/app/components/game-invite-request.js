@@ -89,7 +89,10 @@ export default class GameInviteRequest extends HTMLElement {
 		requestCard.setAttribute("user-id", requestData.id);
 		requestCard.setAttribute("username", requestData.username);
 		requestCard.setAttribute("profile-photo", requestData.image);
+		//game-request-id
 		this.reqList.appendChild(requestCard);
+
+		console.log(requestData);
 	}
 
 	#createRequestList(requestList) {

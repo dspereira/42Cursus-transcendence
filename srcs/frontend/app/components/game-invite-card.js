@@ -69,9 +69,7 @@ const getHtml = function(data) {
 			</div>
 			
 			<div class="buttons">
-				<button type="button" class="btn btn-success join-btn">
-					Join
-				</button>
+				<button type="button" class="btn btn-success join-btn">Join</button>
 				<button type="button" class="btn btn-danger decline-btn">
 					<i class="bi bi-x-lg"></i>
 				</button>
@@ -83,7 +81,7 @@ const getHtml = function(data) {
 }
 
 export default class GameInviteCard extends HTMLElement {
-	static observedAttributes = ["username", "profile-photo"];
+	static observedAttributes = ["username", "profile-photo", "invite-id"];
 
 	constructor() {
 		super()
@@ -99,6 +97,8 @@ export default class GameInviteCard extends HTMLElement {
 	attributeChangedCallback(name, oldValue, newValue) {
 		if (name == "profile-photo")
 			name = "profilePhoto";
+		else if (name == "invite-id")
+			name = "inviteId";
 		this.data[name] = newValue;
 	}
 
@@ -130,6 +130,20 @@ export default class GameInviteCard extends HTMLElement {
 	}
 
 	#scripts() {
+		this.#setJoiBtnEvent();
+	}
+
+	#setJoiBtnEvent() {
+		const btn = this.html.querySelector(".join-btn");
+		if(!btn)
+			return ;
+		btn.addEventListener("click", () => {
+
+			console.log(this.data.inviteId);
+
+			const contentElm = document.querySelector(".content");
+			contentElm.innerHTML = `<app-lobby game-request-id="${this.data.inviteId}"></app-lobby>`;
+		});
 	}
 }
 
