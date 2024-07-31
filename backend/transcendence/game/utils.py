@@ -29,14 +29,6 @@ GAME_STATUS_CREATED = "created"
 def get_user_profile(user):
 	return user_profile_model.get(user=user)
 
-def get_game_request_info(game_req):
-	game_req_info = {
-		"id": game_req.id,
-		"from_user": game_req.from_user.id,
-		"to_user": game_req.to_user.id,
-	}
-	return game_req_info
-
 def get_valid_game_requests_list(game_requests):
 	current_time = datetime.now()
 	game_request_list = []
@@ -133,7 +125,3 @@ def cancel_other_invitations(user):
 		if req.exp.timestamp() > current_time.timestamp() and req.status == GAME_REQ_STATUS_PENDING:
 			req.status = GAME_REQ_STATUS_DECLINED
 			req.save()
-
-def add_user_to_game(game, user2):
-	game.user2 = user2
-	game.save()

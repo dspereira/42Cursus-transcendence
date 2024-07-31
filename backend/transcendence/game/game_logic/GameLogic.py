@@ -10,8 +10,6 @@ class GameLogic:
 		self.player_2_score = 0
 		self.player_1 = user1_id
 		self.player_2 = user2_id
-		self.player_1_ready = False
-		self.player_2_ready = False
 
 	def get_ball_positions(self):
 		return self.ball.get_position()
@@ -44,17 +42,6 @@ class GameLogic:
 			self.ball.set_end_game_position()
 			self.paddle_left.end_game_position()
 			self.paddle_right.end_game_position()
-			return True
-		return False
-
-	def set_player_ready(self, user_id):
-		if user_id == self.player_1:
-			self.player_1_ready = True
-		elif user_id == self.player_2:
-			self.player_2_ready = True
-
-	def get_ready_to_start(self):
-		if self.player_1_ready and self.player_2_ready:
 			return True
 		return False
 

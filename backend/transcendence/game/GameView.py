@@ -12,13 +12,11 @@ from .utils import update_game_request_status
 from .utils import get_games_list
 from .utils import has_already_games_accepted
 from .utils import cancel_other_invitations
-from .utils import get_game_info
-from .utils import add_user_to_game
-from .Games import games_dict
+
+from .Lobby import lobby_dict
 
 game_requests_model = ModelManager(GameRequests)
 user_model = ModelManager(User)
-games_model = ModelManager(Games)
 
 class GameView(View):
 
@@ -37,7 +35,6 @@ class GameView(View):
 		if request.body:
 			req_data = json.loads(request.body)
 			user = user_model.get(id=request.access_data.sub)
-			# user = user_model.get(id=req_data["user"])
 			games_req = game_requests_model.get(id=req_data["id"])
 			if user:
 				if not games_req or games_req.to_user.id != user.id:
@@ -45,39 +42,12 @@ class GameView(View):
 				if not has_already_games_accepted(user=user):
 					update_game_request_status(game_request=games_req, new_status=GAME_REQ_STATUS_ACCEPTED)
 					cancel_other_invitations(user=games_req.from_user)
-					game = games_model.get(id=games_req.game_id)
-					if game:
-						add_user_to_game(game, games_req.to_user)
-						games_dict.create_new_game(game.id, game.user1.id, game.user2.id)
-						return JsonResponse({"message": "Game created with success!", "game": get_game_info(game=game, user=user)}, status=200)
-					else:
-						return JsonResponse({"message": "Error: Failed to create game!"}, status=409)
+					lobby = lobby_dict[games_req.from_user.id]
+					lobby.set_user_2_id(games_req.to_user.id)
+					return JsonResponse({"message": "Invite accepted with success!", "lobby_id": games_req.from_user.id}, status=200) 
 				else:
 					return JsonResponse({"message": "Error: Currently playing a game!"}, status=409)
 			else:
 				return JsonResponse({"message": "Error: Invalid User!"}, status=400)
-		else:
-			return JsonResponse({"message": "Error: Empty Body!"}, status=400)
-
-	# Remover depois de todos os testes feitos
-	def delete(self, request):
-		if request.body:
-			req_data = json.loads(request.body)
-			game_id = req_data['id']
-			if game_id:
-				game = game_requests_model.get(id=game_id)
-				if game:
-					game.delete()
-					return JsonResponse({"message": f"Deleted request with id = {game_id}"}, status=200)
-				else:
-					return JsonResponse({"message": "Error: Invalid Game Request ID!"}, status=400)
-			else:
-				counter = 0
-				games = games_model.all()
-				if games:
-					for game in games:
-						game.delete()
-						counter += 1
-				return JsonResponse({"message": f"Deleted {counter} game requests!"}, status=200)
 		else:
 			return JsonResponse({"message": "Error: Empty Body!"}, status=400)

@@ -1,4 +1,3 @@
-
 from custom_utils.auth_utils import is_authenticated, get_authenticated_user
 from channels.generic.websocket import AsyncWebsocketConsumer
 from custom_utils.models_utils import ModelManager
@@ -10,10 +9,11 @@ import asyncio
 import json
 
 from datetime import datetime
-from .game_logic.GameLogic import GameLogic
 from .Games import games_dict
 
 from .utils import GAME_STATUS_CREATED, GAME_STATUS_PLAYING, GAME_STATUS_FINISHED
+
+from .Lobby import lobby_dict
 
 game_model = ModelManager(Games)
 user_model = ModelManager(User)
@@ -30,28 +30,26 @@ class Game(AsyncWebsocketConsumer):
 		self.access_data = None
 		self.room_group_name = None
 		self.task = None
+		self.lobby = None
+		self.game_info = None
 
 	async def connect(self):
 		await self.accept()
 		self.access_data = self.scope['access_data']
 		if await sync_to_async(is_authenticated)(self.access_data):
 			self.user = await sync_to_async(get_authenticated_user)(self.access_data.sub)
-		self.game_info = await self.__get_game_info(self.scope['game_id'])
-		if not self.user or not self.game_info or not self.game_info.status == GAME_STATUS_CREATED:
-			await self.close(4000)
-			return
-		self.game = games_dict.get_game_obj(self.game_info.id)
-		if not await sync_to_async(self.__has_user_access_to_game)() or not self.game:
-			await self.close(4000)
-			return
 
-		self.room_group_name = str(self.game_info.id)
+		if lobby_dict[self.user.id]:
+			self.lobby = lobby_dict[self.user.id]
+			self.room_group_name = "game_lobby_" + str(self.user.id)
+		else:
+			pass
 
-		await self.channel_layer.group_add(
-			self.room_group_name,
-			self.channel_name
-		)
-		await self.__send_updated_data()
+		if self.room_group_name:
+			await self.channel_layer.group_add(
+				self.room_group_name,
+				self.channel_name
+			)
 
 	async def disconnect(self, close_code):
 		await self.__stop_game_routine()
@@ -73,11 +71,26 @@ class Game(AsyncWebsocketConsumer):
 			await self.__set_ready_state()
 			if await self.__is_already_ready():
 				self.__start_game_routine()
-			# self.__start_game_routine()
 		elif data_type == "key":
 			self.game.update_paddle(key=data_json['key'], status=data_json['status'], user_id=self.user.id)
 
-	def __start_game_routine(self):
+	async def __start_game_routine(self):
+		if lobby_dict[self.user.id] == self.lobby:
+			user_2_id = lobby_dict[self.user.id].get_user_2_id()
+			self.game_info = await sync_to_async(game_model.create)(user1=self.user, user2=user_2_id)
+			games_dict.create_new_game(self.game_info.id, self.user.id, user_2_id)
+			await self.channel_layer.group_send(
+				self.room_group_name,
+				{
+					'type': 'send_start_game',
+					"game_id": self.game_info.id
+				}
+			)
+			del lobby_dict[self.user.id]
+		self.lobby = None
+
+	async def send_start_game(self, event):
+		self.game = games_dict.get_game_obj(event['game_id'])
 		self.task = asyncio.create_task(self.__game_routine())
 
 	async def __stop_game_routine(self):
@@ -86,6 +99,7 @@ class Game(AsyncWebsocketConsumer):
 			await self.task
 
 	async def __game_routine(self):
+		await asyncio.sleep(1)
 		while True:
 			game_ended = self.game.is_end_game()
 			await self.__send_updated_data()
@@ -129,7 +143,11 @@ class Game(AsyncWebsocketConsumer):
 		return False
 
 	async def __is_already_ready(self):
-		self.game_info = await self.__get_game_info(self.game_info.id)
+		if await sync_to_async(self.lobby.is_ready_to_start)():
+			return True
+		return False
+
+		""" self.game_info = await self.__get_game_info(self.game_info.id)
 		if self.game_info.status == GAME_STATUS_PLAYING:
 			return False
 		else:
@@ -138,15 +156,16 @@ class Game(AsyncWebsocketConsumer):
 				await sync_to_async(self.game_info.save)()
 				print("The game has Started!")
 				return True
-		return False
+		return False """
 
 	async def __set_ready_state(self):
-		await sync_to_async(self.game.set_player_ready)(self.user.id)
+		await sync_to_async(self.lobby.update_ready_status)(self.user.id)
 
 	async def __finish_game(self):
-		self.game_info = await self.__get_game_info(self.game_info.id)
-		scores = await sync_to_async(self.game.get_score_values)()
-		self.game_info.user1_score = scores['player_1_score']
-		self.game_info.user2_score = scores['player_2_score']
-		self.game_info.status = GAME_STATUS_FINISHED
-		await sync_to_async(self.game_info.save)()
+		if self.game_info:
+			self.game_info = await self.__get_game_info(self.game_info.id)
+			scores = await sync_to_async(self.game.get_score_values)()
+			self.game_info.user1_score = scores['player_1_score']
+			self.game_info.user2_score = scores['player_2_score']
+			self.game_info.status = GAME_STATUS_FINISHED
+			await sync_to_async(self.game_info.save)()
