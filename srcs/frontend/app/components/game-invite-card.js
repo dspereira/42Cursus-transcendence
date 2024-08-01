@@ -138,9 +138,6 @@ export default class GameInviteCard extends HTMLElement {
 		if(!btn)
 			return ;
 		btn.addEventListener("click", () => {
-
-			console.log(this.data.inviteId);
-
 			const contentElm = document.querySelector(".content");
 			contentElm.innerHTML = `<app-lobby game-request-id="${this.data.inviteId}"></app-lobby>`;
 		});

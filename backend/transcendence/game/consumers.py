@@ -45,7 +45,7 @@ class Game(AsyncWebsocketConsumer):
 
 		game_request_id = int(self.scope['url_route']['kwargs']['game_request_id'])
 		if game_request_id:
-			self.lobby = await self.__get_game_lobby(game_request_id)
+			self.lobby = await sync_to_async(self.__get_game_lobby)(game_request_id)
 		else:
 			if self.user.id in lobby_dict:
 				self.lobby = lobby_dict[self.user.id]
@@ -61,20 +61,6 @@ class Game(AsyncWebsocketConsumer):
 				self.room_group_name,
 				self.channel_name
 			)
-
-		await self.channel_layer.group_send(
-			self.room_group_name,
-			{
-				'type': 'testando_ele',
-				"lobby_id": self.lobby.get_host_id()
-			}
-		)
-
-	async def testando_ele(self, event):
-		await sync_to_async(print)(f"\n")
-		await sync_to_async(print)(f"User: {self.user.username}")
-		await sync_to_async(print)(event['lobby_id'])
-		await sync_to_async(print)(f"\n")
 
 	async def disconnect(self, close_code):
 		await self.__stop_game_routine()
@@ -195,10 +181,11 @@ class Game(AsyncWebsocketConsumer):
 			self.game_info.status = GAME_STATUS_FINISHED
 			await sync_to_async(self.game_info.save)()
 
-
-	async def __get_game_lobby(self, game_req_id):
-		game_req = await sync_to_async(game_req_model.get)(id=game_req_id)
-		if game_req.to_user.id == self.user.id:
-			if game_req.from_user.id in lobby_dict:
-				return lobby_dict[game_req.from_user.id]
+	def __get_game_lobby(self, game_req_id):
+		game_req = game_req_model.get(id=game_req_id)
+		from_user_id = game_req.from_user.id
+		to_user_id =  game_req.to_user.id
+		if to_user_id == self.user.id:
+			if from_user_id in lobby_dict:
+				return lobby_dict[from_user_id]
 		return None
