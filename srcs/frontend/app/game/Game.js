@@ -16,10 +16,14 @@ export default class Game {
 		}
 		this.gameData = {
 			ball: {
-				x:50,
-				y:50
+				x: width / 2,
+				y: height / 2
 			},
-		};
+			paddle_left_pos: height / 2,
+			paddle_right_pos:  height / 2,
+			player_1_score: "0",
+			player_2_score: "0"
+		}
 	}
 
 	updateState(data) {

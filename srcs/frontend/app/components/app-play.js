@@ -102,9 +102,9 @@ export default class AppPlay extends HTMLElement {
 	}
 
 	#styles() {
-			if (styles)
-				return `@scope (.${this.elmtId}) {${styles}}`;
-			return null;
+		if (styles)
+			return `@scope (.${this.elmtId}) {${styles}}`;
+		return null;
 	}
 
 	#html(data){
@@ -146,20 +146,12 @@ export default class AppPlay extends HTMLElement {
 		gameWebSocket.send("down", this.keyDownStatus);
 	}
 
-	/*async #initGame() {
-		await this.#getGameColorPallet();
-		this.game.start();
-		this.#keyEvents();
-		gameWebSocket.open();
-	}*/
-
 	#initGame() {
 		this.#getGameColorPallet();
 		this.#setGameStatusEvent();
 		this.game.start();
 		this.#keyEvents();
 		this.#readyToPlayBtnEvent();
-		gameWebSocket.open();
 	}
 
 	/*
@@ -171,7 +163,7 @@ export default class AppPlay extends HTMLElement {
 		5: Forest Retreat
 	*/
 	#getGameColorPallet() {
-		const queryParam = `?id=${3}`;
+		const queryParam = `?id=${2}`;
 
 		callAPI("GET", `http://127.0.0.1:8000/api/game/color_pallet/${queryParam}`, null, (res, data) => {
 			if (res.ok) {
@@ -193,7 +185,6 @@ export default class AppPlay extends HTMLElement {
 			gameWebSocket.ready();
 		});
 	}
-
 }
 
 customElements.define("app-play", AppPlay);

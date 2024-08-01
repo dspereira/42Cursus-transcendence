@@ -121,6 +121,10 @@ export default class AppLobby extends HTMLElement {
 				this.#updatePlayer(value.host, "host");
 			if (value.guest)
 				this.#updatePlayer(value.guest, "guest");
+			if (value.host && value.guest) {
+				if (value.host.is_ready && value.guest.is_ready)
+					this.#startGame();
+			}
 		});
 	}
 
@@ -142,6 +146,13 @@ export default class AppLobby extends HTMLElement {
 		this.readyBtn.addEventListener("click", () => {
 			gameWebSocket.updateReadyStatus();
 		});
+	}
+
+	#startGame() {
+		const contentElm = document.querySelector(".content");
+		contentElm.innerHTML = `
+		<app-play></app-play>
+	`;
 	}
 }
 

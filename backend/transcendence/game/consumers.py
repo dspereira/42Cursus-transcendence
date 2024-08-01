@@ -63,9 +63,6 @@ class Game(AsyncWebsocketConsumer):
 				self.room_group_name,
 				self.channel_name
 			)
-
-		await sync_to_async(print)(self.lobby)
-
 		await self.send_users_info_to_group()
 
 	async def send_users_info_to_group(self):
@@ -81,9 +78,6 @@ class Game(AsyncWebsocketConsumer):
 
 	async def disconnect(self, close_code):
 		await sync_to_async(self.lobby.update_connected_status)(self.user.id, False)
-
-		await sync_to_async(print)(self.lobby)
-
 		await self.__stop_game_routine()
 		if self.room_group_name:
 			await self.channel_layer.group_discard(
@@ -101,16 +95,16 @@ class Game(AsyncWebsocketConsumer):
 
 		if data_type == "update_ready_status":
 			await self.__update_ready_status()
-			""" if await self.__is_already_ready():
-				self.__start_game_routine() """
+			if await self.__is_already_ready():
+				await self.__start_game_routine()
 		elif data_type == "key":
 			self.game.update_paddle(key=data_json['key'], status=data_json['status'], user_id=self.user.id)
 
 	async def __start_game_routine(self):
-		if lobby_dict[self.user.id] == self.lobby:
-			user_2_id = lobby_dict[self.user.id].get_user_2_id()
-			self.game_info = await sync_to_async(game_model.create)(user1=self.user, user2=user_2_id)
-			games_dict.create_new_game(self.game_info.id, self.user.id, user_2_id)
+		if self.user.id == self.lobby.get_host_id():
+			user_2 = await sync_to_async(user_model.get)(id=self.lobby.get_user_2_id())
+			self.game_info = await sync_to_async(game_model.create)(user1=self.user, user2=user_2)
+			games_dict.create_new_game(self.game_info.id, self.user.id, user_2.id)
 			await self.channel_layer.group_send(
 				self.room_group_name,
 				{
@@ -118,11 +112,10 @@ class Game(AsyncWebsocketConsumer):
 					"game_id": self.game_info.id
 				}
 			)
-			del lobby_dict[self.user.id]
-		self.lobby = None
 
 	async def send_start_game(self, event):
-		self.game = games_dict.get_game_obj(event['game_id'])
+		self.game = await sync_to_async(games_dict.get_game_obj)(event['game_id'])
+		await self.__send_updated_data()
 		self.task = asyncio.create_task(self.__game_routine())
 
 	async def __stop_game_routine(self):
@@ -146,7 +139,7 @@ class Game(AsyncWebsocketConsumer):
 		await self.channel_layer.group_send(
 			self.room_group_name,
 			{
-				'type': 'send_game_status',
+				'type': 'send_game_state',
 				"game_state": {
 					"ball": self.game.get_ball_positions(),
 					"paddle_left_pos": self.game.get_paddle_left(),
@@ -157,9 +150,9 @@ class Game(AsyncWebsocketConsumer):
 			}
 		)
 
-	async def send_game_status(self, event):
+	async def send_game_state(self, event):
 		await self.send(text_data=json.dumps({
-			'type': 'message',
+			'type': 'game_state',
 			'game_state': event['game_state']
 		}))
 
