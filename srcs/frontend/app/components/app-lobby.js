@@ -53,7 +53,7 @@ const getHtml = function(data) {
 }
 
 export default class AppLobby extends HTMLElement {
-	static observedAttributes = ["game-request-id"];
+	static observedAttributes = ["lobby-id"];
 
 	constructor() {
 		super()
@@ -67,8 +67,8 @@ export default class AppLobby extends HTMLElement {
 	}
 
 	attributeChangedCallback(name, oldValue, newValue) {
-		if (name == "game-request-id")
-			name = "gameRequestId";
+		if (name == "lobby-id")
+			name = "lobbyId";
 		this.data[name] = newValue;
 	}
 
@@ -104,9 +104,9 @@ export default class AppLobby extends HTMLElement {
 	}
 
 	#openSocket() {
-		if (!this.data.gameRequestId)
-			this.data.gameRequestId = "0";
-		gameWebSocket.open(this.data.gameRequestId);
+		if (!this.data.lobbyId)
+			this.data.lobbyId = "0";
+		gameWebSocket.open(this.data.lobbyId);
 	}
 }
 

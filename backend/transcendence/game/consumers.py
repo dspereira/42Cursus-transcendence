@@ -1,10 +1,12 @@
 from custom_utils.auth_utils import is_authenticated, get_authenticated_user
 from channels.generic.websocket import AsyncWebsocketConsumer
+from friendships.friendships import get_single_user_info
 from custom_utils.models_utils import ModelManager
+from user_profile.models import UserProfileInfo
 from channels.exceptions import StopConsumer
+from .models import Games, GameRequests
 from asgiref.sync import sync_to_async
 from user_auth.models import User
-from .models import Games, GameRequests
 import asyncio
 import json
 
@@ -15,6 +17,7 @@ from .utils import GAME_STATUS_CREATED, GAME_STATUS_PLAYING, GAME_STATUS_FINISHE
 
 from .Lobby import lobby_dict
 
+user_profile_info_model = ModelManager(UserProfileInfo)
 game_req_model = ModelManager(GameRequests)
 game_model = ModelManager(Games)
 user_model = ModelManager(User)
@@ -43,12 +46,14 @@ class Game(AsyncWebsocketConsumer):
 			await self.close(4000)
 			return
 
-		game_request_id = int(self.scope['url_route']['kwargs']['game_request_id'])
-		if game_request_id:
-			self.lobby = await sync_to_async(self.__get_game_lobby)(game_request_id)
-		else:
-			if self.user.id in lobby_dict:
-				self.lobby = lobby_dict[self.user.id]
+		lobby_id = int(self.scope['url_route']['kwargs']['lobby_id'])
+
+		await sync_to_async(print)(f"\nLobby ID -> {lobby_id}\n")
+
+		if lobby_id and await sync_to_async(self.__has_access_to_lobby)(lobby_id):
+			self.lobby = lobby_dict[lobby_id]
+
+		await sync_to_async(print)(f"\nLobby -> {self.lobby}\n")
 
 		if self.lobby:
 			self.room_group_name = "game_lobby_" + str(self.lobby.get_host_id())
@@ -56,13 +61,34 @@ class Game(AsyncWebsocketConsumer):
 			await self.close(4000)
 			return
 
+		await sync_to_async(self.lobby.update_connected_status)(self.user.id, True)
+
 		if self.room_group_name:
 			await self.channel_layer.group_add(
 				self.room_group_name,
 				self.channel_name
 			)
 
+		await sync_to_async(print)(self.lobby)
+
+		await self.channel_layer.group_send(
+			self.room_group_name, {'type': 'send_connect_to_lobby'}
+		)
+
+	async def send_connect_to_lobby(self, event):
+		is_host = True if self.user.id == self.lobby.get_host_id() else False
+		user_info = await sync_to_async(self.__get_user_info)()
+		await self.send(text_data=json.dumps({
+			'type': 'connected_to_lobby',
+			'is_host': is_host,
+			'user_info': user_info
+		}))
+
 	async def disconnect(self, close_code):
+		await sync_to_async(self.lobby.update_connected_status)(self.user.id, False)
+
+		await sync_to_async(print)(self.lobby)
+
 		await self.__stop_game_routine()
 		if self.room_group_name:
 			await self.channel_layer.group_discard(
@@ -158,17 +184,6 @@ class Game(AsyncWebsocketConsumer):
 			return True
 		return False
 
-		""" self.game_info = await self.__get_game_info(self.game_info.id)
-		if self.game_info.status == GAME_STATUS_PLAYING:
-			return False
-		else:
-			if await sync_to_async(self.game.get_ready_to_start)():
-				self.game_info.status = GAME_STATUS_PLAYING
-				await sync_to_async(self.game_info.save)()
-				print("The game has Started!")
-				return True
-		return False """
-
 	async def __set_ready_state(self):
 		await sync_to_async(self.lobby.update_ready_status)(self.user.id)
 
@@ -181,11 +196,14 @@ class Game(AsyncWebsocketConsumer):
 			self.game_info.status = GAME_STATUS_FINISHED
 			await sync_to_async(self.game_info.save)()
 
-	def __get_game_lobby(self, game_req_id):
-		game_req = game_req_model.get(id=game_req_id)
-		from_user_id = game_req.from_user.id
-		to_user_id =  game_req.to_user.id
-		if to_user_id == self.user.id:
-			if from_user_id in lobby_dict:
-				return lobby_dict[from_user_id]
-		return None
+	def __has_access_to_lobby(self, lobby_id):
+		if lobby_id in lobby_dict:
+			lobby = lobby_dict[lobby_id]
+			if lobby.has_access(self.user.id):
+				return True
+		return False
+
+	def __get_user_info(self):
+		user_profile_info = user_profile_info_model.get(user=self.user)
+		user_info = get_single_user_info(user_profile_info)
+		return user_info

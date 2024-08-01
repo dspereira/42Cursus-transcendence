@@ -138,8 +138,16 @@ export default class GameInviteCard extends HTMLElement {
 		if(!btn)
 			return ;
 		btn.addEventListener("click", () => {
-			const contentElm = document.querySelector(".content");
-			contentElm.innerHTML = `<app-lobby game-request-id="${this.data.inviteId}"></app-lobby>`;
+			callAPI("PUT", `http://127.0.0.1:8000/api/game/request/`, {id: this.data.inviteId}, (res, data) => {
+				if (res.ok) {
+
+					console.log("Lobby id: ", data.lobby_id);
+			
+
+					const contentElm = document.querySelector(".content");
+					contentElm.innerHTML = `<app-lobby lobby-id="${data.lobby_id}"></app-lobby>`;
+				}
+			});
 		});
 	}
 }
