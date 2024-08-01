@@ -11,6 +11,9 @@ class Lobby:
     def get_user_2_id(self):
         return self.user_2
 
+    def get_host_id(self):
+        return self.user_1
+
     def update_ready_status(self, user_id):
         if user_id == self.user_1:
             self.ready_status_player_1 = self.__get_new_ready_status(self.ready_status_player_1)

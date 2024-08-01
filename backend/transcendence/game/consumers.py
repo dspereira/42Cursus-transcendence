@@ -4,7 +4,7 @@ from custom_utils.models_utils import ModelManager
 from channels.exceptions import StopConsumer
 from asgiref.sync import sync_to_async
 from user_auth.models import User
-from .models import Games
+from .models import Games, GameRequests
 import asyncio
 import json
 
@@ -15,6 +15,7 @@ from .utils import GAME_STATUS_CREATED, GAME_STATUS_PLAYING, GAME_STATUS_FINISHE
 
 from .Lobby import lobby_dict
 
+game_req_model = ModelManager(GameRequests)
 game_model = ModelManager(Games)
 user_model = ModelManager(User)
 
@@ -43,18 +44,37 @@ class Game(AsyncWebsocketConsumer):
 			return
 
 		game_request_id = int(self.scope['url_route']['kwargs']['game_request_id'])
-
 		if game_request_id:
-			await sync_to_async(print)(f"Request ID: {game_request_id}")
+			self.lobby = await self.__get_game_lobby(game_request_id)
 		else:
-			self.lobby = lobby_dict[self.user.id]
-			self.room_group_name = "game_lobby_" + str(self.user.id)
+			if self.user.id in lobby_dict:
+				self.lobby = lobby_dict[self.user.id]
+
+		if self.lobby:
+			self.room_group_name = "game_lobby_" + str(self.lobby.get_host_id())
+		else:
+			await self.close(4000)
+			return
 
 		if self.room_group_name:
 			await self.channel_layer.group_add(
 				self.room_group_name,
 				self.channel_name
 			)
+
+		await self.channel_layer.group_send(
+			self.room_group_name,
+			{
+				'type': 'testando_ele',
+				"lobby_id": self.lobby.get_host_id()
+			}
+		)
+
+	async def testando_ele(self, event):
+		await sync_to_async(print)(f"\n")
+		await sync_to_async(print)(f"User: {self.user.username}")
+		await sync_to_async(print)(event['lobby_id'])
+		await sync_to_async(print)(f"\n")
 
 	async def disconnect(self, close_code):
 		await self.__stop_game_routine()
@@ -174,3 +194,11 @@ class Game(AsyncWebsocketConsumer):
 			self.game_info.user2_score = scores['player_2_score']
 			self.game_info.status = GAME_STATUS_FINISHED
 			await sync_to_async(self.game_info.save)()
+
+
+	async def __get_game_lobby(self, game_req_id):
+		game_req = await sync_to_async(game_req_model.get)(id=game_req_id)
+		if game_req.to_user.id == self.user.id:
+			if game_req.from_user.id in lobby_dict:
+				return lobby_dict[game_req.from_user.id]
+		return None
