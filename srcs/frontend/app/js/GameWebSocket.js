@@ -49,10 +49,10 @@ class GameWebSocket {
 		}
 	}
 
-	ready() {
+	updateReadyStatus() {
 		if (this.isOpen()) {
 			this.socket.send(JSON.stringify({
-				type: "ready"
+				type: "update_ready_status"
 			}));
 		}
 	}
@@ -83,6 +83,10 @@ class GameWebSocket {
 		this.socket.onmessage = (event) => {
 			if (event.data) {
 				const data = JSON.parse(event.data);
+
+				if (data.type == "users_info")
+					stateManager.setState("lobbyStatus", data.users_info);
+				
 				stateManager.setState("gameStatus", data.game_state);
 			}
 		};

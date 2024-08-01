@@ -260,7 +260,12 @@ export default class GameInviteSend extends HTMLElement {
 			callAPI("POST", "http://127.0.0.1:8000/api/game/request/", data, (res, data) => {
 				if (res.ok) {
 					const contentElm = document.querySelector(".content");
-					contentElm.innerHTML = `<app-lobby lobby-id="${stateManager.getState("userId")}"></app-lobby>`;
+					contentElm.innerHTML = `
+					<app-lobby 
+						lobby-id="${stateManager.getState("userId")}"
+						player-type="host"
+					></app-lobby>
+					`;
 				}
 			});
 		});

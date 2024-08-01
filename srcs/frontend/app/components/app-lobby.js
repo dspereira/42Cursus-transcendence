@@ -1,5 +1,6 @@
 import { callAPI } from "../utils/callApiUtils.js";
 import gameWebSocket from "../js/GameWebSocket.js";
+import stateManager from "../js/StateManager.js";
 
 const styles = `
 	.lobby {
@@ -8,7 +9,7 @@ const styles = `
 		text-align: center;
 	}
 
-	.owner {
+	.host {
 		width: 50%;
 	}
 
@@ -36,11 +37,11 @@ const getHtml = function(data) {
 	const html = `
 
 		<div class="lobby">
-			<div class="owner">
-				<img src="https://api.dicebear.com/8.x/bottts/svg?seed=dsilveri1" class="profile-photo" alt="avatar">
+			<div class="host">
+				<!--<img src="https://api.dicebear.com/8.x/bottts/svg?seed=dsilveri1" class="profile-photo" alt="avatar">-->
 			</div>
 			<div class="guest">
-				<img src="https://api.dicebear.com/8.x/bottts/svg?seed=dsilveri2" class="profile-photo" alt="avatar">
+				<!--<img src="https://api.dicebear.com/8.x/bottts/svg?seed=dsilveri2" class="profile-photo" alt="avatar">-->
 			</div>
 		</div>
 
@@ -53,7 +54,7 @@ const getHtml = function(data) {
 }
 
 export default class AppLobby extends HTMLElement {
-	static observedAttributes = ["lobby-id"];
+	static observedAttributes = ["lobby-id", "player-type"];
 
 	constructor() {
 		super()
@@ -69,6 +70,8 @@ export default class AppLobby extends HTMLElement {
 	attributeChangedCallback(name, oldValue, newValue) {
 		if (name == "lobby-id")
 			name = "lobbyId";
+		if (name == "player-type")
+			name = "playerType"
 		this.data[name] = newValue;
 	}
 
@@ -81,6 +84,7 @@ export default class AppLobby extends HTMLElement {
 			this.styles.textContent = this.#styles();
 			this.html.classList.add(`${this.elmtId}`);
 		}
+		this.readyBtn = this.html.querySelector(".ready-btn");
 	}
 
 	#styles() {
@@ -101,12 +105,43 @@ export default class AppLobby extends HTMLElement {
 
 	#scripts() {
 		this.#openSocket();
+		this.#setLobbyStatusEvent();
+		this.#setReadyBtnEvent();
 	}
 
 	#openSocket() {
-		if (!this.data.lobbyId)
-			this.data.lobbyId = "0";
 		gameWebSocket.open(this.data.lobbyId);
+	}
+
+	#setLobbyStatusEvent() {
+		stateManager.addEvent("lobbyStatus", (value) => {
+			console.log(value);
+
+			if (value.host)
+				this.#updatePlayer(value.host, "host");
+			if (value.guest)
+				this.#updatePlayer(value.guest, "guest");
+		});
+	}
+
+	#updatePlayer(playerinfo, playerType) {
+		const playerImage = this.html.querySelector(`.${playerType}`);
+		if (!playerImage)
+			return ;
+		playerImage.innerHTML = `
+			<img src="${playerinfo.image}" class="profile-photo" alt="avatar">
+			<div>${playerinfo.username}</div>
+			<div>${playerinfo.is_ready ? "ready" : "not ready"}</div>
+		`;
+
+		if (playerType == this.data.playerType)
+			this.readyBtn.innerHTML = `${playerinfo.is_ready ? "not ready" : "ready"}`;
+	}
+
+	#setReadyBtnEvent() {
+		this.readyBtn.addEventListener("click", () => {
+			gameWebSocket.updateReadyStatus();
+		});
 	}
 }
 

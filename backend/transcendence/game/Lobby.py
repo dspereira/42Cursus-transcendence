@@ -38,6 +38,18 @@ class Lobby:
             return True
         return False
 
+    def is_user_connected(self, user_id):
+        if user_id == self.user_1:
+            return self.user_1_connected
+        else:
+            return self.user_2_connected
+
+    def is_user_ready(self, user_id):
+        if user_id == self.user_1:
+            return self.ready_status_player_1
+        else:
+            return self.ready_status_player_2
+
     def __get_new_ready_status(self, current_status):
         new_status = True
         if current_status == True:

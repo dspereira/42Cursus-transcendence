@@ -1,9 +1,9 @@
 from custom_utils.auth_utils import is_authenticated, get_authenticated_user
 from channels.generic.websocket import AsyncWebsocketConsumer
-from friendships.friendships import get_single_user_info
 from custom_utils.models_utils import ModelManager
 from user_profile.models import UserProfileInfo
 from channels.exceptions import StopConsumer
+from user_profile.aux import get_image_url
 from .models import Games, GameRequests
 from asgiref.sync import sync_to_async
 from user_auth.models import User
@@ -47,13 +47,8 @@ class Game(AsyncWebsocketConsumer):
 			return
 
 		lobby_id = int(self.scope['url_route']['kwargs']['lobby_id'])
-
-		await sync_to_async(print)(f"\nLobby ID -> {lobby_id}\n")
-
 		if lobby_id and await sync_to_async(self.__has_access_to_lobby)(lobby_id):
 			self.lobby = lobby_dict[lobby_id]
-
-		await sync_to_async(print)(f"\nLobby -> {self.lobby}\n")
 
 		if self.lobby:
 			self.room_group_name = "game_lobby_" + str(self.lobby.get_host_id())
@@ -71,17 +66,17 @@ class Game(AsyncWebsocketConsumer):
 
 		await sync_to_async(print)(self.lobby)
 
+		await self.send_users_info_to_group()
+
+	async def send_users_info_to_group(self):
 		await self.channel_layer.group_send(
-			self.room_group_name, {'type': 'send_connect_to_lobby'}
+			self.room_group_name, {'type': 'send_users_info'}
 		)
 
-	async def send_connect_to_lobby(self, event):
-		is_host = True if self.user.id == self.lobby.get_host_id() else False
-		user_info = await sync_to_async(self.__get_user_info)()
+	async def send_users_info(self, event):
 		await self.send(text_data=json.dumps({
-			'type': 'connected_to_lobby',
-			'is_host': is_host,
-			'user_info': user_info
+			'type': 'users_info',
+			'users_info': await sync_to_async(self.__get_users_info)()
 		}))
 
 	async def disconnect(self, close_code):
@@ -104,10 +99,10 @@ class Game(AsyncWebsocketConsumer):
 		data_json = json.loads(text_data)
 		data_type = data_json['type']
 
-		if data_type == "ready":
-			await self.__set_ready_state()
-			if await self.__is_already_ready():
-				self.__start_game_routine()
+		if data_type == "update_ready_status":
+			await self.__update_ready_status()
+			""" if await self.__is_already_ready():
+				self.__start_game_routine() """
 		elif data_type == "key":
 			self.game.update_paddle(key=data_json['key'], status=data_json['status'], user_id=self.user.id)
 
@@ -184,8 +179,9 @@ class Game(AsyncWebsocketConsumer):
 			return True
 		return False
 
-	async def __set_ready_state(self):
+	async def __update_ready_status(self):
 		await sync_to_async(self.lobby.update_ready_status)(self.user.id)
+		await self.send_users_info_to_group()
 
 	async def __finish_game(self):
 		if self.game_info:
@@ -203,7 +199,23 @@ class Game(AsyncWebsocketConsumer):
 				return True
 		return False
 
-	def __get_user_info(self):
-		user_profile_info = user_profile_info_model.get(user=self.user)
-		user_info = get_single_user_info(user_profile_info)
-		return user_info
+	def __get_users_info(self):
+		users_info = {"host": None, "guest": None}
+		user_id = self.lobby.get_host_id()
+		if self.lobby.is_user_connected(user_id):
+			self.__set_display_user_info(users_info, user_id, 'host')
+		user_id = self.lobby.get_user_2_id()
+		if self.lobby.is_user_connected(user_id):
+			self.__set_display_user_info(users_info, user_id, 'guest')
+		return users_info
+
+	def __set_display_user_info(self, users_info, user_id, player_type):
+		user = user_model.get(id=user_id)
+		user_profile = user_profile_info_model.get(user=user)
+		is_ready = self.lobby.is_user_ready(user_id)
+		display_info = {
+			"username": user.username,
+			"image": get_image_url(user_profile),
+			"is_ready": is_ready
+		}
+		users_info[player_type] = display_info

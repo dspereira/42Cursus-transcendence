@@ -22,7 +22,8 @@ class StateManager {
 			messageSend: null,
 			onlineStatus: null,
 			blockStatus: null,
-			gameStatus: null
+			gameStatus: null,
+			lobbyStatus: null
 		}
 		this.stateEvents = {
 			sidePanel: [],
@@ -40,6 +41,7 @@ class StateManager {
 			onlineStatus: [],
 			blockStatus: [],
 			gameStatus: [],
+			lobbyStatus: []
 		}
 
 		StateManager.instance = this;
