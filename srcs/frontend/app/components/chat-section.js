@@ -173,9 +173,6 @@ form {
 	background: ${colors.main_card};
 }
 
-
-
-
 .msg-input ::-webkit-scrollbar {
 	width: 15px;
 }

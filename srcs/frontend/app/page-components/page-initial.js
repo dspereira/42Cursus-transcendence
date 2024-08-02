@@ -18,7 +18,7 @@ const styles = `
 
 	#left {
 		right: 30px;
-		top: 40%;
+		top: 60%;
 	}
 
 	.ball {
@@ -53,14 +53,16 @@ const styles = `
 	.title-container {
 		display: flex;
 		flex-direction: column;
-		width: 50%;
+		width: 70%;
 	}
 
 	.button-container {
 		display: flex;
 		width: 100%;
-		height: 100px;
+		height: 50px;
 		flex-direction: row;
+		justify-content: center;
+		align-items: center;
 		gap: 200px;
 		padding: 0px 20px 0px 20px;
 	}
@@ -71,12 +73,12 @@ const styles = `
 	}
 
 	#login, #signup {
+		width: 150px;
 		font-size: 24px;
 		font-weight: bold;
 	}
 
 	#login {
-		width: 100%;
 		border: 2px solid ${colors.primary_text};
 		color: ${colors.primary_text};
 		background-color: rgba(0, 0, 0, 0);
@@ -89,7 +91,6 @@ const styles = `
 	}
 
 	#signup {
-		width: 100%;
 		border: 2px solid ${colors.primary_text};>
 		color: ${colors.primary_text};
 		background-color: rgba(0, 0, 0, 0);
@@ -113,7 +114,7 @@ const getHtml = function(data) {
 	const html = `
 		<div class=main-container>
 			<div class=title-container>
-				<img src="../img/logo_white.png" class=logo-img>
+				<img src="../img/logo_white_big.png" class=logo-img>
 			</div>
 			<div class=button-container>
 				<button type="button" class="btn btn-primary" id="login">Login</button>

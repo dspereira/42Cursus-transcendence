@@ -74,7 +74,7 @@ export default class AppBackground extends HTMLElement {
 		this.canvas.height = "400";
 
 		this.game = new Game(this.ctx, this.canvas.width, this.canvas.height);
-		this.ctx.filter = "blur(5px)";
+		this.ctx.filter = "blur(0px)";
 	}
 
 	#styles() {
