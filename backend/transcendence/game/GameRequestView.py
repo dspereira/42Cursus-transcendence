@@ -64,7 +64,7 @@ class GameRequestView(View):
 			return JsonResponse({"message": "Error: Empty Body!"}, status=400)
 
 	@method_decorator(login_required)
-	def patch(self, request):
+	def delete(self, request):
 		if request.body:
 			req_data = json.loads(request.body)
 			game_req_id = req_data['id']

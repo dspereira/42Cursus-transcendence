@@ -130,10 +130,11 @@ export default class GameInviteCard extends HTMLElement {
 	}
 
 	#scripts() {
-		this.#setJoiBtnEvent();
+		this.#setJoinBtnEvent();
+		this.#setDeclineBtnEvent();
 	}
 
-	#setJoiBtnEvent() {
+	#setJoinBtnEvent() {
 		const btn = this.html.querySelector(".join-btn");
 		if(!btn)
 			return ;
@@ -148,6 +149,18 @@ export default class GameInviteCard extends HTMLElement {
 						></app-lobby>
 					`;
 				}
+			});
+		});
+	}
+
+	#setDeclineBtnEvent() {
+		const btn = this.html.querySelector(".decline-btn");
+		if(!btn)
+			return ;
+		btn.addEventListener("click", () => {
+			callAPI("DELETE", `http://127.0.0.1:8000/api/game/request/`, {id: this.data.inviteId}, (res, data) => {
+				if (res.ok)
+					this.remove();
 			});
 		});
 	}

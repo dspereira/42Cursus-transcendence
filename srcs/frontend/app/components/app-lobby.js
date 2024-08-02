@@ -1,6 +1,7 @@
 import { callAPI } from "../utils/callApiUtils.js";
 import gameWebSocket from "../js/GameWebSocket.js";
 import stateManager from "../js/StateManager.js";
+import { redirect } from "../js/router.js";
 
 const styles = `
 	.lobby {
@@ -59,6 +60,7 @@ export default class AppLobby extends HTMLElement {
 	constructor() {
 		super()
 		this.data = {};
+		this.intervalID = null;
 	}
 
 	connectedCallback() {
@@ -68,6 +70,8 @@ export default class AppLobby extends HTMLElement {
 	}
 
 	disconnectedCallback() {
+		if (this.intervalID)
+			clearInterval(this.intervalID);
 		console.log('disconnectedCallback');
 	}
 
@@ -111,6 +115,7 @@ export default class AppLobby extends HTMLElement {
 		this.#openSocket();
 		this.#setLobbyStatusEvent();
 		this.#setReadyBtnEvent();
+		this.#setActiveInviteCheckEvent();
 	}
 
 	#openSocket() {
@@ -157,6 +162,22 @@ export default class AppLobby extends HTMLElement {
 		contentElm.innerHTML = `
 		<app-play></app-play>
 	`;
+	}
+
+	#setActiveInviteCheckEvent() {
+		if (this.data.playerType == "host") {
+			this.intervalID = setInterval(() => {
+				callAPI("GET", `http://127.0.0.1:8000/api/game/has-pending-game-requests/`, null, (res, data) => {
+					console.log(data.has_pending_game_requests);
+					if (res.ok) {
+						if (!data.has_pending_game_requests) {
+							clearInterval(this.intervalID);
+							redirect("/play");
+						}
+					}
+				});
+			}, 5000);
+		}
 	}
 }
 

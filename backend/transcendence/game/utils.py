@@ -89,8 +89,8 @@ def is_user_winner(winner, user):
 def get_game_info(game, user):
 	game_info = {
 		"id": game.id,
-		"user1": game.user1.username if not game.user1_alias else game.user1_alias,
-		"user2": game.user2.username if not game.user2_alias else game.user2_alias,
+		"user1": game.user1.username,
+		"user2": game.user2.username,
 		"user1_score": game.user1_score,
 		"user2_score": game.user2_score,
 		"user1_image": get_image_url(get_user_profile(user=game.user1)),
@@ -125,3 +125,10 @@ def cancel_other_invitations(user):
 		if req.exp.timestamp() > current_time.timestamp() and req.status == GAME_REQ_STATUS_PENDING:
 			req.status = GAME_REQ_STATUS_DECLINED
 			req.save()
+
+def has_user_pending_game_requests(user):
+	game_reuests = game_requests_model.filter(from_user=user, status=GAME_REQ_STATUS_PENDING)
+	if game_reuests:
+		if get_valid_game_requests_list(game_reuests):
+			return True
+	return False
