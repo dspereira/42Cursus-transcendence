@@ -86,10 +86,10 @@ class GameWebSocket {
 
 				if (data.type == "users_info")
 					stateManager.setState("lobbyStatus", data.users_info);
-				if (data.type == "game_state") {
-					console.log(data.game_state);
+				if (data.type == "game_state")
 					stateManager.setState("gameStatus", data.game_state);
-				}
+				if (data.type == "time_to_start")
+					stateManager.setState("gameTimeToStart", data.time);
 			}
 		};
 

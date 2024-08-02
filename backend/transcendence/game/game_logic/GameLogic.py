@@ -1,3 +1,4 @@
+from datetime import datetime
 from .Paddle import Paddle
 from .Ball import Ball
 
@@ -10,6 +11,7 @@ class GameLogic:
 		self.player_2_score = 0
 		self.player_1 = user1_id
 		self.player_2 = user2_id
+		self.start_time_value = None
 
 	def get_ball_positions(self):
 		return self.ball.get_position()
@@ -44,6 +46,13 @@ class GameLogic:
 			self.paddle_right.end_game_position()
 			return True
 		return False
+
+	def start_time(self):
+		if not self.start_time_value:
+			self.start_time_value = datetime.now()
+
+	def get_time_to_start(self):
+		return round(datetime.now().timestamp() - self.start_time_value.timestamp())
 
 	def __add_score(self, info):
 		if info['player_1']:

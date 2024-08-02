@@ -23,8 +23,7 @@ game_model = ModelManager(Games)
 user_model = ModelManager(User)
 
 SLEEP_TIME_MILISECONDS = 10
-SLEEP_TIME_SECONDS = 0
-SLEEP_TIME = SLEEP_TIME_SECONDS + (0 if not SLEEP_TIME_MILISECONDS else SLEEP_TIME_MILISECONDS / 1000)
+SLEEP_TIME_SECONDS = (0 if not SLEEP_TIME_MILISECONDS else SLEEP_TIME_MILISECONDS / 1000)
 
 class Game(AsyncWebsocketConsumer):
 
@@ -101,17 +100,17 @@ class Game(AsyncWebsocketConsumer):
 			self.game.update_paddle(key=data_json['key'], status=data_json['status'], user_id=self.user.id)
 
 	async def __start_game_routine(self):
-		if self.user.id == self.lobby.get_host_id():
-			user_2 = await sync_to_async(user_model.get)(id=self.lobby.get_user_2_id())
-			self.game_info = await sync_to_async(game_model.create)(user1=self.user, user2=user_2)
-			games_dict.create_new_game(self.game_info.id, self.user.id, user_2.id)
-			await self.channel_layer.group_send(
-				self.room_group_name,
-				{
-					'type': 'send_start_game',
-					"game_id": self.game_info.id
-				}
-			)
+		user_1 = await sync_to_async(user_model.get)(id=self.lobby.get_host_id())
+		user_2 = await sync_to_async(user_model.get)(id=self.lobby.get_user_2_id())
+		self.game_info = await sync_to_async(game_model.create)(user1=user_1, user2=user_2)
+		games_dict.create_new_game(self.game_info.id, user_1.id, user_2.id)
+		await self.channel_layer.group_send(
+			self.room_group_name,
+			{
+				'type': 'send_start_game',
+				"game_id": self.game_info.id
+			}
+		)
 
 	async def send_start_game(self, event):
 		self.game = await sync_to_async(games_dict.get_game_obj)(event['game_id'])
@@ -124,7 +123,13 @@ class Game(AsyncWebsocketConsumer):
 			await self.task
 
 	async def __game_routine(self):
-		await asyncio.sleep(1)
+		await sync_to_async(self.game.start_time)()
+		while True:
+			time = await sync_to_async(self.game.get_time_to_start)()
+			if 3 - time < 0:
+				break
+			await self.__send_timer_data(3 - time)
+			await asyncio.sleep(SLEEP_TIME_SECONDS * 10)
 		while True:
 			game_ended = self.game.is_end_game()
 			await self.__send_updated_data()
@@ -132,7 +137,22 @@ class Game(AsyncWebsocketConsumer):
 				await self.__finish_game()
 				break
 			self.game.update()
-			await asyncio.sleep(SLEEP_TIME)
+			await asyncio.sleep(SLEEP_TIME_SECONDS)
+
+	async def __send_timer_data(self, time):
+		await self.channel_layer.group_send(
+			self.room_group_name,
+			{
+				'type': 'send_timer_data',
+				'time': time
+			}
+		)
+
+	async def send_timer_data(self, event):
+		await self.send(text_data=json.dumps({
+			'type': 'time_to_start',
+			'time': event['time']
+		}))
 
 	async def __send_updated_data(self):
 		scores = self.game.get_score_values()
@@ -161,11 +181,6 @@ class Game(AsyncWebsocketConsumer):
 		if game_id:
 			game_info = await sync_to_async(game_model.get)(id=game_id)
 		return game_info
-
-	def __has_user_access_to_game(self):
-		if self.game_info.user1.id == self.user.id or self.game_info.user2.id == self.user.id:
-			return True
-		return False
 
 	async def __is_already_ready(self):
 		if await sync_to_async(self.lobby.is_ready_to_start)():

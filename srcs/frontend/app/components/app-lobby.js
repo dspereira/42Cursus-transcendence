@@ -67,6 +67,10 @@ export default class AppLobby extends HTMLElement {
 		this.#scripts();
 	}
 
+	disconnectedCallback() {
+		console.log('disconnectedCallback');
+	}
+
 	attributeChangedCallback(name, oldValue, newValue) {
 		if (name == "lobby-id")
 			name = "lobbyId";

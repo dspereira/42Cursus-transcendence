@@ -6,6 +6,7 @@ class Lobby:
         self.ready_status_player_2 = False
         self.user_1_connected = False
         self.user_2_connected = False
+        self.associated_game = None
 
     def set_user_2_id(self, user_2_id):
         self.user_2 = user_2_id

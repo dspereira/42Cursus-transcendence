@@ -3,53 +3,12 @@ import gameWebSocket from "../js/GameWebSocket.js";
 import { callAPI } from "../utils/callApiUtils.js";
 import stateManager from "../js/StateManager.js";
 
-const styles = `
-	canvas {
-		background: black;
-	}
-
-	button {
-		display: block;
-		background : transparent;
-		border: 0;
-		padding: 0;
-		font-family: innherit;
-		text-align: left;
-		width: 160px;
-	}
-
-	button:hover {
-		background-color: #dbd9d7;
-		border-radius: 6px;
-		width: 160px;
-	}
-
-	.icon {
-		display: inline-block;
-		font-size: 22px;
-		padding: 8px 14px 8px 14px;
-		text-align: center;
-	}
-
-	.icon:hover {
-		background-color: #dbd9d7;
-		clip-path:circle();
-	}
-
-	.icon-text {
-		font-size: 14px;
-	}
-`;
+const styles = ``;
 
 const getHtml = function(data) {
 	const html = `
+		<h1 class="start-timer"></h1>
 		<canvas id="canvas"></canvas>
-		<button id="start-game">
-			<span>
-				<i class="icon bi bi-play-circle"></i>
-				<span class="icon-text">Start Game</span>
-			</span>
-		</button>
 	`;
 	return html;
 }
@@ -88,6 +47,7 @@ export default class AppPlay extends HTMLElement {
 		}
 		this.canvas = this.html.querySelector("#canvas");
 		this.ctx = this.canvas.getContext("2d");
+		this.startTimer = this.html.querySelector(".start-timer");
 		
 		// pode receber tamanho por parametro
 		this.canvas.width = "800";
@@ -95,7 +55,6 @@ export default class AppPlay extends HTMLElement {
 
 		this.game = new Game(this.ctx, this.canvas.width, this.canvas.height);
 
-		this.game_id = 27;
 
 		this.keyDownStatus = "released";
 		this.keyUpStatus = "released";
@@ -151,7 +110,7 @@ export default class AppPlay extends HTMLElement {
 		this.#setGameStatusEvent();
 		this.game.start();
 		this.#keyEvents();
-		this.#readyToPlayBtnEvent();
+		this.#setGameTimeToStartEvent();
 	}
 
 	/*
@@ -179,10 +138,12 @@ export default class AppPlay extends HTMLElement {
 		});
 	}
 
-	#readyToPlayBtnEvent() {
-		const btn = this.html.querySelector("#start-game");
-		btn.addEventListener('click', (event) => {
-			gameWebSocket.ready();
+	#setGameTimeToStartEvent() {
+		stateManager.addEvent("gameTimeToStart", (data) => {
+			if (!data)
+				this.startTimer.innerHTML = "GO!";
+			else
+				this.startTimer.innerHTML = data;
 		});
 	}
 }
