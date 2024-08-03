@@ -45,7 +45,6 @@ export default class Game {
 			this.startCounterFont = 200;
 			this.lastStartCounterValue = this.startCounter;
 		}
-		this.#drawStartCounter();
 	}
 
 	setColorPallet(color_pallet) {
@@ -107,10 +106,10 @@ export default class Game {
 	}
 
 	#drawStartCounter() {
-		if (this.startCounterFont < 180 && this.startCounter == "GO!")
+		if (this.startCounterFont < 160 && this.startCounter == "GO!")
 			return ;
 
-		this.startCounterFont = this.startCounterFont - 1;
+		this.startCounterFont = this.startCounterFont - 2;
 		this.ctx.font = `${this.startCounterFont}px VT323`;
 		this.ctx.fillStyle = "white";
 		let pos = this.#calculateStartCounterPosition(this.startCounter, this.startCounterFont);
