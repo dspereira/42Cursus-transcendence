@@ -115,7 +115,7 @@ export default class AppLobby extends HTMLElement {
 		this.#openSocket();
 		this.#setLobbyStatusEvent();
 		this.#setReadyBtnEvent();
-		this.#setActiveInviteCheckEvent();
+		//this.#setActiveInviteCheckEvent();
 	}
 
 	#openSocket() {

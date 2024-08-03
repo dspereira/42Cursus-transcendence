@@ -140,6 +140,9 @@ export default class AppPlay extends HTMLElement {
 
 	#setGameTimeToStartEvent() {
 		stateManager.addEvent("gameTimeToStart", (data) => {
+			
+			this.game.updateStartCounter(data);
+			
 			if (!data)
 				this.startTimer.innerHTML = "GO!";
 			else

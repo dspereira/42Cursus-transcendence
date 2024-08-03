@@ -24,6 +24,9 @@ export default class Game {
 			player_1_score: "0",
 			player_2_score: "0"
 		}
+		this.startCounter = null;
+		this.lastStartCounterValue = null;
+		this.startCounterFont = 200;
 	}
 
 	updateState(data) {
@@ -31,6 +34,18 @@ export default class Game {
 		// console.log("updateState");
 		// console.log(data);
 		this.gameData = data;
+	}
+
+	updateStartCounter(value) {
+		this.startCounter = value;
+		if (value == 0)
+			this.startCounter = "GO!"
+
+		if (this.lastStartCounterValue == null || this.lastStartCounterValue != this.startCounter) {
+			this.startCounterFont = 200;
+			this.lastStartCounterValue = this.startCounter;
+		}
+		this.#drawStartCounter();
 	}
 
 	setColorPallet(color_pallet) {
@@ -50,7 +65,7 @@ export default class Game {
 	}
 
 	#animate() {
-		// console.log("animacao here");
+		//console.log("animacao here");
 		this.#drawAll();
 		this.animation = window.requestAnimationFrame(this.#animate.bind(this));
 	}
@@ -62,6 +77,7 @@ export default class Game {
 		this.#drawPaddle(this.gameData.paddle_right_pos, "rigth");
 		this.#drawScore(this.gameData.player_1_score, "left");
 		this.#drawScore(this.gameData.player_2_score, "rigth");
+		this.#drawStartCounter();
 	}
 
 	#drawField() {
@@ -88,6 +104,17 @@ export default class Game {
 			this.ctx.fillText(score, this.scoreLeftPos.x, this.scoreLeftPos.y);
 		else
 			this.ctx.fillText(score, this.scoreRigthPos.x, this.scoreRigthPos.y);
+	}
+
+	#drawStartCounter() {
+		if (this.startCounterFont < 180 && this.startCounter == "GO!")
+			return ;
+
+		this.startCounterFont = this.startCounterFont - 1;
+		this.ctx.font = `${this.startCounterFont}px VT323`;
+		this.ctx.fillStyle = "white";
+		let pos = this.#calculateStartCounterPosition(this.startCounter, this.startCounterFont);
+		this.ctx.fillText(`${this.startCounter}`, pos.x, pos.y);
 	}
 
 	#drawPaddle(pos, side) {
@@ -125,8 +152,8 @@ export default class Game {
 	#calculateScorePosition(side) {
 		this.ctx.font = `${this.scoreFont}px VT323`;
 		const metrics = this.ctx.measureText("5");
-		const halfTextHeight   = metrics.actualBoundingBoxAscent / 2;
-		const halfTextWidth  = metrics.width / 2;
+		const halfTextHeight = metrics.actualBoundingBoxAscent / 2;
+		const halfTextWidth = metrics.width / 2;
 		let y = (this.height / 2) + halfTextHeight;
 		let x = 0;
 
@@ -134,6 +161,20 @@ export default class Game {
 			x = (this.width / 4) - halfTextWidth;
 		else
 			x = (this.width / 4) * 3 - halfTextWidth;
+
+		return {
+			x: x,
+			y: y
+		}
+	}
+
+	#calculateStartCounterPosition(value, fontSize) {
+		this.ctx.font = `${fontSize}px VT323`;
+		const metrics = this.ctx.measureText(`${value}`);
+		const halfTextHeight = metrics.actualBoundingBoxAscent / 2;
+		const halfTextWidth = metrics.width / 2;
+		let y = (this.height / 2) + halfTextHeight;
+		let x = (this.width / 2) - halfTextWidth;
 
 		return {
 			x: x,
