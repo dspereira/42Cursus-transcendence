@@ -72,7 +72,8 @@ def get_game_requests_list(user):
 					"req_id": game_req.id,
 					"id": game_req.from_user.id,
 					"username": game_req.from_user.username,
-					"image": get_image_url(get_user_profile(user=game_req.from_user))
+					"image": get_image_url(get_user_profile(user=game_req.from_user)),
+					"exp": get_request_exp_time(game_req)
 				}
 				game_requests_info.append(req_info)
 	return game_requests_info
@@ -132,3 +133,11 @@ def has_user_pending_game_requests(user):
 		if get_valid_game_requests_list(game_reuests):
 			return True
 	return False
+
+def get_request_exp_time(game_request):
+	current_time = datetime.now().timestamp()
+	req_exp_time = game_request.exp.timestamp()
+	diff_time_minutes = round((req_exp_time - current_time) / 60)
+	if diff_time_minutes < 1:
+		return "<1 min left"
+	return f"{diff_time_minutes} min left"

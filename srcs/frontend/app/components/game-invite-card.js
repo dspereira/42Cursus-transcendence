@@ -65,7 +65,7 @@ const getHtml = function(data) {
 			</div>
 			
 			<div class="expires-date">
-				<span class="date"> 5 min left</span>
+				<span class="date">${data.exp}</span>
 			</div>
 			
 			<div class="buttons">
@@ -81,7 +81,7 @@ const getHtml = function(data) {
 }
 
 export default class GameInviteCard extends HTMLElement {
-	static observedAttributes = ["username", "profile-photo", "invite-id"];
+	static observedAttributes = ["username", "profile-photo", "invite-id", "exp"];
 
 	constructor() {
 		super()
@@ -99,6 +99,8 @@ export default class GameInviteCard extends HTMLElement {
 			name = "profilePhoto";
 		else if (name == "invite-id")
 			name = "inviteId";
+		else if (name == "exp")
+			name = "exp";
 		this.data[name] = newValue;
 	}
 
