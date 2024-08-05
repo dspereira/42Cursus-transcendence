@@ -30,12 +30,18 @@ export default class GameInviteRequest extends HTMLElement {
 	constructor() {
 		super()
 		this.data = {};
+		this.intervalID = null;
 	}
 
 	connectedCallback() {
 		this.#initComponent();
 		this.#render();
 		this.#scripts();
+	}
+
+	disconnectedCallback() {
+		if (this.intervalID)
+			clearInterval(this.intervalID);
 	}
 
 	attributeChangedCallback(name, oldValue, newValue) {
@@ -51,7 +57,7 @@ export default class GameInviteRequest extends HTMLElement {
 			this.styles.textContent = this.#styles();
 			this.html.classList.add(`${this.elmtId}`);
 		}
-		this.reqList = this.html.querySelector(".requests-list");
+		this.reqListHtml = this.html.querySelector(".requests-list");
 	}
 
 	#styles() {
@@ -72,6 +78,7 @@ export default class GameInviteRequest extends HTMLElement {
 
 	#scripts() {
 		this.#getInviteGamesCallApi();
+		this.#startGameInvitesPolling();
 	}
 
 	#getInviteGamesCallApi() {
@@ -90,13 +97,28 @@ export default class GameInviteRequest extends HTMLElement {
 		requestCard.setAttribute("username", requestData.username);
 		requestCard.setAttribute("profile-photo", requestData.image);
 		requestCard.setAttribute("exp", requestData.exp);
-		this.reqList.appendChild(requestCard);
+		requestCard.setAttribute("user-id", requestData.id);
+		this.reqListHtml.appendChild(requestCard);
 	}
 
 	#createRequestList(requestList) {
+		this.reqListHtml.innerHTML = "";
 		requestList.forEach(elm => {
 			this.#insertRequestCard(elm);
 		});
+	}
+
+	#startGameInvitesPolling() {
+		this.intervalID = setInterval(() => {
+			callAPI("GET", `http://127.0.0.1:8000/api/game/request/`, null, (res, data) => {
+				if (res.ok){
+					if (data) {
+						console.log("Recria a lista");
+						this.#createRequestList(data.requests_list);
+					}
+				}
+			});
+		}, 10000);
 	}
 }
 

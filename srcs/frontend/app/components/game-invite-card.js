@@ -43,7 +43,7 @@ const styles = `
 	width: 60px;
 }
 
-.expires-date {
+.exp-date {
 	margin-bottom: 5px;
 }
 
@@ -64,7 +64,7 @@ const getHtml = function(data) {
 				<span class="username">${data.username}</span>
 			</div>
 			
-			<div class="expires-date">
+			<div class="exp-date">
 				<span class="date">${data.exp}</span>
 			</div>
 			
@@ -81,7 +81,7 @@ const getHtml = function(data) {
 }
 
 export default class GameInviteCard extends HTMLElement {
-	static observedAttributes = ["username", "profile-photo", "invite-id", "exp"];
+	static observedAttributes = ["username", "profile-photo", "invite-id", "exp", "user-id"];
 
 	constructor() {
 		super()
@@ -99,9 +99,12 @@ export default class GameInviteCard extends HTMLElement {
 			name = "profilePhoto";
 		else if (name == "invite-id")
 			name = "inviteId";
-		else if (name == "exp")
-			name = "exp";
+		else if (name == "user-id")
+			name = "userId";
 		this.data[name] = newValue;
+
+		if (name == "exp" && this.html)
+			this.#changeExpDate();
 	}
 
 	#initComponent() {
@@ -165,6 +168,13 @@ export default class GameInviteCard extends HTMLElement {
 					this.remove();
 			});
 		});
+	}
+
+	#changeExpDate() {
+		const exp = this.html.querySelector(".exp-date span");
+		if (!exp)
+			return ;
+		exp.innerHTML = this.data.exp;
 	}
 }
 
