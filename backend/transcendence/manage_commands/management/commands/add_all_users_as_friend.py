@@ -18,20 +18,14 @@ class Command(BaseCommand):
 	def add_arguments(self, parser):
 		parser.add_argument('user_id', type=int, help='ID of the user')
 
-	def get_user(self, user_id):
-		return user_model.get(id=user_id)
-
 	def handle(self, *args, **kwargs):
 		user_id = kwargs['user_id']
-		user = self.get_user(user_id)
+		user = user_model.get(id=user_id)
 		all_users = user_model.all()
 		if user:
 			all_users = self.__remove_user_from_list(all_users, user_id)
 			for current_user in all_users:
 				if not is_already_friend(user, current_user) and not is_request_already_maded(user, current_user):
-
-					print("\nNão existem amizades feitas.\n")
-
 					friendship = friend_list_model.create(user1=user , user2=current_user)
 					if friendship:
 						chat_name = str(user.id) + "_" + str(current_user.id)
