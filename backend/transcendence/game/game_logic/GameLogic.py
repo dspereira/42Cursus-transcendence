@@ -54,6 +54,11 @@ class GameLogic:
 	def get_time_to_start(self):
 		return round(datetime.now().timestamp() - self.start_time_value.timestamp())
 
+	def get_winner(self):
+		if self.player_1_score > self.player_2_score:
+			return self.player_1
+		return self.player_2
+
 	def __add_score(self, info):
 		if info['player_1']:
 			self.player_1_score += 1

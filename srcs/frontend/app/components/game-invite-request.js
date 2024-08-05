@@ -84,7 +84,7 @@ export default class GameInviteRequest extends HTMLElement {
 	#getInviteGamesCallApi() {
 		callAPI("GET", `http://127.0.0.1:8000/api/game/request/`, null, (res, data) => {
 			if (res.ok){
-				if (data && data.requests_list.length)
+				if (data)
 					this.#createRequestList(data.requests_list);
 			}
 		});
@@ -110,14 +110,7 @@ export default class GameInviteRequest extends HTMLElement {
 
 	#startGameInvitesPolling() {
 		this.intervalID = setInterval(() => {
-			callAPI("GET", `http://127.0.0.1:8000/api/game/request/`, null, (res, data) => {
-				if (res.ok){
-					if (data) {
-						console.log("Recria a lista");
-						this.#createRequestList(data.requests_list);
-					}
-				}
-			});
+			this.#getInviteGamesCallApi();
 		}, 10000);
 	}
 }

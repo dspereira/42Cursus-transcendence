@@ -61,6 +61,7 @@ export default class AppLobby extends HTMLElement {
 		super()
 		this.data = {};
 		this.intervalID = null;
+		this.startGame = false;
 	}
 
 	connectedCallback() {
@@ -72,7 +73,8 @@ export default class AppLobby extends HTMLElement {
 	disconnectedCallback() {
 		if (this.intervalID)
 			clearInterval(this.intervalID);
-		console.log('disconnectedCallback');
+		if (!this.startGame)
+			gameWebSocket.close();
 	}
 
 	attributeChangedCallback(name, oldValue, newValue) {
@@ -158,6 +160,7 @@ export default class AppLobby extends HTMLElement {
 	}
 
 	#startGame() {
+		this.startGame = true;
 		const contentElm = document.querySelector(".content");
 		contentElm.innerHTML = `
 		<app-play></app-play>

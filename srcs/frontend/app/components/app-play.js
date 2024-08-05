@@ -30,6 +30,7 @@ export default class AppPlay extends HTMLElement {
 	disconnectedCallback() {
 		this.game.stop();
 		this.game = null;
+		gameWebSocket.close();
 	}
 
 	attributeChangedCallback(name, oldValue, newValue) {

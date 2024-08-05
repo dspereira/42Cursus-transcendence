@@ -13,7 +13,7 @@ user_model = ModelManager(User)
 user_profile_model = ModelManager(UserProfileInfo)
 
 TIME_HOURS = 0
-TIME_MINUTES = 5
+TIME_MINUTES = 2
 TIME_SECONDS = 0
 
 GAME_REQ_EXP_TIME_SECONDS = TIME_HOURS * 3600 + TIME_MINUTES * 60 + TIME_SECONDS

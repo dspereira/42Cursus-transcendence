@@ -114,6 +114,7 @@ class Game(AsyncWebsocketConsumer):
 
 	async def send_start_game(self, event):
 		self.game = await sync_to_async(games_dict.get_game_obj)(event['game_id'])
+		self.game_info = await sync_to_async(game_model.get)(id=event['game_id'])
 		await self.__send_updated_data()
 		self.task = asyncio.create_task(self.__game_routine())
 
@@ -192,12 +193,13 @@ class Game(AsyncWebsocketConsumer):
 		await self.send_users_info_to_group()
 
 	async def __finish_game(self):
-		if self.game_info:
-			self.game_info = await self.__get_game_info(self.game_info.id)
+		self.game_info = await self.__get_game_info(self.game_info.id)
+		if self.game_info.status != GAME_STATUS_FINISHED:
 			scores = await sync_to_async(self.game.get_score_values)()
 			self.game_info.user1_score = scores['player_1_score']
 			self.game_info.user2_score = scores['player_2_score']
 			self.game_info.status = GAME_STATUS_FINISHED
+			self.game_info.winner = await sync_to_async(user_model.get)(id=self.game.get_winner())
 			await sync_to_async(self.game_info.save)()
 
 	def __has_access_to_lobby(self, lobby_id):
