@@ -20,7 +20,6 @@ const styles = `
 
 const getHtml = function(data) {
 	const html = `
-
 	<div class="game-board">
 		<div class="players-info">
 			<div>
@@ -113,6 +112,7 @@ export default class AppPlay extends HTMLElement {
 
 	#scripts() {
 		this.#initGame();
+		this.#setWinnerEvent();
 	}
 
     #keyEvents() {
@@ -176,6 +176,12 @@ export default class AppPlay extends HTMLElement {
 	#setGameTimeToStartEvent() {
 		stateManager.addEvent("gameTimeToStart", (data) => {
 			this.game.updateStartCounter(data);
+		});
+	}
+
+	#setWinnerEvent() {
+		stateManager.addEvent("gameWinner", (value) => {
+			this.game.updateWinner(value);
 		});
 	}
 }

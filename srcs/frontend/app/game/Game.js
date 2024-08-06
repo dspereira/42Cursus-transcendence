@@ -27,12 +27,11 @@ export default class Game {
 		this.startCounter = null;
 		this.lastStartCounterValue = null;
 		this.startCounterFont = 200;
+
+		this.winnerUsername = null;
 	}
 
 	updateState(data) {
-		// update gameData
-		// console.log("updateState");
-		// console.log(data);
 		this.gameData = data;
 	}
 
@@ -47,12 +46,15 @@ export default class Game {
 		}
 	}
 
+	updateWinner(value) {
+		this.winnerUsername = value;
+	}
+
 	setColorPallet(color_pallet) {
 		this.colors = color_pallet;
 	}
 
 	start() {
-		// console.log("First Time Start");
 		this.#animate();
 	}
 
@@ -77,6 +79,7 @@ export default class Game {
 		this.#drawScore(this.gameData.player_1_score, "left");
 		this.#drawScore(this.gameData.player_2_score, "rigth");
 		this.#drawStartCounter();
+		this.#drawWinner();
 	}
 
 	#drawField() {
@@ -148,6 +151,21 @@ export default class Game {
 		this.ctx.stroke();
 	}
 
+	#drawWinner() {
+		if (!this.winnerUsername)
+			return ;
+
+		const fontSize = 70;
+		this.ctx.font = `${fontSize}px VT323`;
+		this.ctx.fillStyle = "white";
+
+		let pos = this.#calculateStartWinnerPosition("winner", fontSize - 20);
+		this.ctx.fillText("winner", pos.x, pos.y - 60);
+
+		pos = this.#calculateStartWinnerPosition(this.winnerUsername, fontSize);
+		this.ctx.fillText(`${this.winnerUsername}`, pos.x, pos.y);
+	}
+
 	#calculateScorePosition(side) {
 		this.ctx.font = `${this.scoreFont}px VT323`;
 		const metrics = this.ctx.measureText("5");
@@ -173,6 +191,20 @@ export default class Game {
 		const halfTextHeight = metrics.actualBoundingBoxAscent / 2;
 		const halfTextWidth = metrics.width / 2;
 		let y = (this.height / 2) + halfTextHeight;
+		let x = (this.width / 2) - halfTextWidth;
+
+		return {
+			x: x,
+			y: y
+		}
+	}
+
+	#calculateStartWinnerPosition(value, fontSize) {
+		this.ctx.font = `${fontSize}px VT323`;
+		const metrics = this.ctx.measureText(`${value}`);
+		const halfTextHeight = metrics.actualBoundingBoxAscent / 2;
+		const halfTextWidth = metrics.width / 2;
+		let y = (this.height / 4) + halfTextHeight;
 		let x = (this.width / 2) - halfTextWidth;
 
 		return {

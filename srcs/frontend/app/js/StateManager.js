@@ -24,7 +24,8 @@ class StateManager {
 			blockStatus: null,
 			gameStatus: null,
 			lobbyStatus: null,
-			gameTimeToStart: null
+			gameTimeToStart: null,
+			gameWinner: null
 		}
 		this.stateEvents = {
 			sidePanel: [],
@@ -43,7 +44,8 @@ class StateManager {
 			blockStatus: [],
 			gameStatus: [],
 			lobbyStatus: [],
-			gameTimeToStart: []
+			gameTimeToStart: [],
+			gameWinner: []
 		}
 
 		StateManager.instance = this;

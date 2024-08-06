@@ -170,7 +170,7 @@ export default class AppLobby extends HTMLElement {
 			guest-username="${playersData.guest.username}"
 			guest-image="${playersData.guest.image}"
 		></app-play>
-	`;
+		`;
 	}
 
 	#setActiveInviteCheckEvent() {

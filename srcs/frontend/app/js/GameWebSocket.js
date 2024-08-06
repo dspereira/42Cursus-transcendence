@@ -83,13 +83,14 @@ class GameWebSocket {
 		this.socket.onmessage = (event) => {
 			if (event.data) {
 				const data = JSON.parse(event.data);
-
 				if (data.type == "users_info")
 					stateManager.setState("lobbyStatus", data.users_info);
-				if (data.type == "game_state")
+				else if (data.type == "game_state")
 					stateManager.setState("gameStatus", data.game_state);
-				if (data.type == "time_to_start")
+				else if (data.type == "time_to_start")
 					stateManager.setState("gameTimeToStart", data.time);
+				else if (data.type == "finished_game")
+					stateManager.setState("gameWinner", data.winner);
 			}
 		};
 
