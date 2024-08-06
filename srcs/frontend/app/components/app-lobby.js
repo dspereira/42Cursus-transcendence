@@ -118,6 +118,7 @@ export default class AppLobby extends HTMLElement {
 		this.#setLobbyStatusEvent();
 		this.#setReadyBtnEvent();
 		//this.#setActiveInviteCheckEvent();
+		this.#setLobbyEndedEvent();
 	}
 
 	#openSocket() {
@@ -126,12 +127,16 @@ export default class AppLobby extends HTMLElement {
 
 	#setLobbyStatusEvent() {
 		stateManager.addEvent("lobbyStatus", (value) => {
+			let playerImage;
 			console.log(value);
-
 			if (value.host)
 				this.#updatePlayer(value.host, "host");
 			if (value.guest)
 				this.#updatePlayer(value.guest, "guest");
+			if (!value.host)
+				this.#removePlayer("host");
+			if (!value.guest)
+				this.#removePlayer("guest");
 			if (value.host && value.guest) {
 				if (value.host.is_ready && value.guest.is_ready)
 					this.#startGame();
@@ -153,6 +158,13 @@ export default class AppLobby extends HTMLElement {
 			this.readyBtn.innerHTML = `${playerinfo.is_ready ? "not ready" : "ready"}`;
 	}
 
+	#removePlayer(playerType) {
+		const playerImage = this.html.querySelector(`.${playerType}`);
+		if (!playerImage)
+			return ;
+		playerImage.innerHTML = "";
+	}
+
 	#setReadyBtnEvent() {
 		this.readyBtn.addEventListener("click", () => {
 			gameWebSocket.updateReadyStatus();
@@ -171,6 +183,15 @@ export default class AppLobby extends HTMLElement {
 			guest-image="${playersData.guest.image}"
 		></app-play>
 		`;
+	}
+
+	#setLobbyEndedEvent() {
+		stateManager.addEvent("hasLobbyEnded", (value) => {
+			if (value) {
+				stateManager.setState("hasLobbyEnded", false);
+				redirect("/play");
+			}
+		});
 	}
 
 	#setActiveInviteCheckEvent() {

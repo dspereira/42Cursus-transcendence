@@ -51,6 +51,16 @@ class Lobby:
         else:
             return self.ready_status_player_2
 
+    def is_only_host_online(self):
+        if self.user_1_connected and not self.user_2_connected:
+            return True
+        return False
+
+    def is_full(self):
+        if self.user_1_connected and self.user_2_connected:
+            return True
+        return False
+
     def __get_new_ready_status(self, current_status):
         new_status = True
         if current_status == True:

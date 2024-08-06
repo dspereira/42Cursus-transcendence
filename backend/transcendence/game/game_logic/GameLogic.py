@@ -1,4 +1,5 @@
 from .const_vars import WINNING_SCORE_PONTUATION
+from game.utils import GAME_STATUS_CREATED, GAME_STATUS_FINISHED
 from datetime import datetime
 from .Paddle import Paddle
 from .Ball import Ball
@@ -13,6 +14,10 @@ class GameLogic:
 		self.player_1 = user1_id
 		self.player_2 = user2_id
 		self.start_time_value = None
+		self.status = GAME_STATUS_CREATED
+
+	def set_status(self, new_status):
+		self.status = new_status
 
 	def get_ball_positions(self):
 		return self.ball.get_position()
@@ -45,6 +50,7 @@ class GameLogic:
 			self.ball.set_end_game_position()
 			self.paddle_left.end_game_position()
 			self.paddle_right.end_game_position()
+			self.status = GAME_STATUS_FINISHED
 			return True
 		return False
 
@@ -59,6 +65,9 @@ class GameLogic:
 		if self.player_1_score > self.player_2_score:
 			return self.player_1
 		return self.player_2
+
+	def get_status(self):
+		return self.status
 
 	def __add_score(self, info):
 		if info['player_1']:

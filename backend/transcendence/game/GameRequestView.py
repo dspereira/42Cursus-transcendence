@@ -87,11 +87,13 @@ class GameRequestView(View):
 				if not games_req or games_req.to_user.id != user.id:
 					return JsonResponse({"message": "Error: Invalid game request ID!"}, status=409)
 				if not has_already_games_accepted(user=user):
-					update_game_request_status(game_request=games_req, new_status=GAME_REQ_STATUS_ACCEPTED)
-					cancel_other_invitations(user=games_req.from_user)
 					lobby = lobby_dict[games_req.from_user.id]
-					lobby.set_user_2_id(games_req.to_user.id)
-					return JsonResponse({"message": "Invite accepted with success!", "lobby_id": games_req.from_user.id}, status=200) 
+					if not lobby.is_full():
+						update_game_request_status(game_request=games_req, new_status=GAME_REQ_STATUS_ACCEPTED)
+						lobby.set_user_2_id(games_req.to_user.id)
+						return JsonResponse({"message": "Invite accepted with success!", "lobby_id": games_req.from_user.id}, status=200) 
+					else:
+						return JsonResponse({"message": "Error: Game lobby is full!"}, status=409)
 				else:
 					return JsonResponse({"message": "Error: Currently playing a game!"}, status=409)
 			else:

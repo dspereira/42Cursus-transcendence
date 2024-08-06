@@ -14,6 +14,7 @@ from datetime import datetime
 from .Games import games_dict
 
 from .utils import GAME_STATUS_CREATED, GAME_STATUS_PLAYING, GAME_STATUS_FINISHED
+from .utils import cancel_other_invitations
 
 from .Lobby import lobby_dict
 
@@ -35,6 +36,7 @@ class Game(AsyncWebsocketConsumer):
 		self.task = None
 		self.lobby = None
 		self.game_info = None
+		self.game = None
 
 	async def connect(self):
 		await self.accept()
@@ -76,14 +78,35 @@ class Game(AsyncWebsocketConsumer):
 		}))
 
 	async def disconnect(self, close_code):
-		await sync_to_async(self.lobby.update_connected_status)(self.user.id, False)
 		await self.__stop_game_routine()
+
+		if not self.game:
+			if self.user.id == self.lobby.get_host_id():
+				await sync_to_async(cancel_other_invitations)(self.user)
+				if not self.lobby.is_only_host_online():
+					await self.channel_layer.group_send(
+						self.room_group_name, {'type': 'send_end_lobby_session'}
+					)
+		elif self.game:
+			game_status = self.game.get_status()
+			if game_status == GAME_STATUS_PLAYING:
+				print("\nO jogo foi interrompido a meio!\n")
+			else:
+				print("\nO jogo Terminou\n")
+
+		await sync_to_async(self.lobby.update_connected_status)(self.user.id, False)
+		await self.send_users_info_to_group()
 		if self.room_group_name:
 			await self.channel_layer.group_discard(
 				self.room_group_name,
 				self.channel_name
 			)
 		raise StopConsumer()
+
+	async def send_end_lobby_session(self, event):
+		await self.send(text_data=json.dumps({
+			'type': 'end_lobby_session'
+		}))
 
 	async def receive(self, text_data):
 		if not await sync_to_async(is_authenticated)(self.access_data):
@@ -113,6 +136,8 @@ class Game(AsyncWebsocketConsumer):
 		)
 
 	async def send_start_game(self, event):
+		if self.lobby.get_host_id() == self.user.id:
+			await sync_to_async(cancel_other_invitations)(self.user)
 		self.game = await sync_to_async(games_dict.get_game_obj)(event['game_id'])
 		self.game_info = await sync_to_async(game_model.get)(id=event['game_id'])
 		await self.__send_updated_data()
@@ -124,6 +149,7 @@ class Game(AsyncWebsocketConsumer):
 			await self.task
 
 	async def __game_routine(self):
+		self.game.set_status(GAME_STATUS_PLAYING)
 		await sync_to_async(self.game.start_time)()
 		while True:
 			time = await sync_to_async(self.game.get_time_to_start)()
