@@ -1,3 +1,4 @@
+from .const_vars import WINNING_SCORE_PONTUATION
 from datetime import datetime
 from .Paddle import Paddle
 from .Ball import Ball
@@ -40,7 +41,7 @@ class GameLogic:
 		return {"player_1_score": self.player_1_score, "player_2_score": self.player_2_score}
 
 	def is_end_game(self):
-		if self.player_1_score == 7 or self.player_2_score == 7:
+		if self.player_1_score == WINNING_SCORE_PONTUATION or self.player_2_score == WINNING_SCORE_PONTUATION:
 			self.ball.set_end_game_position()
 			self.paddle_left.end_game_position()
 			self.paddle_right.end_game_position()
