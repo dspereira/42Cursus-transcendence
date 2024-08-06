@@ -3,18 +3,43 @@ import gameWebSocket from "../js/GameWebSocket.js";
 import { callAPI } from "../utils/callApiUtils.js";
 import stateManager from "../js/StateManager.js";
 
-const styles = ``;
+const styles = `
+.profile-photo {
+	width: 50px;
+}
+
+.players-info {
+	display: flex;
+	justify-content: space-between;
+}
+
+.game-board {
+	width: 800px;
+}
+`;
 
 const getHtml = function(data) {
 	const html = `
-		<h1 class="start-timer"></h1>
+
+	<div class="game-board">
+		<div class="players-info">
+			<div>
+				<img src="${data.hostImage}" class="profile-photo" alt="profile photo chat">
+				<span>${data.hostUsername}</span>
+			</div>
+			<div>
+				<span>${data.guestUsername}</span>
+				<img src="${data.guestImage}" class="profile-photo" alt="profile photo chat">
+			</div>
+		</div>
 		<canvas id="canvas"></canvas>
+	</div>
 	`;
 	return html;
 }
 
 export default class AppPlay extends HTMLElement {
-	static observedAttributes = [];
+	static observedAttributes = ["host-username", "host-image", "guest-username", "guest-image"];
 
 	constructor() {
 		super()
@@ -34,7 +59,15 @@ export default class AppPlay extends HTMLElement {
 	}
 
 	attributeChangedCallback(name, oldValue, newValue) {
-
+		if(name == "host-username")
+			name = "hostUsername";
+		else if (name == "host-image")
+			name = "hostImage";
+		if(name == "guest-username")
+			name = "guestUsername";
+		else if (name == "guest-image")
+			name = "guestImage";
+		this.data[name] = newValue;
 	}
 
 	#initComponent() {
@@ -56,9 +89,10 @@ export default class AppPlay extends HTMLElement {
 
 		this.game = new Game(this.ctx, this.canvas.width, this.canvas.height);
 
-
 		this.keyDownStatus = "released";
 		this.keyUpStatus = "released";
+
+
 	}
 
 	#styles() {
@@ -141,13 +175,7 @@ export default class AppPlay extends HTMLElement {
 
 	#setGameTimeToStartEvent() {
 		stateManager.addEvent("gameTimeToStart", (data) => {
-			
 			this.game.updateStartCounter(data);
-			
-			if (!data)
-				this.startTimer.innerHTML = "GO!";
-			else
-				this.startTimer.innerHTML = data;
 		});
 	}
 }
