@@ -19,6 +19,10 @@ class GameLogic:
 	def set_status(self, new_status):
 		self.status = new_status
 
+	def set_scores(self, scores):
+		self.player_1_score = scores["player_1"]
+		self.player_2_score = scores["player_2"]
+
 	def get_ball_positions(self):
 		return self.ball.get_position()
 

@@ -29,10 +29,12 @@ export default class Game {
 		this.startCounterFont = 200;
 
 		this.winnerUsername = null;
+		this.surrender = null;
 	}
 
 	updateState(data) {
 		this.gameData = data;
+		this.startCounter = null;
 	}
 
 	updateStartCounter(value) {
@@ -47,7 +49,9 @@ export default class Game {
 	}
 
 	updateWinner(value) {
-		this.winnerUsername = value;
+		this.winnerUsername = value.winner_username;
+		this.surrender = value.surrender;
+		this.startCounter = null;
 	}
 
 	setColorPallet(color_pallet) {
@@ -109,9 +113,12 @@ export default class Game {
 	}
 
 	#drawStartCounter() {
-		if (this.startCounterFont < 160 && this.startCounter == "GO!")
+		if (this.startCounter == null)
 			return ;
-
+		if (this.startCounterFont < 160 && this.startCounter == "GO!") {
+			this.startCounter = null;
+			return ;
+		}
 		this.startCounterFont = this.startCounterFont - 2;
 		this.ctx.font = `${this.startCounterFont}px VT323`;
 		this.ctx.fillStyle = "white";
@@ -164,6 +171,13 @@ export default class Game {
 
 		pos = this.#calculateStartWinnerPosition(this.winnerUsername, fontSize);
 		this.ctx.fillText(`${this.winnerUsername}`, pos.x, pos.y);
+
+		if (this.surrender) {
+			const msg = "Opponent left the game";
+			pos = this.#calculateStartWinnerPosition(msg, fontSize - 40);
+			this.ctx.fillText(msg, pos.x, pos.y + 180);
+			//this.ctx.fillText(msg, pos.x, pos.y + 200);
+		}
 	}
 
 	#calculateScorePosition(side) {

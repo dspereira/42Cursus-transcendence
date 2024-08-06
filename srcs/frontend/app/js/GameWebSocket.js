@@ -90,7 +90,7 @@ class GameWebSocket {
 				else if (data.type == "time_to_start")
 					stateManager.setState("gameTimeToStart", data.time);
 				else if (data.type == "finished_game")
-					stateManager.setState("gameWinner", data.winner);
+					stateManager.setState("gameWinner", data.finish_data);
 				else if (data.type == "end_lobby_session")
 					stateManager.setState("hasLobbyEnded", true);
 			}

@@ -25,6 +25,7 @@ GAME_STATUS_FINISHED = "finished"
 GAME_STATUS_ABORTED = "aborted"
 GAME_STATUS_PLAYING = "playing"
 GAME_STATUS_CREATED = "created"
+GAME_STATUS_SURRENDER = "sorrender"
 
 def get_user_profile(user):
 	return user_profile_model.get(user=user)
