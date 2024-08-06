@@ -2,6 +2,7 @@ import Game from "../game/Game.js";
 import gameWebSocket from "../js/GameWebSocket.js";
 import { callAPI } from "../utils/callApiUtils.js";
 import stateManager from "../js/StateManager.js";
+import { redirect } from "../js/router.js";
 
 const styles = `
 .profile-photo {
@@ -16,6 +17,22 @@ const styles = `
 .game-board {
 	width: 800px;
 }
+
+.btn-leave-div {
+	display: flex;
+	justify-content: center;
+	margin-top: 50px;
+}
+
+.btn-leave {
+	width: 150px;
+	height: 50px;
+}
+
+.hide {
+	display: none;
+}
+
 `;
 
 const getHtml = function(data) {
@@ -32,6 +49,9 @@ const getHtml = function(data) {
 			</div>
 		</div>
 		<canvas id="canvas"></canvas>
+		<div class="btn-leave-div">
+			<button type="button" class="btn btn-primary btn-leave hide">Leave</button>
+		</div>
 	</div>
 	`;
 	return html;
@@ -81,6 +101,7 @@ export default class AppPlay extends HTMLElement {
 		this.canvas = this.html.querySelector("#canvas");
 		this.ctx = this.canvas.getContext("2d");
 		this.startTimer = this.html.querySelector(".start-timer");
+		this.leave = this.html.querySelector(".btn-leave");
 		
 		// pode receber tamanho por parametro
 		this.canvas.width = "800";
@@ -113,6 +134,7 @@ export default class AppPlay extends HTMLElement {
 	#scripts() {
 		this.#initGame();
 		this.#setWinnerEvent();
+		this.#setBtnLeaveEvent();
 	}
 
     #keyEvents() {
@@ -182,6 +204,13 @@ export default class AppPlay extends HTMLElement {
 	#setWinnerEvent() {
 		stateManager.addEvent("gameWinner", (value) => {
 			this.game.updateWinner(value);
+			this.leave.classList.remove("hide");
+		});
+	}
+
+	#setBtnLeaveEvent() {
+		this.leave.addEventListener("click", () => {
+			redirect("/play");
 		});
 	}
 }
