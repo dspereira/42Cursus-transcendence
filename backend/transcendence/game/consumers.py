@@ -133,12 +133,13 @@ class Game(AsyncWebsocketConsumer):
 			await asyncio.sleep(SLEEP_TIME_SECONDS * 10)
 		while True:
 			game_ended = self.game.is_end_game()
-			await self.__send_updated_data()
-			if game_ended:
-				await self.__finish_game()
+			if not game_ended:
+				await self.__send_updated_data()
+			else:
 				break
 			self.game.update()
 			await asyncio.sleep(SLEEP_TIME_SECONDS)
+		await self.__finish_game()
 
 	async def __send_timer_data(self, time):
 		await self.channel_layer.group_send(
@@ -195,12 +196,20 @@ class Game(AsyncWebsocketConsumer):
 	async def __finish_game(self):
 		self.game_info = await self.__get_game_info(self.game_info.id)
 		if self.game_info.status != GAME_STATUS_FINISHED:
+			await self.__send_updated_data()
 			scores = await sync_to_async(self.game.get_score_values)()
 			self.game_info.user1_score = scores['player_1_score']
 			self.game_info.user2_score = scores['player_2_score']
 			self.game_info.status = GAME_STATUS_FINISHED
 			self.game_info.winner = await sync_to_async(user_model.get)(id=self.game.get_winner())
 			await sync_to_async(self.game_info.save)()
+			await self.channel_layer.group_send(
+				self.room_group_name,
+				{
+					'type': 'send_finished_game',
+					"winner_username": self.game_info.winner.username
+				}
+			)
 
 	def __has_access_to_lobby(self, lobby_id):
 		if lobby_id in lobby_dict:
@@ -229,3 +238,9 @@ class Game(AsyncWebsocketConsumer):
 			"is_ready": is_ready
 		}
 		users_info[player_type] = display_info
+
+	async def send_finished_game(self, event):
+		await self.send(text_data=json.dumps({
+			'type': 'finished_game',
+			'winner': event['winner_username']
+		}))
