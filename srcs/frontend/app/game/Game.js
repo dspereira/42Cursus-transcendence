@@ -70,9 +70,11 @@ export default class Game {
 	}
 
 	#animate() {
-		//console.log("animacao here");
+		console.log("animacao here");
 		this.#drawAll();
 		this.animation = window.requestAnimationFrame(this.#animate.bind(this));
+		if (this.winnerUsername)
+			this.stop();
 	}
 
 	#drawAll() {
@@ -166,17 +168,16 @@ export default class Game {
 		this.ctx.font = `${fontSize}px VT323`;
 		this.ctx.fillStyle = "white";
 
-		let pos = this.#calculateStartWinnerPosition("winner", fontSize - 20);
-		this.ctx.fillText("winner", pos.x, pos.y - 60);
+		let pos = this.#calculateStartWinnerPosition("WINNER", fontSize - 20);
+		this.ctx.fillText("WINNER", pos.x, pos.y - 60);
 
 		pos = this.#calculateStartWinnerPosition(this.winnerUsername, fontSize);
 		this.ctx.fillText(`${this.winnerUsername}`, pos.x, pos.y);
 
 		if (this.surrender) {
-			const msg = "Opponent left the game";
+			const msg = "OPPONENT LEFT THE GAME";
 			pos = this.#calculateStartWinnerPosition(msg, fontSize - 40);
-			this.ctx.fillText(msg, pos.x, pos.y + 180);
-			//this.ctx.fillText(msg, pos.x, pos.y + 200);
+			this.ctx.fillText(msg, pos.x, pos.y + 200);
 		}
 	}
 
