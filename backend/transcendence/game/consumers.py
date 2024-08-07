@@ -69,6 +69,7 @@ class Game(AsyncWebsocketConsumer):
 		)
 
 	async def send_users_info(self, event):
+		await self.__check_authentication()
 		await self.send(text_data=json.dumps({
 			'type': 'users_info',
 			'users_info': await sync_to_async(self.__get_users_info)()
@@ -99,14 +100,13 @@ class Game(AsyncWebsocketConsumer):
 		raise StopConsumer()
 
 	async def send_end_lobby_session(self, event):
+		await self.__check_authentication()
 		await self.send(text_data=json.dumps({
 			'type': 'end_lobby_session'
 		}))
 
 	async def receive(self, text_data):
-		if not await sync_to_async(is_authenticated)(self.access_data):
-			await self.close(4000)
-			return
+		await self.__check_authentication()
 		data_json = json.loads(text_data)
 		data_type = data_json['type']
 		if data_type == "update_ready_status":
@@ -172,6 +172,7 @@ class Game(AsyncWebsocketConsumer):
 		)
 
 	async def send_timer_data(self, event):
+		await self.__check_authentication()
 		await self.send(text_data=json.dumps({
 			'type': 'time_to_start',
 			'time': event['time']
@@ -194,6 +195,7 @@ class Game(AsyncWebsocketConsumer):
 		)
 
 	async def send_game_state(self, event):
+		await self.__check_authentication()
 		await self.send(text_data=json.dumps({
 			'type': 'game_state',
 			'game_state': event['game_state']
@@ -266,7 +268,13 @@ class Game(AsyncWebsocketConsumer):
 		users_info[player_type] = display_info
 
 	async def send_finished_game(self, event):
+		await self.__check_authentication()
 		await self.send(text_data=json.dumps({
 			'type': 'finished_game',
 			'finish_data': event['finish_data']
 		}))
+
+	async def __check_authentication(self):
+		if not await sync_to_async(is_authenticated)(self.access_data):
+			await self.close(4000)
+			return
