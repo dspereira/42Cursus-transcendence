@@ -13,7 +13,7 @@ import json
 from datetime import datetime
 from .Games import games_dict
 
-from .utils import GAME_STATUS_SURRENDER, GAME_STATUS_PLAYING, GAME_STATUS_FINISHED
+from .utils import GAME_STATUS_CREATED, GAME_STATUS_SURRENDER, GAME_STATUS_PLAYING, GAME_STATUS_FINISHED
 from .game_logic.const_vars import WINNING_SCORE_PONTUATION
 from .utils import cancel_other_invitations
 
@@ -38,6 +38,7 @@ class Game(AsyncWebsocketConsumer):
 		self.lobby = None
 		self.game_info = None
 		self.game = None
+		self.refresh_token_status = None
 
 	async def connect(self):
 		await self.accept()
@@ -63,6 +64,10 @@ class Game(AsyncWebsocketConsumer):
 			)
 		await self.send_users_info_to_group()
 
+		game_id = self.lobby.get_associated_game_id()
+		if game_id:
+			self.__start_game(game_id)
+
 	async def send_users_info_to_group(self):
 		await self.channel_layer.group_send(
 			self.room_group_name, {'type': 'send_users_info'}
@@ -76,20 +81,21 @@ class Game(AsyncWebsocketConsumer):
 		}))
 
 	async def disconnect(self, close_code):
-		if not self.game:
-			if self.user.id == self.lobby.get_host_id():
-				await sync_to_async(cancel_other_invitations)(self.user)
-				if not self.lobby.is_only_host_online():
-					await self.channel_layer.group_send(self.room_group_name, {'type': 'send_end_lobby_session'})
-		else:
-			await self.__stop_game_routine()
-			if self.game.get_status() == GAME_STATUS_PLAYING:
+		if not self.refresh_token_status:
+			if not self.game:
 				if self.user.id == self.lobby.get_host_id():
-					self.game.set_scores({"player_1": 0, "player_2": WINNING_SCORE_PONTUATION})
-				else:
-					self.game.set_scores({"player_1": WINNING_SCORE_PONTUATION, "player_2": 0})
-				await sync_to_async(self.game.is_end_game)()
-				await self.__finish_game(GAME_STATUS_SURRENDER)
+					await sync_to_async(cancel_other_invitations)(self.user)
+					if not self.lobby.is_only_host_online():
+						await self.channel_layer.group_send(self.room_group_name, {'type': 'send_end_lobby_session'})
+			else:
+				await self.__stop_game_routine()
+				if self.game.get_status() != GAME_STATUS_FINISHED:
+					if self.user.id == self.lobby.get_host_id():
+						self.game.set_scores({"player_1": 0, "player_2": WINNING_SCORE_PONTUATION})
+					else:
+						self.game.set_scores({"player_1": WINNING_SCORE_PONTUATION, "player_2": 0})
+					await sync_to_async(self.game.is_end_game)()
+					await self.__finish_game(GAME_STATUS_SURRENDER)
 		await sync_to_async(self.lobby.update_connected_status)(self.user.id, False)
 		await self.send_users_info_to_group()
 		if self.room_group_name:
@@ -112,28 +118,35 @@ class Game(AsyncWebsocketConsumer):
 		if data_type == "update_ready_status":
 			await self.__update_ready_status()
 			if await self.__is_already_ready():
-				await self.__start_game_routine()
+				await self.__send_start_game_routine()
 		elif data_type == "key":
 			self.game.update_paddle(key=data_json['key'], status=data_json['status'], user_id=self.user.id)
+		elif data_json == "refresh_token":
+			self.refresh_token_status = True
 
-	async def __start_game_routine(self):
+	async def __send_start_game_routine(self):
 		user_1 = await sync_to_async(user_model.get)(id=self.lobby.get_host_id())
 		user_2 = await sync_to_async(user_model.get)(id=self.lobby.get_user_2_id())
 		self.game_info = await sync_to_async(game_model.create)(user1=user_1, user2=user_2)
-		games_dict.create_new_game(self.game_info.id, user_1.id, user_2.id)
+		game_id = self.game_info.id
+		games_dict.create_new_game(game_id, user_1.id, user_2.id)
+		self.lobby.set_associated_game_id(game_id)
 		await self.channel_layer.group_send(
 			self.room_group_name,
 			{
 				'type': 'send_start_game',
-				"game_id": self.game_info.id
+				"game_id": game_id
 			}
 		)
 
 	async def send_start_game(self, event):
 		if self.lobby.get_host_id() == self.user.id:
 			await sync_to_async(cancel_other_invitations)(self.user)
-		self.game = await sync_to_async(games_dict.get_game_obj)(event['game_id'])
-		self.game_info = await sync_to_async(game_model.get)(id=event['game_id'])
+		await self.__start_game(event['game_id'])
+
+	async def __start_game(self, game_id):
+		self.game = await sync_to_async(games_dict.get_game_obj)(game_id)
+		self.game_info = await sync_to_async(game_model.get)(id=game_id)
 		await self.__send_updated_data()
 		self.task = asyncio.create_task(self.__game_routine())
 
@@ -142,16 +155,17 @@ class Game(AsyncWebsocketConsumer):
 			self.task.cancel()
 
 	async def __game_routine(self):
-		await sync_to_async(self.game.set_status)(GAME_STATUS_PLAYING)
-		await sync_to_async(self.game.start_time)()
-		while True:
-			if self.game.is_end_game():
-				break
-			time = await sync_to_async(self.game.get_time_to_start)()
-			if 3 - time < 0:
-				break
-			await self.__send_timer_data(3 - time)
-			await asyncio.sleep(SLEEP_TIME_SECONDS * 10)
+		if await sync_to_async(self.game.get_status)() == GAME_STATUS_CREATED:
+			await sync_to_async(self.game.start_time)()
+			while True:
+				if self.game.is_end_game():
+					break
+				time = await sync_to_async(self.game.get_time_to_start)()
+				if 3 - time < 0:
+					break
+				await self.__send_timer_data(3 - time)
+				await asyncio.sleep(SLEEP_TIME_SECONDS * 10)
+			await sync_to_async(self.game.set_status)(GAME_STATUS_PLAYING)
 		while True:
 			game_ended = self.game.is_end_game()
 			if not game_ended:
@@ -276,5 +290,6 @@ class Game(AsyncWebsocketConsumer):
 
 	async def __check_authentication(self):
 		if not await sync_to_async(is_authenticated)(self.access_data):
+			self.refresh_token_status = True
 			await self.close(4000)
 			return

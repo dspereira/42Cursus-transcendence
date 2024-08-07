@@ -7,15 +7,22 @@ class Lobby:
         self.user_1_connected = False
         self.user_2_connected = False
         self.associated_game = None
+        self.game_id = None
 
     def set_user_2_id(self, user_2_id):
         self.user_2 = user_2_id
+
+    def set_associated_game_id(self, associated_game_id):
+        self.game_id = associated_game_id
 
     def get_user_2_id(self):
         return self.user_2
 
     def get_host_id(self):
         return self.user_1
+
+    def get_associated_game_id(self):
+        return self.game_id
 
     def update_ready_status(self, user_id):
         if user_id == self.user_1:
@@ -66,6 +73,15 @@ class Lobby:
         if current_status == True:
             new_status = False
         return new_status
+
+    def reset(self):
+        self.user_2 = 0
+        self.ready_status_player_1 = False
+        self.ready_status_player_2 = False
+        self.user_1_connected = False
+        self.user_2_connected = False
+        self.associated_game = None
+        self.game_id = None
 
     def __str__(self) -> str:
         res = "\n---------------------------------------------------\n"
