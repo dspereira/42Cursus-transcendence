@@ -103,10 +103,6 @@ export default class GameInviteSend extends HTMLElement {
 		this.#initComponent();
 		this.#render();
 		this.#scripts();
-
-		console.log("--------------------------");
-		console.log("Init game invite send");
-		console.log("--------------------------");
 	}
 
 	attributeChangedCallback(name, oldValue, newValue) {

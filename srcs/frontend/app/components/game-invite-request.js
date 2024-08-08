@@ -37,11 +37,6 @@ export default class GameInviteRequest extends HTMLElement {
 		this.#initComponent();
 		this.#render();
 		this.#scripts();
-
-		console.log("--------------------------");
-		console.log("Init game invite request");
-		console.log("--------------------------");
-
 	}
 
 	disconnectedCallback() {

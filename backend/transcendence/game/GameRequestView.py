@@ -43,7 +43,10 @@ class GameRequestView(View):
 			if user:
 				if has_already_games_accepted(user=user):
 					return JsonResponse({"message": f"Error: User is already playing a game!",}, status=409)
-				lobby_dict[user.id] = Lobby(user.id)
+				if user.id in lobby_dict and lobby_dict[user.id]:
+					lobby_dict[user.id].reset()
+				else:
+					lobby_dict[user.id] = Lobby(user.id)
 				if not lobby_dict[user.id]:
 					return JsonResponse({"message": f"Error: Failed to create game lobby!",}, status=409)
 				for friend_id in invites_list:

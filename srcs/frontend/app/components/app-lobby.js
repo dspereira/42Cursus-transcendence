@@ -68,28 +68,18 @@ export default class AppLobby extends HTMLElement {
 		this.#initComponent();
 		this.#render();
 		this.#scripts();
-		console.log("--------------------------");
-		console.log("connectedCallback() do lobby");
-		console.log("--------------------------");
-
 	}
 
 	disconnectedCallback() {
 		if (this.intervalID)
 			clearInterval(this.intervalID);
 		if (!this.startGame) {
-			console.log("-------------------------------");
-			console.log("FRCHA SOCKET 3");
-			console.log("-------------------------------");
-
 			gameWebSocket.close();
 		}
 		stateManager.cleanStateEvents("hasRefreshToken");
 		stateManager.cleanStateEvents("gameSocket"); 
 		stateManager.cleanStateEvents("lobbyStatus"); 
 		stateManager.cleanStateEvents("hasLobbyEnded");
-
-		console.log("disconnectedCallback do lobby");
 	}
 
 	attributeChangedCallback(name, oldValue, newValue) {
@@ -110,6 +100,7 @@ export default class AppLobby extends HTMLElement {
 			this.html.classList.add(`${this.elmtId}`);
 		}
 		this.readyBtn = this.html.querySelector(".ready-btn");
+		this.lobbyStatus = null;
 	}
 
 	#styles() {
@@ -132,7 +123,7 @@ export default class AppLobby extends HTMLElement {
 		this.#openSocket();
 		this.#setLobbyStatusEvent();
 		this.#setReadyBtnEvent();
-		//this.#setActiveInviteCheckEvent();
+		this.#setActiveInviteCheckEvent();
 		this.#setLobbyEndedEvent();
 		this.#onRefreshTokenEvent();
 		this.#onSocketCloseEvent();
@@ -144,8 +135,10 @@ export default class AppLobby extends HTMLElement {
 
 	#setLobbyStatusEvent() {
 		stateManager.addEvent("lobbyStatus", (value) => {
-			let playerImage;
 			console.log(value);
+
+			this.lobbyStatus = value;
+
 			if (value.host)
 				this.#updatePlayer(value.host, "host");
 			if (value.guest)
@@ -192,23 +185,8 @@ export default class AppLobby extends HTMLElement {
 		const playersData = stateManager.getState("lobbyStatus");
 		const contentElm = document.querySelector(".content");
 		const lobbyId = this.data.lobbyId;
-
-		console.log("--------------------------");
-		console.log(lobbyId);
-		console.log("--------------------------");
-
-
-		console.log("--------------------------");
-		console.log("Estou no start game do lobby");
-		console.log("--------------------------");
-
-
 		this.startGame = true;
 		this.remove();
-
-
-
-
 		contentElm.innerHTML = `
 		<app-play
 			host-username="${playersData.host.username}"
@@ -232,6 +210,8 @@ export default class AppLobby extends HTMLElement {
 	#setActiveInviteCheckEvent() {
 		if (this.data.playerType == "host") {
 			this.intervalID = setInterval(() => {
+				if (this.lobbyStatus && this.lobbyStatus.guest)
+					return ;
 				callAPI("GET", `http://127.0.0.1:8000/api/game/has-pending-game-requests/`, null, (res, data) => {
 					console.log(data.has_pending_game_requests);
 					if (res.ok) {
@@ -248,9 +228,6 @@ export default class AppLobby extends HTMLElement {
 	#onRefreshTokenEvent() {
 		stateManager.addEvent("hasRefreshToken", (state) => {
 			if (state) {
-				console.log("-------------------------------");
-				console.log("FRCHA SOCKET 2");
-				console.log("-------------------------------");
 				gameWebSocket.refreshToken();
 				gameWebSocket.close();
 			}

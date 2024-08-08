@@ -69,23 +69,11 @@ export default class AppPlay extends HTMLElement {
 		this.#initComponent();
 		this.#render();
 		this.#scripts();
-
-
-		console.log("-------------------------------");
-		console.log("Disconecta do app play");
-		console.log("-------------------------------");
-
-	
 	}
 
 	disconnectedCallback() {
 		this.game.stop();
 		this.game = null;
-
-		console.log("-------------------------------");
-		console.log("FRCHA SOCKET 4");
-		console.log("-------------------------------");
-
 		gameWebSocket.close();
 	}
 
@@ -127,7 +115,6 @@ export default class AppPlay extends HTMLElement {
 		this.keyUpStatus = "released";
 
 		this.isGameFinished = false;
-
 
 	}
 
@@ -181,9 +168,6 @@ export default class AppPlay extends HTMLElement {
 	}
 
 	#initGame() {
-
-		console.log("--------Faz init do game-----------");
-
 		this.#getGameColorPallet();
 		this.#setGameStatusEvent();
 		this.game.start();
@@ -224,65 +208,29 @@ export default class AppPlay extends HTMLElement {
 
 	#setWinnerEvent() {
 		stateManager.addEvent("gameWinner", (value) => {
-
-			console.log("-------------------------------");
-			console.log("Game finished");
-			console.log("-------------------------------");
-			
-
 			this.isGameFinished = true;
 			this.game.updateWinner(value);
 			this.leave.classList.remove("hide");
-			console.log("-------------------------------");
-			console.log("FRCHA SOCKET 5");
-			console.log("-------------------------------");
-	
 			stateManager.cleanStateEvents("gameWinner");
 			stateManager.cleanStateEvents("gameTimeToStart"); 
-			stateManager.cleanStateEvents("hasRefreshToken"); 
 			stateManager.cleanStateEvents("gameStatus");
-
-
 			gameWebSocket.close();
-
-
-
-
 		});
 	}
 
 	#setBtnLeaveEvent() {
 		this.leave.addEventListener("click", () => {
-			
-			console.log("Vai redirecionar para o play");
-			
 			redirect("/play");
 		});
 	}
 
 	#openSocket() {
-		//console.log("será que tem lobby: ", this.data.lobbyId);
 		gameWebSocket.open(this.data.lobbyId);
 	}
 
-	#onRefreshTokenEvent() {
-		stateManager.addEvent("hasRefreshToken", (state) => {
-			if (state) {
-
-				console.log("-------------------------------");
-				console.log("FRCHA SOCKET 1");
-				console.log("-------------------------------");
-
-				gameWebSocket.refreshToken();
-				gameWebSocket.close();
-			}
-		});
-	}
-	
 	#onSocketCloseEvent() {
 		stateManager.addEvent("gameSocket", (state) => {
 			if (state == "closed") {
-			//	console.log("devia reabrir socket");
 				if (!this.isGameFinished)
 					this.#openSocket();
 			}

@@ -64,23 +64,12 @@ class Game(AsyncWebsocketConsumer):
 				self.channel_name
 			)
 		await self.send_users_info_to_group()
-
 		game_id = self.lobby.get_associated_game_id()
-
-		await sync_to_async(print)(f"\n-----------------------------------------------\nGAME ID START -> {game_id}\n-----------------------------------------------\n")
-
 		if game_id:
 			await self.__start_game(game_id)
 
-		await sync_to_async(print)("\n---------------------------------------------------------")
-		await sync_to_async(print)(f"User: {self.user.username}")
-		await sync_to_async(print)(f"Game: {self.game}")
-		await sync_to_async(print)("---------------------------------------------------------\n")
-
 	async def send_users_info_to_group(self):
-		await self.channel_layer.group_send(
-			self.room_group_name, {'type': 'send_users_info'}
-		)
+		await self.channel_layer.group_send(self.room_group_name, {'type': 'send_users_info'})
 
 	async def send_users_info(self, event):
 		await self.__check_authentication()
@@ -90,9 +79,6 @@ class Game(AsyncWebsocketConsumer):
 		})
 
 	async def disconnect(self, close_code):
-
-		await sync_to_async(print)(f"\n-----------------------------------------------\nRefresh Token Status -> {True if self.refresh_token_status else False}\n-----------------------------------------------\n")
-
 		if not self.refresh_token_status:
 			if not self.game:
 				if self.user.id == self.lobby.get_host_id():
@@ -158,7 +144,6 @@ class Game(AsyncWebsocketConsumer):
 		self.game = await sync_to_async(games_dict.get_game_obj)(game_id)
 		self.game_info = await sync_to_async(game_model.get)(id=game_id)
 		await self.__send_updated_data()
-		await sync_to_async(print)(f"\n-----------------------------------------------\nSETUP GAME ID -> {game_id}\n-----------------------------------------------\n")
 		self.task = asyncio.create_task(self.__game_routine())
 
 	async def __stop_game_routine(self):
