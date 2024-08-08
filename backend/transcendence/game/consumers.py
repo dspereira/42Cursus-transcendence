@@ -231,19 +231,22 @@ class Game(AsyncWebsocketConsumer):
 		if self.game_info.status != GAME_STATUS_FINISHED and self.game_info.status != GAME_STATUS_SURRENDER:
 			self.game.set_status(finish_status)
 			await self.__send_updated_data()
+			winner = await sync_to_async(user_model.get)(id=self.game.get_winner())
+			winner_username = winner.username if winner else None
 			scores = await sync_to_async(self.game.get_score_values)()
 			self.game_info.user1_score = scores['player_1_score']
 			self.game_info.user2_score = scores['player_2_score']
 			self.game_info.status = finish_status
-			self.game_info.winner = await sync_to_async(user_model.get)(id=self.game.get_winner())
+			self.game_info.winner = winner
 			await sync_to_async(self.game_info.save)()
+			games_dict.remove_game_obj(self.game_info.id)
 			surrender = True if finish_status == GAME_STATUS_SURRENDER else False
 			await self.channel_layer.group_send(
 				self.room_group_name,
 				{
 					'type': 'send_finished_game',
 					'finish_data': {
-						"winner_username": self.game_info.winner.username,
+						"winner_username": winner_username,
 						"surrender": surrender
 					}
 				}
