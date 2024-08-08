@@ -68,13 +68,28 @@ export default class AppLobby extends HTMLElement {
 		this.#initComponent();
 		this.#render();
 		this.#scripts();
+		console.log("--------------------------");
+		console.log("connectedCallback() do lobby");
+		console.log("--------------------------");
+
 	}
 
 	disconnectedCallback() {
 		if (this.intervalID)
 			clearInterval(this.intervalID);
-		if (!this.startGame)
+		if (!this.startGame) {
+			console.log("-------------------------------");
+			console.log("FRCHA SOCKET 3");
+			console.log("-------------------------------");
+
 			gameWebSocket.close();
+		}
+		stateManager.cleanStateEvents("hasRefreshToken");
+		stateManager.cleanStateEvents("gameSocket"); 
+		stateManager.cleanStateEvents("lobbyStatus"); 
+		stateManager.cleanStateEvents("hasLobbyEnded");
+
+		console.log("disconnectedCallback do lobby");
 	}
 
 	attributeChangedCallback(name, oldValue, newValue) {
@@ -119,6 +134,8 @@ export default class AppLobby extends HTMLElement {
 		this.#setReadyBtnEvent();
 		//this.#setActiveInviteCheckEvent();
 		this.#setLobbyEndedEvent();
+		this.#onRefreshTokenEvent();
+		this.#onSocketCloseEvent();
 	}
 
 	#openSocket() {
@@ -174,13 +191,31 @@ export default class AppLobby extends HTMLElement {
 	#startGame() {
 		const playersData = stateManager.getState("lobbyStatus");
 		const contentElm = document.querySelector(".content");
+		const lobbyId = this.data.lobbyId;
+
+		console.log("--------------------------");
+		console.log(lobbyId);
+		console.log("--------------------------");
+
+
+		console.log("--------------------------");
+		console.log("Estou no start game do lobby");
+		console.log("--------------------------");
+
+
 		this.startGame = true;
+		this.remove();
+
+
+
+
 		contentElm.innerHTML = `
 		<app-play
 			host-username="${playersData.host.username}"
 			host-image="${playersData.host.image}"
 			guest-username="${playersData.guest.username}"
 			guest-image="${playersData.guest.image}"
+			lobby-id="${lobbyId}"
 		></app-play>
 		`;
 	}
@@ -208,6 +243,25 @@ export default class AppLobby extends HTMLElement {
 				});
 			}, 5000);
 		}
+	}
+
+	#onRefreshTokenEvent() {
+		stateManager.addEvent("hasRefreshToken", (state) => {
+			if (state) {
+				console.log("-------------------------------");
+				console.log("FRCHA SOCKET 2");
+				console.log("-------------------------------");
+				gameWebSocket.refreshToken();
+				gameWebSocket.close();
+			}
+		});
+	}
+
+	#onSocketCloseEvent() {
+		stateManager.addEvent("gameSocket", (state) => {
+			if (state == "closed")
+				this.#openSocket();
+		});
 	}
 }
 

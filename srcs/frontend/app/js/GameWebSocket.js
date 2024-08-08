@@ -25,6 +25,9 @@ class GameWebSocket {
 		if (!gameRequestId)
 			gameRequestId = "";
 		const url = `${webSockettUrl}${gameRequestId}/`;
+		
+		//console.log("Tenta abrir o socket open(gameRequestId)");
+		//console.log(url);
 
 		if (this.isClose()) {
 			this.socket = new WebSocket(url);
@@ -34,9 +37,8 @@ class GameWebSocket {
 	}
 
 	close() {
-		if (this.isOpen()) {
+		if (this.isOpen())
 			this.socket.close();
-		}
 	}
 
 	send(key, status) {
@@ -55,6 +57,14 @@ class GameWebSocket {
 				type: "update_ready_status"
 			}));
 		}
+	}
+
+	refreshToken() {
+		if (this.isOpen()) {
+			this.socket.send(JSON.stringify({
+				type: "refresh_token"
+			}));
+		}		
 	}
 
 	isOpen() {
@@ -99,6 +109,7 @@ class GameWebSocket {
 		this.socket.onclose = (event) => {
 			console.log('WebSocket game close: ', event);
 			this.socket = null;
+			stateManager.setState("gameSocket", "closed");
 		};
 	}
 }

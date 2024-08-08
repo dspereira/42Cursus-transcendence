@@ -70,7 +70,7 @@ export default class Game {
 	}
 
 	#animate() {
-		console.log("animacao here");
+		//console.log("animacao here");
 		this.#drawAll();
 		this.animation = window.requestAnimationFrame(this.#animate.bind(this));
 		if (this.winnerUsername)
