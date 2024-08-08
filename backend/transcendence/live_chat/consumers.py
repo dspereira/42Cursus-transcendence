@@ -114,13 +114,13 @@ class ChatConsumer(AsyncWebsocketConsumer):
 			owner = "owner"
 		else:
 			owner = "friend"
-		await self.send(text_data=json.dumps({
+		await self.__send({
 			'type': 'message',
 			'message': event['message'],
 			'owner': owner,
 			'timestamp': event['timestamp'],
 			'user_image': event['user_image'],
-		}))
+		})
 
 	async def __send_get_message(self, message, id_browser):
 		message_content = None
@@ -149,7 +149,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
 			owner = "owner"
 		else:
 			owner = "friend"
-		await self.send(text_data=json.dumps({
+		await self.__send({
 			'type': 'get_message',
 			'message': event['message'],
 			'owner': owner,
@@ -157,7 +157,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
 			'requester_id': event['requester_id'],
 			'idBrowser': event['idBrowser'],
 			'user_image': event['user_image'],
-		}))
+		})
 
 	def __get_messages(self, start, limit):
 		return list(msg_model.filter(room=self.room)[start:start+limit])
@@ -232,11 +232,11 @@ class ChatConsumer(AsyncWebsocketConsumer):
 				)
 
 	async def send_online_status(self, event):
-		await self.send(text_data=json.dumps({
+		await self.__send({
 			'type': 'online_status',
 			'user_id': event['id'],
 			'online': event['online']
-		}))
+		})
 
 	async def __get_user_image(self, user_id):
 		user = await sync_to_async(user_model.get)(id=user_id)
@@ -269,7 +269,13 @@ class ChatConsumer(AsyncWebsocketConsumer):
 					)
 
 	async def send_update_friend_block_status(self, event):
-		await self.send(text_data=json.dumps({
+		await self.__send({
 			'type': 'update_block_status',
 			'id': event['id']
-		}))
+		})
+
+	async def __send(self, content):
+		try:
+			await self.send(text_data=json.dumps(content))
+		except Exception as e:
+			await sync_to_async(print)(e)
