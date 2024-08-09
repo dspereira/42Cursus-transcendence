@@ -10,7 +10,7 @@ class StateManager {
 		this.states = {
 			sidePanel: "open",
 			pageReady: false,
-			isLoggedIn: null,
+			isLoggedIn: null,   // realy change when user logout and not when chage refresh token
 			friendChatId: null,
 			newChatMessage: null,
 			chatMessagesCounter: 0,
@@ -22,7 +22,13 @@ class StateManager {
 			messageSend: null,
 			onlineStatus: null,
 			blockStatus: null,
-			gameStatus: null
+			gameStatus: null,
+			lobbyStatus: null,
+			gameTimeToStart: null,
+			gameWinner: null,
+			hasLobbyEnded: null,
+			hasRefreshToken: null,
+			gameSocket: null,
 		}
 		this.stateEvents = {
 			sidePanel: [],
@@ -40,6 +46,12 @@ class StateManager {
 			onlineStatus: [],
 			blockStatus: [],
 			gameStatus: [],
+			lobbyStatus: [],
+			gameTimeToStart: [],
+			gameWinner: [],
+			hasLobbyEnded: [],
+			hasRefreshToken: [],
+			gameSocket: []
 		}
 
 		StateManager.instance = this;
@@ -73,6 +85,11 @@ class StateManager {
 			if (!globalEvents.includes(key))
 				this.stateEvents[key] = [];
 		}
+	}
+
+	cleanStateEvents(name) {
+		if (name)
+			this.stateEvents[name] = [];
 	}
 
 	// DEBUG
