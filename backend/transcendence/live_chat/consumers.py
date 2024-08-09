@@ -105,22 +105,24 @@ class ChatConsumer(AsyncWebsocketConsumer):
 					'message': message_content,
 					'id': user_id,
 					'timestamp': timestamp,
-					'user_image': await self.__get_user_image(user_id=user_id)
+					'user_image': await self.__get_user_image(user_id=user_id),
+					"room": self.room_group_name
 				}
 			)
 
 	async def send_message_to_friend(self, event):
-		if self.user.id == event['id']:
-			owner = "owner"
-		else:
-			owner = "friend"
-		await self.__send({
-			'type': 'message',
-			'message': event['message'],
-			'owner': owner,
-			'timestamp': event['timestamp'],
-			'user_image': event['user_image'],
-		})
+		if self.room_group_name == event['room']:
+			if self.user.id == event['id']:
+				owner = "owner"
+			else:
+				owner = "friend"
+			await self.__send({
+				'type': 'message',
+				'message': event['message'],
+				'owner': owner,
+				'timestamp': event['timestamp'],
+				'user_image': event['user_image'],
+			})
 
 	async def __send_get_message(self, message, id_browser):
 		message_content = None
