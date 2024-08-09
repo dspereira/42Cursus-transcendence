@@ -16,17 +16,42 @@ export default class Game {
 		}
 		this.gameData = {
 			ball: {
-				x:50,
-				y:50
+				x: width / 2,
+				y: height / 2
 			},
-		};
+			paddle_left_pos: height / 2,
+			paddle_right_pos:  height / 2,
+			player_1_score: "0",
+			player_2_score: "0"
+		}
+		this.startCounter = null;
+		this.lastStartCounterValue = null;
+		this.startCounterFont = 200;
+
+		this.winnerUsername = null;
+		this.surrender = null;
 	}
 
 	updateState(data) {
-		// update gameData
-		// console.log("updateState");
-		// console.log(data);
 		this.gameData = data;
+		this.startCounter = null;
+	}
+
+	updateStartCounter(value) {
+		this.startCounter = value;
+		if (value == 0)
+			this.startCounter = "GO!"
+
+		if (this.lastStartCounterValue == null || this.lastStartCounterValue != this.startCounter) {
+			this.startCounterFont = 200;
+			this.lastStartCounterValue = this.startCounter;
+		}
+	}
+
+	updateWinner(value) {
+		this.winnerUsername = value.winner_username;
+		this.surrender = value.surrender;
+		this.startCounter = null;
 	}
 
 	setColorPallet(color_pallet) {
@@ -34,7 +59,6 @@ export default class Game {
 	}
 
 	start() {
-		// console.log("First Time Start");
 		this.#animate();
 	}
 
@@ -46,9 +70,11 @@ export default class Game {
 	}
 
 	#animate() {
-		// console.log("animacao here");
+		//console.log("animacao here");
 		this.#drawAll();
 		this.animation = window.requestAnimationFrame(this.#animate.bind(this));
+		if (this.winnerUsername)
+			this.stop();
 	}
 
 	#drawAll() {
@@ -58,6 +84,8 @@ export default class Game {
 		this.#drawPaddle(this.gameData.paddle_right_pos, "rigth");
 		this.#drawScore(this.gameData.player_1_score, "left");
 		this.#drawScore(this.gameData.player_2_score, "rigth");
+		this.#drawStartCounter();
+		this.#drawWinner();
 	}
 
 	#drawField() {
@@ -84,6 +112,20 @@ export default class Game {
 			this.ctx.fillText(score, this.scoreLeftPos.x, this.scoreLeftPos.y);
 		else
 			this.ctx.fillText(score, this.scoreRigthPos.x, this.scoreRigthPos.y);
+	}
+
+	#drawStartCounter() {
+		if (this.startCounter == null)
+			return ;
+		if (this.startCounterFont < 160 && this.startCounter == "GO!") {
+			this.startCounter = null;
+			return ;
+		}
+		this.startCounterFont = this.startCounterFont - 2;
+		this.ctx.font = `${this.startCounterFont}px VT323`;
+		this.ctx.fillStyle = "white";
+		let pos = this.#calculateStartCounterPosition(this.startCounter, this.startCounterFont);
+		this.ctx.fillText(`${this.startCounter}`, pos.x, pos.y);
 	}
 
 	#drawPaddle(pos, side) {
@@ -118,11 +160,32 @@ export default class Game {
 		this.ctx.stroke();
 	}
 
+	#drawWinner() {
+		if (!this.winnerUsername)
+			return ;
+
+		const fontSize = 70;
+		this.ctx.font = `${fontSize}px VT323`;
+		this.ctx.fillStyle = "white";
+
+		let pos = this.#calculateStartWinnerPosition("WINNER", fontSize - 20);
+		this.ctx.fillText("WINNER", pos.x, pos.y - 60);
+
+		pos = this.#calculateStartWinnerPosition(this.winnerUsername, fontSize);
+		this.ctx.fillText(`${this.winnerUsername}`, pos.x, pos.y);
+
+		if (this.surrender) {
+			const msg = "OPPONENT LEFT THE GAME";
+			pos = this.#calculateStartWinnerPosition(msg, fontSize - 40);
+			this.ctx.fillText(msg, pos.x, pos.y + 200);
+		}
+	}
+
 	#calculateScorePosition(side) {
 		this.ctx.font = `${this.scoreFont}px VT323`;
 		const metrics = this.ctx.measureText("5");
-		const halfTextHeight   = metrics.actualBoundingBoxAscent / 2;
-		const halfTextWidth  = metrics.width / 2;
+		const halfTextHeight = metrics.actualBoundingBoxAscent / 2;
+		const halfTextWidth = metrics.width / 2;
 		let y = (this.height / 2) + halfTextHeight;
 		let x = 0;
 
@@ -130,6 +193,34 @@ export default class Game {
 			x = (this.width / 4) - halfTextWidth;
 		else
 			x = (this.width / 4) * 3 - halfTextWidth;
+
+		return {
+			x: x,
+			y: y
+		}
+	}
+
+	#calculateStartCounterPosition(value, fontSize) {
+		this.ctx.font = `${fontSize}px VT323`;
+		const metrics = this.ctx.measureText(`${value}`);
+		const halfTextHeight = metrics.actualBoundingBoxAscent / 2;
+		const halfTextWidth = metrics.width / 2;
+		let y = (this.height / 2) + halfTextHeight;
+		let x = (this.width / 2) - halfTextWidth;
+
+		return {
+			x: x,
+			y: y
+		}
+	}
+
+	#calculateStartWinnerPosition(value, fontSize) {
+		this.ctx.font = `${fontSize}px VT323`;
+		const metrics = this.ctx.measureText(`${value}`);
+		const halfTextHeight = metrics.actualBoundingBoxAscent / 2;
+		const halfTextWidth = metrics.width / 2;
+		let y = (this.height / 4) + halfTextHeight;
+		let x = (this.width / 2) - halfTextWidth;
 
 		return {
 			x: x,

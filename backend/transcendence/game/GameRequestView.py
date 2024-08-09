@@ -9,59 +9,65 @@ import json
 
 from friendships.friendships import is_already_friend
 
+from .utils import GAME_REQ_STATUS_DECLINED, GAME_REQ_STATUS_ACCEPTED
 from .utils import has_already_valid_game_request
 from .utils import set_exp_time
 from .utils import get_game_requests_list
 from .utils import update_game_request_status
 from .utils import has_already_games_accepted
-from .utils import GAME_REQ_STATUS_DECLINED
-from .utils import get_game_request_info
+from .utils import cancel_other_invitations
+from .utils import get_games_list
+
+from .Lobby import Lobby, lobby_dict
 
 game_requests_model = ModelManager(GameRequests)
 user_model = ModelManager(User)
 
 class GameRequestView(View):
 
-	# @method_decorator(login_required)
+	@method_decorator(login_required)
 	def get(self, request):
-		# user = user_model.get(id=request.access_data.sub)
-		user = user_model.get(id=request.GET.get('user'))
+		user = user_model.get(id=request.access_data.sub)
 		if user:
 			requests_list = get_game_requests_list(user=user)
 			return JsonResponse({"message": f"Game request list retrieved with success.", "requests_list": requests_list}, status=200)
 		else:
 			return JsonResponse({"message": "Error: Invalid User!"}, status=400)
 
-	# @method_decorator(login_required)
+	@method_decorator(login_required)
 	def post(self, request):
 		if request.body:
 			req_data = json.loads(request.body)
-			# user = user_model.get(id=request.access_data.sub)
-			user = user_model.get(id=req_data["user"])
-			friend = user_model.get(id=req_data["id"])
-			if user and friend and user.id != friend.id:
-				if is_already_friend(user1=user, user2=friend):
-					if has_already_valid_game_request(user1=user, user2=friend):
-						return JsonResponse({"message": f"Error: Has already game request!",}, status=409)
-					if has_already_games_accepted(user=user):
-						return JsonResponse({"message": f"Error: User is already playing a game!",}, status=409)
-					game_request = game_requests_model.create(from_user=user, to_user=friend)
-					set_exp_time(game_request=game_request)
-					if game_request:
-						return JsonResponse({"message": f"Game Requested Created With Success!",
-								"game_request": get_game_request_info(game_req=game_request)
-						}, status=201)
-					else:
-						return JsonResponse({"message": f"Error: Failed to create game request in DataBase",}, status=409)
+			user = user_model.get(id=request.access_data.sub)
+			invites_list = req_data["invites_list"]
+			if user:
+				if has_already_games_accepted(user=user):
+					return JsonResponse({"message": f"Error: User is already playing a game!",}, status=409)
+				if user.id in lobby_dict and lobby_dict[user.id]:
+					lobby_dict[user.id].reset()
 				else:
-					return JsonResponse({"message": "Error: Users are not friends!"}, status=409)
+					lobby_dict[user.id] = Lobby(user.id)
+				if not lobby_dict[user.id]:
+					return JsonResponse({"message": f"Error: Failed to create game lobby!",}, status=409)
+				for friend_id in invites_list:
+					user2 = user_model.get(id=friend_id)
+					if is_already_friend(user1=user, user2=user2):
+						if has_already_valid_game_request(user1=user, user2=user2):
+							return JsonResponse({"message": f"Error: Has already game request!",}, status=409)
+						game_request = game_requests_model.create(from_user=user, to_user=user2)
+						set_exp_time(game_request=game_request)
+						if not game_request:
+							return JsonResponse({"message": f"Error: Failed to create game request in DataBase",}, status=409)
+					else:
+						return JsonResponse({"message": "Error: Users are not friends!"}, status=409)
+				return JsonResponse({"message": f"Game Requested Created With Success!"}, status=201)
 			else:
 				return JsonResponse({"message": "Error: Invalid User, Requested Friend!"}, status=400)
 		else:
 			return JsonResponse({"message": "Error: Empty Body!"}, status=400)
 
-	# @method_decorator(login_required)
-	def patch(self, request):
+	@method_decorator(login_required)
+	def delete(self, request):
 		if request.body:
 			req_data = json.loads(request.body)
 			game_req_id = req_data['id']
@@ -74,25 +80,26 @@ class GameRequestView(View):
 		else:
 			return JsonResponse({"message": "Error: Empty Body!"}, status=400)
 
-	# Remover depois de todos os testes feitos
-	def delete(self, request):
+	@method_decorator(login_required)
+	def put(self, request):
 		if request.body:
 			req_data = json.loads(request.body)
-			game_req_id = req_data['id']
-			if game_req_id:
-				game_request = game_requests_model.get(id=game_req_id)
-				if game_request:
-					game_request.delete()
-					return JsonResponse({"message": f"Deleted request with id = {game_req_id}"}, status=200)
+			user = user_model.get(id=request.access_data.sub)
+			games_req = game_requests_model.get(id=req_data["id"])
+			if user:
+				if not games_req or games_req.to_user.id != user.id:
+					return JsonResponse({"message": "Error: Invalid game request ID!"}, status=409)
+				if not has_already_games_accepted(user=user):
+					lobby = lobby_dict[games_req.from_user.id]
+					if not lobby.is_full():
+						update_game_request_status(game_request=games_req, new_status=GAME_REQ_STATUS_ACCEPTED)
+						lobby.set_user_2_id(games_req.to_user.id)
+						return JsonResponse({"message": "Invite accepted with success!", "lobby_id": games_req.from_user.id}, status=200) 
+					else:
+						return JsonResponse({"message": "Error: Game lobby is full!"}, status=409)
 				else:
-					return JsonResponse({"message": "Error: Invalid Game Request ID!"}, status=400)
+					return JsonResponse({"message": "Error: Currently playing a game!"}, status=409)
 			else:
-				counter = 0
-				game_requests = game_requests_model.all()
-				if game_requests:
-					for req in game_requests:
-						req.delete()
-						counter += 1
-				return JsonResponse({"message": f"Deleted {counter} game requests!"}, status=200)
+				return JsonResponse({"message": "Error: Invalid User!"}, status=400)
 		else:
 			return JsonResponse({"message": "Error: Empty Body!"}, status=400)

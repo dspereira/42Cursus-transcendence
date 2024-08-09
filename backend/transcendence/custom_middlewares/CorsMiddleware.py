@@ -16,6 +16,9 @@ methods_name = "Access-Control-Allow-Methods"
 methods_data = [
 	"GET",
 	"POST",
+	"PATCH",
+	"UPDATE",
+	"PUT",
 	"DELETE",
 ]
 

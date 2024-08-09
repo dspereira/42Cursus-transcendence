@@ -4,6 +4,7 @@ from datetime import timedelta, datetime
 from .models import GameRequests, Games
 from user_auth.models import User
 from django.db.models import Q
+import math
 
 from user_profile.aux import get_image_url
 
@@ -25,17 +26,10 @@ GAME_STATUS_FINISHED = "finished"
 GAME_STATUS_ABORTED = "aborted"
 GAME_STATUS_PLAYING = "playing"
 GAME_STATUS_CREATED = "created"
+GAME_STATUS_SURRENDER = "sorrender"
 
 def get_user_profile(user):
 	return user_profile_model.get(user=user)
-
-def get_game_request_info(game_req):
-	game_req_info = {
-		"id": game_req.id,
-		"from_user": game_req.from_user.id,
-		"to_user": game_req.to_user.id,
-	}
-	return game_req_info
 
 def get_valid_game_requests_list(game_requests):
 	current_time = datetime.now()
@@ -80,7 +74,8 @@ def get_game_requests_list(user):
 					"req_id": game_req.id,
 					"id": game_req.from_user.id,
 					"username": game_req.from_user.username,
-					"image": get_image_url(get_user_profile(user=game_req.from_user))
+					"image": get_image_url(get_user_profile(user=game_req.from_user)),
+					"exp": get_request_exp_time(game_req)
 				}
 				game_requests_info.append(req_info)
 	return game_requests_info
@@ -97,8 +92,8 @@ def is_user_winner(winner, user):
 def get_game_info(game, user):
 	game_info = {
 		"id": game.id,
-		"user1": game.user1.username if not game.user1_alias else game.user1_alias,
-		"user2": game.user2.username if not game.user2_alias else game.user2_alias,
+		"user1": game.user1.username,
+		"user2": game.user2.username,
 		"user1_score": game.user1_score,
 		"user2_score": game.user2_score,
 		"user1_image": get_image_url(get_user_profile(user=game.user1)),
@@ -134,5 +129,17 @@ def cancel_other_invitations(user):
 			req.status = GAME_REQ_STATUS_DECLINED
 			req.save()
 
-def create_game(user1, user2, user1_alias=None, user2_alias=None):
-	return games_model.create(user1=user1, user2=user2, user1_alias=user1_alias, user2_alias=user2_alias)
+def has_user_pending_game_requests(user):
+	game_reuests = game_requests_model.filter(from_user=user, status=GAME_REQ_STATUS_PENDING)
+	if game_reuests:
+		if get_valid_game_requests_list(game_reuests):
+			return True
+	return False
+
+def get_request_exp_time(game_request):
+	current_time = datetime.now().timestamp()
+	req_exp_time = game_request.exp.timestamp()
+	diff_time_minutes = (req_exp_time - current_time) / 60
+	if diff_time_minutes <= 0.3:
+		return f"30 sec left"
+	return f"{math.floor(diff_time_minutes) + 1} min left"
