@@ -12,8 +12,8 @@ class InputValidationMiddleware:
 			request.GET = self.__get_query_params_correct(request.GET)
 
 		if request.body:
-			body = self.__get_body_correct(body=json.loads(request.body))
-			request._body = json.dumps(body).encode('utf-8')
+			body = self.__get_body_correct(body=request.body.decode('utf-8'))
+			request._body = body.encode('utf-8')
 
 		response = self.get_response(request)
 		return response
@@ -29,8 +29,5 @@ class InputValidationMiddleware:
 		return new_query_params
 
 	def __get_body_correct(self, body):
-		new_body = body.copy()
-		for key, value in body.items():
-			valid_value = self.input_checker.get_valid_input(value)
-			new_body[key] = valid_value
+		new_body = self.input_checker.get_valid_input(body)
 		return new_body
