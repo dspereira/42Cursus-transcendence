@@ -8,9 +8,7 @@ class InputValidationMiddleware:
 
 	def __call__(self, request):
 
-		if request.method == 'POST':
-			request.POST = self.__get_query_params_correct(request.POST)
-		elif request.method == 'GET':
+		if request.GET:
 			request.GET = self.__get_query_params_correct(request.GET)
 
 		if request.body:
