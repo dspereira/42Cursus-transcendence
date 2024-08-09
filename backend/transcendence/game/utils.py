@@ -4,6 +4,7 @@ from datetime import timedelta, datetime
 from .models import GameRequests, Games
 from user_auth.models import User
 from django.db.models import Q
+import math
 
 from user_profile.aux import get_image_url
 
@@ -13,7 +14,7 @@ user_model = ModelManager(User)
 user_profile_model = ModelManager(UserProfileInfo)
 
 TIME_HOURS = 0
-TIME_MINUTES = 2
+TIME_MINUTES = 5
 TIME_SECONDS = 0
 
 GAME_REQ_EXP_TIME_SECONDS = TIME_HOURS * 3600 + TIME_MINUTES * 60 + TIME_SECONDS
@@ -138,7 +139,7 @@ def has_user_pending_game_requests(user):
 def get_request_exp_time(game_request):
 	current_time = datetime.now().timestamp()
 	req_exp_time = game_request.exp.timestamp()
-	diff_time_minutes = round((req_exp_time - current_time) / 60)
-	if diff_time_minutes < 1:
-		return "<1 min left"
-	return f"{diff_time_minutes} min left"
+	diff_time_minutes = (req_exp_time - current_time) / 60
+	if diff_time_minutes <= 0.3:
+		return f"30 sec left"
+	return f"{math.floor(diff_time_minutes) + 1} min left"

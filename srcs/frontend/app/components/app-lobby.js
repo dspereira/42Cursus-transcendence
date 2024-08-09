@@ -213,7 +213,6 @@ export default class AppLobby extends HTMLElement {
 				if (this.lobbyStatus && this.lobbyStatus.guest)
 					return ;
 				callAPI("GET", `http://127.0.0.1:8000/api/game/has-pending-game-requests/`, null, (res, data) => {
-					console.log(data.has_pending_game_requests);
 					if (res.ok) {
 						if (!data.has_pending_game_requests) {
 							clearInterval(this.intervalID);
