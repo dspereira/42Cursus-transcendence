@@ -9,6 +9,7 @@ from user_profile.aux import get_image_url
 from channels.exceptions import StopConsumer
 from .auth_utils import is_authenticated, get_authenticated_user
 from custom_utils.models_utils import ModelManager
+from custom_utils.input_checker import InputChecker
 from datetime import datetime
 
 from friendships.friendships import get_friendship
@@ -21,6 +22,8 @@ user_model = ModelManager(User)
 user_profile_model = ModelManager(UserProfileInfo)
 
 MESSAGE_LIMIT_COUNT = 20
+
+input_checker = InputChecker()
 
 class ChatConsumer(AsyncWebsocketConsumer):
 
@@ -64,8 +67,10 @@ class ChatConsumer(AsyncWebsocketConsumer):
 			await self.__send_chat_group_messages(amount_messages=data_json['message_count'], id_browser=data_json['idBrowser'])
 		elif data_type == "message":
 			if not await self.__get_block_status(friend_id=data_json['friend_id']):
-				new_message = await self.__save_message(data_json['message'].strip())
-				await self.__send_message(new_message)
+				valid_message = input_checker.get_valid_chat_input(data_json['message'].strip())
+				if valid_message:
+					new_message = await self.__save_message(valid_message)
+					await self.__send_message(new_message)
 		elif data_type == "update_block_status":
 			await self.__update_friend_block_status(friend_id=data_json['friend_id'])
 		elif data_type == "last_message_received":

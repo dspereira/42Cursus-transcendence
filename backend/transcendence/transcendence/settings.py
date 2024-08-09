@@ -65,6 +65,7 @@ MIDDLEWARE = [
     'custom_middlewares.JwtMiddleware',
     'custom_middlewares.BlacklistTokenMiddleware',
     'custom_middlewares.OnlineStatusMiddleware',
+    'custom_middlewares.InputValidationMiddleware',
 ]
 
 AUTHENTICATION_BACKENDS = [
