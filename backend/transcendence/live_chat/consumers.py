@@ -67,7 +67,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
 			await self.__send_chat_group_messages(amount_messages=data_json['message_count'], id_browser=data_json['idBrowser'])
 		elif data_type == "message":
 			if not await self.__get_block_status(friend_id=data_json['friend_id']):
-				valid_message = input_checker.get_valid_input(data_json['message'].strip())
+				valid_message = input_checker.get_valid_chat_input(data_json['message'].strip())
 				if valid_message:
 					new_message = await self.__save_message(valid_message)
 					await self.__send_message(new_message)
