@@ -11,7 +11,8 @@ const getHtml = function(data) {
 	<side-panel selected="play"></side-panel>
 	<div class="content content-small">
         <h1>Tournaments</h1>
-        <tourney-graph></tourney-graph>
+        <!--<tourney-graph></tourney-graph>-->
+        <tourney-lobby></tourney-lobby>
 	</div>
 	`;
 	return html;
