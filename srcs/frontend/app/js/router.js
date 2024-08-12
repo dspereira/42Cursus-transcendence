@@ -2,7 +2,8 @@
 import PageHome from "../page-components/page-home.js";
 import PageProfile from "../page-components/page-profile.js";
 import PageChat from "../page-components/page-chat.js";
-import PageTournaments from "../page-components/page-tournaments.js";
+//import PageTournaments from "../page-components/page-tournaments_old.js";
+import  PageTournaments from "../page-components/page-tournaments.js";
 import PageNotifications from "../page-components/page-notifications.js";
 import PageConfigs from "../page-components/page-configs.js";
 import PageLogin from "../page-components/page-login.js";
@@ -15,7 +16,6 @@ import PagePlay from "../page-components/page-play.js";
 import PageGame from "../page-components/page-game.js";
 
 // Components
-import AppTest from "../components/app-test.js";
 import AppHeader from "../components/app-header.js";
 import LoginForm from "../components/login-form.js";
 import SignupForm from "../components/signup-form.js";
@@ -32,6 +32,7 @@ import GameInviteCard from "../components/game-invite-card.js";
 import GameInviteSend from "../components/game-invite-send.js";
 import GameInviteCard1 from "../components/game-invite-card1.js";
 import AppLobby from "../components/app-lobby.js";
+import TourneyGraph from "../components/tourney-graph.js";
 
 // Others
 import stateManager from "./StateManager.js";
