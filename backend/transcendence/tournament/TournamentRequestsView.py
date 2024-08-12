@@ -1,0 +1,90 @@
+from django.utils.decorators import method_decorator
+from custom_utils.models_utils import ModelManager
+from custom_decorators import login_required
+from django.http import JsonResponse
+from user_auth.models import User
+from .models import TournamentRequests
+from django.views import View
+import json
+
+from friendships.friendships import is_already_friend
+
+tournament_requests_model = ModelManager(TournamentRequests)
+user_model = ModelManager(User)
+
+from custom_utils.requests_utils import REQ_STATUS_DECLINED, REQ_STATUS_ACCEPTED
+from custom_utils.requests_utils import update_request_status
+from custom_utils.requests_utils import set_exp_time
+
+from game.utils import has_already_valid_game_request
+
+from .utils import has_already_valid_tournament_request
+from .utils import get_tournament_requests_list
+
+class TournamentRequestsView(View):
+
+	@method_decorator(login_required)
+	def get(self, request):
+		user = user_model.get(id=request.access_data.sub)
+		if user:
+			requests_list = get_tournament_requests_list(user=user)
+			return JsonResponse({"message": f"Tournament request list retrieved with success.", "requests_list": requests_list}, status=200)
+		else:
+			return JsonResponse({"message": "Error: Invalid User!"}, status=400)
+
+	@method_decorator(login_required)
+	def post(self, request):
+		if request.body:
+			req_data = json.loads(request.body)
+			user = user_model.get(id=request.access_data.sub)
+			invites_list = req_data["invites_list"]
+			if user:
+				if has_already_valid_tournament_request(user=user):
+					return JsonResponse({"message": f"Error: User is already playing a tournament!",}, status=409)
+				for friend_id in invites_list:
+					user2 = user_model.get(id=friend_id)
+					if is_already_friend(user1=user, user2=user2):
+						game_request = tournament_requests_model.create(from_user=user, to_user=user2)
+						set_exp_time(game_request=game_request)
+						if not game_request:
+							return JsonResponse({"message": f"Error: Failed to create tournament request in DataBase",}, status=409)
+					else:
+						return JsonResponse({"message": "Error: Users are not friends!"}, status=409)
+				return JsonResponse({"message": f"Game Requested Created With Success!"}, status=201)
+			else:
+				return JsonResponse({"message": "Error: Invalid User, Requested Friend!"}, status=400)
+		else:
+			return JsonResponse({"message": "Error: Empty Body!"}, status=400)
+
+	@method_decorator(login_required)
+	def delete(self, request):
+		if request.body:
+			req_data = json.loads(request.body)
+			tournament_req_id = req_data['id']
+			if tournament_req_id:
+				game_request = tournament_requests_model.get(id=tournament_req_id)
+				if game_request:
+					update_request_status(request=game_request, new_status=REQ_STATUS_DECLINED)
+					return JsonResponse({"message": f"Request {tournament_req_id} new status = decline"}, status=200)
+			return JsonResponse({"message": "Error: Invalid Request ID!"}, status=400)
+		else:
+			return JsonResponse({"message": "Error: Empty Body!"}, status=400)
+
+	@method_decorator(login_required)
+	def put(self, request):
+		if request.body:
+			req_data = json.loads(request.body)
+			user = user_model.get(id=request.access_data.sub)
+			tournament_req = tournament_requests_model.get(id=req_data["id"])
+			if user:
+				if not tournament_req or tournament_req.to_user.id != user.id:
+					return JsonResponse({"message": "Error: Invalid request ID!"}, status=409)
+				if not has_already_valid_tournament_request(user=user):
+					update_request_status(request=tournament_req, new_status=REQ_STATUS_ACCEPTED)
+					return JsonResponse({"message": "Invite accepted with success!"}, status=200) 
+				else:
+					return JsonResponse({"message": "Error: Currently playing a game!"}, status=409)
+			else:
+				return JsonResponse({"message": "Error: Invalid User!"}, status=400)
+		else:
+			return JsonResponse({"message": "Error: Empty Body!"}, status=400)

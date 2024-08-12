@@ -9,11 +9,11 @@ import json
 
 from friendships.friendships import is_already_friend
 
-from .utils import GAME_REQ_STATUS_DECLINED, GAME_REQ_STATUS_ACCEPTED
+from custom_utils.requests_utils import REQ_STATUS_DECLINED, REQ_STATUS_ACCEPTED
+from custom_utils.requests_utils import update_request_status
+from custom_utils.requests_utils import set_exp_time
 from .utils import has_already_valid_game_request
-from .utils import set_exp_time
 from .utils import get_game_requests_list
-from .utils import update_game_request_status
 from .utils import has_already_games_accepted
 from .utils import cancel_other_invitations
 from .utils import get_games_list
@@ -55,7 +55,7 @@ class GameRequestView(View):
 						if has_already_valid_game_request(user1=user, user2=user2):
 							return JsonResponse({"message": f"Error: Has already game request!",}, status=409)
 						game_request = game_requests_model.create(from_user=user, to_user=user2)
-						set_exp_time(game_request=game_request)
+						set_exp_time(request=game_request)
 						if not game_request:
 							return JsonResponse({"message": f"Error: Failed to create game request in DataBase",}, status=409)
 					else:
@@ -74,7 +74,7 @@ class GameRequestView(View):
 			if game_req_id:
 				game_request = game_requests_model.get(id=game_req_id)
 				if game_request:
-					update_game_request_status(game_request=game_request, new_status=GAME_REQ_STATUS_DECLINED)
+					update_request_status(request=game_request, new_status=REQ_STATUS_DECLINED)
 					return JsonResponse({"message": f"Request {game_req_id} new status = decline"}, status=200)
 			return JsonResponse({"message": "Error: Invalid Game Request ID!"}, status=400)
 		else:
@@ -92,7 +92,7 @@ class GameRequestView(View):
 				if not has_already_games_accepted(user=user):
 					lobby = lobby_dict[games_req.from_user.id]
 					if not lobby.is_full():
-						update_game_request_status(game_request=games_req, new_status=GAME_REQ_STATUS_ACCEPTED)
+						update_request_status(request=games_req, new_status=REQ_STATUS_ACCEPTED)
 						lobby.set_user_2_id(games_req.to_user.id)
 						return JsonResponse({"message": "Invite accepted with success!", "lobby_id": games_req.from_user.id}, status=200) 
 					else:

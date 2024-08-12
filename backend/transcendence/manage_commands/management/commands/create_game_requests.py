@@ -6,9 +6,9 @@ from friendships.friendships import is_already_friend
 from game.models import GameRequests
 from user_auth.models import User
 
+from custom_utils.requests_utils import set_exp_time
 from game.Lobby import Lobby, lobby_dict
 from game.utils import has_already_valid_game_request
-from game.utils import set_exp_time
 
 game_requests_model = ModelManager(GameRequests)
 user_model = ModelManager(User)
@@ -35,7 +35,7 @@ class Command(BaseCommand):
 						self.stdout.write(self.style.ERROR("Error: Has already game request!"))
 						break
 					game_request = game_requests_model.create(from_user=user2, to_user=user)
-					set_exp_time(game_request=game_request)
+					set_exp_time(request=game_request)
 					if not game_request:
 						self.stdout.write(self.style.ERROR("Error: Failed to create game request in DataBase"))
 						break

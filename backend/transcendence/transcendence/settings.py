@@ -50,6 +50,7 @@ INSTALLED_APPS = [
     'channels',
     'user_profile',
     'friendships',
+    'tournament',
     'game',
     'manage_commands', # test app
 ]
