@@ -29,6 +29,14 @@ def color_pallet(request):
 	return JsonResponse({"message": "Error: Invalid color pallet id!"}, status=400)
 
 @accepted_methods(["GET"])
+def color_pallet_local(request):
+	if request.GET.get('id'):
+		color_id = int(request.GET.get('id'))
+		if color_id and color_id <= len(COLOR_PALLETS):
+			return JsonResponse({"message": "Color Pallet Retrieved With Success", "color_pallet": COLOR_PALLETS[color_id - 1]}, status=200)	
+	return JsonResponse({"message": "Error: Invalid color pallet id!"}, status=400)
+
+@accepted_methods(["GET"])
 def test(request):
 	user = user_model.get(id=request.GET.get('user'))
 	friend = user_model.get(id=request.GET.get('id'))

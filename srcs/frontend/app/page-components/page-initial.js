@@ -11,6 +11,7 @@ const getHtml = function(data) {
 		<br>
 		<button type="button" class="btn btn-primary" id="login">Login</button>
 		<button type="button" class="btn btn-secondary" id="signup">SignUp</button>
+		<button type="button" class="btn btn-secondary" id="localplay">Local Play</button>
 	`;
 	return html;
 }
@@ -62,6 +63,7 @@ export default class PageInitial extends HTMLElement {
 	#scripts() {
 		const login = this.html.querySelector("#login");
 		const signup = this.html.querySelector("#signup");
+		const localplay = this.html.querySelector("#localplay");
 
 		login.addEventListener("click", (event) => {
 			redirect("/login");
@@ -69,6 +71,10 @@ export default class PageInitial extends HTMLElement {
 
 		signup.addEventListener("click", (event) => {
 			redirect("/signup"); 
+		})
+
+		localplay.addEventListener("click", (event) => {
+			redirect("/localplay"); 
 		})
 	}
 }
