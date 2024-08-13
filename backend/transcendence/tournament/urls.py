@@ -1,7 +1,9 @@
 from django.urls import path
-from .TournamentRequestsView import TournamentRequestsView
+from .TournamentRequestsView import TournamentInvitesView
+from .TournamentView import TournamentView
 from . import views
 
 urlpatterns = [
-	path('request/', TournamentRequestsView.as_view(), name='request'),
+	path('invite/', TournamentInvitesView.as_view(), name='invite'),
+	path('/', TournamentView.as_view(), name='tournament'),
 ]

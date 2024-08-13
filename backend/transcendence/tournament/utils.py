@@ -5,10 +5,12 @@ from datetime import datetime
 
 from user_profile.models import UserProfileInfo
 from .models import TournamentRequests
+from .models import TournamentPlayers
 
 from custom_utils.requests_utils import REQ_STATUS_PENDING, REQ_STATUS_DECLINED, REQ_STATUS_ACCEPTED 
 
 tournament_requests_model = ModelManager(TournamentRequests)
+tournament_players_model = ModelManager(TournamentPlayers)
 user_profile_model = ModelManager(UserProfileInfo)
 
 def get_user_profile(user):
@@ -52,3 +54,17 @@ def has_already_valid_tournament_request(user1, user2):
 			if tournament_requests_list:
 				return True
 	return False
+
+def get_tournament_requests_list(user):
+	tournaments_list = []
+	tournaments = tournament_players_model.filter(user=user)
+	for tournament in tournaments:
+		tournaments_list.append(tournament.tournament)
+	if len(tournaments_list):
+		return tournaments_list
+	return None
+
+def update_tournament_status(tournament, new_status):
+	if tournament:
+		tournament.status = new_status
+		tournament.save()
