@@ -56,6 +56,7 @@ export class GameLogic {
 			this.ball.setEndGamePosition();
 			this.paddleLeft.endGamePosition();
 			this.paddleRight.endGamePosition();
+
 			return true;
 		}
 		return false;

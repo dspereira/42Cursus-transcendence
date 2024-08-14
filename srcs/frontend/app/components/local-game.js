@@ -69,7 +69,6 @@ export default class LocalGame extends HTMLElement {
 	constructor() {
 		super()
 		this.data = {};
-		this.gameLogic = null; //
 	}
 
 	connectedCallback() {
@@ -169,7 +168,6 @@ export default class LocalGame extends HTMLElement {
 	}
 
 	#initGame() {
-		console.log("Estou cá dentro");
 		this.#getGameColorPallet();
 		this.#setGameStatusEvent();
 		this.game.updateState({
@@ -209,17 +207,10 @@ export default class LocalGame extends HTMLElement {
 		});
 	}
 
-	$getGameId() {
-		console.log(`Game ID: ${this.game_id}`);
-		return this.game_id;
-	}
-
 	#readyToPlayBtnEvent() {
 		const btn = this.html.querySelector("#start-game");
 		btn.addEventListener('click', (event) => {
-			console.log("Start the game");
 			const gameLoop = () => {
-				console.log("Dentro do Loop");
 				this.gameLogic.update();
 				
 				this.game.updateState({
@@ -230,8 +221,13 @@ export default class LocalGame extends HTMLElement {
 					player_2_score: this.gameLogic.getScoreValues().player2Score,
 				})
 	
-				if (!this.gameLogic.isEndGame()) {
+				if (!this.gameLogic.isEndGame())
 					setTimeout(gameLoop, 10);
+				else {
+					if (this.gameLogic.getScoreValues().player1Score === 7)
+						this.game.updateWinner({winner_username: "player1"})
+					else
+						this.game.updateWinner({winner_username: "player2"})
 				}
 			};
 			gameLoop();
