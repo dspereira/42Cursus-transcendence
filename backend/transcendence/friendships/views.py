@@ -24,6 +24,12 @@ user_model = ModelManager(User)
 def search_user_by_name(request):
 	user = user_model.get(id=request.access_data.sub)
 	search_username = request.GET.get('key')
+
+	print("-------------------------------------------------")
+	print(request.GET)
+	print(f"Key: {search_username}")
+	print("-------------------------------------------------")
+
 	users_values = None
 	result_users = None
 	if not search_username or search_username == "" or search_username == '""':

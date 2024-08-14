@@ -71,18 +71,23 @@ export default class PageTournaments extends HTMLElement {
 		this.#createTornementEvent();
 	}
 
-
 	#createTornementEvent() {
 		const btn = this.html.querySelector(".btn-create-tourney");
 		btn.addEventListener("click", () => {
 			callAPI("POST", `http://127.0.0.1:8000/api/tournament/`, null, (res, data) => {					
 				if (res.ok) {
 					const content = this.html.querySelector(".content");
-					content.innerHTML = "<tourney-lobby></tourney-lobby>";
+					content.innerHTML = `
+						<tourney-lobby 
+							tournament-id="${data.tournament_id}"
+							owner-id="${stateManager.getState("userId")}"
+						></tourney-lobby>`;
 				}
 			});
 		});
 	}
+
+
 
 }
 

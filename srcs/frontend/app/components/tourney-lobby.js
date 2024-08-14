@@ -1,3 +1,5 @@
+import { callAPI } from "../utils/callApiUtils.js";
+
 const styles = `
 .players {
 	display: flex;
@@ -89,20 +91,20 @@ const getHtml = function(data) {
 		<div class="players">
 			<div class="player">
 				<div><img src="../img/default_profile.png" class="default-photo" alt="avatar"></div>
-				<div>waiting...</div>
+				<div class="username">waiting...</div>
 			</div>
 			<div class="player">
 				<div><img src="../img/default_profile.png" class="default-photo" alt="avatar"></div>
-				<div>waiting...</div>
+				<div class="username">waiting...</div>
 			</div>
 			
 			<div class="player">
 				<div><img src="../img/default_profile.png" class="default-photo" alt="avatar"></div>
-				<div>waiting...</div>
+				<div class="username">waiting...</div>
 			</div>
 			<div class="player">
 				<div><img src="../img/default_profile.png" class="default-photo" alt="avatar"></div>
-				<div>waiting...</div>
+				<div class="username">waiting...</div>
 			</div>
 		</div>
 		<div class="buttons">
@@ -125,18 +127,17 @@ const getHtml = function(data) {
 
 			</div>
 		</div>
-
-
 	`;
 	return html;
 }
 
 export default class TourneyLobby extends HTMLElement {
-	static observedAttributes = [];
+	static observedAttributes = ["tournament-id", "owner-id"];
 
 	constructor() {
 		super()
 		this.data = {};
+		this.intervalID = null;
 	}
 
 	connectedCallback() {
@@ -146,10 +147,16 @@ export default class TourneyLobby extends HTMLElement {
 	}
 
 	disconnectedCallback() {
-
+		if (this.intervalID)
+			clearInterval(this.intervalID);
 	}
 
 	attributeChangedCallback(name, oldValue, newValue) {
+		if (name == "tournament-id")
+			name = "tournamentId";
+		else if (name == "owner-id")
+			name = "ownerId";
+		this.data[name] = newValue;
 	}
 
 	#initComponent() {
@@ -180,7 +187,51 @@ export default class TourneyLobby extends HTMLElement {
 	}
 
 	#scripts() {
+		this.#joinedPlayersPolling();
+	}
 
+	#setDefaultPhoto() {
+
+	}
+
+	#setProfilePhoto(elmHtml, playerData) {
+		let img = elmHtml.querySelector("img");
+		img.setAttribute("src", playerData.image);
+		img.classList.remove("default-photo");
+		img.classList.add("profile-photo");
+		elmHtml.querySelector(".username").innerHTML = playerData.username;
+		elmHtml.classList.add(`id-${playerData.id}`);
+	}
+
+	#updatePlayers(players) {
+		const playersNodeList = this.html.querySelectorAll(".player");
+		let player = null;
+
+		if (!playersNodeList)
+			return ;
+		playersNodeList.forEach((elm, idx) => {
+			if (idx >= players.length)
+				return ;
+			player = players[idx];
+			if (!elm.classList.contains(`id-${player.id}`)) {
+				this.#setProfilePhoto(elm, player);
+			}
+		});
+	}
+
+	#joinedPlayersCall() {
+		callAPI("GET", `http://127.0.0.1:8000/api/tournament/players?id=${this.data.tournamentId}`, null, (res, data) => {
+			if (res.ok) {
+				if (data.players)
+					this.#updatePlayers(data.players);
+			}
+		});
+	}
+
+	#joinedPlayersPolling() {
+		this.intervalID = setInterval(() => {
+			this.#joinedPlayersCall();
+		}, 5000);
 	}
 }
 
