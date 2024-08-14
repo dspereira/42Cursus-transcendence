@@ -61,12 +61,12 @@ def has_already_valid_tournament_request(user1, user2):
 def get_tournament_list(user):
 	tournaments_list = []
 	tournaments = tournament_players_model.filter(user=user)
-	for tournament in tournaments:
-		tournament_info = {
-			'name': tournament.name
-		}
-		tournaments_list.append(tournament_info)
-	if len(tournaments_list):
+	if tournaments:
+		for tournament in tournaments:
+			tournament_info = {
+				'name': tournament.tournament.name
+			}
+			tournaments_list.append(tournament_info)
 		return tournaments_list
 	return None
 
