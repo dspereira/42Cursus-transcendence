@@ -46,6 +46,10 @@ const styles = `
 	.icon-text {
 		font-size: 14px;
 	}
+
+	.hide {
+		display: none;
+	}
 `;
 
 const getHtml = function(data) {
@@ -56,6 +60,12 @@ const getHtml = function(data) {
 				<span>
 					<i class="icon bi bi-play-circle"></i>
 					<span class="icon-text">Start Game</span>
+				</span>
+			</button>
+			<button class="hide" id="play-again">
+				<span>
+					<i class="icon bi bi-play-circle"></i>
+					<span class="icon-text">Play Again</span>
 				</span>
 			</button>
 		</div>
@@ -182,23 +192,8 @@ export default class LocalGame extends HTMLElement {
 		this.#readyToPlayBtnEvent();
 	}
 
-	/*
-		Color Pallets IDs
-		1: Classic Retro
-		2: Modern Neon
-		3: Ocean Vibes
-		4: Sunset Glow
-		5: Forest Retreat
-	*/
 	#getGameColorPallet() {
-		const queryParam = `?id=${1}`;
-
-		callAPI("GET", `http://127.0.0.1:8000/api/game/color_pallet_local/${queryParam}`, null, (res, data) => {
-			if (res.ok) {
-				if (data && data.color_pallet)
-					this.game.setColorPallet(data.color_pallet);
-			}
-		});
+		this.game.setColorPallet({"ground": "#000000", "paddle": "#FFFFFF", "ball": "#FFD700", "score": "rgba(26, 26, 26, 0.8)", "middleLine": "#FFFFFF"});
 	}
 
 	#setGameStatusEvent() {
@@ -208,8 +203,8 @@ export default class LocalGame extends HTMLElement {
 	}
 
 	#readyToPlayBtnEvent() {
-		const btn = this.html.querySelector("#start-game");
-		btn.addEventListener('click', (event) => {
+		const btnStart = this.html.querySelector("#start-game");
+		btnStart.addEventListener('click', (event) => {
 			const gameLoop = () => {
 				this.gameLogic.update();
 				
@@ -223,17 +218,49 @@ export default class LocalGame extends HTMLElement {
 	
 				if (!this.gameLogic.isEndGame())
 					setTimeout(gameLoop, 10);
-				else {
-					if (this.gameLogic.getScoreValues().player1Score === 7)
-						this.game.updateWinner({winner_username: "player1"})
-					else
-						this.game.updateWinner({winner_username: "player2"})
-				}
+				else
+					this.#finishGame(btnStart);
 			};
 			gameLoop();
 		});
 	}
 
+	#finishGame(btnStart) {
+		const btnAgain = this.html.querySelector("#play-again");
+
+		if (this.gameLogic.getScoreValues().player1Score === 7)
+			this.game.updateWinner({winner_username: "player1"})
+		else
+			this.game.updateWinner({winner_username: "player2"})
+
+		btnAgain.classList.remove("hide");
+		btnStart.classList.add("hide");
+
+		btnAgain.addEventListener('click', (event) => {
+			this.game = new Game(this.ctx, this.canvas.width, this.canvas.height);
+			this.gameLogic = new GameLogic();
+			this.#initGame()
+
+			const gameLoop = () => {
+				this.gameLogic.update();
+				
+				this.game.updateState({
+					ball: this.gameLogic.getBallPositions(),
+					paddle_left_pos: this.gameLogic.getPaddleLeft(),
+					paddle_right_pos: this.gameLogic.getPaddleRight(),
+					player_1_score: this.gameLogic.getScoreValues().player1Score,
+					player_2_score: this.gameLogic.getScoreValues().player2Score,
+				})
+	
+				if (!this.gameLogic.isEndGame())
+					setTimeout(gameLoop, 10);
+				else
+					this.#finishGame(btnStart);
+			};
+			gameLoop();
+		});
+	}
 }
+
 
 customElements.define("local-game", LocalGame);
