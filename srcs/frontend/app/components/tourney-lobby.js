@@ -92,18 +92,22 @@ const getHtml = function(data) {
 			<div class="player empty">
 				<div><img src="../img/default_profile.png" class="default-photo" alt="avatar"></div>
 				<div class="username">waiting...</div>
+				<div class="player-id"></div>
 			</div>
 			<div class="player empty">
 				<div><img src="../img/default_profile.png" class="default-photo" alt="avatar"></div>
 				<div class="username">waiting...</div>
+				<div class="player-id"></div>
 			</div>
 			<div class="player empty">
 				<div><img src="../img/default_profile.png" class="default-photo" alt="avatar"></div>
 				<div class="username">waiting...</div>
+				<div class="player-id"></div>
 			</div>
 			<div class="player empty">
 				<div><img src="../img/default_profile.png" class="default-photo" alt="avatar"></div>
 				<div class="username">waiting...</div>
+				<div class="player-id"></div>
 			</div>
 		</div>
 		<div class="buttons">
@@ -189,6 +193,23 @@ export default class TourneyLobby extends HTMLElement {
 		this.#joinedPlayersPolling();
 	}
 
+	#isFriendExistsInList(list, playerId) {
+		list.forEach((elm) => {
+			if (elm.id == playerId)
+				return true;
+		});
+		return false;
+	}
+
+	#isFriendExistsInNodeList(list, playerId) {
+		list.forEach((elm) => {
+			if (elm.querySelector(".player-id").innerHTML == playerId)
+				return true;
+		});
+		return false;
+	}
+
+	/*
 	#setDefaultPhoto(elmHtml) {
 		let img = elmHtml.querySelector("img");
 		img.setAttribute("src", "../img/default_profile.png");
@@ -198,6 +219,16 @@ export default class TourneyLobby extends HTMLElement {
 		elmHtml.className = '';
 		elmHtml.classList.add(`player`);
 		elmHtml.classList.add(`empty`);
+	}*/
+
+	#setDefaultPhoto(elmHtml) {
+		let img = elmHtml.querySelector("img");
+		img.setAttribute("src", "../img/default_profile.png");
+		img.classList.remove("profile-photo");
+		img.classList.add("default-photo");
+		elmHtml.querySelector(".username").innerHTML = "waiting...";
+		elmHtml.querySelector(".player-id").innerHTML = "";
+
 	}
 
 	#setProfilePhoto(elmHtml, playerData) {
@@ -206,11 +237,10 @@ export default class TourneyLobby extends HTMLElement {
 		img.classList.remove("default-photo");
 		img.classList.add("profile-photo");
 		elmHtml.querySelector(".username").innerHTML = playerData.username;
-		elmHtml.classList.add(`id-${playerData.id}`);
-		elmHtml.classList.remove(`empty`);
+		elmHtml.querySelector(".player-id").innerHTML = `${playerData.id}`;
 	}
 
-	#updatePlayers(players) {
+	/*#updatePlayers(players) {
 		const playersNodeList = this.html.querySelectorAll(".player");
 		let player = null;
 
@@ -224,6 +254,49 @@ export default class TourneyLobby extends HTMLElement {
 				this.#setProfilePhoto(elm, player);
 			}
 		});
+	}*/
+
+	#updatePlayers(players) {
+		const playersNodeList = this.html.querySelectorAll(".player");
+		if (!playersNodeList)
+			return ;
+		let playerId = null;
+		// if player left the tournament remove from the list
+		playersNodeList.forEach((elmHtml) => {
+			playerId = elmHtml.querySelector(".player-id").innerHTML;
+			if (playerId && !this.#isFriendExistsInList(players, playerId)) {
+				this.#setDefaultPhoto(elmHtml);
+			}
+		});
+
+		// if player join to tournament add to list
+		players.forEach((elm) => {
+			if (!this.#isFriendExistsInNodeList(playersNodeList, elm.id)) {
+				for (let i = 0; i < playersNodeList.length; i++) {
+					const playerId = playersNodeList[i].querySelector(".player-id").innerHTML;
+					if (!playerId) {
+						this.#setProfilePhoto(playersNodeList[i], elm);
+						break ;
+					}
+				}
+			}
+		});
+
+		// if player join to tournament add to list
+		/*
+		players.forEach((elm) => {
+			if (!this.#isFriendExistsInNodeList(playersNodeList, elm.id)) {
+				playersNodeList.forEach((elmHtml) => {
+					playerId = elmHtml.querySelector(".player-id").innerHTML;
+					if (!playerId) {
+						this.#setProfilePhoto(elmHtml, elm);
+						//break;
+					}
+				});
+			}
+		});
+		*/
+
 	}
 
 	#joinedPlayersCall() {
