@@ -89,20 +89,19 @@ const styles = `
 const getHtml = function(data) {
 	const html = `
 		<div class="players">
-			<div class="player">
+			<div class="player empty">
 				<div><img src="../img/default_profile.png" class="default-photo" alt="avatar"></div>
 				<div class="username">waiting...</div>
 			</div>
-			<div class="player">
+			<div class="player empty">
 				<div><img src="../img/default_profile.png" class="default-photo" alt="avatar"></div>
 				<div class="username">waiting...</div>
 			</div>
-			
-			<div class="player">
+			<div class="player empty">
 				<div><img src="../img/default_profile.png" class="default-photo" alt="avatar"></div>
 				<div class="username">waiting...</div>
 			</div>
-			<div class="player">
+			<div class="player empty">
 				<div><img src="../img/default_profile.png" class="default-photo" alt="avatar"></div>
 				<div class="username">waiting...</div>
 			</div>
@@ -190,8 +189,15 @@ export default class TourneyLobby extends HTMLElement {
 		this.#joinedPlayersPolling();
 	}
 
-	#setDefaultPhoto() {
-
+	#setDefaultPhoto(elmHtml) {
+		let img = elmHtml.querySelector("img");
+		img.setAttribute("src", "../img/default_profile.png");
+		img.classList.remove("profile-photo");
+		img.classList.add("default-photo");
+		elmHtml.querySelector(".username").innerHTML = "waiting...";
+		elmHtml.className = '';
+		elmHtml.classList.add(`player`);
+		elmHtml.classList.add(`empty`);
 	}
 
 	#setProfilePhoto(elmHtml, playerData) {
@@ -201,6 +207,7 @@ export default class TourneyLobby extends HTMLElement {
 		img.classList.add("profile-photo");
 		elmHtml.querySelector(".username").innerHTML = playerData.username;
 		elmHtml.classList.add(`id-${playerData.id}`);
+		elmHtml.classList.remove(`empty`);
 	}
 
 	#updatePlayers(players) {
