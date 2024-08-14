@@ -62,7 +62,10 @@ def get_tournament_list(user):
 	tournaments_list = []
 	tournaments = tournament_players_model.filter(user=user)
 	for tournament in tournaments:
-		tournaments_list.append(tournament.tournament)
+		tournament_info = {
+			'name': tournament.name
+		}
+		tournaments_list.append(tournament_info)
 	if len(tournaments_list):
 		return tournaments_list
 	return None
