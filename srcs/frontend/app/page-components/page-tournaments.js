@@ -10,9 +10,12 @@ const getHtml = function(data) {
 	<app-header></app-header>
 	<side-panel selected="play"></side-panel>
 	<div class="content content-small">
-        <h1>Tournaments</h1>
-        <!--<tourney-graph></tourney-graph>-->
-        <tourney-lobby></tourney-lobby>
+		<h1>Tournaments</h1>
+		<!--<tourney-graph></tourney-graph>-->
+		<!--<tourney-lobby></tourney-lobby>-->
+
+		<button type="button" class="btn btn-primary btn-create-tourney">Create Tornement</button>
+
 	</div>
 	`;
 	return html;
@@ -64,7 +67,17 @@ export default class PageTournaments extends HTMLElement {
 
 	#scripts() {
 		adjustContent(this.html.querySelector(".content"));
+		this.#createTornementEvent();
 	}
+
+
+	#createTornementEvent() {
+		const btn = this.html.querySelector(".btn-create-tourney");
+		btn.addEventListener("click", () => {
+
+		});
+	}
+
 }
 
 customElements.define(PageTournaments.componentName, PageTournaments);
