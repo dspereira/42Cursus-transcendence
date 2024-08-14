@@ -8,6 +8,9 @@ from .models import TournamentRequests
 from .models import TournamentPlayers
 
 from custom_utils.requests_utils import REQ_STATUS_PENDING, REQ_STATUS_DECLINED, REQ_STATUS_ACCEPTED 
+from .consts import *
+
+from friendships.friendships import get_single_user_info
 
 tournament_requests_model = ModelManager(TournamentRequests)
 tournament_players_model = ModelManager(TournamentPlayers)
@@ -72,3 +75,20 @@ def update_tournament_status(tournament, new_status):
 def add_player_to_tournament(tournament, player):
 	new_tournament_player = tournament_players_model.create(user=player, tournament=tournament)
 	return (new_tournament_player if new_tournament_player else None)
+
+def has_active_tournament(user):
+	if user:
+		tournament_players = tournament_players_model.filter(user=user)
+		if tournament_players:
+			tournament = tournament_players.last().tournament
+			if tournament.status != TOURNAMENT_STATUS_ABORTED and tournament.status != TOURNAMENT_STATUS_FINISHED:
+				return tournament
+	return None
+
+def get_tournament_players(tournament):
+	tournament_players_list = []
+	tournament_players = tournament_players_model.filter(tournament=tournament)
+	for player in tournament_players:
+		user_info = get_single_user_info(get_user_profile(player.user))
+		tournament_players_list.append(user_info)
+	return tournament_players_list if len(tournament_players_list) else None
