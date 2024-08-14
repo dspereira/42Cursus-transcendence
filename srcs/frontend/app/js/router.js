@@ -13,6 +13,7 @@ import PageLogout from "../page-components/page-logout.js";
 import PageFriends from "../page-components/page-friends.js";
 import PagePlay from "../page-components/page-play.js";
 import PageLocalPlay from "../page-components/page-local-play.js";
+import PageGame from "../page-components/page-game.js";
 
 // Components
 import AppTest from "../components/app-test.js";
@@ -26,7 +27,12 @@ import AppFriends from "../components/app-friends.js";
 import UserCard from "../components/user-card.js";
 import ChatFriendsList from "../components/chat-friends-list.js";
 import ChatSection from "../components/chat-section.js";
-import AppGame from "../components/app-game.js";
+import AppPlay from "../components/app-play.js";
+import GameInviteRequest from "../components/game-invite-request.js";
+import GameInviteCard from "../components/game-invite-card.js";
+import GameInviteSend from "../components/game-invite-send.js";
+import GameInviteCard1 from "../components/game-invite-card1.js";
+import AppLobby from "../components/app-lobby.js";
 import LocalGame from "../components/local-game.js";
 
 // Others
@@ -50,7 +56,8 @@ const routes = {
 	"/configurations"	: PageConfigs.componentName,
 	"/friends"			: PageFriends.componentName,
 	"/play"				: PagePlay.componentName,
-	"/localplay"		: PageLocalPlay.componentName
+	"/localplay"		: PageLocalPlay.componentName,
+	"/game"				: PageGame.componentName,
 }
 
 const publicRoutes = ["/initial", "/login", "/signup", "/localplay"];

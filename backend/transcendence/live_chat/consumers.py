@@ -9,6 +9,7 @@ from user_profile.aux import get_image_url
 from channels.exceptions import StopConsumer
 from .auth_utils import is_authenticated, get_authenticated_user
 from custom_utils.models_utils import ModelManager
+from custom_utils.input_checker import InputChecker
 from datetime import datetime
 
 from friendships.friendships import get_friendship
@@ -21,6 +22,8 @@ user_model = ModelManager(User)
 user_profile_model = ModelManager(UserProfileInfo)
 
 MESSAGE_LIMIT_COUNT = 20
+
+input_checker = InputChecker()
 
 class ChatConsumer(AsyncWebsocketConsumer):
 
@@ -64,8 +67,10 @@ class ChatConsumer(AsyncWebsocketConsumer):
 			await self.__send_chat_group_messages(amount_messages=data_json['message_count'], id_browser=data_json['idBrowser'])
 		elif data_type == "message":
 			if not await self.__get_block_status(friend_id=data_json['friend_id']):
-				new_message = await self.__save_message(data_json['message'].strip())
-				await self.__send_message(new_message)
+				valid_message = input_checker.get_valid_chat_input(data_json['message'].strip())
+				if valid_message:
+					new_message = await self.__save_message(valid_message)
+					await self.__send_message(new_message)
 		elif data_type == "update_block_status":
 			await self.__update_friend_block_status(friend_id=data_json['friend_id'])
 		elif data_type == "last_message_received":
@@ -105,22 +110,24 @@ class ChatConsumer(AsyncWebsocketConsumer):
 					'message': message_content,
 					'id': user_id,
 					'timestamp': timestamp,
-					'user_image': await self.__get_user_image(user_id=user_id)
+					'user_image': await self.__get_user_image(user_id=user_id),
+					"room": self.room_group_name
 				}
 			)
 
 	async def send_message_to_friend(self, event):
-		if self.user.id == event['id']:
-			owner = "owner"
-		else:
-			owner = "friend"
-		await self.send(text_data=json.dumps({
-			'type': 'message',
-			'message': event['message'],
-			'owner': owner,
-			'timestamp': event['timestamp'],
-			'user_image': event['user_image'],
-		}))
+		if self.room_group_name == event['room']:
+			if self.user.id == event['id']:
+				owner = "owner"
+			else:
+				owner = "friend"
+			await self.__send({
+				'type': 'message',
+				'message': event['message'],
+				'owner': owner,
+				'timestamp': event['timestamp'],
+				'user_image': event['user_image'],
+			})
 
 	async def __send_get_message(self, message, id_browser):
 		message_content = None
@@ -149,7 +156,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
 			owner = "owner"
 		else:
 			owner = "friend"
-		await self.send(text_data=json.dumps({
+		await self.__send({
 			'type': 'get_message',
 			'message': event['message'],
 			'owner': owner,
@@ -157,7 +164,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
 			'requester_id': event['requester_id'],
 			'idBrowser': event['idBrowser'],
 			'user_image': event['user_image'],
-		}))
+		})
 
 	def __get_messages(self, start, limit):
 		return list(msg_model.filter(room=self.room)[start:start+limit])
@@ -232,11 +239,11 @@ class ChatConsumer(AsyncWebsocketConsumer):
 				)
 
 	async def send_online_status(self, event):
-		await self.send(text_data=json.dumps({
+		await self.__send({
 			'type': 'online_status',
 			'user_id': event['id'],
 			'online': event['online']
-		}))
+		})
 
 	async def __get_user_image(self, user_id):
 		user = await sync_to_async(user_model.get)(id=user_id)
@@ -269,7 +276,13 @@ class ChatConsumer(AsyncWebsocketConsumer):
 					)
 
 	async def send_update_friend_block_status(self, event):
-		await self.send(text_data=json.dumps({
+		await self.__send({
 			'type': 'update_block_status',
 			'id': event['id']
-		}))
+		})
+
+	async def __send(self, content):
+		try:
+			await self.send(text_data=json.dumps(content))
+		except Exception as e:
+			await sync_to_async(print)(e)

@@ -2,60 +2,63 @@ import Game from "../game/Game.js";
 import gameWebSocket from "../js/GameWebSocket.js";
 import { callAPI } from "../utils/callApiUtils.js";
 import stateManager from "../js/StateManager.js";
+import { redirect } from "../js/router.js";
 
 const styles = `
-	canvas {
-		background: black;
-	}
+.profile-photo {
+	width: 50px;
+}
 
-	button {
-		display: block;
-		background : transparent;
-		border: 0;
-		padding: 0;
-		font-family: innherit;
-		text-align: left;
-		width: 160px;
-	}
+.players-info {
+	display: flex;
+	justify-content: space-between;
+}
 
-	button:hover {
-		background-color: #dbd9d7;
-		border-radius: 6px;
-		width: 160px;
-	}
+.game-board {
+	width: 800px;
+}
 
-	.icon {
-		display: inline-block;
-		font-size: 22px;
-		padding: 8px 14px 8px 14px;
-		text-align: center;
-	}
+.btn-leave-div {
+	display: flex;
+	justify-content: center;
+	margin-top: 50px;
+}
 
-	.icon:hover {
-		background-color: #dbd9d7;
-		clip-path:circle();
-	}
+.btn-leave {
+	width: 150px;
+	height: 50px;
+}
 
-	.icon-text {
-		font-size: 14px;
-	}
+.hide {
+	display: none;
+}
+
 `;
 
 const getHtml = function(data) {
 	const html = `
+	<div class="game-board">
+		<div class="players-info">
+			<div>
+				<img src="${data.hostImage}" class="profile-photo" alt="profile photo chat">
+				<span>${data.hostUsername}</span>
+			</div>
+			<div>
+				<span>${data.guestUsername}</span>
+				<img src="${data.guestImage}" class="profile-photo" alt="profile photo chat">
+			</div>
+		</div>
 		<canvas id="canvas"></canvas>
-		<button id="start-game">
-			<span>
-				<i class="icon bi bi-play-circle"></i>
-				<span class="icon-text">Start Game</span>
-			</span>
-		</button>
+		<div class="btn-leave-div">
+			<button type="button" class="btn btn-primary btn-leave hide">Leave</button>
+		</div>
+	</div>
 	`;
 	return html;
 }
 
-export default class AppGame extends HTMLElement {
-	static observedAttributes = [];
+export default class AppPlay extends HTMLElement {
+	static observedAttributes = ["host-username", "host-image", "guest-username", "guest-image", "lobby-id"];
 
 	constructor() {
 		super()
@@ -71,10 +74,21 @@ export default class AppGame extends HTMLElement {
 	disconnectedCallback() {
 		this.game.stop();
 		this.game = null;
+		gameWebSocket.close();
 	}
 
 	attributeChangedCallback(name, oldValue, newValue) {
-
+		if(name == "host-username")
+			name = "hostUsername";
+		else if (name == "host-image")
+			name = "hostImage";
+		if(name == "guest-username")
+			name = "guestUsername";
+		else if (name == "guest-image")
+			name = "guestImage";
+		else if (name == "lobby-id")
+			name = "lobbyId";
+		this.data[name] = newValue;
 	}
 
 	#initComponent() {
@@ -88,6 +102,8 @@ export default class AppGame extends HTMLElement {
 		}
 		this.canvas = this.html.querySelector("#canvas");
 		this.ctx = this.canvas.getContext("2d");
+		this.startTimer = this.html.querySelector(".start-timer");
+		this.leave = this.html.querySelector(".btn-leave");
 		
 		// pode receber tamanho por parametro
 		this.canvas.width = "800";
@@ -95,16 +111,17 @@ export default class AppGame extends HTMLElement {
 
 		this.game = new Game(this.ctx, this.canvas.width, this.canvas.height);
 
-		this.game_id = 27;
-
 		this.keyDownStatus = "released";
 		this.keyUpStatus = "released";
+
+		this.isGameFinished = false;
+
 	}
 
 	#styles() {
-			if (styles)
-				return `@scope (.${this.elmtId}) {${styles}}`;
-			return null;
+		if (styles)
+			return `@scope (.${this.elmtId}) {${styles}}`;
+		return null;
 	}
 
 	#html(data){
@@ -119,6 +136,10 @@ export default class AppGame extends HTMLElement {
 
 	#scripts() {
 		this.#initGame();
+		this.#setWinnerEvent();
+		this.#setBtnLeaveEvent();
+		//this.#onRefreshTokenEvent();
+		this.#onSocketCloseEvent();
 	}
 
     #keyEvents() {
@@ -146,20 +167,12 @@ export default class AppGame extends HTMLElement {
 		gameWebSocket.send("down", this.keyDownStatus);
 	}
 
-	/*async #initGame() {
-		await this.#getGameColorPallet();
-		this.game.start();
-		this.#keyEvents();
-		gameWebSocket.open();
-	}*/
-
 	#initGame() {
 		this.#getGameColorPallet();
 		this.#setGameStatusEvent();
 		this.game.start();
 		this.#keyEvents();
-		this.#readyToPlayBtnEvent();
-		gameWebSocket.open(this.$getGameId());
+		this.#setGameTimeToStartEvent();
 	}
 
 	/*
@@ -171,7 +184,7 @@ export default class AppGame extends HTMLElement {
 		5: Forest Retreat
 	*/
 	#getGameColorPallet() {
-		const queryParam = `?id=${3}`;
+		const queryParam = `?id=${2}`;
 
 		callAPI("GET", `http://127.0.0.1:8000/api/game/color_pallet/${queryParam}`, null, (res, data) => {
 			if (res.ok) {
@@ -187,18 +200,42 @@ export default class AppGame extends HTMLElement {
 		});
 	}
 
-	$getGameId() {
-		console.log(`Game ID: ${this.game_id}`);
-		return this.game_id;
-	}
-
-	#readyToPlayBtnEvent() {
-		const btn = this.html.querySelector("#start-game");
-		btn.addEventListener('click', (event) => {
-			gameWebSocket.ready();
+	#setGameTimeToStartEvent() {
+		stateManager.addEvent("gameTimeToStart", (data) => {
+			this.game.updateStartCounter(data);
 		});
 	}
 
+	#setWinnerEvent() {
+		stateManager.addEvent("gameWinner", (value) => {
+			this.isGameFinished = true;
+			this.game.updateWinner(value);
+			this.leave.classList.remove("hide");
+			stateManager.cleanStateEvents("gameWinner");
+			stateManager.cleanStateEvents("gameTimeToStart"); 
+			stateManager.cleanStateEvents("gameStatus");
+			gameWebSocket.close();
+		});
+	}
+
+	#setBtnLeaveEvent() {
+		this.leave.addEventListener("click", () => {
+			redirect("/play");
+		});
+	}
+
+	#openSocket() {
+		gameWebSocket.open(this.data.lobbyId);
+	}
+
+	#onSocketCloseEvent() {
+		stateManager.addEvent("gameSocket", (state) => {
+			if (state == "closed") {
+				if (!this.isGameFinished)
+					this.#openSocket();
+			}
+		});
+	}
 }
 
-customElements.define("app-game", AppGame);
+customElements.define("app-play", AppPlay);

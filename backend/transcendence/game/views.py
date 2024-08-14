@@ -5,8 +5,8 @@ from user_auth.models import User
 from .models import Games
 import json
 
-from .utils import has_already_valid_game_request
-from .utils import GAME_STATUS_FINISHED
+from .utils import has_user_pending_game_requests
+from .utils import get_games_list
 
 user_model = ModelManager(User)
 game_model = ModelManager(Games)
@@ -36,46 +36,23 @@ def color_pallet_local(request):
 			return JsonResponse({"message": "Color Pallet Retrieved With Success", "color_pallet": COLOR_PALLETS[color_id - 1]}, status=200)	
 	return JsonResponse({"message": "Error: Invalid color pallet id!"}, status=400)
 
+@login_required
 @accepted_methods(["GET"])
-def test(request):
-	user = user_model.get(id=request.GET.get('user'))
-	friend = user_model.get(id=request.GET.get('id'))
-
-	if user and friend and user.id != friend.id:
-		has_already_valid_game_request(user1=user, user2=friend)
-
-	return JsonResponse({"message": "Test Message"}, status=200)
-
-@accepted_methods(["POST"])
-def set_game_score_info(request):
-	if request.body:
-		req_data = json.loads(request.body)
-		game = game_model.get(id=req_data["id"])
-		if not game:
-			return JsonResponse({"message": "Error: Invalid game ID!"}, status=409)
-		game.user1_score = req_data["user1_score"]
-		game.user2_score = req_data["user2_score"]
-		game.save()
-		return JsonResponse({"message": "Scores updated with success!"}, status=200)
+def get_games(request):
+	user = user_model.get(id=request.access_data.sub)
+	if user:
+		games_list = get_games_list(user=user)
+		return JsonResponse({"message": f"Game request list retrieved with success.", "games_list": games_list}, status=200)
 	else:
-		return JsonResponse({"message": "Error: Empty Body!"}, status=400)
+		return JsonResponse({"message": "Error: Invalid User!"}, status=400)
 
-@accepted_methods(["POST"])
-def set_game_as_finished(request):
-	if request.body:
-		req_data = json.loads(request.body)
-		game = game_model.get(id=req_data["id"])
-		if not game:
-			return JsonResponse({"message": "Error: Invalid game ID!"}, status=409)
-		if game.user1_score != game.user2_score:
-			if game.user1_score > game.user2_score:
-				game.winner = game.user1
-			else:
-				game.winner = game.user2
-			game.status = GAME_STATUS_FINISHED
-			game.save()
-			return JsonResponse({"message": "Game is finished with success!"}, status=200)
-		else:
-			return JsonResponse({"message": "Error: Scores are iqual!"}, status=409)
+@login_required
+@accepted_methods(["GET"])
+def has_pending_game_requests(request):
+
+	user = user_model.get(id=request.access_data.sub)
+	if user:
+		flag = has_user_pending_game_requests(user)
+		return JsonResponse({"message": f"Pending game requests flag returned with success.", "has_pending_game_requests": flag}, status=200)
 	else:
-		return JsonResponse({"message": "Error: Empty Body!"}, status=400)
+		return JsonResponse({"message": "Error: Invalid User!"}, status=400)
