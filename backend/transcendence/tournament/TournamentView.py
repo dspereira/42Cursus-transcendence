@@ -17,6 +17,7 @@ user_model = ModelManager(User)
 from .utils import has_already_valid_tournament_request
 from .utils import get_tournament_list
 from .utils import update_tournament_status
+from .utils import add_player_to_tournament
 
 from .consts import TOURNAMENT_STATUS_ABORTED
 
@@ -36,9 +37,12 @@ class TournamentView(View):
 		user = user_model.get(id=request.access_data.sub)
 		if user:
 			new_tournament_name = f'{user.username}\'s Tournament'
-			new_tournament = tournament_model.create(name=new_tournament_name)
+			new_tournament = tournament_model.create(name=new_tournament_name, owner=user)
 			if not new_tournament:
 				return JsonResponse({"message": f"Error: Failed to create Tournament.",}, status=409)
+			if not add_player_to_tournament(new_tournament, user):
+				new_tournament.delete()
+				return JsonResponse({"message": f"Error: Failed to add player to Tournament.",}, status=409)
 			return JsonResponse({"message": f"Tournament Created With Success!", "tournament_id": new_tournament.id}, status=201)
 		else:
 			return JsonResponse({"message": "Error: Invalid User, Requested Friend!"}, status=400)

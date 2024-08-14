@@ -8,6 +8,7 @@ class Tournament(models.Model):
 	nbr_players = models.IntegerField(default=0)
 	nbr_max_players = models.IntegerField(default=4)
 	status = models.CharField(default=TOURNAMENT_STATUS_CREATED)
+	owner = models.ForeignKey(to=User, related_name='tournament_owner_user', on_delete=models.SET_NULL, null=True)
 
 	def __str__(self) -> str:
 		return f'ID: {self.id}\nName: {self.name}\nNbr Players:   {self.nbr_players}\nNbr Max Players:   {self.nbr_max_players}\nCreated:   {self.created}'

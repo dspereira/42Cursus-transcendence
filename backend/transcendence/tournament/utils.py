@@ -68,3 +68,7 @@ def update_tournament_status(tournament, new_status):
 	if tournament:
 		tournament.status = new_status
 		tournament.save()
+
+def add_player_to_tournament(tournament, player):
+	new_tournament_player = tournament_players_model.create(user=player, tournament=tournament)
+	return (new_tournament_player if new_tournament_player else None)
