@@ -55,7 +55,7 @@ def has_already_valid_tournament_request(user1, user2):
 				return True
 	return False
 
-def get_tournament_requests_list(user):
+def get_tournament_list(user):
 	tournaments_list = []
 	tournaments = tournament_players_model.filter(user=user)
 	for tournament in tournaments:

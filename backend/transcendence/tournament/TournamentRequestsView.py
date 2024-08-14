@@ -18,8 +18,6 @@ from custom_utils.requests_utils import REQ_STATUS_DECLINED, REQ_STATUS_ACCEPTED
 from custom_utils.requests_utils import update_request_status
 from custom_utils.requests_utils import set_exp_time
 
-from game.utils import has_already_valid_tournament_request
-
 from .utils import has_already_valid_tournament_request
 from .utils import get_tournament_requests_list
 

@@ -14,8 +14,6 @@ tournament_player_model = ModelManager(TournamentPlayers)
 tournament_model = ModelManager(Tournament)
 user_model = ModelManager(User)
 
-from game.utils import has_already_valid_tournament_request
-
 from .utils import has_already_valid_tournament_request
 from .utils import get_tournament_list
 from .utils import update_tournament_status
@@ -35,18 +33,15 @@ class TournamentView(View):
 
 	@method_decorator(login_required)
 	def post(self, request):
-		if request.body:
-			user = user_model.get(id=request.access_data.sub)
-			if user:
-				new_tournament_name = f'{user.username}\'s Tournament'
-				new_tournament = tournament_model.create(name=new_tournament_name)
-				if not new_tournament:
-					return JsonResponse({"message": f"Error: Failed to create Tournament.",}, status=409)
-				return JsonResponse({"message": f"Tournament Created With Success!", "tournament_id": new_tournament.id}, status=201)
-			else:
-				return JsonResponse({"message": "Error: Invalid User, Requested Friend!"}, status=400)
+		user = user_model.get(id=request.access_data.sub)
+		if user:
+			new_tournament_name = f'{user.username}\'s Tournament'
+			new_tournament = tournament_model.create(name=new_tournament_name)
+			if not new_tournament:
+				return JsonResponse({"message": f"Error: Failed to create Tournament.",}, status=409)
+			return JsonResponse({"message": f"Tournament Created With Success!", "tournament_id": new_tournament.id}, status=201)
 		else:
-			return JsonResponse({"message": "Error: Empty Body!"}, status=400)
+			return JsonResponse({"message": "Error: Invalid User, Requested Friend!"}, status=400)
 
 	@method_decorator(login_required)
 	def delete(self, request):

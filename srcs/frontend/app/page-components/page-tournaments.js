@@ -1,5 +1,6 @@
 import { adjustContent } from "../utils/adjustContent.js";
 import stateManager from "../js/StateManager.js";
+import { callAPI } from "../utils/callApiUtils.js";
 
 const styles = `
 
@@ -74,7 +75,12 @@ export default class PageTournaments extends HTMLElement {
 	#createTornementEvent() {
 		const btn = this.html.querySelector(".btn-create-tourney");
 		btn.addEventListener("click", () => {
-
+			callAPI("POST", `http://127.0.0.1:8000/api/tournament/`, null, (res, data) => {					
+				if (res.ok) {
+					const content = this.html.querySelector(".content");
+					content.innerHTML = "<tourney-lobby></tourney-lobby>";
+				}
+			});
 		});
 	}
 
