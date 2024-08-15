@@ -10,6 +10,7 @@ REQ_EXP_TIME_SECONDS = TIME_HOURS * 3600 + TIME_MINUTES * 60 + TIME_SECONDS
 REQ_STATUS_ACCEPTED = "accepted"
 REQ_STATUS_DECLINED = "declined"
 REQ_STATUS_PENDING = "pending"
+REQ_STATUS_ABORTED = "aborted"
 
 def get_request_exp_time(request):
 	current_time = datetime.now().timestamp()

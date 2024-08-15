@@ -18,6 +18,7 @@ from .utils import has_active_tournament
 from .utils import get_tournament_list
 from .utils import update_tournament_status
 from .utils import add_player_to_tournament
+from .utils import invalidate_active_tournament_invites
 
 from .consts import TOURNAMENT_STATUS_ABORTED
 
@@ -57,6 +58,7 @@ class TournamentView(View):
 			if tournament_id:
 				tournament = tournament_model.get(id=tournament_id)
 				if tournament:
+					invalidate_active_tournament_invites(tournament)
 					update_tournament_status(tournament=tournament, new_status=TOURNAMENT_STATUS_ABORTED)
 					return JsonResponse({"message": f"Tournament {tournament_id} new status = decline"}, status=200)
 			return JsonResponse({"message": "Error: Invalid Tournament ID!"}, status=400)
