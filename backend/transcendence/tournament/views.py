@@ -65,6 +65,7 @@ def active_tournament(request):
 		tournament_data = {
 			"id": tournament.id,
 			"name": tournament.name,
-			"status": tournament.status
+			"status": tournament.status,
+			"owner": tournament.owner.id
 		}
 	return JsonResponse({"message": f"Tournament status returned with success!", "tournament": tournament_data}, status=200)
