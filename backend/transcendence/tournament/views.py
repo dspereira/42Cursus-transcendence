@@ -2,15 +2,19 @@ from custom_decorators import accepted_methods, login_required
 from custom_utils.models_utils import ModelManager
 from django.http import JsonResponse
 from user_auth.models import User
-from .models import Tournament
+from .models import Tournament, TournamentRequests
+import json
 
 from friendships.friendships import get_friend_list, get_friends_users_list
+
+from custom_utils.requests_utils import REQ_STATUS_ABORTED
 
 from .utils import get_tournament_user_requests_list
 from .utils import has_active_tournament
 from .utils import get_tournament_players
 from .utils import is_user_inside_list
 
+tournament_requests_model = ModelManager(TournamentRequests)
 tournament_model = ModelManager(Tournament)
 user_model = ModelManager(User)
 
@@ -92,7 +96,7 @@ def friend_list(request):
 		has_request_flag = False
 		if is_user_inside_list(tournament_requests, friend['id']) or is_user_inside_list(current_tournament_players, friend['id']):
 			has_request_flag = True
-		elif not friend['username'].startswith(search_username):
+		elif search_username and not friend['username'].startswith(search_username):
 			has_request_flag = True
 		if not has_request_flag:
 			new_friend_list.append(friend)
@@ -109,3 +113,26 @@ def invited_users_to_tournament(request):
 		return JsonResponse({"message": "Error: User is not the host of an tournament!"}, status=400)
 	invited_users = get_tournament_user_requests_list(tournament)
 	return JsonResponse({"message": f"Invited Users list returned with success!", "invited_users": invited_users}, status=200)
+
+@login_required
+@accepted_methods(["DELETE"])
+def cancel_invite(request):
+	if not request.body:
+		return JsonResponse({"message": "Error: Empty Body!"}, status=400)
+	req_data = json.loads(request.body)
+	if not req_data['id']:
+		return JsonResponse({"message": "Error: Invalid invite ID!"}, status=400)
+	invite = tournament_requests_model.get(id=req_data['id'])
+	if not invite:
+		return JsonResponse({"message": "Error: Tournament invite does not exist!"}, status=409)
+	user = user_model.get(id=request.access_data.sub)
+	if not user:
+		return JsonResponse({"message": "Error: Invalid User!"}, status=400)
+	tournament = has_active_tournament(user)
+	if not tournament or tournament.owner != user:
+		return JsonResponse({"message": "Error: User is not the host of an tournament!"}, status=409)
+	if invite.tournament != tournament:
+		return JsonResponse({"message": "Error: Tournament invite does not belong to your current Tournament!"}, status=409)
+	invite.status = REQ_STATUS_ABORTED
+	invite.save()
+	return JsonResponse({"message": f"Invite canceled with success!"}, status=200)
