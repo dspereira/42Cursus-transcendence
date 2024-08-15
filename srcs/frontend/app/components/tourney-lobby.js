@@ -209,18 +209,6 @@ export default class TourneyLobby extends HTMLElement {
 		return false;
 	}
 
-	/*
-	#setDefaultPhoto(elmHtml) {
-		let img = elmHtml.querySelector("img");
-		img.setAttribute("src", "../img/default_profile.png");
-		img.classList.remove("profile-photo");
-		img.classList.add("default-photo");
-		elmHtml.querySelector(".username").innerHTML = "waiting...";
-		elmHtml.className = '';
-		elmHtml.classList.add(`player`);
-		elmHtml.classList.add(`empty`);
-	}*/
-
 	#setDefaultPhoto(elmHtml) {
 		let img = elmHtml.querySelector("img");
 		img.setAttribute("src", "../img/default_profile.png");
@@ -239,22 +227,6 @@ export default class TourneyLobby extends HTMLElement {
 		elmHtml.querySelector(".username").innerHTML = playerData.username;
 		elmHtml.querySelector(".player-id").innerHTML = `${playerData.id}`;
 	}
-
-	/*#updatePlayers(players) {
-		const playersNodeList = this.html.querySelectorAll(".player");
-		let player = null;
-
-		if (!playersNodeList)
-			return ;
-		playersNodeList.forEach((elm, idx) => {
-			if (idx >= players.length)
-				return ;
-			player = players[idx];
-			if (!elm.classList.contains(`id-${player.id}`)) {
-				this.#setProfilePhoto(elm, player);
-			}
-		});
-	}*/
 
 	#updatePlayers(players) {
 		const playersNodeList = this.html.querySelectorAll(".player");
@@ -281,22 +253,6 @@ export default class TourneyLobby extends HTMLElement {
 				}
 			}
 		});
-
-		// if player join to tournament add to list
-		/*
-		players.forEach((elm) => {
-			if (!this.#isFriendExistsInNodeList(playersNodeList, elm.id)) {
-				playersNodeList.forEach((elmHtml) => {
-					playerId = elmHtml.querySelector(".player-id").innerHTML;
-					if (!playerId) {
-						this.#setProfilePhoto(elmHtml, elm);
-						//break;
-					}
-				});
-			}
-		});
-		*/
-
 	}
 
 	#joinedPlayersCall() {

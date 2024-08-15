@@ -3,7 +3,26 @@ import stateManager from "../js/StateManager.js";
 import { callAPI } from "../utils/callApiUtils.js";
 
 const styles = `
+.border-separation {
+	width: 60%;
+	margin: 0 auto;
+	margin-top: 25px;
+	margin-bottom: 25px;
+	border-bottom: 3px solid #EEEDEB;
+}
 
+.create-tourney {
+	display: flex;
+	justify-content: center;
+}
+
+.btn-create-tourney {
+	padding: 10px 70px 10px 70px;
+}
+
+.hide {
+	display: none;
+}
 `;
 
 const getHtml = function(data) {
@@ -11,11 +30,17 @@ const getHtml = function(data) {
 	<app-header></app-header>
 	<side-panel selected="play"></side-panel>
 	<div class="content content-small">
-		<h1>Tournaments</h1>
+		<!--<h1>Tournaments</h1>-->
 		<!--<tourney-graph></tourney-graph>-->
 		<!--<tourney-lobby></tourney-lobby>-->
 
-		<button type="button" class="btn btn-primary btn-create-tourney">Create Tornement</button>
+		<div class="btn-create-tourney-section hide">
+			<div class="create-tourney">
+				<button type="button" class="btn btn-primary btn-create-tourney">Create Tornement</button>
+			</div>
+			<div class="border-separation"></div>
+		</div>
+		<div class="tourney-section"></div>
 
 	</div>
 	`;
@@ -47,6 +72,8 @@ export default class PageTournaments extends HTMLElement {
 			this.styles.textContent = this.#styles();
 			this.html.classList.add(`${this.elmtId}`);
 		}
+		this.btnCreateTourneySection = this.html.querySelector(".btn-create-tourney-section");
+		this.tourneySection = this.html.querySelector(".tourney-section");
 	}
 
 	#styles() {
@@ -69,6 +96,7 @@ export default class PageTournaments extends HTMLElement {
 	#scripts() {
 		adjustContent(this.html.querySelector(".content"));
 		this.#createTornementEvent();
+		this.#checkActiveTournamentCall();
 	}
 
 	#createTornementEvent() {
@@ -87,8 +115,28 @@ export default class PageTournaments extends HTMLElement {
 		});
 	}
 
+	#checkActiveTournamentCall() {
+		callAPI("GET", `http://127.0.0.1:8000/api/tournament/active-tournament/`, null, (res, data) => {					
+			if (res.ok && data && data.tournament) {
+				const torneyData = data.tournament;
 
-
+				this.btnCreateTourneySection.classList.add("hide");
+				if (torneyData.status == "created") {
+					this.tourneySection.innerHTML = `
+					<tourney-lobby 
+						tournament-id="${torneyData.id}"
+						owner-id="${torneyData.owner}"
+					></tourney-lobby>`;
+				}
+				else if (torneyData.status == "active") {
+					this.tourneySection.innerHTML = `<tourney-graph></tourney-graph>`;
+				}
+			}
+			else {
+				this.btnCreateTourneySection.classList.remove("hide");
+			}
+		});
+	}
 }
 
 customElements.define(PageTournaments.componentName, PageTournaments);
