@@ -58,7 +58,13 @@ def get_tournament_user_requests_list(tournament):
 		tournament_user_requests_list = get_valid_tournament_requests_list(tournament_requests=tournament_requests)
 		if tournament_user_requests_list:
 			for tournament_req in tournament_user_requests_list:
-				user_req_info = {"id": tournament_req.to_user.id}
+				user_req_info = {
+					"req_id": tournament_req.id,
+					"id": tournament_req.to_user.id,
+					"username": tournament_req.to_user.username,
+					"image": get_image_url(get_user_profile(user=tournament_req.to_user)),
+					"exp": get_request_exp_time(tournament_req)
+				}
 				tournament_user_requests_info.append(user_req_info)
 	return tournament_user_requests_info
 
@@ -117,15 +123,9 @@ def invalidate_active_tournament_invites(tournament):
 		if request.exp.timestamp() > current_time.timestamp() and request.status == REQ_STATUS_PENDING:
 			update_request_status(request, REQ_STATUS_ABORTED)
 
-def get_current_tournament_players(tournament):
-	current_tournament_players = []
-	current_players = tournament_players_model.filter(tournament=tournament)
-	for player in current_players:
-		current_tournament_players.append({"id": player.user.id})
-	return current_tournament_players
-
 def is_user_inside_list(users_list, user_id):
-	for user in users_list:
-		if user['id'] == user_id:
-			return True
+	if users_list:
+		for user in users_list:
+			if user['id'] == user_id:
+				return True
 	return False

@@ -9,7 +9,6 @@ from friendships.friendships import get_friend_list, get_friends_users_list
 from .utils import get_tournament_user_requests_list
 from .utils import has_active_tournament
 from .utils import get_tournament_players
-from .utils import get_current_tournament_players
 from .utils import is_user_inside_list
 
 tournament_model = ModelManager(Tournament)
@@ -88,7 +87,7 @@ def friend_list(request):
 	new_friend_list = []
 	friends_list = get_friends_users_list(get_friend_list(user), user.id)
 	tournament_requests = get_tournament_user_requests_list(tournament)
-	current_tournament_players = get_current_tournament_players(tournament)
+	current_tournament_players = get_tournament_players(tournament)
 	for friend in friends_list:
 		has_request_flag = False
 		if is_user_inside_list(tournament_requests, friend['id']) or is_user_inside_list(current_tournament_players, friend['id']):
@@ -98,3 +97,15 @@ def friend_list(request):
 		if not has_request_flag:
 			new_friend_list.append(friend)
 	return JsonResponse({"message": f"Friend list returned with success!", "friends": new_friend_list}, status=200)
+
+@login_required
+@accepted_methods(["GET"])
+def invited_users_to_tournament(request):
+	user = user_model.get(id=request.access_data.sub)
+	if not user:
+		return JsonResponse({"message": "Error: Invalid User!"}, status=400)
+	tournament = has_active_tournament(user)
+	if not tournament or tournament.owner != user:
+		return JsonResponse({"message": "Error: User is not the host of an tournament!"}, status=400)
+	invited_users = get_tournament_user_requests_list(tournament)
+	return JsonResponse({"message": f"Invited Users list returned with success!", "invited_users": invited_users}, status=200)
