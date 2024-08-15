@@ -1,50 +1,26 @@
 import Game from "../game/Game.js";
 import { GameLogic } from "../game/GameLogic.js";
-import { callAPI } from "../utils/callApiUtils.js";
+import { redirect } from "../js/router.js";
 import stateManager from "../js/StateManager.js";
 
 const styles = `
 
-	.game-div{
+	.general-div {
+		display: flex;
+		flex-direction: column;
+	}
+
+	.game-div {
 		display: flex;
 		justify-content: center;
 		margin-top: 50px;
 	}
 
-	canvas {
-		background: black;
-	}
-
-	button {
-		display: block;
-		background : transparent;
-		border: 0;
-		padding: 0;
-		font-family: innherit;
-		text-align: left;
-		width: 160px;
-	}
-
-	button:hover {
-		background-color: #dbd9d7;
-		border-radius: 6px;
-		width: 160px;
-	}
-
-	.icon {
-		display: inline-block;
-		font-size: 22px;
-		padding: 8px 14px 8px 14px;
-		text-align: center;
-	}
-
-	.icon:hover {
-		background-color: #dbd9d7;
-		clip-path:circle();
-	}
-
-	.icon-text {
-		font-size: 14px;
+	.buttons-div {
+		display: flex;
+		justify-content: center;
+		margin-top: 50px;
+		gap: 15px;
 	}
 
 	.hide {
@@ -54,22 +30,17 @@ const styles = `
 
 const getHtml = function(data) {
 	const html = `
-		<div class="game-div">
-			<canvas id="canvas"></canvas>
-			<button id="start-game">
-				<span>
-					<i class="icon bi bi-play-circle"></i>
-					<span class="icon-text">Start Game</span>
-				</span>
-			</button>
-			<button class="hide" id="play-again">
-				<span>
-					<i class="icon bi bi-play-circle"></i>
-					<span class="icon-text">Play Again</span>
-				</span>
-			</button>
-		</div>
-	`;
+		<div class="general-div">
+			<div class="game-div">
+				<canvas id="canvas"></canvas>
+			</div>
+			<div class="buttons-div">
+				<button type="button" class="btn btn-primary" id="start-game">Start Game</button>
+				<button type="button" class="btn btn-primary hide" id="play-again">Play Again</button>
+				<button type="button" class="btn btn-secondary" id="initial-page">Initial Page</button>
+			</div>
+		<div>
+			`;
 	return html;
 }
 
@@ -138,6 +109,12 @@ export default class LocalGame extends HTMLElement {
 	}
 
 	#scripts() {
+		const initialPage = this.html.querySelector("#initial-page");
+
+		initialPage.addEventListener("click", (event) => {
+			redirect("/initial");
+		});
+
 		this.#initGame();
 	}
 
@@ -206,6 +183,7 @@ export default class LocalGame extends HTMLElement {
 		const btnStart = this.html.querySelector("#start-game");
 		btnStart.addEventListener('click', (event) => {
 			const gameLoop = () => {
+				btnStart.disabled = true;
 				this.gameLogic.update();
 				
 				this.game.updateState({
@@ -218,14 +196,17 @@ export default class LocalGame extends HTMLElement {
 	
 				if (!this.gameLogic.isEndGame())
 					setTimeout(gameLoop, 10);
-				else
-					this.#finishGame(btnStart);
+				else 
+				{
+					btnStart.classList.add("hide");
+					this.#finishGame();
+				}
 			};
 			gameLoop();
 		});
 	}
 
-	#finishGame(btnStart) {
+	#finishGame() {
 		const btnAgain = this.html.querySelector("#play-again");
 
 		if (this.gameLogic.getScoreValues().player1Score === 7)
@@ -234,7 +215,6 @@ export default class LocalGame extends HTMLElement {
 			this.game.updateWinner({winner_username: "player2"})
 
 		btnAgain.classList.remove("hide");
-		btnStart.classList.add("hide");
 
 		btnAgain.addEventListener('click', (event) => {
 			this.game = new Game(this.ctx, this.canvas.width, this.canvas.height);
@@ -242,6 +222,7 @@ export default class LocalGame extends HTMLElement {
 			this.#initGame()
 
 			const gameLoop = () => {
+				btnAgain.disabled = true;
 				this.gameLogic.update();
 				
 				this.game.updateState({
@@ -255,7 +236,10 @@ export default class LocalGame extends HTMLElement {
 				if (!this.gameLogic.isEndGame())
 					setTimeout(gameLoop, 10);
 				else
-					this.#finishGame(btnStart);
+				{
+					btnAgain.disabled = false;
+					this.#finishGame();
+				}
 			};
 			gameLoop();
 		});
