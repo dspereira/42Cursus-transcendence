@@ -49,41 +49,6 @@ const styles = `
 	border-bottom: 3px solid #EEEDEB;
 }
 
-.invites-section {
-	display: flex;
-	width: 100%;
-	height: 50vh;
-	gap: 10px;
-}
-
-.friend-list {
-	width: 70%;
-	background-color: #D3D3D3;
-	border-radius: 5px;
-	padding: 20px;
-}
-
-.invites-send {
-	width: 30%;
-	background-color: #D3D3D3;
-	border-radius: 5px;
-	padding: 20px;
-}
-
-.search-icon {
-	position: absolute;
-	margin-top: 6px;
-	margin-left: 15px;
-	font-size: 16px;
-}
-
-.search-bar input {
-	padding-left: 40px;
-}
-
-.search-bar {
-	margin-bottom: 25px;
-}
 `;
 
 const getHtml = function(data) {
@@ -116,20 +81,7 @@ const getHtml = function(data) {
 		</div>
 		<div class="border-separation"></div>
 
-		<div class="invites-section">
-			<div class="friend-list">
-				<div class="search-bar">
-					<div class="form-group">
-						<i class="search-icon bi bi-search"></i>
-						<input type="text" class="form-control form-control-md" id="search" placeholder="Search friends..." maxlength="50">
-					</div>
-				</div>
-				<div class="friends"></div>
-			</div>
-			<div class="invites-send">
-
-			</div>
-		</div>
+		<tourney-inviter></tourney-inviter>
 	`;
 	return html;
 }
@@ -190,6 +142,7 @@ export default class TourneyLobby extends HTMLElement {
 	}
 
 	#scripts() {
+		this.#joinedPlayersCall();
 		this.#joinedPlayersPolling();
 	}
 

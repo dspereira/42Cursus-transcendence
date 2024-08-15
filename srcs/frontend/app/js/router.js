@@ -34,6 +34,7 @@ import GameInviteCard1 from "../components/game-invite-card1.js";
 import AppLobby from "../components/app-lobby.js";
 import TourneyGraph from "../components/tourney-graph.js";
 import TourneyLobby from "../components/tourney-lobby.js";
+import TourneyInviter from "../components/tourney-inviter.js";
 
 // Others
 import stateManager from "./StateManager.js";
