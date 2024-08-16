@@ -35,6 +35,8 @@ import AppLobby from "../components/app-lobby.js";
 import TourneyGraph from "../components/tourney-graph.js";
 import TourneyLobby from "../components/tourney-lobby.js";
 import TourneyInviter from "../components/tourney-inviter.js";
+import TourneyInvitesReceived from "../components/tourney-invites-received.js";
+import TourneyInviteCard from "../components/tourney-invite-card.js";
 
 // Others
 import stateManager from "./StateManager.js";

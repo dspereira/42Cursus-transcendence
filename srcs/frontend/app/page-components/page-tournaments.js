@@ -41,6 +41,10 @@ const getHtml = function(data) {
 			<div class="border-separation"></div>
 		</div>
 		<div class="tourney-section"></div>
+		<div class="invites-received">
+			<tourney-invites-received></tourney-invites-received>
+		<div>
+
 
 	</div>
 	`;
@@ -74,6 +78,7 @@ export default class PageTournaments extends HTMLElement {
 		}
 		this.btnCreateTourneySection = this.html.querySelector(".btn-create-tourney-section");
 		this.tourneySection = this.html.querySelector(".tourney-section");
+		this.invitesReceived = this.html.querySelector(".invites-received");
 	}
 
 	#styles() {
@@ -97,6 +102,7 @@ export default class PageTournaments extends HTMLElement {
 		adjustContent(this.html.querySelector(".content"));
 		this.#createTornementEvent();
 		this.#checkActiveTournamentCall();
+		this.#setStateEvent();
 	}
 
 	#createTornementEvent() {
@@ -127,9 +133,12 @@ export default class PageTournaments extends HTMLElement {
 						tournament-id="${torneyData.id}"
 						owner-id="${torneyData.owner}"
 					></tourney-lobby>`;
+
+					this.invitesReceived.innerHTML = "";
 				}
 				else if (torneyData.status == "active") {
 					this.tourneySection.innerHTML = `<tourney-graph></tourney-graph>`;
+					this.invitesReceived.innerHTML = "";
 				}
 			}
 			else {
@@ -137,6 +146,15 @@ export default class PageTournaments extends HTMLElement {
 			}
 		});
 	}
+
+	#setStateEvent() {
+		stateManager.addEvent("tournamentRequestAccepted", (stateValue) => {
+			if (stateValue) {
+				stateManager.setState("tournamentRequestAccepted", false);
+				this.#checkActiveTournamentCall();
+			}
+		});
+	}	
 }
 
 customElements.define(PageTournaments.componentName, PageTournaments);

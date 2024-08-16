@@ -19,6 +19,7 @@ from custom_utils.requests_utils import update_request_status
 from custom_utils.requests_utils import set_exp_time
 
 from .utils import has_already_valid_tournament_request
+from .utils import has_active_tournament
 from .utils import get_tournament_requests_list
 
 class TournamentInvitesView(View):
@@ -73,26 +74,28 @@ class TournamentInvitesView(View):
 			if tournament_request:
 				tournament = tournament_model.get(id=tournament_request.tournament.id)
 				if not tournament:
-					return JsonResponse({"message": "Error: Request does not have associated tournament!"}, status=406)
+					return JsonResponse({"message": "Error: Request does not have associated tournament!"}, status=409)
 				if tournament.owner == user and tournament_request.from_user == user:
 					update_request_status(request=tournament_request, new_status=REQ_STATUS_ABORTED)
 				elif tournament_request.to_user == user:
 					update_request_status(request=tournament_request, new_status=REQ_STATUS_DECLINED)
 				else:
-					return JsonResponse({"message": "Error: Invalid User!"}, status=400)
+					return JsonResponse({"message": "Error: Invalid User!"}, status=409)
 				return JsonResponse({"message": f"Request {tournament_req_id} status updated!"}, status=200)
-		return JsonResponse({"message": "Error: Invalid Request ID!"}, status=400)
+		return JsonResponse({"message": "Error: Invalid Request ID!"}, status=409)
 
 	@method_decorator(login_required)
 	def put(self, request):
 		if request.body:
 			req_data = json.loads(request.body)
 			user = user_model.get(id=request.access_data.sub)
+			if not req_data.get("id"):
+				return JsonResponse({"message": "Error: Invalid request ID!"}, status=409)
 			tournament_req = tournament_requests_model.get(id=req_data["id"])
 			if user:
 				if not tournament_req or tournament_req.to_user.id != user.id:
 					return JsonResponse({"message": "Error: Invalid request ID!"}, status=409)
-				if not has_already_valid_tournament_request(user=user):
+				if not has_active_tournament(user):
 					update_request_status(request=tournament_req, new_status=REQ_STATUS_ACCEPTED)
 					new_tournament_player = tournament_player_model.create(user=user, tournament=tournament_req.tournament)
 					if not new_tournament_player:
