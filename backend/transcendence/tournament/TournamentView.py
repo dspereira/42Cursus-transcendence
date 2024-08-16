@@ -21,6 +21,8 @@ from .utils import add_player_to_tournament
 from .utils import invalidate_active_tournament_invites
 
 from .consts import TOURNAMENT_STATUS_ABORTED
+from .consts import TOURNAMENT_STATUS_ACTIVE
+from .consts import TOURNAMENT_STATUS_CREATED
 
 class TournamentView(View):
 
@@ -52,18 +54,22 @@ class TournamentView(View):
 
 	@method_decorator(login_required)
 	def delete(self, request):
-		if request.body:
-			req_data = json.loads(request.body)
-			tournament_id = req_data['id']
-			if tournament_id:
-				tournament = tournament_model.get(id=tournament_id)
-				if tournament:
+		user = user_model.get(id=request.access_data.sub)
+		if not user:
+			return JsonResponse({"message": "Error: Invalid User!"}, status=400)
+		if not request.GET.get('id'):
+			return JsonResponse({"message": "Error: Invalid request ID!"}, status=409)
+		tournament_id = request.GET.get('id')
+		if tournament_id:
+			tournament = tournament_model.get(id=tournament_id)
+			if tournament and tournament.owner == user:
+				if tournament.status == TOURNAMENT_STATUS_CREATED:
 					invalidate_active_tournament_invites(tournament)
-					update_tournament_status(tournament=tournament, new_status=TOURNAMENT_STATUS_ABORTED)
-					return JsonResponse({"message": f"Tournament {tournament_id} new status = decline"}, status=200)
-			return JsonResponse({"message": "Error: Invalid Tournament ID!"}, status=400)
-		else:
-			return JsonResponse({"message": "Error: Empty Body!"}, status=400)
+				elif tournament.status == TOURNAMENT_STATUS_ACTIVE:
+					print(f"Tournament Status:", TOURNAMENT_STATUS_ACTIVE)
+				update_tournament_status(tournament=tournament, new_status=TOURNAMENT_STATUS_ABORTED)
+				return JsonResponse({"message": f"Tournament {tournament_id} new status -> {tournament.status}"}, status=200)
+		return JsonResponse({"message": "Error: Invalid Tournament ID!"}, status=409)
 
 	@method_decorator(login_required)
 	def put(self, request):

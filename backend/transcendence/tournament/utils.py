@@ -119,9 +119,10 @@ def get_tournament_players(tournament):
 def invalidate_active_tournament_invites(tournament):
 	current_time = datetime.now()
 	tournament_requests = tournament_requests_model.filter(tournament=tournament)
-	for request in tournament_requests:
-		if request.exp.timestamp() > current_time.timestamp() and request.status == REQ_STATUS_PENDING:
-			update_request_status(request, REQ_STATUS_ABORTED)
+	if tournament_requests:
+		for request in tournament_requests:
+			if request.exp.timestamp() > current_time.timestamp() and request.status == REQ_STATUS_PENDING:
+				update_request_status(request, REQ_STATUS_ABORTED)
 
 def is_user_inside_list(users_list, user_id):
 	if users_list:

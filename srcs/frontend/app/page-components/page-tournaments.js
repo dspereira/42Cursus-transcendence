@@ -20,15 +20,17 @@ const styles = `
 	padding: 10px 70px 10px 70px;
 }
 
+/*
 .hide {
 	display: none;
 }
+	*/
 `;
 
 const getHtml = function(data) {
 	const html = `
 	<app-header></app-header>
-	<side-panel selected="play"></side-panel>
+	<side-panel selected="tournaments"></side-panel>
 	<div class="content content-small">
 		<!--<h1>Tournaments</h1>-->
 		<!--<tourney-graph></tourney-graph>-->
@@ -40,7 +42,8 @@ const getHtml = function(data) {
 			</div>
 			<div class="border-separation"></div>
 		</div>
-		<div class="tourney-section"></div>
+		<div class="tourney-section">
+		</div>
 		<div class="invites-received">
 			<tourney-invites-received></tourney-invites-received>
 		<div>
@@ -100,12 +103,12 @@ export default class PageTournaments extends HTMLElement {
 
 	#scripts() {
 		adjustContent(this.html.querySelector(".content"));
-		this.#createTornementEvent();
+		this.#createTournamentEvent();
 		this.#checkActiveTournamentCall();
 		this.#setStateEvent();
 	}
 
-	#createTornementEvent() {
+	#createTournamentEvent() {
 		const btn = this.html.querySelector(".btn-create-tourney");
 		btn.addEventListener("click", () => {
 			callAPI("POST", `http://127.0.0.1:8000/api/tournament/`, null, (res, data) => {					
@@ -125,11 +128,10 @@ export default class PageTournaments extends HTMLElement {
 		callAPI("GET", `http://127.0.0.1:8000/api/tournament/active-tournament/`, null, (res, data) => {					
 			if (res.ok && data && data.tournament) {
 				const torneyData = data.tournament;
-
 				this.btnCreateTourneySection.classList.add("hide");
 				if (torneyData.status == "created") {
 					this.tourneySection.innerHTML = `
-					<tourney-lobby 
+					<tourney-lobby
 						tournament-id="${torneyData.id}"
 						owner-id="${torneyData.owner}"
 					></tourney-lobby>`;
@@ -141,8 +143,18 @@ export default class PageTournaments extends HTMLElement {
 					this.invitesReceived.innerHTML = "";
 				}
 			}
-			else {
+			else if (res.ok && data && !data.tournament) {
+				console.log("Torneio inactivo");
+
 				this.btnCreateTourneySection.classList.remove("hide");
+
+				this.tourneySection.innerHTML = "";
+				this.invitesReceived.innerHTML = "<tourney-invites-received></tourney-invites-received>";
+
+				console.log(this.btnCreateTourneySection);
+				console.log(this.tourneySection);
+				console.log(this.invitesReceived);
+				console.log(this.html);
 			}
 		});
 	}
@@ -154,7 +166,14 @@ export default class PageTournaments extends HTMLElement {
 				this.#checkActiveTournamentCall();
 			}
 		});
-	}	
+
+		stateManager.addEvent("tournamentAborted",  (stateValue) => {
+			if (stateValue) {
+				stateManager.setState("tournamentAborted", false);
+				this.#checkActiveTournamentCall();
+			}
+		});
+	}
 }
 
 customElements.define(PageTournaments.componentName, PageTournaments);

@@ -1,4 +1,5 @@
 import { callAPI } from "../utils/callApiUtils.js";
+import stateManager from "../js/StateManager.js";
 
 const styles = `
 .players {
@@ -48,7 +49,6 @@ const styles = `
 	margin-bottom: 50px;
 	border-bottom: 3px solid #EEEDEB;
 }
-
 `;
 
 const getHtml = function(data) {
@@ -146,6 +146,7 @@ export default class TourneyLobby extends HTMLElement {
 	#scripts() {
 		this.#joinedPlayersCall();
 		this.#joinedPlayersPolling();
+		this.#setCancelTournamentEvent();
 	}
 
 	#isFriendExistsInList(list, playerId) {
@@ -223,6 +224,24 @@ export default class TourneyLobby extends HTMLElement {
 		this.intervalID = setInterval(() => {
 			this.#joinedPlayersCall();
 		}, 5000);
+	}
+
+	#setCancelTournamentEvent() {
+		const btn = this.html.querySelector(".btn-cancel");
+		if (!btn)
+			return ;
+		btn.addEventListener("click", () => {
+
+			console.log("cancel btn");
+
+			callAPI("DELETE", `http://127.0.0.1:8000/api/tournament/?id=${this.data.tournamentId}`, null, (res, data) => {
+				if (res.ok) {
+
+					console.log("cancel pedido");
+					stateManager.setState("tournamentAborted", true);
+				}
+			});			
+		});
 	}
 }
 
