@@ -37,6 +37,8 @@ class TournamentInvitesView(View):
 		if request.body:
 			req_data = json.loads(request.body)
 			user = user_model.get(id=request.access_data.sub)
+			if not req_data["invites_list"] or not req_data["id"]:
+				return JsonResponse({"message": "Error: Missing body information!"}, status=400)
 			invites_list = req_data["invites_list"]
 			tournament_id = req_data["id"]
 			if user:
