@@ -2,6 +2,7 @@ from custom_utils.requests_utils import get_request_exp_time
 from custom_utils.models_utils import ModelManager
 from user_profile.aux import get_image_url
 from datetime import datetime
+from django.db.models import Q
 
 from user_profile.models import UserProfileInfo
 from .models import TournamentRequests
@@ -69,9 +70,8 @@ def get_tournament_user_requests_list(tournament):
 	return tournament_user_requests_info
 
 def has_already_valid_tournament_request(user1, user2):
-	tournament_requests = tournament_requests_model.filter((Q(from_user=user1) | Q(to_user=user1)))
+	tournament_requests = tournament_requests_model.filter(from_user=user1, to_user=user2)
 	if tournament_requests:
-		tournament_requests = tournament_requests.filter(Q(from_user=user2) | Q(to_user=user2))
 		if tournament_requests:
 			tournament_requests_list = get_valid_tournament_requests_list(tournament_requests=tournament_requests)
 			if tournament_requests_list:

@@ -81,7 +81,9 @@ const getHtml = function(data) {
 		</div>
 		<div class="border-separation"></div>
 
-		<tourney-inviter></tourney-inviter>
+		<tourney-inviter
+			tournament-id="${data.tournamentId}"
+		></tourney-inviter>
 	`;
 	return html;
 }

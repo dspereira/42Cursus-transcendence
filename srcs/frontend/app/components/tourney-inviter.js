@@ -91,7 +91,7 @@ const getHtml = function(data) {
 }
 
 export default class TourneyInviter extends HTMLElement {
-	static observedAttributes = [];
+	static observedAttributes = ["tournament-id"];
 
 	constructor() {
 		super()
@@ -113,8 +113,6 @@ export default class TourneyInviter extends HTMLElement {
 	attributeChangedCallback(name, oldValue, newValue) {
 		if (name == "tournament-id")
 			name = "tournamentId";
-		else if (name == "owner-id")
-			name = "ownerId";
 		this.data[name] = newValue;
 	}
 
@@ -149,10 +147,8 @@ export default class TourneyInviter extends HTMLElement {
 		this.#setFriendsSearchEvent();
 		this.#getFriendsCallApi();
 		this.#setBtnInviteEvent();
-		this.#createInvitesSendList();
-		this.#createInvitesSendList();
-		this.#createInvitesSendList();
-		this.#setCancelInviteEvent();
+		//this.#setCancelInviteEvent();
+		this.#getListPendingInvites();
 	}
 
 	#setFriendsSearchEvent() {
@@ -177,6 +173,13 @@ export default class TourneyInviter extends HTMLElement {
 			friendList.appendChild(friendCard);
 		});
 	}
+
+	#removeFriendFromList(friendId) {
+		const elm = this.html.querySelector(`game-invite-card1[id="id-${friendId}"]`);
+		console.log()
+		if (elm)
+			elm.remove();
+	} 
 
 	#selectFriend(friendCard) {
 		friendCard.setAttribute("selected", "true");
@@ -207,18 +210,30 @@ export default class TourneyInviter extends HTMLElement {
 
 	#createInvitesSendList(list) {
 		const listHtml = this.html.querySelector(".invites-send");
-		//listHtml.innerHTML = "";
-		
-		const elm = document.createElement("div");
-		elm.classList.add("player-invite-send");
+		listHtml.innerHTML = "";
+		if (!list || !list.length)
+			return ;
 
-		elm.innerHTML = `
-			<div><span>dsilveri</span></div>
-			<div class="cross-icon btn-cancel-invite" id="id-3"><i class="bi bi-x-lg"></i></div>
-		`;
+		let elm = null;
+		list.forEach((invite) => {
+			elm = document.createElement("div");
+			if (!elm)
+				return ;
+			elm.classList.add("player-invite-send");
+			elm.classList.add(`id-${invite.req_id}`);
+			elm.innerHTML = `
+				<div><span>${invite.username}</span></div>
+				<div class="cross-icon btn-cancel-invite" id="id-${invite.req_id}"><i class="bi bi-x-lg"></i></div>
+			`;
+			listHtml.appendChild(elm);
+			this.#setCancelInviteEvent(elm);
+		});
+	}
 
-		listHtml.appendChild(elm);
-
+	#removeInvitesSendFromList(inviteId) {
+		 const inviteRequest = this.html.querySelector(`.player-invite-send.id-${inviteId}`);
+		 if (inviteRequest)
+			inviteRequest.remove();
 	}
 
 	#getFriendsCallApi(key) {
@@ -226,13 +241,22 @@ export default class TourneyInviter extends HTMLElement {
 		if (key)
 			queryParam = `?key=${key}`;
 
-		callAPI("GET", `http://127.0.0.1:8000/api/friends/friendships/${queryParam}`, null, (res, data) => {
+		callAPI("GET", `http://127.0.0.1:8000/api/tournament/friend-list/${queryParam}`, null, (res, data) => {
+			console.log(res);
+			console.log(data);
 			if (res.ok) {
 				this.#createFriendsList(data.friends);
 				this.#selectFriendEvent();
 			}
 		});
 	}
+
+	#getListPendingInvites() {
+		callAPI("GET", `http://127.0.0.1:8000/api/tournament/invited-friends/`, null, (res, data) => {
+			if (res.ok && data)
+				this.#createInvitesSendList(data.invited_users);
+		});
+	}	
 
 	#setBtnInviteEvent() {
 		const btn = this.html.querySelector(".btn-invite");
@@ -242,33 +266,36 @@ export default class TourneyInviter extends HTMLElement {
 			if (!this.selectedElm.length)
 				return ;
 			const data = {
+				id: this.data.tournamentId,
 				invites_list: []
 			};
 			this.selectedElm.forEach((elm) => {
 				data.invites_list.push(elm.substring(3));
 			});
-			console.log(data);
-			callAPI("POST", `http://127.0.0.1:8000/api/tournament/request`, data, (res, data) => {
+			callAPI("POST", `http://127.0.0.1:8000/api/tournament/invite/`, data, (res, data) => {
 				if (res.ok) {
-					console.log(data);
+					this.#getListPendingInvites();
+					this.selectedElm.forEach((elm) => {
+						this.#removeFriendFromList(elm.substring(3));
+					});
 				}
 			});
 		});
 	}
 
-	#setCancelInviteEvent() {
-		const btns = this.html.querySelectorAll(".btn-cancel-invite");
-		if (!btns || !btns.length)
+	#setCancelInviteEvent(elmHtml) {
+		if (!elmHtml)
 			return ;
-
-		btns.forEach((btn) => {
-			btn.addEventListener("click", () => {
-				// btn.id => id do invite
-				console.log(btn.id.substring(3));
+		const btn = elmHtml.querySelector(".btn-cancel-invite");
+		if (!btn)
+			return ;
+		btn.addEventListener("click", () => {
+			const inviteId = btn.id.substring(3);
+			callAPI("DELETE", `http://127.0.0.1:8000/api/tournament/invite/?id=${inviteId}`, null, (res, data) => {
+				if (res.ok)
+					this.#removeInvitesSendFromList(inviteId);
 			});
 		});
-		
-
 	}
 }
 

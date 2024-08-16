@@ -14,7 +14,7 @@ tournament_player_model = ModelManager(TournamentPlayers)
 tournament_model = ModelManager(Tournament)
 user_model = ModelManager(User)
 
-from custom_utils.requests_utils import REQ_STATUS_DECLINED, REQ_STATUS_ACCEPTED
+from custom_utils.requests_utils import REQ_STATUS_DECLINED, REQ_STATUS_ACCEPTED, REQ_STATUS_ABORTED
 from custom_utils.requests_utils import update_request_status
 from custom_utils.requests_utils import set_exp_time
 
@@ -37,17 +37,19 @@ class TournamentInvitesView(View):
 		if request.body:
 			req_data = json.loads(request.body)
 			user = user_model.get(id=request.access_data.sub)
-			if not req_data["invites_list"] or not req_data["id"]:
+			if not req_data.get("invites_list") or not req_data.get("id"):
 				return JsonResponse({"message": "Error: Missing body information!"}, status=400)
 			invites_list = req_data["invites_list"]
 			tournament_id = req_data["id"]
 			if user:
 				tournament = tournament_model.get(id=tournament_id)
-				if tournament:
-					return JsonResponse({"message": f"Error: Failed to create Tournament.",}, status=409)
+				if not tournament:
+					return JsonResponse({"message": f"Error: Failed to get Tournament."}, status=409)
 				for friend_id in invites_list:
 					user2 = user_model.get(id=friend_id)
 					if is_already_friend(user1=user, user2=user2):
+						if has_already_valid_tournament_request(user1=user, user2=user2):
+							return JsonResponse({"message": f"Error: Friend has already a valid tournament invite.",}, status=409)
 						tournament_request = tournament_requests_model.create(from_user=user, to_user=user2, tournament=tournament)
 						set_exp_time(request=tournament_request)
 						if not tournament_request:
@@ -62,17 +64,24 @@ class TournamentInvitesView(View):
 
 	@method_decorator(login_required)
 	def delete(self, request):
-		if request.body:
-			req_data = json.loads(request.body)
-			tournament_req_id = req_data['id']
-			if tournament_req_id:
-				tournament_request = tournament_requests_model.get(id=tournament_req_id)
-				if tournament_request:
+		user = user_model.get(id=request.access_data.sub)
+		if not user:
+			return JsonResponse({"message": "Error: Invalid User!"}, status=400)
+		tournament_req_id = request.GET.get('id')
+		if tournament_req_id:
+			tournament_request = tournament_requests_model.get(id=tournament_req_id)
+			if tournament_request:
+				tournament = tournament_model.get(id=tournament_request.tournament.id)
+				if not tournament:
+					return JsonResponse({"message": "Error: Request does not have associated tournament!"}, status=406)
+				if tournament.owner == user and tournament_request.from_user == user:
+					update_request_status(request=tournament_request, new_status=REQ_STATUS_ABORTED)
+				elif tournament_request.to_user == user:
 					update_request_status(request=tournament_request, new_status=REQ_STATUS_DECLINED)
-					return JsonResponse({"message": f"Request {tournament_req_id} new status = decline"}, status=200)
-			return JsonResponse({"message": "Error: Invalid Request ID!"}, status=400)
-		else:
-			return JsonResponse({"message": "Error: Empty Body!"}, status=400)
+				else:
+					return JsonResponse({"message": "Error: Invalid User!"}, status=400)
+				return JsonResponse({"message": f"Request {tournament_req_id} status updated!"}, status=200)
+		return JsonResponse({"message": "Error: Invalid Request ID!"}, status=400)
 
 	@method_decorator(login_required)
 	def put(self, request):
