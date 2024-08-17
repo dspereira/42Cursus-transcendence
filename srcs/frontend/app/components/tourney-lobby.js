@@ -95,6 +95,7 @@ export default class TourneyLobby extends HTMLElement {
 		super()
 		this.data = {};
 		this.intervalID = null;
+		this.isOwner = false;
 	}
 
 	connectedCallback() {
@@ -111,9 +112,12 @@ export default class TourneyLobby extends HTMLElement {
 	attributeChangedCallback(name, oldValue, newValue) {
 		if (name == "tournament-id")
 			name = "tournamentId";
-		else if (name == "owner-id")
+		else if (name == "owner-id") {
 			name = "ownerId";
+			this.isOwner = stateManager.getState("userId") == newValue;
+		}
 		this.data[name] = newValue;
+
 	}
 
 	#initComponent() {
@@ -214,8 +218,18 @@ export default class TourneyLobby extends HTMLElement {
 	#joinedPlayersCall() {
 		callAPI("GET", `http://127.0.0.1:8000/api/tournament/players?id=${this.data.tournamentId}`, null, (res, data) => {
 			if (res.ok) {
+				console.log(data);
 				if (data.players)
 					this.#updatePlayers(data.players);
+			}
+		});
+	}
+
+	#getTournamentStatusCall() {
+		callAPI("GET", `http://127.0.0.1:8000/api/tournament/active-tournament/`, null, (res, data) => {
+			if (res.ok) {
+				if (data && !data.tournament)
+					stateManager.setState("tournamentAborted", true);
 			}
 		});
 	}
@@ -223,6 +237,8 @@ export default class TourneyLobby extends HTMLElement {
 	#joinedPlayersPolling() {
 		this.intervalID = setInterval(() => {
 			this.#joinedPlayersCall();
+			if (!this.isOwner)
+				this.#getTournamentStatusCall();
 		}, 5000);
 	}
 
@@ -231,15 +247,9 @@ export default class TourneyLobby extends HTMLElement {
 		if (!btn)
 			return ;
 		btn.addEventListener("click", () => {
-
-			console.log("cancel btn");
-
 			callAPI("DELETE", `http://127.0.0.1:8000/api/tournament/?id=${this.data.tournamentId}`, null, (res, data) => {
-				if (res.ok) {
-
-					console.log("cancel pedido");
+				if (res.ok)
 					stateManager.setState("tournamentAborted", true);
-				}
 			});			
 		});
 	}
