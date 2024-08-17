@@ -20,11 +20,10 @@ const styles = `
 	padding: 10px 70px 10px 70px;
 }
 
-/*
 .hide {
 	display: none;
 }
-	*/
+
 `;
 
 const getHtml = function(data) {
@@ -113,12 +112,13 @@ export default class PageTournaments extends HTMLElement {
 		btn.addEventListener("click", () => {
 			callAPI("POST", `http://127.0.0.1:8000/api/tournament/`, null, (res, data) => {					
 				if (res.ok) {
-					const content = this.html.querySelector(".content");
-					content.innerHTML = `
-						<tourney-lobby 
-							tournament-id="${data.tournament_id}"
-							owner-id="${stateManager.getState("userId")}"
-						></tourney-lobby>`;
+					this.btnCreateTourneySection.classList.add("hide");
+					this.tourneySection.innerHTML = `
+					<tourney-lobby
+						tournament-id="${data.tournament_id}"
+						owner-id="${stateManager.getState("userId")}"
+					></tourney-lobby>`;
+					this.invitesReceived.innerHTML = "";
 				}
 			});
 		});
@@ -144,17 +144,9 @@ export default class PageTournaments extends HTMLElement {
 				}
 			}
 			else if (res.ok && data && !data.tournament) {
-				console.log("Torneio inactivo");
-
 				this.btnCreateTourneySection.classList.remove("hide");
-
 				this.tourneySection.innerHTML = "";
 				this.invitesReceived.innerHTML = "<tourney-invites-received></tourney-invites-received>";
-
-				console.log(this.btnCreateTourneySection);
-				console.log(this.tourneySection);
-				console.log(this.invitesReceived);
-				console.log(this.html);
 			}
 		});
 	}
