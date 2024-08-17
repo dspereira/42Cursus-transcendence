@@ -52,6 +52,17 @@ const styles = `
 `;
 
 const getHtml = function(data) {
+
+	const tournamentInviterHtml = `<div class="border-separation"></div>
+	<tourney-inviter tournament-id="${data.tournamentId}"></tourney-inviter>`;
+
+	const ownerBtns = `<button type="button" class="btn btn-success btn-success">Start</button>
+			<button type="button" class="btn btn-danger btn-cancel">Cancel</button>`;
+	
+	const guestBtns = `<button type="button" class="btn btn-danger btn-leave">Leave</button>`;
+
+
+
 	const html = `
 		<div class="players">
 			<div class="player empty">
@@ -76,14 +87,10 @@ const getHtml = function(data) {
 			</div>
 		</div>
 		<div class="buttons">
-			<button type="button" class="btn btn-success btn-success">Start</button>
-			<button type="button" class="btn btn-danger btn-cancel">Cancel</button>
+			${data.isOwner == true ? ownerBtns : guestBtns}
 		</div>
-		<div class="border-separation"></div>
+		${data.isOwner == true ? tournamentInviterHtml : ""}
 
-		<tourney-inviter
-			tournament-id="${data.tournamentId}"
-		></tourney-inviter>
 	`;
 	return html;
 }
@@ -114,7 +121,7 @@ export default class TourneyLobby extends HTMLElement {
 			name = "tournamentId";
 		else if (name == "owner-id") {
 			name = "ownerId";
-			this.isOwner = stateManager.getState("userId") == newValue;
+			this.data.isOwner = stateManager.getState("userId") == newValue;
 		}
 		this.data[name] = newValue;
 
@@ -237,7 +244,7 @@ export default class TourneyLobby extends HTMLElement {
 	#joinedPlayersPolling() {
 		this.intervalID = setInterval(() => {
 			this.#joinedPlayersCall();
-			if (!this.isOwner)
+			if (!this.data.isOwner)
 				this.#getTournamentStatusCall();
 		}, 5000);
 	}
