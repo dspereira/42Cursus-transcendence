@@ -1,15 +1,10 @@
 from custom_utils.jwt_utils import JwtData
 from channels.middleware import BaseMiddleware
-import re
 
 class ChannelsAuthMiddleware(BaseMiddleware):
 
 	async def __call__(self, scope, receive, send):
 		scope['access_data'] = JwtData(self.__getAccessToken(scope))
-
-		if self.__isGameSocket(scope['path']):
-			scope['game_id'] = self.__getGameId(scope['path'])
-
 		return await super().__call__(scope, receive, send)
 
 	def __getAccessToken(self, scope):
@@ -20,11 +15,3 @@ class ChannelsAuthMiddleware(BaseMiddleware):
 					if not cookie.find("access="):
 						token = cookie.replace("access=", "")
 						return token
-
-	def __getGameId(self, path):
-		match = re.search(r'/game/(?P<game_id>\d+)/', path)
-		if match:
-			return match.group('game_id')
-
-	def __isGameSocket(self, path):
-		return path.startswith('/game/')

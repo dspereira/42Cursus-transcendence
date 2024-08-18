@@ -1,3 +1,6 @@
+from .const_vars import WINNING_SCORE_PONTUATION
+from game.utils import GAME_STATUS_CREATED, GAME_STATUS_FINISHED
+from datetime import datetime
 from .Paddle import Paddle
 from .Ball import Ball
 
@@ -10,8 +13,15 @@ class GameLogic:
 		self.player_2_score = 0
 		self.player_1 = user1_id
 		self.player_2 = user2_id
-		self.player_1_ready = False
-		self.player_2_ready = False
+		self.start_time_value = None
+		self.status = GAME_STATUS_CREATED
+
+	def set_status(self, new_status):
+		self.status = new_status
+
+	def set_scores(self, scores):
+		self.player_1_score = scores["player_1"]
+		self.player_2_score = scores["player_2"]
 
 	def get_ball_positions(self):
 		return self.ball.get_position()
@@ -40,23 +50,28 @@ class GameLogic:
 		return {"player_1_score": self.player_1_score, "player_2_score": self.player_2_score}
 
 	def is_end_game(self):
-		if self.player_1_score == 7 or self.player_2_score == 7:
+		if self.player_1_score == WINNING_SCORE_PONTUATION or self.player_2_score == WINNING_SCORE_PONTUATION:
 			self.ball.set_end_game_position()
 			self.paddle_left.end_game_position()
 			self.paddle_right.end_game_position()
+			self.status = GAME_STATUS_FINISHED
 			return True
 		return False
 
-	def set_player_ready(self, user_id):
-		if user_id == self.player_1:
-			self.player_1_ready = True
-		elif user_id == self.player_2:
-			self.player_2_ready = True
+	def start_time(self):
+		if not self.start_time_value:
+			self.start_time_value = datetime.now()
 
-	def get_ready_to_start(self):
-		if self.player_1_ready and self.player_2_ready:
-			return True
-		return False
+	def get_time_to_start(self):
+		return round(datetime.now().timestamp() - self.start_time_value.timestamp())
+
+	def get_winner(self):
+		if self.player_1_score > self.player_2_score:
+			return self.player_1
+		return self.player_2
+
+	def get_status(self):
+		return self.status
 
 	def __add_score(self, info):
 		if info['player_1']:

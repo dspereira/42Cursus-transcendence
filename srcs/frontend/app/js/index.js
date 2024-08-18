@@ -20,15 +20,17 @@ stateManager.addEvent("isLoggedIn", (stateValue) => {
 	}
 });
 
+// Event triggered when the refresh token expires and closes the chat. 
+// The chat should reopen, reconnect, and send the last message.
 stateManager.addEvent("chatSocket", (stateValue) => {
 	console.log(`Chat socket: ${stateValue}`);
 	if (stateValue == "closed") {
 		checkUserLoginState((state, userId) => {
 			stateManager.setState("userId", userId);
-			if (state != stateManager.getState("isLoggedIn"))
-				stateManager.setState("isLoggedIn", state);
-				if (state)
-					chatWebSocket.open();
+			//if (state != stateManager.getState("isLoggedIn"))
+			//	stateManager.setState("isLoggedIn", state);
+			if (state)
+				chatWebSocket.open();
 		});
 	}
 	else if (stateValue == "open") {
@@ -39,6 +41,9 @@ stateManager.addEvent("chatSocket", (stateValue) => {
 	}
 });
 
+
+// Verify if the user is logged in, but if the refresh token has expired, refresh the access token.
+// The user's logged-in state should not change because of the expired refresh token.
 const setupLoginStateChecker  = function(intervalSeconds) {
 	setInterval(() => {
 		checkUserLoginState((state, userId) => {

@@ -1,6 +1,10 @@
 from django.core.management.base import BaseCommand
 from user_auth.models import User
 import random
+from custom_utils.models_utils import ModelManager
+from user_auth.auth_utils import create_user_profile_info
+
+user_model = ModelManager(User)
 
 class Command(BaseCommand):
     help = 'Generate random users'
@@ -25,5 +29,8 @@ class Command(BaseCommand):
                     break
             email = f'{username}@bot_user.com'
             password = '123'
-            User.objects.create_user(username=username, email=email, password=password)
+            user = user_model.create(username=username, email=email, password=password)
+            create_user_profile_info(user=user)
+
+            #User.objects.create_user(username=username, email=email, password=password)
             self.stdout.write(self.style.SUCCESS(f'User {username} created successfully'))

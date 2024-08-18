@@ -52,15 +52,13 @@ INSTALLED_APPS = [
     'friendships',
     'user_settings',
     'game',
-    'generate_users', # test app
-    'generate_chatrooms', # test app
+    'manage_commands', # test app
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
-    #'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
@@ -68,7 +66,7 @@ MIDDLEWARE = [
     'custom_middlewares.JwtMiddleware',
     'custom_middlewares.BlacklistTokenMiddleware',
     'custom_middlewares.OnlineStatusMiddleware',
-	#'custom_middlewares.DataSanitize',
+    'custom_middlewares.InputValidationMiddleware',
 ]
 
 AUTHENTICATION_BACKENDS = [
