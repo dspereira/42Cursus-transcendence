@@ -55,9 +55,9 @@ const styles = `
 `;
 
 const getHtml = function(data) {
-
+	console.log(data);
 	const html = `
-		<div class="game-grid-container game-win">
+		<div class="game-grid-container">
 			<div class="player-container">
 				<img class="profile-picture" src=${data.player1_image}>
 				<h1 class="username">${data.player1}</h1>
@@ -76,7 +76,7 @@ const getHtml = function(data) {
 }
 
 export default class GameCard extends HTMLElement {
-	static observedAttributes = ["player1", "player1_image", "player1_score", "player2", "player2_image", "player2_score"];
+	static observedAttributes = ["player1", "player1_image", "player1_score", "player2", "player2_image", "player2_score", "win"];
 
 	constructor() {
 		super();
@@ -121,9 +121,17 @@ export default class GameCard extends HTMLElement {
 	}
 
 	#scripts() {
-
+		this.#setColor();
 	}
 
+	#setColor() {
+		const gameContainer = this.html.querySelector(".game-grid-container");
+		
+		if (this.data.win == "true")
+			gameContainer.classList.add("game-win");
+		else
+			gameContainer.classList.add("game-loss");
+	}
 }
 
 customElements.define("game-card", GameCard);

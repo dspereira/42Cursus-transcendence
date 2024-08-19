@@ -59,8 +59,7 @@ export default class GameHistory extends HTMLElement {
 	}
 
 	#scripts() {
-		const gameList = getGamesFakeCall();
-		this.#insertGames(gameList);
+		this.#getGameList();
 	}
 
 	#insertGames(gameList) {
@@ -70,44 +69,24 @@ export default class GameHistory extends HTMLElement {
 			game = document.createElement("div");
 			game.innerHTML = 
 			`<game-card
-				player1=${elm.player1}
-				player1_image=${elm.player1_image}
-				player1_score=${elm.player1_score}
-				player2=${elm.player2}
-				player2_image=${elm.player2_image}
-				player2_score=${elm.player2_score}
+				player1=${elm.user1}
+				player1_image=${elm.user1_image}
+				player1_score=${elm.user1_score}
+				player2=${elm.user2}
+				player2_image=${elm.user2_image}
+				player2_score=${elm.user2_score}
+				win=${elm.winner}
 				>
 			</game-card>`;
 			gameListHtml.appendChild(game);
 		});
 	}
+
+	#getGameList() {
+		callAPI("GET", "http://127.0.0.1:8000/api/game/get-games/", null, (res, data) => {
+			this.#insertGames(data.games_list);
+		});
+	};
 }
 
 customElements.define("game-history", GameHistory);
-
-// just for debug
-const getGamesFakeCall = function ()
-{
-	const data = `[
-		{
-			"player1":"pcampos-",
-			"player1_image": "https://api.dicebear.com/8.x/bottts/svg?seed=pcampos-",
-			"player1_score": 7,
-			"player2": "candeia",
-			"player2_image": "https://api.dicebear.com/8.x/bottts/svg?seed=candeia",
-			"player2_score": 3,
-			"winner": "pcampos-"
-		},
-		{
-			"player1":"dsilveri",
-			"player1_image": "https://api.dicebear.com/8.x/bottts/svg?seed=dsilveri",
-			"player1_score": 7,
-			"player2": "pcampos-",
-			"player2_image": "https://api.dicebear.com/8.x/bottts/svg?seed=pcampos-",
-			"player2_score": 6,
-			"winner": "dsilveri"
-		}
-	]`;
-
-	return JSON.parse(data);
-}

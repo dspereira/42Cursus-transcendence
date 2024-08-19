@@ -97,7 +97,7 @@ def get_game_info(game, user):
 		"user1_score": game.user1_score,
 		"user2_score": game.user2_score,
 		"user1_image": get_image_url(get_user_profile(user=game.user1)),
-		"user2_image": get_image_url(get_user_profile(user=game.user1)),
+		"user2_image": get_image_url(get_user_profile(user=game.user2)),
 		"winner": is_user_winner(winner=game.winner, user=user),
 		"sorrender": True if game.status == "aborted" else False
 	}
