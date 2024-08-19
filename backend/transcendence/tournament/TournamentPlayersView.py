@@ -30,14 +30,14 @@ class TournamentPlayersView(View):
 
 	@method_decorator(login_required)
 	def delete(self, request):
-		if not request.DELETE.get('id'):
+		if not request.GET.get('id'):
 			return JsonResponse({"message": "Error: Empty Body!"}, status=400)
 		user = user_model.get(id=request.access_data.sub)
 		if not user:
 			return JsonResponse({"message": "Error: Invalid User!"}, status=400)
-		tournament = has_active_tournament(user)
+		tournament = tournament_model.get(id=request.GET.get('id'))
 		if not tournament or tournament.owner == user:
 			return JsonResponse({"message": "Error: User is the host of an tournament!"}, status=409)
 		if not delete_single_tournament_player(user, tournament):
 			return JsonResponse({"message": "Error: Failed to leave the tournament!"}, status=409)
-		return JsonResponse({"message": "Tournament left with success!"}, status=409)
+		return JsonResponse({"message": "Tournament left with success!"}, status=200)

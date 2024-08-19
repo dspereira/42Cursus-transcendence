@@ -158,6 +158,7 @@ export default class TourneyLobby extends HTMLElement {
 		this.#joinedPlayersCall();
 		this.#joinedPlayersPolling();
 		this.#setCancelTournamentEvent();
+		this.#setLeaveTournamentEvent();
 	}
 
 	#isFriendExistsInList(list, playerId) {
@@ -223,7 +224,7 @@ export default class TourneyLobby extends HTMLElement {
 	}
 
 	#joinedPlayersCall() {
-		callAPI("GET", `http://127.0.0.1:8000/api/tournament/players?id=${this.data.tournamentId}`, null, (res, data) => {
+		callAPI("GET", `http://127.0.0.1:8000/api/tournament/players/?id=${this.data.tournamentId}`, null, (res, data) => {
 			if (res.ok) {
 				console.log(data);
 				if (data.players)
@@ -258,6 +259,20 @@ export default class TourneyLobby extends HTMLElement {
 				if (res.ok)
 					stateManager.setState("tournamentAborted", true);
 			});			
+		});
+	}
+
+	#setLeaveTournamentEvent() {
+		if (this.data.isOwner)
+			return ;
+		const btn = this.html.querySelector(".btn-leave");
+		if (!btn)
+			return ;
+		btn.addEventListener("click", () => {
+			callAPI("DELETE", `http://127.0.0.1:8000/api/tournament/players/?id=${this.data.tournamentId}`, null, (res, data) => {
+				if (res.ok)
+					stateManager.setState("tournamentAborted", true);
+			});	
 		});
 	}
 }
