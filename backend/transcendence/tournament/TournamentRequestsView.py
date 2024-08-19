@@ -21,6 +21,7 @@ from custom_utils.requests_utils import set_exp_time
 from .utils import has_already_valid_tournament_request
 from .utils import has_active_tournament
 from .utils import get_tournament_requests_list
+from .utils import add_player_to_tournament
 
 class TournamentInvitesView(View):
 
@@ -96,9 +97,8 @@ class TournamentInvitesView(View):
 				if not tournament_req or tournament_req.to_user.id != user.id:
 					return JsonResponse({"message": "Error: Invalid request ID!"}, status=409)
 				if not has_active_tournament(user):
-					update_request_status(request=tournament_req, new_status=REQ_STATUS_ACCEPTED)
-					new_tournament_player = tournament_player_model.create(user=user, tournament=tournament_req.tournament)
-					if not new_tournament_player:
+					update_request_status(request=tournament_req, new_status=REQ_STATUS_ACCEPTED)					
+					if not add_player_to_tournament(tournament_req.tournament, user):
 						return JsonResponse({"message": "Error: Failed to create tournament player!"}, status=409)
 					return JsonResponse({"message": "Invite accepted with success!"}, status=200)
 				else:

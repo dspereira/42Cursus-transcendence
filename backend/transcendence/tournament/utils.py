@@ -97,7 +97,10 @@ def update_tournament_status(tournament, new_status):
 
 def add_player_to_tournament(tournament, player):
 	new_tournament_player = tournament_players_model.create(user=player, tournament=tournament)
-	return (new_tournament_player if new_tournament_player else None)
+	if new_tournament_player:
+		update_nbr_players(tournament, tournament.nbr_players + 1)
+		return new_tournament_player
+	return None
 
 def has_active_tournament(user):
 	if user:
@@ -137,3 +140,7 @@ def delete_single_tournament_player(user, tournament):
 		tournament_player.delete()
 		return True
 	return False
+
+def update_nbr_players(tournament, new_nbr):
+	tournament.nbr_players = new_nbr
+	tournament.save()

@@ -123,3 +123,21 @@ def cancel_invite(request):
 	invite.status = REQ_STATUS_ABORTED
 	invite.save()
 	return JsonResponse({"message": f"Invite canceled with success!"}, status=200)
+
+@login_required
+@accepted_methods(["DELETE"])
+def start_tournament(request):
+	if not request.body:
+		return JsonResponse({"message": "Error: Empty Body!"}, status=400)
+	req_data = json.loads(request.body)
+	if not req_data.get('id'):
+		return JsonResponse({"message": "Error: Invalid invite ID!"}, status=400)
+	user = user_model.get(id=request.access_data.sub)
+	if not user:
+		return JsonResponse({"message": "Error: Invalid User!"}, status=400)
+	tournament = tournament_model.get(id=req_data['id'])
+	if not tournament or tournament.owner != user:
+		return JsonResponse({"message": "Error: User is not the host of an tournament!"}, status=409)
+	if not tournament.nbr_players == tournament.nbr_max_players:
+		return JsonResponse({"message": "Error: Invalid number of players to start the tournament!"}, status=409)
+	return JsonResponse({"message": f"Tournament started with success!"}, status=200)

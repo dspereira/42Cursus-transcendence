@@ -11,7 +11,7 @@ tournament_model = ModelManager(Tournament)
 user_model = ModelManager(User)
 
 from .utils import get_tournament_players
-from .utils import has_active_tournament
+from .utils import update_nbr_players
 from .utils import delete_single_tournament_player
 
 class TournamentPlayersView(View):
@@ -40,4 +40,5 @@ class TournamentPlayersView(View):
 			return JsonResponse({"message": "Error: User is the host of an tournament!"}, status=409)
 		if not delete_single_tournament_player(user, tournament):
 			return JsonResponse({"message": "Error: Failed to leave the tournament!"}, status=409)
+		update_nbr_players(tournament, tournament.nbr_players - 1)
 		return JsonResponse({"message": "Tournament left with success!"}, status=200)
