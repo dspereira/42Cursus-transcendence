@@ -44,10 +44,8 @@ const getHtml = function(data) {
 		<div class="tourney-section">
 		</div>
 		<div class="invites-received">
-			<tourney-invites-received></tourney-invites-received>
+			<!--<tourney-invites-received></tourney-invites-received>-->
 		<div>
-
-
 	</div>
 	`;
 	return html;

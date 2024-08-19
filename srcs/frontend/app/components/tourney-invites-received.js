@@ -102,9 +102,6 @@ export default class TourneyInvitesReceived extends HTMLElement {
 
 	#getInviteTournamentsCallApi() {
 		callAPI("GET", `http://127.0.0.1:8000/api/tournament/invite/`, null, (res, data) => {
-			console.log(res);
-			console.log(data);
-
 			if (res.ok) {
 				if (data && data.requests_list)
 					this.#createRequestList(data.requests_list);

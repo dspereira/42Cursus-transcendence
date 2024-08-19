@@ -278,6 +278,7 @@ export default class TourneyInviter extends HTMLElement {
 					this.selectedElm.forEach((elm) => {
 						this.#removeFriendFromList(elm.substring(3));
 					});
+					this.selectedElm.length = 0; // clear array
 				}
 			});
 		});

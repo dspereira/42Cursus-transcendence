@@ -61,36 +61,33 @@ const getHtml = function(data) {
 	
 	const guestBtns = `<button type="button" class="btn btn-danger btn-leave">Leave</button>`;
 
-
-
 	const html = `
-		<div class="players">
-			<div class="player empty">
-				<div><img src="../img/default_profile.png" class="default-photo" alt="avatar"></div>
-				<div class="username">waiting...</div>
-				<div class="player-id"></div>
-			</div>
-			<div class="player empty">
-				<div><img src="../img/default_profile.png" class="default-photo" alt="avatar"></div>
-				<div class="username">waiting...</div>
-				<div class="player-id"></div>
-			</div>
-			<div class="player empty">
-				<div><img src="../img/default_profile.png" class="default-photo" alt="avatar"></div>
-				<div class="username">waiting...</div>
-				<div class="player-id"></div>
-			</div>
-			<div class="player empty">
-				<div><img src="../img/default_profile.png" class="default-photo" alt="avatar"></div>
-				<div class="username">waiting...</div>
-				<div class="player-id"></div>
-			</div>
+	<div class="players">
+		<div class="player">
+			<div><img src="../img/default_profile.png" class="default-photo" alt="avatar"></div>
+			<div class="username">waiting...</div>
+			<div class="player-id">0</div>
 		</div>
-		<div class="buttons">
-			${data.isOwner == true ? ownerBtns : guestBtns}
+		<div class="player">
+			<div><img src="../img/default_profile.png" class="default-photo" alt="avatar"></div>
+			<div class="username">waiting...</div>
+			<div class="player-id">0</div>
 		</div>
-		${data.isOwner == true ? tournamentInviterHtml : ""}
-
+		<div class="player">
+			<div><img src="../img/default_profile.png" class="default-photo" alt="avatar"></div>
+			<div class="username">waiting...</div>
+			<div class="player-id">0</div>
+		</div>
+		<div class="player">
+			<div><img src="../img/default_profile.png" class="default-photo" alt="avatar"></div>
+			<div class="username">waiting...</div>
+			<div class="player-id">0</div>
+		</div>
+	</div>
+	<div class="buttons">
+		${data.isOwner == true ? ownerBtns : guestBtns}
+	</div>
+	${data.isOwner == true ? tournamentInviterHtml : ""}
 	`;
 	return html;
 }
@@ -162,19 +159,31 @@ export default class TourneyLobby extends HTMLElement {
 	}
 
 	#isFriendExistsInList(list, playerId) {
+		let stop = false;
+		let exists = false;
 		list.forEach((elm) => {
-			if (elm.id == playerId)
-				return true;
+			if (stop)
+				return ;
+			if (elm.id == playerId) {
+				exists = true;
+				stop = true;
+			}
 		});
-		return false;
+		return exists;
 	}
 
 	#isFriendExistsInNodeList(list, playerId) {
+		let stop = false;
+		let exists = false;
 		list.forEach((elm) => {
-			if (elm.querySelector(".player-id").innerHTML == playerId)
-				return true;
+			if (stop)
+				return ;
+			if (elm.querySelector(".player-id").innerHTML == playerId) {
+				exists = true;
+				stop = true;
+			}
 		});
-		return false;
+		return exists;
 	}
 
 	#setDefaultPhoto(elmHtml) {
@@ -184,7 +193,6 @@ export default class TourneyLobby extends HTMLElement {
 		img.classList.add("default-photo");
 		elmHtml.querySelector(".username").innerHTML = "waiting...";
 		elmHtml.querySelector(".player-id").innerHTML = "";
-
 	}
 
 	#setProfilePhoto(elmHtml, playerData) {
@@ -201,34 +209,39 @@ export default class TourneyLobby extends HTMLElement {
 		if (!playersNodeList)
 			return ;
 		let playerId = null;
+
 		// if player left the tournament remove from the list
 		playersNodeList.forEach((elmHtml) => {
 			playerId = elmHtml.querySelector(".player-id").innerHTML;
-			if (playerId && !this.#isFriendExistsInList(players, playerId)) {
+			if (playerId && !this.#isFriendExistsInList(players, playerId))
 				this.#setDefaultPhoto(elmHtml);
-			}
 		});
 
 		// if player join to tournament add to list
 		players.forEach((elm) => {
 			if (!this.#isFriendExistsInNodeList(playersNodeList, elm.id)) {
-				for (let i = 0; i < playersNodeList.length; i++) {
-					const playerId = playersNodeList[i].querySelector(".player-id").innerHTML;
+				let stop = false;
+				playersNodeList.forEach((elmHtml) => {
+					if (stop)
+						return ;
+					const playerId = elmHtml.querySelector(".player-id").innerHTML;
 					if (!playerId) {
-						this.#setProfilePhoto(playersNodeList[i], elm);
-						break ;
+						this.#setProfilePhoto(elmHtml, elm);
+						stop = true;
 					}
-				}
+				});
 			}
 		});
+
 	}
 
 	#joinedPlayersCall() {
 		callAPI("GET", `http://127.0.0.1:8000/api/tournament/players/?id=${this.data.tournamentId}`, null, (res, data) => {
 			if (res.ok) {
 				console.log(data);
-				if (data.players)
+				if (data.players) {
 					this.#updatePlayers(data.players);
+				}
 			}
 		});
 	}
