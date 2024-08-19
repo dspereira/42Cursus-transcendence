@@ -14,5 +14,4 @@ urlpatterns = [
     path('friend-list/', views.friend_list, name='friend_list'),
     path('invited-friends/', views.invited_users_to_tournament, name='invited_users'),
     path('cancel-invite/', views.cancel_invite, name='cancel_invite'),
-    path('cancel-invite/', views.leave_tournament, name='leave_tournament'),
 ]
