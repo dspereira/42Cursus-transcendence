@@ -13,6 +13,7 @@ from .utils import get_tournament_user_requests_list
 from .utils import has_active_tournament
 from .utils import get_tournament_players
 from .utils import is_user_inside_list
+from .utils import delete_single_tournament_player
 
 tournament_requests_model = ModelManager(TournamentRequests)
 tournament_model = ModelManager(Tournament)
@@ -46,20 +47,6 @@ def get_tournament_state(request):
 	if not tournament:
 		return JsonResponse({"message": "Error: Invalid Tournament ID!"}, status=400)
 	return JsonResponse({"message": f"Tournament status returned with success!", "status": tournament.status}, status=200)
-
-@login_required
-@accepted_methods(["GET"])
-def tournament_players(request):
-	if not request.GET.get('id'):
-		return JsonResponse({"message": f"Error: Invalid query parameter!"}, status=400)
-	user = user_model.get(id=request.access_data.sub)
-	if not user:
-		return JsonResponse({"message": "Error: Invalid User!"}, status=400)
-	tournament = tournament_model.get(id=request.GET.get('id'))
-	if not tournament:
-		return JsonResponse({"message": "Error: Invalid Tournament ID!"}, status=400)
-	tournament_players_list = get_tournament_players(tournament)
-	return JsonResponse({"message": f"Tournament players returned with success!", "players": tournament_players_list}, status=200)
 
 @login_required
 @accepted_methods(["GET"])

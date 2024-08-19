@@ -130,3 +130,10 @@ def is_user_inside_list(users_list, user_id):
 			if user['id'] == user_id:
 				return True
 	return False
+
+def delete_single_tournament_player(user, tournament):
+	tournament_player = tournament_players_model.get(user=user, tournament=tournament)
+	if tournament_player:
+		tournament_player.delete()
+		return True
+	return False
