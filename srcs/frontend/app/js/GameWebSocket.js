@@ -21,12 +21,12 @@ class GameWebSocket {
 		this.socket = null;
 	}
 
-	open(gameRequestId) {
-		if (!gameRequestId)
-			gameRequestId = "";
-		const url = `${webSockettUrl}${gameRequestId}/`;
+	open(lobbyId) {
+		if (!lobbyId)
+			lobbyId = "";
+		const url = `${webSockettUrl}${lobbyId}/`;
 		
-		//console.log("Tenta abrir o socket open(gameRequestId)");
+		//console.log("Tenta abrir o socket open(lobbyId)");
 		//console.log(url);
 
 		if (this.isClose()) {
