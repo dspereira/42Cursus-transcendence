@@ -163,8 +163,8 @@ def get_tournament_games_list(tournament):
 	tournament_games = games_model.filter(tournament=tournament)
 	if tournament_games:
 		for game in tournament_games:
-			user1_profile = get_user_profile(game.user1)
-			user2_profile = get_user_profile(game.user2)
+			user1_profile = get_user_profile(game.user1) if game.user1 else None
+			user2_profile = get_user_profile(game.user2) if game.user2 else None
 			winner = get_user_profile(game.winner)
 			game_info = {
 				"id": game.id,

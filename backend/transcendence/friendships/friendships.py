@@ -150,14 +150,16 @@ def get_users_info(users):
 
 def get_single_user_info(user):
 	online = False
-	if user.online:
-		online = True
-	info = {
-		"id": user.user.id,
-		"username": user.user.username,
-		"image": get_image_url(user=user),
-		"online": online
-	}
+	info = None
+	if user:
+		if user.online:
+			online = True
+		info = {
+			"id": user.user.id,
+			"username": user.user.username,
+			"image": get_image_url(user=user),
+			"online": online
+		}
 	return info
 
 def get_friendship_block_status(user, friendship):
