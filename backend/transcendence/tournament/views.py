@@ -2,7 +2,7 @@ from custom_decorators import accepted_methods, login_required
 from custom_utils.models_utils import ModelManager
 from django.http import JsonResponse
 from user_auth.models import User
-from .models import Tournament, TournamentRequests
+from .models import Tournament, TournamentRequests, TournamentPlayers
 import json
 
 from friendships.friendships import get_friend_list, get_friends_users_list
@@ -20,6 +20,7 @@ from .utils import get_tournament_games_list
 from .consts import TOURNAMENT_STATUS_ACTIVE
 
 tournament_requests_model = ModelManager(TournamentRequests)
+tournament_players_model = ModelManager(TournamentPlayers)
 tournament_model = ModelManager(Tournament)
 user_model = ModelManager(User)
 
@@ -160,8 +161,10 @@ def games_list(request):
 	if not user:
 		return JsonResponse({"message": "Error: Invalid User!"}, status=400)
 	tournament = tournament_model.get(id=tournament_id)
-	if not tournament or tournament.owner != user:
-		return JsonResponse({"message": "Error: User is not the host of an tournament!"}, status=409)
+	if not tournament:
+		return JsonResponse({"message": "Error: Invalid tournament ID!"}, status=409)
+	if not tournament_players_model.get(tournament=tournament, user=user):
+		return JsonResponse({"message": "Error: User is not a member of the tournament!"}, status=409)
 	tournament_games = get_tournament_games_list(tournament)
 	if not tournament_games:
 		return JsonResponse({"message": "Error: The tournament has no games!"}, status=409)
