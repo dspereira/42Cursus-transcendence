@@ -24,7 +24,9 @@ games_model = ModelManager(Games)
 user_model = ModelManager(User)
 
 def get_user_profile(user):
-	return user_profile_model.get(user=user)
+	if user:
+		return user_profile_model.get(user=user)
+	return None
 
 def get_valid_tournament_requests_list(tournament_requests):
 	current_time = datetime.now()
@@ -161,7 +163,18 @@ def get_tournament_games_list(tournament):
 	tournament_games = games_model.filter(tournament=tournament)
 	if tournament_games:
 		for game in tournament_games:
-			tournament_games_list.append(game)
+			user1_profile = get_user_profile(game.user1)
+			user2_profile = get_user_profile(game.user2)
+			winner = get_user_profile(game.winner)
+			game_info = {
+				"id": game.id,
+				"player1": get_single_user_info(user1_profile),
+				"player2": get_single_user_info(user2_profile),
+				"player1_score": game.user1_score,
+				"player2_score": game.user2_score,
+				"winner": winner
+			}
+			tournament_games_list.append(game_info)
 	return tournament_games_list
 
 def create_tournament_single_game(user1=None, user2=None, tournament=None):

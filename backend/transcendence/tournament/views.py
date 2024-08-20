@@ -16,6 +16,7 @@ from .utils import get_tournament_players
 from .utils import is_user_inside_list
 from .utils import create_tournament_games
 from .utils import update_tournament_status
+from .utils import get_tournament_games_list
 from .consts import TOURNAMENT_STATUS_ACTIVE
 
 tournament_requests_model = ModelManager(TournamentRequests)
@@ -133,7 +134,7 @@ def start_tournament(request):
 		return JsonResponse({"message": "Error: Empty Body!"}, status=400)
 	req_data = json.loads(request.body)
 	if not req_data.get('id'):
-		return JsonResponse({"message": "Error: Invalid invite ID!"}, status=400)
+		return JsonResponse({"message": "Error: Invalid tournament ID!"}, status=400)
 	user = user_model.get(id=request.access_data.sub)
 	if not user:
 		return JsonResponse({"message": "Error: Invalid User!"}, status=400)
@@ -148,3 +149,20 @@ def start_tournament(request):
 		return JsonResponse({"message": "Error: Failed to create tournament games!"}, status=409)
 	update_tournament_status(tournament, TOURNAMENT_STATUS_ACTIVE)
 	return JsonResponse({"message": f"Tournament started with success!"}, status=200)
+
+@login_required
+@accepted_methods(["GET"])
+def games_list(request):
+	tournament_id = request.GET.get('id')
+	if not tournament_id:
+		return JsonResponse({"message": "Error: Invalid tournament id!"}, status=400)
+	user = user_model.get(id=request.access_data.sub)
+	if not user:
+		return JsonResponse({"message": "Error: Invalid User!"}, status=400)
+	tournament = tournament_model.get(id=tournament_id)
+	if not tournament or tournament.owner != user:
+		return JsonResponse({"message": "Error: User is not the host of an tournament!"}, status=409)
+	tournament_games = get_tournament_games_list(tournament)
+	if not tournament_games:
+		return JsonResponse({"message": "Error: The tournament has no games!"}, status=409)
+	return JsonResponse({"message": f"Tournament games sended with success!", "games": tournament_games}, status=200)
