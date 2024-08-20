@@ -150,17 +150,10 @@ export default class PageTournaments extends HTMLElement {
 	}
 
 	#setStateEvent() {
-		stateManager.addEvent("tournamentRequestAccepted", (stateValue) => {
+		stateManager.addEvent("isTournamentChanged", (stateValue) => {
 			if (stateValue) {
-				stateManager.setState("tournamentRequestAccepted", false);
 				this.#checkActiveTournamentCall();
-			}
-		});
-
-		stateManager.addEvent("tournamentAborted",  (stateValue) => {
-			if (stateValue) {
-				stateManager.setState("tournamentAborted", false);
-				this.#checkActiveTournamentCall();
+				stateManager.setState("isTournamentChanged", false);
 			}
 		});
 	}

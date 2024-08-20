@@ -147,7 +147,7 @@ export default class TourneyInviteCard extends HTMLElement {
 		btn.addEventListener("click", () => {
 			callAPI("PUT", `http://127.0.0.1:8000/api/tournament/invite/`, {id: this.data.inviteId}, (res, data) => {
 				if (res.ok)
-					stateManager.setState("tournamentRequestAccepted", true);
+					stateManager.setState("isTournamentChanged", true);
 			});
 		});
 	}

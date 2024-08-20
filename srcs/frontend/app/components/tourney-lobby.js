@@ -49,6 +49,10 @@ const styles = `
 	margin-bottom: 50px;
 	border-bottom: 3px solid #EEEDEB;
 }
+
+.hiden {
+	display: none;
+}
 `;
 
 const getHtml = function(data) {
@@ -56,7 +60,7 @@ const getHtml = function(data) {
 	const tournamentInviterHtml = `<div class="border-separation"></div>
 	<tourney-inviter tournament-id="${data.tournamentId}"></tourney-inviter>`;
 
-	const ownerBtns = `<button type="button" class="btn btn-success btn-success">Start</button>
+	const ownerBtns = `<button type="button" class="btn btn-success btn-start">Start</button>
 			<button type="button" class="btn btn-danger btn-cancel">Cancel</button>`;
 	
 	const guestBtns = `<button type="button" class="btn btn-danger btn-leave">Leave</button>`;
@@ -66,22 +70,22 @@ const getHtml = function(data) {
 		<div class="player">
 			<div><img src="../img/default_profile.png" class="default-photo" alt="avatar"></div>
 			<div class="username">waiting...</div>
-			<div class="player-id">0</div>
+			<div class="player-id hiden">0</div>
 		</div>
 		<div class="player">
 			<div><img src="../img/default_profile.png" class="default-photo" alt="avatar"></div>
 			<div class="username">waiting...</div>
-			<div class="player-id">0</div>
+			<div class="player-id hiden">0</div>
 		</div>
 		<div class="player">
 			<div><img src="../img/default_profile.png" class="default-photo" alt="avatar"></div>
 			<div class="username">waiting...</div>
-			<div class="player-id">0</div>
+			<div class="player-id hiden">0</div>
 		</div>
 		<div class="player">
 			<div><img src="../img/default_profile.png" class="default-photo" alt="avatar"></div>
 			<div class="username">waiting...</div>
-			<div class="player-id">0</div>
+			<div class="player-id hiden">0</div>
 		</div>
 	</div>
 	<div class="buttons">
@@ -156,6 +160,7 @@ export default class TourneyLobby extends HTMLElement {
 		this.#joinedPlayersPolling();
 		this.#setCancelTournamentEvent();
 		this.#setLeaveTournamentEvent();
+		this.#setStartTournamentEvent();
 	}
 
 	#isFriendExistsInList(list, playerId) {
@@ -232,13 +237,11 @@ export default class TourneyLobby extends HTMLElement {
 				});
 			}
 		});
-
 	}
 
 	#joinedPlayersCall() {
 		callAPI("GET", `http://127.0.0.1:8000/api/tournament/players/?id=${this.data.tournamentId}`, null, (res, data) => {
 			if (res.ok) {
-				console.log(data);
 				if (data.players) {
 					this.#updatePlayers(data.players);
 				}
@@ -249,8 +252,12 @@ export default class TourneyLobby extends HTMLElement {
 	#getTournamentStatusCall() {
 		callAPI("GET", `http://127.0.0.1:8000/api/tournament/active-tournament/`, null, (res, data) => {
 			if (res.ok) {
-				if (data && !data.tournament)
-					stateManager.setState("tournamentAborted", true);
+				if (data) {
+					if (!data.tournament)
+						stateManager.setState("isTournamentChanged", true);
+					else if (data.tournament.status == "active")
+						stateManager.setState("isTournamentChanged", true);
+				}
 			}
 		});
 	}
@@ -258,8 +265,10 @@ export default class TourneyLobby extends HTMLElement {
 	#joinedPlayersPolling() {
 		this.intervalID = setInterval(() => {
 			this.#joinedPlayersCall();
-			if (!this.data.isOwner)
+			if (!this.data.isOwner) {
 				this.#getTournamentStatusCall();
+
+			}
 		}, 5000);
 	}
 
@@ -270,7 +279,7 @@ export default class TourneyLobby extends HTMLElement {
 		btn.addEventListener("click", () => {
 			callAPI("DELETE", `http://127.0.0.1:8000/api/tournament/?id=${this.data.tournamentId}`, null, (res, data) => {
 				if (res.ok)
-					stateManager.setState("tournamentAborted", true);
+					stateManager.setState("isTournamentChanged", true);
 			});			
 		});
 	}
@@ -284,8 +293,22 @@ export default class TourneyLobby extends HTMLElement {
 		btn.addEventListener("click", () => {
 			callAPI("DELETE", `http://127.0.0.1:8000/api/tournament/players/?id=${this.data.tournamentId}`, null, (res, data) => {
 				if (res.ok)
-					stateManager.setState("tournamentAborted", true);
+					stateManager.setState("isTournamentChanged", true);
 			});	
+		});
+	}
+
+	#setStartTournamentEvent() {
+		if (!this.data.isOwner)
+			return ;
+		const btn = this.html.querySelector(".btn-start");
+		if (!btn)
+			return ;
+		btn.addEventListener("click", () => {
+			callAPI("POST", `http://127.0.0.1:8000/api/tournament/start/`, {id: this.data.tournamentId}, (res, data) => {
+				if (res.ok)
+					stateManager.setState("isTournamentChanged", true);	
+			});
 		});
 	}
 }
