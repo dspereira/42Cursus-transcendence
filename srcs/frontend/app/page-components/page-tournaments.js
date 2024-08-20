@@ -137,7 +137,7 @@ export default class PageTournaments extends HTMLElement {
 					this.invitesReceived.innerHTML = "";
 				}
 				else if (torneyData.status == "active") {
-					this.tourneySection.innerHTML = `<tourney-graph></tourney-graph>`;
+					this.tourneySection.innerHTML = `<tourney-graph tournament-id="${torneyData.id}"></tourney-graph>`;
 					this.invitesReceived.innerHTML = "";
 				}
 			}

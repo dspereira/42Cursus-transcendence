@@ -1,3 +1,6 @@
+import stateManager from "../js/StateManager.js";
+import { callAPI } from "../utils/callApiUtils.js";
+
 const styles = `
 	.graph {
 		display: flex;
@@ -33,7 +36,7 @@ const styles = `
 		flex-direction: column;
 	}
 
-	.player {
+	.player-1, .player-2 {
 		display: flex;
 		/*justify-content: center;*/
 		align-items: center;
@@ -53,35 +56,17 @@ const styles = `
 const getHtml = function(data) {
 	const html = `
 		<div class="graph">
-			<div class="game-size-1 padding-35 game-flex game-flex-column">
-				<div class="player">
-					<img src="https://api.dicebear.com/8.x/bottts/svg?seed=diogo" class="profile-photo" alt="profile photo chat"/>
-					<span class="username">dsilveri</span>
-				</div>
-				<div class="player">
-					<img src="https://api.dicebear.com/8.x/bottts/svg?seed=diogo" class="profile-photo" alt="profile photo chat"/>
-					<span class="username">dsilveri</span>
-				</div>
+			<div class="game-size-1 padding-35 game-flex game-flex-column game-0">
+				<div class="player-1"></div>
+				<div class="player-2"></div>
 			</div>
-			<div class="game-size-2 game-flex game-flex-row">
-				<div class="player">
-					<img src="https://api.dicebear.com/8.x/bottts/svg?seed=diogo" class="profile-photo" alt="profile photo chat"/>
-					<span class="username">dsilveri</span>
-				</div>
-				<div class="player">
-					<img src="https://api.dicebear.com/8.x/bottts/svg?seed=diogo" class="profile-photo" alt="profile photo chat"/>
-					<span class="username">dsilveri</span>
-				</div>
+			<div class="game-size-2 game-flex game-flex-row game-2">
+				<div class="player-1"></div>
+				<div class="player-2"></div>
 			</div>
-			<div class="game-size-1 padding-35 game-flex game-flex-column">
-				<div class="player">
-					<img src="https://api.dicebear.com/8.x/bottts/svg?seed=diogo" class="profile-photo" alt="profile photo chat"/>
-					<span class="username">dsilveri</span>
-				</div>
-				<div class="player">
-					<img src="https://api.dicebear.com/8.x/bottts/svg?seed=diogo" class="profile-photo" alt="profile photo chat"/>
-					<span class="username">dsilveri</span>
-				</div>
+			<div class="game-size-1 padding-35 game-flex game-flex-column game-1">
+				<div class="player-1"></div>
+				<div class="player-2"></div>
 			</div>
 		</div>
 	`;
@@ -89,7 +74,7 @@ const getHtml = function(data) {
 }
 
 export default class TourneyGraph extends HTMLElement {
-	static observedAttributes = [];
+	static observedAttributes = ["tournament-id"];
 
 	constructor() {
 		super()
@@ -107,6 +92,9 @@ export default class TourneyGraph extends HTMLElement {
 	}
 
 	attributeChangedCallback(name, oldValue, newValue) {
+		if (name == "tournament-id")
+			name = "tournamentId";
+		this.data[name] = newValue;
 	}
 
 	#initComponent() {
@@ -137,8 +125,38 @@ export default class TourneyGraph extends HTMLElement {
 	}
 
 	#scripts() {
+		this.#getTournamentGamesData();
+	}
 
+	#getTournamentGamesData() {
+		callAPI("GET", `http://127.0.0.1:8000/api/tournament/games/?id=${this.data.tournamentId}`, null, (res, data) => {
+			if (res.ok) {
+				console.log(data);
+				if (data && data.games && data.games.length)
+					this.#updateGames(data.games);
+			}
+		});
+	}
+
+	#updateGames(data) {
+		data.forEach((game, idx) => {
+			console.log(game);
+			this.#updatePlayerData(idx, "1", game.player1);
+			this.#updatePlayerData(idx, "2", game.player2);
+		});
+	}
+
+	#updatePlayerData(gameNum, playerNum, data) {
+		const player = this.html.querySelector(`.game-${gameNum} .player-${playerNum}`);
+		if (!player || !data)
+			return ;
+		player.innerHTML = `
+		<img src="${data.image}" class="profile-photo" alt="profile photo chat"/>
+		<span class="username">${data.username}</span>
+	`;	
 	}
 }
 
 customElements.define("tourney-graph", TourneyGraph);
+
+
