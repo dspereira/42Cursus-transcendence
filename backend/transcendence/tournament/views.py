@@ -140,6 +140,8 @@ def start_tournament(request):
 	tournament = tournament_model.get(id=req_data['id'])
 	if not tournament or tournament.owner != user:
 		return JsonResponse({"message": "Error: User is not the host of an tournament!"}, status=409)
+	if tournament.status == TOURNAMENT_STATUS_ACTIVE:
+		return JsonResponse({"message": "Error: Tournament already started!"}, status=409)
 	if not tournament.nbr_players == tournament.nbr_max_players:
 		return JsonResponse({"message": "Error: Invalid number of players to start the tournament!"}, status=409)
 	if not create_tournament_games(tournament):
