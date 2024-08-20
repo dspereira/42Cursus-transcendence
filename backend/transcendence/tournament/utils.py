@@ -3,10 +3,13 @@ from custom_utils.models_utils import ModelManager
 from user_profile.aux import get_image_url
 from datetime import datetime
 from django.db.models import Q
+import random
 
 from user_profile.models import UserProfileInfo
 from .models import TournamentRequests
 from .models import TournamentPlayers
+from game.models import Games
+from user_auth.models import User
 
 from custom_utils.requests_utils import REQ_STATUS_PENDING, REQ_STATUS_ABORTED, REQ_STATUS_DECLINED, REQ_STATUS_ACCEPTED
 from custom_utils.requests_utils import update_request_status
@@ -17,6 +20,8 @@ from friendships.friendships import get_single_user_info
 tournament_requests_model = ModelManager(TournamentRequests)
 tournament_players_model = ModelManager(TournamentPlayers)
 user_profile_model = ModelManager(UserProfileInfo)
+games_model = ModelManager(Games)
+user_model = ModelManager(User)
 
 def get_user_profile(user):
 	return user_profile_model.get(user=user)
@@ -144,3 +149,44 @@ def delete_single_tournament_player(user, tournament):
 def update_nbr_players(tournament, new_nbr):
 	tournament.nbr_players = new_nbr
 	tournament.save()
+
+def delete_tournament_games(tournament):
+	tournament_games = games_model.filter(tournament=tournament)
+	if tournament_games:
+		for game in tournament_games:
+			game.delete()
+
+def get_tournament_games_list(tournament):
+	tournament_games_list = []
+	tournament_games = games_model.filter(tournament=tournament)
+	if tournament_games:
+		for game in tournament_games:
+			tournament_games_list.append(game)
+	return tournament_games_list
+
+def create_tournament_single_game(user1=None, user2=None, tournament=None):
+	new_tournament_game = games_model.create(user1=user1, user2=user2, tournament=tournament)
+	if not new_tournament_game:
+		delete_tournament_games(tournament)
+		return None
+	return new_tournament_game
+
+def create_tournament_games(tournament):
+	tournament_players = get_tournament_players(tournament)
+	random.shuffle(tournament_players)
+	nbr_players = len(tournament_players)
+	nbr_initial_games = nbr_players / 2
+	nbr_final_games = nbr_players - nbr_initial_games - 1
+	i = 0
+	while i <= nbr_initial_games:
+		user1 = user_model.get(id=tournament_players[i]['id'])
+		user2 = user_model.get(id=tournament_players[i + 1]['id'])
+		if not create_tournament_single_game(user1=user1, user2=user2, tournament=tournament):
+			return False
+		i += 2
+	i = 0
+	while i < nbr_final_games:
+		if not create_tournament_single_game(tournament=tournament):
+			return False
+		i += 1
+	return True

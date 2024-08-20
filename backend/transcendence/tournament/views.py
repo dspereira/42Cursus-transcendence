@@ -13,7 +13,7 @@ from .utils import get_tournament_user_requests_list
 from .utils import has_active_tournament
 from .utils import get_tournament_players
 from .utils import is_user_inside_list
-from .utils import delete_single_tournament_player
+from .utils import create_tournament_games
 
 tournament_requests_model = ModelManager(TournamentRequests)
 tournament_model = ModelManager(Tournament)
@@ -125,7 +125,7 @@ def cancel_invite(request):
 	return JsonResponse({"message": f"Invite canceled with success!"}, status=200)
 
 @login_required
-@accepted_methods(["DELETE"])
+@accepted_methods(["POST"])
 def start_tournament(request):
 	if not request.body:
 		return JsonResponse({"message": "Error: Empty Body!"}, status=400)
@@ -140,4 +140,6 @@ def start_tournament(request):
 		return JsonResponse({"message": "Error: User is not the host of an tournament!"}, status=409)
 	if not tournament.nbr_players == tournament.nbr_max_players:
 		return JsonResponse({"message": "Error: Invalid number of players to start the tournament!"}, status=409)
+	if not create_tournament_games(tournament):
+		return JsonResponse({"message": "Error: Failed to create tournament games!"}, status=409)
 	return JsonResponse({"message": f"Tournament started with success!"}, status=200)
