@@ -17,6 +17,9 @@ from .utils import is_user_inside_list
 from .utils import create_tournament_games
 from .utils import update_tournament_status
 from .utils import get_tournament_games_list
+from .utils import get_next_game
+from .utils import is_tournament_finished
+from .utils import get_game_info
 from .consts import TOURNAMENT_STATUS_ACTIVE
 
 tournament_requests_model = ModelManager(TournamentRequests)
@@ -169,3 +172,41 @@ def games_list(request):
 	if not tournament_games:
 		return JsonResponse({"message": "Error: The tournament has no games!"}, status=409)
 	return JsonResponse({"message": f"Tournament games sended with success!", "games": tournament_games}, status=200)
+
+@login_required
+@accepted_methods(["GET"])
+def next_game(request):
+	tournament_id = request.GET.get('id')
+	if not tournament_id:
+		return JsonResponse({"message": "Error: Invalid tournament id!"}, status=400)
+	user = user_model.get(id=request.access_data.sub)
+	if not user:
+		return JsonResponse({"message": "Error: Invalid User!"}, status=400)
+	tournament = tournament_model.get(id=tournament_id)
+	if not tournament:
+		return JsonResponse({"message": "Error: Invalid tournament ID!"}, status=409)
+	if not tournament_players_model.get(tournament=tournament, user=user):
+		return JsonResponse({"message": "Error: User is not a member of the tournament!"}, status=409)
+	next_game = get_next_game(tournament)
+	game_lobby_id = next_game.user1.id if next_game else None
+	return JsonResponse({"message": f"Next game lobby id retrived with success!", "lobby_id": game_lobby_id}, status=200)
+
+@login_required
+@accepted_methods(["GET"])
+def finished_status(request):
+	tournament_id = request.GET.get('id')
+	if not tournament_id:
+		return JsonResponse({"message": "Error: Invalid tournament id!"}, status=400)
+	user = user_model.get(id=request.access_data.sub)
+	if not user:
+		return JsonResponse({"message": "Error: Invalid User!"}, status=400)
+	tournament = tournament_model.get(id=tournament_id)
+	if not tournament:
+		return JsonResponse({"message": "Error: Invalid tournament ID!"}, status=409)
+	if not tournament_players_model.get(tournament=tournament, user=user):
+		return JsonResponse({"message": "Error: User is not a member of the tournament!"}, status=409)
+	is_finished = is_tournament_finished(tournament)
+	game_info = None
+	if is_finished:
+		game_info = get_game_info(is_finished)
+	return JsonResponse({"message": f"Finish tournament status retrived with success!", "is_finished": game_info}, status=200)

@@ -14,6 +14,7 @@ from user_auth.models import User
 from custom_utils.requests_utils import REQ_STATUS_PENDING, REQ_STATUS_ABORTED, REQ_STATUS_DECLINED, REQ_STATUS_ACCEPTED
 from custom_utils.requests_utils import update_request_status
 from .consts import *
+from game.utils import GAME_STATUS_CREATED, GAME_STATUS_FINISHED
 
 from friendships.friendships import get_single_user_info
 
@@ -158,22 +159,26 @@ def delete_tournament_games(tournament):
 		for game in tournament_games:
 			game.delete()
 
+def get_game_info(game)
+	user1_profile = get_user_profile(game.user1) if game.user1 else None
+	user2_profile = get_user_profile(game.user2) if game.user2 else None
+	winner = get_user_profile(game.winner)
+	game_info = {
+		"id": game.id,
+		"player1": get_single_user_info(user1_profile),
+		"player2": get_single_user_info(user2_profile),
+		"player1_score": game.user1_score,
+		"player2_score": game.user2_score,
+		"winner": winner
+	}
+	return game_info
+
 def get_tournament_games_list(tournament):
 	tournament_games_list = []
 	tournament_games = games_model.filter(tournament=tournament)
 	if tournament_games:
 		for game in tournament_games:
-			user1_profile = get_user_profile(game.user1) if game.user1 else None
-			user2_profile = get_user_profile(game.user2) if game.user2 else None
-			winner = get_user_profile(game.winner)
-			game_info = {
-				"id": game.id,
-				"player1": get_single_user_info(user1_profile),
-				"player2": get_single_user_info(user2_profile),
-				"player1_score": game.user1_score,
-				"player2_score": game.user2_score,
-				"winner": winner
-			}
+			game_info = get_game_info(game)
 			tournament_games_list.append(game_info)
 	return tournament_games_list
 
@@ -203,3 +208,17 @@ def create_tournament_games(tournament):
 			return False
 		i += 1
 	return True
+
+def get_next_game(tournament, user):
+	tournament_games = games_model.filter(tournament=tournament)
+	for game in tournament_games:
+		if game.status == GAME_STATUS_CREATED and (game.user1 == user or game.user2 == user):
+			return game
+	return None
+
+def is_tournament_finished(tournament):
+	tournament_games = games_model.filter(tournament=tournament)
+	last_game = tournament_games[-1]
+	if last_game.status == GAME_STATUS_FINISHED:
+		return last_game
+	return None
