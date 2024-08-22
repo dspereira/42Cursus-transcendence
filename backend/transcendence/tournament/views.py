@@ -7,6 +7,8 @@ import json
 
 from friendships.friendships import get_friend_list, get_friends_users_list
 
+from game.Lobby import Lobby, lobby_dict
+
 from custom_utils.requests_utils import REQ_STATUS_ABORTED
 from custom_utils.requests_utils import update_request_status
 
@@ -189,6 +191,11 @@ def next_game(request):
 		return JsonResponse({"message": "Error: User is not a member of the tournament!"}, status=409)
 	next_game = get_next_game(tournament)
 	game_lobby_id = next_game.user1.id if next_game else None
+	if not game_lobby_id in lobby_dict:
+		lobby_dict[next_game.user1.id] = Lobby(next_game.user1.id)
+	lobby_dict[game_lobby_id].reset()
+	lobby_dict[game_lobby_id].set_user_2_id(next_game.user2.id)
+	lobby_dict[game_lobby_id].set_associated_game_id(next_game.id)
 	return JsonResponse({"message": f"Next game lobby id retrived with success!", "lobby_id": game_lobby_id}, status=200)
 
 @login_required
