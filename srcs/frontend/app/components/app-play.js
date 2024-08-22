@@ -218,6 +218,7 @@ export default class AppPlay extends HTMLElement {
 		});
 	}
 
+	// alterar esta função não pode ir para o play
 	#setBtnLeaveEvent() {
 		this.leave.addEventListener("click", () => {
 			redirect("/play");

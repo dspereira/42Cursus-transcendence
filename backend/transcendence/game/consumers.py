@@ -65,7 +65,7 @@ class Game(AsyncWebsocketConsumer):
 			)
 		await self.send_users_info_to_group()
 		game_id = self.lobby.get_associated_game_id()
-		if game_id:
+		if game_id and not await sync_to_async(self.lobby.is_tournament_game)():
 			await self.__start_game(game_id)
 
 	async def send_users_info_to_group(self):
@@ -86,13 +86,14 @@ class Game(AsyncWebsocketConsumer):
 					if not self.lobby.is_only_host_online():
 						await self.channel_layer.group_send(self.room_group_name, {'type': 'send_end_lobby_session'})
 			else:
-				if self.game.get_status() != GAME_STATUS_FINISHED:
-					if self.user.id == self.lobby.get_host_id():
-						self.game.set_scores({"player_1": 0, "player_2": WINNING_SCORE_PONTUATION})
-					else:
-						self.game.set_scores({"player_1": WINNING_SCORE_PONTUATION, "player_2": 0})
-					await sync_to_async(self.game.is_end_game)()
-					await self.__finish_game(GAME_STATUS_SURRENDER)
+				if not await sync_to_async(self.lobby.is_tournament_game)():
+					if self.game.get_status() != GAME_STATUS_FINISHED:
+						if self.user.id == self.lobby.get_host_id():
+							self.game.set_scores({"player_1": 0, "player_2": WINNING_SCORE_PONTUATION})
+						else:
+							self.game.set_scores({"player_1": WINNING_SCORE_PONTUATION, "player_2": 0})
+						await sync_to_async(self.game.is_end_game)()
+						await self.__finish_game(GAME_STATUS_SURRENDER)
 			await sync_to_async(self.lobby.update_connected_status)(self.user.id, False)
 			await self.send_users_info_to_group()
 		await self.__stop_game_routine()
@@ -277,6 +278,7 @@ class Game(AsyncWebsocketConsumer):
 		user_profile = user_profile_info_model.get(user=user)
 		is_ready = self.lobby.is_user_ready(user_id)
 		display_info = {
+			"id": user_id,
 			"username": user.username,
 			"image": get_image_url(user_profile),
 			"is_ready": is_ready

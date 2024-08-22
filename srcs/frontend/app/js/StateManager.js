@@ -30,6 +30,7 @@ class StateManager {
 			hasRefreshToken: null,
 			gameSocket: null,
 			isTournamentChanged: null,
+			tournamentGameLobby: null
 		}
 		this.stateEvents = {
 			sidePanel: [],
@@ -54,6 +55,7 @@ class StateManager {
 			hasRefreshToken: [],
 			gameSocket: [],
 			isTournamentChanged: [],
+			tournamentGameLobby: []
 		}
 
 		StateManager.instance = this;

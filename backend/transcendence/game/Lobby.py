@@ -96,6 +96,11 @@ class Lobby:
 				return True
 		return False
 
+	def is_someone_connected(self):
+		if self.user_1_connected or self.user_2_connected:
+			return True
+		return False
+
 	def __get_new_ready_status(self, current_status):
 		new_status = True
 		if current_status == True:

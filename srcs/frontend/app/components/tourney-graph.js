@@ -51,6 +51,10 @@ const styles = `
 		width: 40px;
 		margin-left: 10px;
 	}
+
+	.hide {
+		display: none;
+	}
 `;
 
 const getHtml = function(data) {
@@ -69,6 +73,8 @@ const getHtml = function(data) {
 				<div class="player-2"></div>
 			</div>
 		</div>
+		<br></br>
+		<button type="button" class="btn btn-success btn-start hide">Start Game</button>
 	`;
 	return html;
 }
@@ -79,6 +85,7 @@ export default class TourneyGraph extends HTMLElement {
 	constructor() {
 		super()
 		this.data = {};
+		this.lobbyIdNextGame = null;
 	}
 
 	connectedCallback() {
@@ -106,6 +113,7 @@ export default class TourneyGraph extends HTMLElement {
 			this.styles.textContent = this.#styles();
 			this.html.classList.add(`${this.elmtId}`);
 		}
+		this.startGameBtn = this.html.querySelector(".btn-start");
 	}
 
 	#styles() {
@@ -126,6 +134,8 @@ export default class TourneyGraph extends HTMLElement {
 
 	#scripts() {
 		this.#getTournamentGamesData();
+		this.#setStartGameEvent();
+		this.#getNextGame();
 	}
 
 	#getTournamentGamesData() {
@@ -140,7 +150,6 @@ export default class TourneyGraph extends HTMLElement {
 
 	#updateGames(data) {
 		data.forEach((game, idx) => {
-			console.log(game);
 			this.#updatePlayerData(idx, "1", game.player1);
 			this.#updatePlayerData(idx, "2", game.player2);
 		});
@@ -154,6 +163,29 @@ export default class TourneyGraph extends HTMLElement {
 		<img src="${data.image}" class="profile-photo" alt="profile photo chat"/>
 		<span class="username">${data.username}</span>
 	`;	
+	}
+
+	#setStartGameEvent() {
+		const btn = this.html.querySelector(".btn-start");
+		if (!btn)
+			return ;
+		btn.addEventListener("click", () => {
+			stateManager.setState("tournamentGameLobby", this.lobbyIdNextGame);
+
+		});
+	}
+
+	#getNextGame() {
+		callAPI("GET", `http://127.0.0.1:8000/api/tournament/next-game/?id=${this.data.tournamentId}`, null, (res, data) => {
+			if (res.ok) {
+				if (data && data.lobby_id) {
+					this.lobbyIdNextGame = data.lobby_id;
+					this.startGameBtn.classList.remove("hide");
+				}
+				else
+					this.startGameBtn.classList.add("hide");
+			}
+		});	
 	}
 }
 

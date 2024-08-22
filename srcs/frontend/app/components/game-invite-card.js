@@ -150,7 +150,6 @@ export default class GameInviteCard extends HTMLElement {
 					contentElm.innerHTML = `
 						<app-lobby 
 							lobby-id="${data.lobby_id}"
-							player-type="guest"
 						></app-lobby>
 					`;
 				}

@@ -36,7 +36,6 @@ const styles = `
 
 const getHtml = function(data) {
 	const html = `
-
 		<div class="lobby">
 			<div class="host">
 				<!--<img src="https://api.dicebear.com/8.x/bottts/svg?seed=dsilveri1" class="profile-photo" alt="avatar">-->
@@ -49,13 +48,12 @@ const getHtml = function(data) {
 		<div class="btn-section">
 			<button type="button" class="btn btn-primary ready-btn">ready</button>
 		</div>
-
 	`;
 	return html;
 }
 
 export default class AppLobby extends HTMLElement {
-	static observedAttributes = ["lobby-id", "player-type"];
+	static observedAttributes = ["lobby-id", "player-type", "is-tournament"];
 
 	constructor() {
 		super()
@@ -85,8 +83,8 @@ export default class AppLobby extends HTMLElement {
 	attributeChangedCallback(name, oldValue, newValue) {
 		if (name == "lobby-id")
 			name = "lobbyId";
-		if (name == "player-type")
-			name = "playerType"
+		if (name == "is-tournament")
+			name = "isTournament";
 		this.data[name] = newValue;
 	}
 
@@ -123,8 +121,10 @@ export default class AppLobby extends HTMLElement {
 		this.#openSocket();
 		this.#setLobbyStatusEvent();
 		this.#setReadyBtnEvent();
-		this.#setActiveInviteCheckEvent();
-		this.#setLobbyEndedEvent();
+		if (!this.data.isTournament) {
+			this.#setActiveInviteCheckEvent();
+			this.#setLobbyEndedEvent();
+		}
 		this.#onRefreshTokenEvent();
 		this.#onSocketCloseEvent();
 	}
@@ -135,10 +135,11 @@ export default class AppLobby extends HTMLElement {
 
 	#setLobbyStatusEvent() {
 		stateManager.addEvent("lobbyStatus", (value) => {
+			
+			console.log("----------------------------------------");
 			console.log(value);
 
 			this.lobbyStatus = value;
-
 			if (value.host)
 				this.#updatePlayer(value.host, "host");
 			if (value.guest)
@@ -154,18 +155,18 @@ export default class AppLobby extends HTMLElement {
 		});
 	}
 
-	#updatePlayer(playerinfo, playerType) {
+	#updatePlayer(playerInfo, playerType) {
 		const playerImage = this.html.querySelector(`.${playerType}`);
 		if (!playerImage)
 			return ;
 		playerImage.innerHTML = `
-			<img src="${playerinfo.image}" class="profile-photo" alt="avatar">
-			<div>${playerinfo.username}</div>
-			<div>${playerinfo.is_ready ? "ready" : "not ready"}</div>
+			<img src="${playerInfo.image}" class="profile-photo" alt="avatar">
+			<div>${playerInfo.username}</div>
+			<div>${playerInfo.is_ready ? "ready" : "not ready"}</div>
 		`;
 
-		if (playerType == this.data.playerType)
-			this.readyBtn.innerHTML = `${playerinfo.is_ready ? "not ready" : "ready"}`;
+		if (playerInfo.id == stateManager.getState("userId"))
+			this.readyBtn.innerHTML = `${playerInfo.is_ready ? "not ready" : "ready"}`;
 	}
 
 	#removePlayer(playerType) {
@@ -216,7 +217,7 @@ export default class AppLobby extends HTMLElement {
 					if (res.ok) {
 						if (!data.has_pending_game_requests) {
 							clearInterval(this.intervalID);
-							redirect("/play");
+							redirect("/play"); // modificar esta redireçao
 						}
 					}
 				});

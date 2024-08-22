@@ -31,21 +31,14 @@ const getHtml = function(data) {
 	<app-header></app-header>
 	<side-panel selected="tournaments"></side-panel>
 	<div class="content content-small">
-		<!--<h1>Tournaments</h1>-->
-		<!--<tourney-graph></tourney-graph>-->
-		<!--<tourney-lobby></tourney-lobby>-->
-
 		<div class="btn-create-tourney-section hide">
 			<div class="create-tourney">
 				<button type="button" class="btn btn-primary btn-create-tourney">Create Tornement</button>
 			</div>
 			<div class="border-separation"></div>
 		</div>
-		<div class="tourney-section">
-		</div>
-		<div class="invites-received">
-			<!--<tourney-invites-received></tourney-invites-received>-->
-		<div>
+		<div class="tourney-section"></div>
+		<div class="invites-received"><div>
 	</div>
 	`;
 	return html;
@@ -154,6 +147,15 @@ export default class PageTournaments extends HTMLElement {
 			if (stateValue) {
 				this.#checkActiveTournamentCall();
 				stateManager.setState("isTournamentChanged", false);
+			}
+		});
+
+		stateManager.addEvent("tournamentGameLobby", (stateValue) => {
+			if (stateValue) {
+				this.btnCreateTourneySection.classList.add("hide");
+				this.tourneySection.innerHTML = `<app-lobby lobby-id=${stateValue} is-tournament="true"></app-lobby>`;
+				this.invitesReceived.innerHTML = "";			
+				stateManager.setState("tournamentGameLobby", null);
 			}
 		});
 	}
