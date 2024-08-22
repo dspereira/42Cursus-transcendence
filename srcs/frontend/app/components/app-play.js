@@ -138,7 +138,6 @@ export default class AppPlay extends HTMLElement {
 		this.#initGame();
 		this.#setWinnerEvent();
 		this.#setBtnLeaveEvent();
-		//this.#onRefreshTokenEvent();
 		this.#onSocketCloseEvent();
 	}
 

@@ -122,9 +122,9 @@ class Game(AsyncWebsocketConsumer):
 			self.refresh_token_status = True
 
 	async def __send_start_game_routine(self):
+		user_1 = await sync_to_async(user_model.get)(id=self.lobby.get_host_id())
+		user_2 = await sync_to_async(user_model.get)(id=self.lobby.get_user_2_id())
 		if not await sync_to_async(self.lobby.is_tournament_game)():
-			user_1 = await sync_to_async(user_model.get)(id=self.lobby.get_host_id())
-			user_2 = await sync_to_async(user_model.get)(id=self.lobby.get_user_2_id())
 			self.game_info = await sync_to_async(game_model.create)(user1=user_1, user2=user_2)
 		else:
 			self.game_info = await sync_to_async(self.lobby.get_tournament_game)()
