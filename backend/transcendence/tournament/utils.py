@@ -159,7 +159,7 @@ def delete_tournament_games(tournament):
 		for game in tournament_games:
 			game.delete()
 
-def get_game_info(game)
+def get_game_info(game):
 	user1_profile = get_user_profile(game.user1) if game.user1 else None
 	user2_profile = get_user_profile(game.user2) if game.user2 else None
 	winner = get_user_profile(game.winner)
