@@ -36,18 +36,6 @@ const styles = `
 		flex-direction: column;
 	}
 
-	
-	/*
-	.player-1, .player-2 {
-		display: flex;
-		align-items: center;
-		gap: 10px;
-		background-color: #F6F5F5;
-		width: 100%;
-		height: 60px;
-		border-radius: 8px;
-	}*/
-	
 	.player-1, .player-2 {
 		display: flex;
 		align-items: center;
@@ -57,7 +45,6 @@ const styles = `
 		border-radius: 8px;
 	}
 
-	
 	.justify-start {
 		justify-content: flex-start;
 	}
@@ -69,7 +56,6 @@ const styles = `
 
 	.profile-photo {
 		width: 40px;
-		margin-left: 10px;
 	}
 
 	.winner-border {
@@ -85,7 +71,7 @@ const styles = `
 	.img-name-info {
 		display: flex;
 		align-items: center;
-		gap: 10px;
+		gap: 5px;
 		width: 80%;
 	}
 
@@ -112,7 +98,7 @@ const getHtml = function(data) {
 							<span class="username">username</span>
 						</div>
 						<div class="score-info">
-							<span class="score">7</span>
+							<span class="score hide">7</span>
 						</div>
 					</div>
 				</div>
@@ -123,7 +109,7 @@ const getHtml = function(data) {
 							<span class="username">username</span>
 						</div>
 						<div class="score-info">
-							<span class="score">7</span>
+							<span class="score hide">7</span>
 						</div>
 					</div>
 				</div>
@@ -136,14 +122,14 @@ const getHtml = function(data) {
 							<span class="username">username</span>
 						</div>
 						<div class="score-info">
-							<span class="score">7</span>
+							<span class="score hide">7</span>
 						</div>
 					</div>
 				</div>
 				<div class="player-2">
 					<div class="player-info hide">
 						<div class="score-info">
-							<span class="score">7</span>
+							<span class="score hide">7</span>
 						</div>
 						<div class="img-name-info justify-end">
 							<span class="username">username</span>
@@ -156,7 +142,7 @@ const getHtml = function(data) {
 				<div class="player-1">
 					<div class="player-info hide">
 						<div class="score-info">
-							<span class="score">7</span>
+							<span class="score hide">7</span>
 						</div>
 						<div class="img-name-info justify-end">
 							<span class="username">username</span>
@@ -167,7 +153,7 @@ const getHtml = function(data) {
 				<div class="player-2">
 					<div class="player-info hide">
 						<div class="score-info">
-							<span class="score">7</span>
+							<span class="score hide">7</span>
 						</div>
 						<div class="img-name-info justify-end">
 							<span class="username">username</span>
@@ -252,41 +238,20 @@ export default class TourneyGraph extends HTMLElement {
 		});
 	}
 
-	/*
 	#updateGames(data) {
 		data.forEach((game, idx) => {
-			console.log(game);
-			this.#updatePlayerData(idx, "1", game.player1);
-			this.#updatePlayerData(idx, "2", game.player2);
-		});
-	}
-
-	#updatePlayerData(gameNum, playerNum, data) {
-		const player = this.html.querySelector(`.game-${gameNum} .player-${playerNum}`);
-		if (!player || !data)
-			return ;
-
-		console.log("-------------------------------------");
-		console.log(data);
-
-		player.innerHTML = `
-		<img src="${data.image}" class="profile-photo" alt="profile photo chat"/>
-		<span class="username">${data.username}</span>
-	`;
-	}
-	*/
-
-	#updateGames(data) {
-		data.forEach((game, idx) => {
-
-			console.log("###############################");
-			console.log(game);
-			this.#updatePlayerData(idx, "1", game.player1, game.player1_score, game.winner);
-			this.#updatePlayerData(idx, "2", game.player2, game.player2_score, game.winner);
+			if (game.player1)
+				this.#updatePlayerData(idx, "1", game.player1, game.player1_score, game.winner);
+			if (game.player2)
+				this.#updatePlayerData(idx, "2", game.player2, game.player2_score, game.winner);
 		});
 	}
 
 	#updatePlayerData(gameNum, playerNum, playerInfo, playerScore, playerWinner) {
+
+		console.log("------------------------------");
+		console.log("game num: ", gameNum);
+
 		const player = this.html.querySelector(`.game-${gameNum} .player-${playerNum}`);
 		if (!player)
 			return ;
@@ -300,8 +265,11 @@ export default class TourneyGraph extends HTMLElement {
 		img.setAttribute("src", playerInfo.image);
 		username.innerHTML = playerInfo.username;
 		score.innerHTML = `${playerScore}`;
-		if (playerWinner.id == playerInfo.id) {
-			player.classList.add("winner-border");
+
+		if (playerWinner) {
+			score.classList.remove("hide");
+			if (playerWinner.id == playerInfo.id)
+				player.classList.add("winner-border");
 		}
 
 	}
@@ -312,7 +280,6 @@ export default class TourneyGraph extends HTMLElement {
 			return ;
 		btn.addEventListener("click", () => {
 			stateManager.setState("tournamentGameLobby", this.lobbyIdNextGame);
-
 		});
 	}
 

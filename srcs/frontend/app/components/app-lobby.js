@@ -135,10 +135,6 @@ export default class AppLobby extends HTMLElement {
 
 	#setLobbyStatusEvent() {
 		stateManager.addEvent("lobbyStatus", (value) => {
-			
-			console.log("----------------------------------------");
-			console.log(value);
-
 			this.lobbyStatus = value;
 			if (value.host)
 				this.#updatePlayer(value.host, "host");
@@ -149,8 +145,12 @@ export default class AppLobby extends HTMLElement {
 			if (!value.guest)
 				this.#removePlayer("guest");
 			if (value.host && value.guest) {
-				if (value.host.is_ready && value.guest.is_ready)
-					this.#startGame();
+				if (value.host.is_ready && value.guest.is_ready) {
+					if (this.data.isTournament)
+						this.#startTournamentGame();
+					else
+						this.#startGame();
+				}
 			}
 		});
 	}
@@ -185,6 +185,24 @@ export default class AppLobby extends HTMLElement {
 	#startGame() {
 		const playersData = stateManager.getState("lobbyStatus");
 		const contentElm = document.querySelector(".content");
+		const lobbyId = this.data.lobbyId;
+		this.startGame = true;
+		this.remove();
+		contentElm.innerHTML = `
+		<app-play
+			host-username="${playersData.host.username}"
+			host-image="${playersData.host.image}"
+			guest-username="${playersData.guest.username}"
+			guest-image="${playersData.guest.image}"
+			lobby-id="${lobbyId}"
+			is-tournament="${this.data.isTournament}"
+		></app-play>
+		`;
+	}
+
+	#startTournamentGame() {
+		const playersData = stateManager.getState("lobbyStatus");
+		const contentElm = document.querySelector(".tourney-section");
 		const lobbyId = this.data.lobbyId;
 		this.startGame = true;
 		this.remove();

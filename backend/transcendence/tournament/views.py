@@ -192,15 +192,18 @@ def next_game(request):
 	game_lobby_id = None
 	next_game = get_next_game(tournament, user)
 	if next_game:
-		game_lobby_id = next_game.user1.id if next_game else None
-		if not game_lobby_id in lobby_dict:
-			lobby_dict[next_game.user1.id] = Lobby(next_game.user1.id)
-		else:
-			lobby = lobby_dict[game_lobby_id]
-			if not lobby.is_someone_connected():
-				lobby_dict[game_lobby_id].reset()
-				lobby_dict[game_lobby_id].set_user_2_id(next_game.user2.id)
-				lobby_dict[game_lobby_id].set_associated_game_id(next_game.id)
+		user1_id = next_game.user1.id if next_game.user1 else None
+		user2_id = next_game.user2.id if next_game.user2 else None
+		game_lobby_id = user1_id
+		if game_lobby_id:
+			if not game_lobby_id in lobby_dict:
+				lobby_dict[game_lobby_id] = Lobby(game_lobby_id)
+			else:
+				lobby = lobby_dict[game_lobby_id]
+				if not lobby.is_someone_connected():
+					lobby_dict[game_lobby_id].reset()
+					lobby_dict[game_lobby_id].set_user_2_id(user2_id)
+					lobby_dict[game_lobby_id].set_associated_game_id(next_game.id)
 	return JsonResponse({"message": f"Next game lobby id retrived with success!", "lobby_id": game_lobby_id}, status=200)
 
 @login_required

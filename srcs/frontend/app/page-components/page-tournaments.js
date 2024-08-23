@@ -116,7 +116,7 @@ export default class PageTournaments extends HTMLElement {
 	}
 
 	#checkActiveTournamentCall() {
-		callAPI("GET", `http://127.0.0.1:8000/api/tournament/active-tournament/`, null, (res, data) => {					
+		callAPI("GET", `http://127.0.0.1:8000/api/tournament/active-tournament/`, null, (res, data) => {
 			if (res.ok && data && data.tournament) {
 				const torneyData = data.tournament;
 				this.btnCreateTourneySection.classList.add("hide");
@@ -126,7 +126,6 @@ export default class PageTournaments extends HTMLElement {
 						tournament-id="${torneyData.id}"
 						owner-id="${torneyData.owner}"
 					></tourney-lobby>`;
-
 					this.invitesReceived.innerHTML = "";
 				}
 				else if (torneyData.status == "active") {
@@ -145,6 +144,9 @@ export default class PageTournaments extends HTMLElement {
 	#setStateEvent() {
 		stateManager.addEvent("isTournamentChanged", (stateValue) => {
 			if (stateValue) {
+
+				console.log("------------------------Devia sair do play app--------------------");
+
 				this.#checkActiveTournamentCall();
 				stateManager.setState("isTournamentChanged", false);
 			}
