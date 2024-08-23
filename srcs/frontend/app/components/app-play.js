@@ -58,7 +58,7 @@ const getHtml = function(data) {
 }
 
 export default class AppPlay extends HTMLElement {
-	static observedAttributes = ["host-username", "host-image", "guest-username", "guest-image", "lobby-id"];
+	static observedAttributes = ["host-username", "host-image", "guest-username", "guest-image", "lobby-id", "is-tournament"];
 
 	constructor() {
 		super()
@@ -88,6 +88,8 @@ export default class AppPlay extends HTMLElement {
 			name = "guestImage";
 		else if (name == "lobby-id")
 			name = "lobbyId";
+		else if (name == "is-tournament")
+			name = "isTournament"
 		this.data[name] = newValue;
 	}
 
@@ -219,9 +221,16 @@ export default class AppPlay extends HTMLElement {
 
 	// alterar esta função não pode ir para o play
 	#setBtnLeaveEvent() {
-		this.leave.addEventListener("click", () => {
-			redirect("/play");
-		});
+		if (this.data.isTournament) {
+			console.log("Botão de leave");
+			stateManager.setState("isTournamentChanged", true);
+		}
+		else {
+			this.leave.addEventListener("click", () => {
+				redirect("/play");
+			});
+		}
+
 	}
 
 	#openSocket() {

@@ -4,6 +4,7 @@ from user_profile.aux import get_image_url
 from datetime import datetime
 from django.db.models import Q
 import random
+import math
 
 from user_profile.models import UserProfileInfo
 from .models import TournamentRequests
@@ -169,7 +170,7 @@ def get_game_info(game):
 		"player2": get_single_user_info(user2_profile),
 		"player1_score": game.user1_score,
 		"player2_score": game.user2_score,
-		"winner": winner
+		"winner": get_single_user_info(winner)
 	}
 	return game_info
 
@@ -177,6 +178,7 @@ def get_tournament_games_list(tournament):
 	tournament_games_list = []
 	tournament_games = games_model.filter(tournament=tournament)
 	if tournament_games:
+		tournament_games = tournament_games.order_by("id")
 		for game in tournament_games:
 			game_info = get_game_info(game)
 			tournament_games_list.append(game_info)
@@ -222,3 +224,20 @@ def is_tournament_finished(tournament):
 	if last_game.status == GAME_STATUS_FINISHED:
 		return last_game
 	return None
+
+def update_next_game(tournament, user, game):
+	tournament_games = games_model.filter(tournament=tournament)
+	if tournament_games:
+		tournament_games = tournament_games.order_by("id")
+		tournament_games = list(tournament_games)
+		half_nbr_players = tournament.nbr_max_players / 2
+		index = tournament_games.index(game)
+		if index < len(tournament_games) - 1:
+			next_game_index = int(math.floor(index / 2) + half_nbr_players)
+			next_game = tournament_games[next_game_index]
+			if next_game:
+				if not index or index % 2 == 0:
+					next_game.user1 = user
+				else:
+					next_game.user2 = user
+				next_game.save()

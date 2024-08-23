@@ -108,15 +108,16 @@ def has_already_games_accepted(user):
 
 def cancel_other_invitations(user):
 	current_time = datetime.now()
-	game_reuests = game_requests_model.filter(from_user=user)
-	for req in game_reuests:
-		if req.exp.timestamp() > current_time.timestamp() and req.status == REQ_STATUS_PENDING:
-			req.status = REQ_STATUS_DECLINED
-			req.save()
+	game_requests = game_requests_model.filter(from_user=user)
+	if game_requests:
+		for req in game_requests:
+			if req.exp.timestamp() > current_time.timestamp() and req.status == REQ_STATUS_PENDING:
+				req.status = REQ_STATUS_DECLINED
+				req.save()
 
 def has_user_pending_game_requests(user):
-	game_reuests = game_requests_model.filter(from_user=user, status=REQ_STATUS_PENDING)
-	if game_reuests:
-		if get_valid_game_requests_list(game_reuests):
+	game_requests = game_requests_model.filter(from_user=user, status=REQ_STATUS_PENDING)
+	if game_requests:
+		if get_valid_game_requests_list(game_requests):
 			return True
 	return False

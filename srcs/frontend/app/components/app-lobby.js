@@ -195,6 +195,7 @@ export default class AppLobby extends HTMLElement {
 			guest-username="${playersData.guest.username}"
 			guest-image="${playersData.guest.image}"
 			lobby-id="${lobbyId}"
+			is-tournament="${this.data.isTournament}"
 		></app-play>
 		`;
 	}
@@ -243,3 +244,18 @@ export default class AppLobby extends HTMLElement {
 }
 
 customElements.define("app-lobby", AppLobby);
+
+
+/*
+select * from game_games;
+select * from tournament_tournamentrequests;
+select * from tournament_tournamentplayers;
+select * from tournament_tournament;
+
+
+delete from game_games;
+delete from tournament_tournamentrequests;
+delete from tournament_tournamentplayers;
+delete from tournament_tournament;
+
+*/

@@ -14,7 +14,7 @@ class Games(models.Model):
 	played = models.DateTimeField(auto_now_add=True)
 
 	def __str__(self) -> str:
-		return f'User1: {self.user1}\nUser2: {self.user2}\nUser1 Score: {self.user1_score}\nUser2 Score: {self.user2_score}\nStatus: {self.status}\nWinner: {self.winner}'
+		return f'User1: {self.user1}\nUser2: {self.user2}\nUser1 Score: {self.user1_score}\nUser2 Score: {self.user2_score}\nStatus: {self.status}\nWinner: {self.winner}\nTournament: {self.tournament}'
 
 class GameRequests(models.Model):
 	from_user = models.ForeignKey(to=User, related_name='from_user_game_req', on_delete=models.SET_NULL, null=True)

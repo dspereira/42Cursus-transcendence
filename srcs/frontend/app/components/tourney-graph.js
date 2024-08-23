@@ -142,8 +142,10 @@ export default class TourneyGraph extends HTMLElement {
 		callAPI("GET", `http://127.0.0.1:8000/api/tournament/games/?id=${this.data.tournamentId}`, null, (res, data) => {
 			if (res.ok) {
 				console.log(data);
-				if (data && data.games && data.games.length)
+				if (data && data.games && data.games.length) {
+					console.log(data.games);
 					this.#updateGames(data.games);
+				}
 			}
 		});
 	}

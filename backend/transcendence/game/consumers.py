@@ -5,7 +5,7 @@ from user_profile.models import UserProfileInfo
 from channels.exceptions import StopConsumer
 from user_profile.aux import get_image_url
 from .models import Games, GameRequests
-from asgiref.sync import sync_to_async
+from asgiref.sync import sync_to_async, async_to_sync
 from user_auth.models import User
 import asyncio
 import json
@@ -18,6 +18,8 @@ from .game_logic.const_vars import WINNING_SCORE_PONTUATION
 from .utils import cancel_other_invitations
 
 from .Lobby import lobby_dict
+
+from tournament.utils import update_next_game
 
 user_profile_info_model = ModelManager(UserProfileInfo)
 game_req_model = ModelManager(GameRequests)
@@ -86,14 +88,13 @@ class Game(AsyncWebsocketConsumer):
 					if not self.lobby.is_only_host_online():
 						await self.channel_layer.group_send(self.room_group_name, {'type': 'send_end_lobby_session'})
 			else:
-				if not await sync_to_async(self.lobby.is_tournament_game)():
-					if self.game.get_status() != GAME_STATUS_FINISHED:
-						if self.user.id == self.lobby.get_host_id():
-							self.game.set_scores({"player_1": 0, "player_2": WINNING_SCORE_PONTUATION})
-						else:
-							self.game.set_scores({"player_1": WINNING_SCORE_PONTUATION, "player_2": 0})
-						await sync_to_async(self.game.is_end_game)()
-						await self.__finish_game(GAME_STATUS_SURRENDER)
+				if self.game.get_status() != GAME_STATUS_FINISHED:
+					if self.user.id == self.lobby.get_host_id():
+						self.game.set_scores({"player_1": 0, "player_2": WINNING_SCORE_PONTUATION})
+					else:
+						self.game.set_scores({"player_1": WINNING_SCORE_PONTUATION, "player_2": 0})
+					await sync_to_async(self.game.is_end_game)()
+					await self.__finish_game(GAME_STATUS_SURRENDER)
 			await sync_to_async(self.lobby.update_connected_status)(self.user.id, False)
 			await self.send_users_info_to_group()
 		await self.__stop_game_routine()
@@ -140,8 +141,9 @@ class Game(AsyncWebsocketConsumer):
 		)
 
 	async def send_start_game(self, event):
-		if self.lobby.get_host_id() == self.user.id:
-			await sync_to_async(cancel_other_invitations)(self.user)
+		if not self.lobby.is_tournament_game():
+			if self.lobby.get_host_id() == self.user.id:
+				await sync_to_async(cancel_other_invitations)(self.user)
 		await self.__start_game(event['game_id'])
 
 	async def __start_game(self, game_id):
@@ -245,6 +247,10 @@ class Game(AsyncWebsocketConsumer):
 			await sync_to_async(self.game_info.save)()
 			games_dict.remove_game_obj(self.game_info.id)
 			surrender = True if finish_status == GAME_STATUS_SURRENDER else False
+
+			if await sync_to_async(self.lobby.is_tournament_game)():
+				await sync_to_async(self.__update_tournament_games)()
+
 			await self.channel_layer.group_send(
 				self.room_group_name,
 				{
@@ -309,3 +315,8 @@ class Game(AsyncWebsocketConsumer):
 			await self.send(text_data=json.dumps(content))
 		except Exception as e:
 			await sync_to_async(print)(e)
+
+	def __update_tournament_games(self):
+		game = self.game_info
+		tournament = game.tournament
+		update_next_game(tournament, game.winner, game)
