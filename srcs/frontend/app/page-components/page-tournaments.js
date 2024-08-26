@@ -126,13 +126,6 @@ export default class PageTournaments extends HTMLElement {
 	}
 
 	#checkActiveTournamentCall() {
-		/*const finishedTournamentId = stateManager.getState("finishedTournament");
-		if (finishedTournamentId) {
-			this.tourneySection.innerHTML = `<tourney-graph tournament-id="${finishedTournamentId}"></tourney-graph>`;
-			this.invitesReceived.innerHTML = "Estea merda tem de funcionar";
-			return ;
-		}*/
-
 		callAPI("GET", `http://127.0.0.1:8000/api/tournament/active-tournament/`, null, (res, data) => {
 			if (res.ok && data && data.tournament) {
 				const torneyData = data.tournament;
@@ -148,7 +141,7 @@ export default class PageTournaments extends HTMLElement {
 					this.invitesReceived.innerHTML = "";
 				}
 				else if (torneyData.status == "active") {
-					this.tourneySection.innerHTML = `<tourney-graph tournament-id="${torneyData.id}"></tourney-graph>`;
+					this.tourneySection.innerHTML = `<tourney-graph tournament-id="${torneyData.id}" tournament-name="${torneyData.name}"></tourney-graph>`;
 					this.invitesReceived.innerHTML = "";
 				}
 			}
@@ -190,7 +183,7 @@ export default class PageTournaments extends HTMLElement {
 		callAPI("GET", `http://127.0.0.1:8000/api/tournament/is-finished/?id=${tournamentId}`, null, (res, data) => {
 			if (res.ok && data && data.is_finished) {
 				this.btnCreateTourneySection.classList.add("hide");
-				this.tourneySection.innerHTML = `<tourney-graph tournament-id="${tournamentId}"></tourney-graph>`;
+				this.tourneySection.innerHTML = `<tourney-graph tournament-id="${tournamentId}" tournament-name="${data.tournament_name}"></tourney-graph>`;
 				this.invitesReceived.innerHTML = "";
 				this.exitTournament.classList.remove("hide");
 			}
