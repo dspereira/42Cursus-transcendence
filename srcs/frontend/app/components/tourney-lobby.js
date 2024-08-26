@@ -56,7 +56,6 @@ const styles = `
 `;
 
 const getHtml = function(data) {
-
 	const tournamentInviterHtml = `<div class="border-separation"></div>
 	<tourney-inviter tournament-id="${data.tournamentId}"></tourney-inviter>`;
 
@@ -89,9 +88,9 @@ const getHtml = function(data) {
 		</div>
 	</div>
 	<div class="buttons">
-		${data.isOwner == true ? ownerBtns : guestBtns}
+		${data.isOwner ? ownerBtns : guestBtns}
 	</div>
-	${data.isOwner == true ? tournamentInviterHtml : ""}
+	${data.isOwner ? tournamentInviterHtml : ""}
 	`;
 	return html;
 }

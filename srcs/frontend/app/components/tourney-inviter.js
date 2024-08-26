@@ -21,6 +21,13 @@ const styles = `
 	border-radius: 5px;
 	padding: 20px;
 }
+.search-bar-section {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	width: 100%;
+	margin-bottom: 20px;
+}
 
 .search-icon {
 	position: absolute;
@@ -29,12 +36,17 @@ const styles = `
 	font-size: 16px;
 }
 
+.refresh-icon {
+	font-size: 22px;
+	cursor: pointer;
+}
+
 .search-bar input {
 	padding-left: 40px;
 }
 
 .search-bar {
-	margin-bottom: 25px;
+	width: 93%;
 }
 
 .friends {
@@ -42,8 +54,8 @@ const styles = `
 	flex-wrap: wrap;
 	gap: 30px;
 	justify-content: center;
-}
 
+}
 
 .player-invite-send {
 	display: flex;
@@ -73,17 +85,18 @@ const getHtml = function(data) {
 	const html = `
 		<div class="invites-section">
 			<div class="friend-list">
-				<div class="search-bar">
-					<div class="form-group">
-						<i class="search-icon bi bi-search"></i>
-						<input type="text" class="form-control form-control-md" id="search" placeholder="Search friends..." maxlength="50">
+				<div class="search-bar-section">
+					<div class="search-bar">
+						<div class="form-group">
+							<i class="search-icon bi bi-search"></i>
+							<input type="text" class="form-control form-control-md" id="search" placeholder="Search friends..." maxlength="50">
+						</div>
 					</div>
+					<div><i class="bi bi-arrow-clockwise refresh-icon"></i></div>
 				</div>
 				<div class="friends"></div>
 			</div>
-			<div class="invites-send">
-
-			</div>
+			<div class="invites-send"></div>
 		</div>
 		<button type="button" class="btn btn-primary btn-invite">Invite</button>
 	`;
@@ -97,6 +110,7 @@ export default class TourneyInviter extends HTMLElement {
 		super()
 		this.data = {};
 		this.selectedElm = [];
+		this.intervalID = null;
 	}
 
 	connectedCallback() {
@@ -147,8 +161,9 @@ export default class TourneyInviter extends HTMLElement {
 		this.#setFriendsSearchEvent();
 		this.#getFriendsCallApi();
 		this.#setBtnInviteEvent();
-		//this.#setCancelInviteEvent();
 		this.#getListPendingInvites();
+		this.#setRefreshFriendsListEvent();
+		this.#checkInvitesPolling();
 	}
 
 	#setFriendsSearchEvent() {
@@ -253,8 +268,10 @@ export default class TourneyInviter extends HTMLElement {
 
 	#getListPendingInvites() {
 		callAPI("GET", `http://127.0.0.1:8000/api/tournament/invited-friends/`, null, (res, data) => {
-			if (res.ok && data)
+			if (res.ok && data) {
+				console.log(data);
 				this.#createInvitesSendList(data.invited_users);
+			}
 		});
 	}	
 
@@ -297,6 +314,21 @@ export default class TourneyInviter extends HTMLElement {
 					this.#removeInvitesSendFromList(inviteId);
 			});
 		});
+	}
+
+	#setRefreshFriendsListEvent() {
+		const btn = this.html.querySelector(".refresh-icon");
+		if (!btn)
+			return ;
+		btn.addEventListener("click", () => {
+			this.#getFriendsCallApi();
+		});
+	}
+
+	#checkInvitesPolling() {
+		this.intervalID = setInterval(() => {
+			this.#getListPendingInvites();
+		}, 5000);
 	}
 }
 
