@@ -8,9 +8,10 @@ class Games(models.Model):
 	user2_score = models.IntegerField(default=0)
 	winner = models.ForeignKey(to=User, related_name='game_winner', on_delete=models.SET_NULL, null=True)
 	status = models.CharField(default="created")
+	date = models.DateTimeField(auto_now_add=True)
 
 	def __str__(self) -> str:
-		return f'User1: {self.user1}\nUser2: {self.user2}\nUser1 Score: {self.user1_score}\nUser2 Score: {self.user2_score}\nStatus: {self.status}\nWinner: {self.winner}'
+		return f'User1: {self.user1}\nUser2: {self.user2}\nUser1 Score: {self.user1_score}\nUser2 Score: {self.user2_score}\nStatus: {self.status}\nWinner: {self.winner}\nDate: {self.date}'
 
 class GameRequests(models.Model):
 	from_user = models.ForeignKey(to=User, related_name='from_user_game_req', on_delete=models.SET_NULL, null=True)

@@ -76,7 +76,7 @@ const getHtml = function(data) {
 		<div class="profile-grid-container">
 			<div class="profile-info">
 				<div>
-					<img class="profile-picture" src="https://static.vecteezy.com/ti/fotos-gratis/t2/2098203-gato-malhado-prateado-sentado-no-fundo-verde-gratis-foto.jpg" alt="Profile Picture">
+					<img class="profile-picture" src="" alt="Profile Picture">
 				</div>
 				<div class="username-container">
 					<h1 class="username"></h1>
@@ -94,7 +94,7 @@ const getHtml = function(data) {
 				<p class="tournements-won"></p>
 			</div>
 			<div class="bio-box">
-				<span class="bio">A wonderful serenity has taken possession of my entire soul, like these sweet mornings of spring which I enjoy with my whole heart. I am alone, and feel the charm of existence in this spot, which was created for the bliss of souls like mine. I am so happy</span>
+				<span class="bio"></span>
 			</div>
 		</div>
 	`;
@@ -199,7 +199,10 @@ export default class UserProfile extends HTMLElement {
 			lossesElement.textContent = `L: ${losses}`;
 		}
 		if (winRateBarElement) {
-			winRateBarElement.style.background = `linear-gradient(to right, blue ${win_rate}%, red ${100 - win_rate}%)`;
+			if (win_rate == 0)
+				winRateBarElement.style.background = `red`;
+			else
+				winRateBarElement.style.background = `linear-gradient(to right, blue ${win_rate}%, red ${win_rate}%)`;
 		}
 	}
 
@@ -212,5 +215,3 @@ export default class UserProfile extends HTMLElement {
 }
 
 customElements.define("user-profile", UserProfile);
-
-

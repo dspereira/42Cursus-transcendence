@@ -3,12 +3,70 @@ import {callAPI} from "../utils/callApiUtils.js";
 
 const styles = `
 
+	.page-container {
+		display: flex;
+		width: 100%;
+		flex-direction: column;
+		gap: 40px;
+		overflow-y: scroll;
+		height: 675px;
+	}
+
+	.tab-select {
+		display: flex;
+		width: 100%;
+		height: 50px;
+		justify-content: center;
+		align-items: center;
+	}
+
+	.tab-select-btn{
+		display: flex;
+		width: 600px;
+		height: 50px;
+		color: white;
+		background-color: #EEEEEE;
+		border-style: hidden;
+		border-radius: 5px;
+	}
+
+	.select-left, .select-right{
+		display: flex;
+		width: 50%;
+		height: 100%;
+		border-style: hidden;
+		justify-content: center;
+		align-items: center;
+		--toggled: off;
+		font-size: 16px;
+		font-weight: bold;
+		transition: .5s;
+	}
+
+	.select-left {
+		border-radius: 5px 0px 0px 5px;
+		background-color: #C2C2C2;
+}
+
+	.select-right {
+		border-radius: 0px 5px 5px 0px;
+		background-color: #E0E0E0;
+	}
 `;
 
 const getHtml = function(data) {
 
 	const html = `
+	<div class="page-container">
+		<div class="tab-select">
+			<button class="tab-select-btn">
+				<div class="select-left">Game History</div>
+				<div class="select-right">Tournament History</div>
+			</button>
+		</div>
 		<div class="game-list"></div>
+		<div class="tounament-list"></div>
+	</div>
 	`;
 
 	return html;
@@ -60,33 +118,70 @@ export default class GameHistory extends HTMLElement {
 
 	#scripts() {
 		this.#getGameList();
+		this.#toggleTabSelector();
+	}
+
+	#toggleTabSelector() {
+		this.html.querySelector(".tab-select-btn").addEventListener("click", () => {
+			const leftSlct = this.html.querySelector(".select-left");
+			const rightSlct = this.html.querySelector(".select-right");
+			const isToggled = leftSlct.style.getPropertyValue('--toggled') === 'on';
+			const highlight = "#C2C2C2";
+			const background = "#EEEEEE";
+			leftSlct.style.setProperty('--toggled', isToggled ? 'off' : 'on');
+			if (isToggled) {
+				leftSlct.style.backgroundColor = highlight;
+				rightSlct.style.backgroundColor = background;
+				leftSlct.style.color = "white";
+				rightSlct.style.color = highlight;
+				this.#getGameList();
+			} else {
+				leftSlct.style.backgroundColor = background;
+				rightSlct.style.backgroundColor = highlight;
+				leftSlct.style.color = highlight;
+				rightSlct.style.color = "white";
+				this.#getTournamentList();
+			}
+		});
 	}
 
 	#insertGames(gameList) {
 		let game = null;
 		const gameListHtml = this.html.querySelector(".game-list");
-		gameList.forEach(elm => {
-			game = document.createElement("div");
-			game.innerHTML = 
-			`<game-card
-				player1=${elm.user1}
-				player1_image=${elm.user1_image}
-				player1_score=${elm.user1_score}
-				player2=${elm.user2}
-				player2_image=${elm.user2_image}
-				player2_score=${elm.user2_score}
-				win=${elm.winner}
-				>
-			</game-card>`;
-			gameListHtml.appendChild(game);
-		});
+		if (gameList.length === 0)
+			gameListHtml.innerHTML = '<h1>No games played yet.</h1>';
+		else
+		{
+			gameListHtml.innerHTML= "";
+			gameList.forEach(elm => {
+				game = document.createElement("div");
+				game.innerHTML = 
+				`<game-card
+					player1=${elm.user1}
+					player1_image=${elm.user1_image}
+					player1_score=${elm.user1_score}
+					player2=${elm.user2}
+					player2_image=${elm.user2_image}
+					player2_score=${elm.user2_score}
+					win=${elm.winner}
+					data=${elm.date}
+					>
+				</game-card>`;
+				gameListHtml.appendChild(game);
+			});
+		}
 	}
 
 	#getGameList() {
 		callAPI("GET", "http://127.0.0.1:8000/api/game/get-games/", null, (res, data) => {
-			this.#insertGames(data.games_list);
+				this.#insertGames(data.games_list);
 		});
 	};
+
+	#getTournamentList() {
+		const gameListHtml = this.html.querySelector(".game-list");
+		gameListHtml.innerHTML = '<h1>No tournaments played yet.</h1>';
+	}
 }
 
 customElements.define("game-history", GameHistory);

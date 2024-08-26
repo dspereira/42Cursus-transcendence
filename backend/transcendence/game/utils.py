@@ -26,7 +26,7 @@ GAME_STATUS_FINISHED = "finished"
 GAME_STATUS_ABORTED = "aborted"
 GAME_STATUS_PLAYING = "playing"
 GAME_STATUS_CREATED = "created"
-GAME_STATUS_SURRENDER = "sorrender"
+GAME_STATUS_SURRENDER = "surrender"
 
 def get_user_profile(user):
 	return user_profile_model.get(user=user)
@@ -143,3 +143,23 @@ def get_request_exp_time(game_request):
 	if diff_time_minutes <= 0.3:
 		return f"30 sec left"
 	return f"{math.floor(diff_time_minutes) + 1} min left"
+
+def update_users(user1_id, user2_id, winner):
+	user1 = user_profile_model.get(user=user1_id)
+	user2 = user_profile_model.get(user=user2_id)
+
+	user1.total_games = user1.total_games + 1
+	user2.total_games = user2.total_games + 1
+
+	if winner == user1_id:
+		user1_id.victories = user1_id.victories + 1
+		user2_id.defeats = user2_id.defeats + 1
+	else:
+		user2_id.victories = user2_id.victories + 1
+		user1_id.defeats = user1_id.defeats + 1
+
+	user1.win_rate = user1.victories / user1.total_games
+	user2.win_rate = user2.victories / user2.total_games
+
+	user1.save()
+	user2.save()

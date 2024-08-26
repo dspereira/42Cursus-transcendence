@@ -135,5 +135,3 @@ export default class GameCard extends HTMLElement {
 }
 
 customElements.define("game-card", GameCard);
-
-

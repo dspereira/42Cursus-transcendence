@@ -8,10 +8,6 @@ const styles = `
 		justify-content: flex-start;
 	}
 
-	.red {
-		border: 1px solid red;
-	}
-
 	.profile {
 		width: 30%;
 	}
@@ -27,10 +23,10 @@ const getHtml = function(data) {
 		<side-panel selected="profile"></side-panel>
 		<div class="content content-small">
 			<div class="profile-container">
-				<div class="profile red">
+				<div class="profile">
 					<user-profile></user-profile>
 				</div>
-				<div class="history red">
+				<div class="history">
 					<game-history></game-history>
 				</div>
 			</div>

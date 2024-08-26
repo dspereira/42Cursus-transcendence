@@ -171,6 +171,7 @@ class Game(AsyncWebsocketConsumer):
 			self.game.update()
 			await asyncio.sleep(SLEEP_TIME_SECONDS)
 		await self.__finish_game(GAME_STATUS_FINISHED)
+		await sync_to_async(self.update_users)()
 
 	async def __send_timer_data(self, time):
 		await self.channel_layer.group_send(
@@ -251,7 +252,7 @@ class Game(AsyncWebsocketConsumer):
 					}
 				}
 			)
-
+	
 	def __has_access_to_lobby(self, lobby_id):
 		if lobby_id in lobby_dict:
 			lobby = lobby_dict[lobby_id]
@@ -304,3 +305,23 @@ class Game(AsyncWebsocketConsumer):
 			await self.send(text_data=json.dumps(content))
 		except Exception as e:
 			await sync_to_async(print)(e)
+
+	def update_users(self):
+		print("_____________________aqui__________________________")
+		game_info = self.__get_game_info(self.game_info.id)
+
+		user_profile = user_profile_info_model.get(user=self.user)
+		user_profile.total_games = user_profile.total_games + 1
+		print(game_info)
+		print("---depois---")
+
+		if self.game_info.winner.id == self.user.id:
+			print("---ganhou---")
+			user_profile.victories = user_profile.victories + 1
+		else:
+			print("---perdeu---")
+			user_profile.defeats = user_profile.defeats + 1
+
+		user_profile.win_rate = user_profile.victories / user_profile.total_games * 100
+
+		user_profile.save()
