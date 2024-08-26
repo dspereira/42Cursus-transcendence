@@ -176,6 +176,7 @@ export default class TourneyGraph extends HTMLElement {
 		super()
 		this.data = {};
 		this.lobbyIdNextGame = null;
+		this.intervalID = null;
 	}
 
 	connectedCallback() {
@@ -185,7 +186,8 @@ export default class TourneyGraph extends HTMLElement {
 	}
 
 	disconnectedCallback() {
-
+		if (this.intervalID)
+			clearInterval(this.intervalID);
 	}
 
 	attributeChangedCallback(name, oldValue, newValue) {
@@ -226,6 +228,7 @@ export default class TourneyGraph extends HTMLElement {
 		this.#getTournamentGamesData();
 		this.#setStartGameEvent();
 		this.#getNextGame();
+		this.#updateGamesPolling();
 	}
 
 	#getTournamentGamesData() {
@@ -267,7 +270,6 @@ export default class TourneyGraph extends HTMLElement {
 			if (playerWinner.id == playerInfo.id)
 				player.classList.add("winner-border");
 		}
-
 	}
 
 	#setStartGameEvent() {
@@ -290,6 +292,26 @@ export default class TourneyGraph extends HTMLElement {
 					this.startGameBtn.classList.add("hide");
 			}
 		});	
+	}
+
+	#checkTournamentFinished() {
+		callAPI("GET", `http://127.0.0.1:8000/api/tournament/is-finished/?id=${this.data.tournamentId}`, null, (res, data) => {
+			if (res.ok && data && data.is_finished) {
+				const btn = document.querySelector(".exit-tourney");
+				if (!btn)
+					return ;
+				btn.classList.remove("hide");
+			}
+		});
+	}
+
+	#updateGamesPolling() {
+		this.intervalID = setInterval(() => {
+			this.#getTournamentGamesData();
+			this.#getNextGame();
+			this.#checkTournamentFinished();
+
+		}, 5000);
 	}
 }
 
