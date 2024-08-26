@@ -52,6 +52,10 @@ const styles = `
 	.score {
 		font-size: 24px;
 	}
+
+	.date {
+		font-size: 16px;
+	}
 `;
 
 const getHtml = function(data) {
@@ -63,6 +67,7 @@ const getHtml = function(data) {
 				<h1 class="username">${data.player1}</h1>
 			</div>
 			<div class="score-container">
+				<h3 class="date">${data.date}</h3>
 				<h1 class="score">${data.player1_score} - ${data.player2_score}</h1>
 			</div>
 			<div class="player-container">
@@ -76,7 +81,7 @@ const getHtml = function(data) {
 }
 
 export default class GameCard extends HTMLElement {
-	static observedAttributes = ["player1", "player1_image", "player1_score", "player2", "player2_image", "player2_score", "win"];
+	static observedAttributes = ["player1", "player1_image", "player1_score", "player2", "player2_image", "player2_score", "win", "date"];
 
 	constructor() {
 		super();

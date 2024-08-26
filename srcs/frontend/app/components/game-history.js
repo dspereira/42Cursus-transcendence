@@ -1,6 +1,5 @@
 import {callAPI} from "../utils/callApiUtils.js";
 
-
 const styles = `
 
 	.page-container {
@@ -164,7 +163,7 @@ export default class GameHistory extends HTMLElement {
 					player2_image=${elm.user2_image}
 					player2_score=${elm.user2_score}
 					win=${elm.winner}
-					data=${elm.date}
+					date=${this.#parse_date(elm.date)}
 					>
 				</game-card>`;
 				gameListHtml.appendChild(game);
@@ -181,6 +180,14 @@ export default class GameHistory extends HTMLElement {
 	#getTournamentList() {
 		const gameListHtml = this.html.querySelector(".game-list");
 		gameListHtml.innerHTML = '<h1>No tournaments played yet.</h1>';
+	}
+
+	#parse_date(date) {
+		let date_part = date.split("T")[0];
+		let day = date_part.split("-")[2];
+		let month = date_part.split("-")[1];
+		let new_date = day + "-" + month;
+		return new_date;
 	}
 }
 

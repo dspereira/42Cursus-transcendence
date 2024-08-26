@@ -162,7 +162,7 @@ export default class UserProfile extends HTMLElement {
 		this.#updateImage(data.image_url);
 		this.#updateUsername(data.username);
 		this.#updateBio(data.bio);
-		this.#updateWinRate(data.victories, data.defeats, data.win_rate);
+		this.#updateWinRate(data.victories, data.defeats, data.win_rate, data.total_games);
 		this.#updateTournaments(data.tournaments_won);
 	}
 
@@ -187,7 +187,7 @@ export default class UserProfile extends HTMLElement {
 		}
 	}
 
-	#updateWinRate(wins, losses, win_rate) {
+	#updateWinRate(wins, losses, win_rate, total_games) {
 		const winsElement = this.html.querySelector('.wins');
 		const lossesElement = this.html.querySelector('.losses');
 		const winRateBarElement = this.html.querySelector('#win-rate-bar');
@@ -199,10 +199,15 @@ export default class UserProfile extends HTMLElement {
 			lossesElement.textContent = `L: ${losses}`;
 		}
 		if (winRateBarElement) {
-			if (win_rate == 0)
+			if (total_games == 0) {
+				winRateBarElement.style.background = `linear-gradient(to right, blue 0%, red 100%)`;
+			}
+			else if (win_rate == 0) {
 				winRateBarElement.style.background = `red`;
-			else
+			}
+			else {
 				winRateBarElement.style.background = `linear-gradient(to right, blue ${win_rate}%, red ${win_rate}%)`;
+			}
 		}
 	}
 
