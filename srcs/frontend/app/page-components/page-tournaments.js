@@ -20,6 +20,12 @@ const styles = `
 	padding: 10px 70px 10px 70px;
 }
 
+.exit-tourney {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
 .hide {
 	display: none;
 }
@@ -38,7 +44,8 @@ const getHtml = function(data) {
 			<div class="border-separation"></div>
 		</div>
 		<div class="tourney-section"></div>
-		<div class="invites-received"><div>
+		<div class="invites-received"></div>
+		<div class="exit-tourney hide"><button type="button" class="btn btn-primary btn-exit-tourney">Exit Tournament</button></div>
 	</div>
 	`;
 	return html;
@@ -72,6 +79,7 @@ export default class PageTournaments extends HTMLElement {
 		this.btnCreateTourneySection = this.html.querySelector(".btn-create-tourney-section");
 		this.tourneySection = this.html.querySelector(".tourney-section");
 		this.invitesReceived = this.html.querySelector(".invites-received");
+		this.exitTournament = this.html.querySelector(".exit-tourney");
 	}
 
 	#styles() {
@@ -96,13 +104,15 @@ export default class PageTournaments extends HTMLElement {
 		this.#createTournamentEvent();
 		this.#checkActiveTournamentCall();
 		this.#setStateEvent();
+		this.#setExitTtourneyBtn();
 	}
 
 	#createTournamentEvent() {
 		const btn = this.html.querySelector(".btn-create-tourney");
 		btn.addEventListener("click", () => {
 			callAPI("POST", `http://127.0.0.1:8000/api/tournament/`, null, (res, data) => {					
-				if (res.ok) {
+				if (res.ok && data) {
+					stateManager.setState("tournamentId", data.tournament_id);
 					this.btnCreateTourneySection.classList.add("hide");
 					this.tourneySection.innerHTML = `
 					<tourney-lobby
@@ -116,10 +126,19 @@ export default class PageTournaments extends HTMLElement {
 	}
 
 	#checkActiveTournamentCall() {
+		/*const finishedTournamentId = stateManager.getState("finishedTournament");
+		if (finishedTournamentId) {
+			this.tourneySection.innerHTML = `<tourney-graph tournament-id="${finishedTournamentId}"></tourney-graph>`;
+			this.invitesReceived.innerHTML = "Estea merda tem de funcionar";
+			return ;
+		}*/
+
 		callAPI("GET", `http://127.0.0.1:8000/api/tournament/active-tournament/`, null, (res, data) => {
 			if (res.ok && data && data.tournament) {
 				const torneyData = data.tournament;
+				stateManager.setState("tournamentId", torneyData.id);
 				this.btnCreateTourneySection.classList.add("hide");
+				this.exitTournament.classList.add("hide");
 				if (torneyData.status == "created") {
 					this.tourneySection.innerHTML = `
 					<tourney-lobby
@@ -135,18 +154,20 @@ export default class PageTournaments extends HTMLElement {
 			}
 			else if (res.ok && data && !data.tournament) {
 				this.btnCreateTourneySection.classList.remove("hide");
+				this.exitTournament.classList.add("hide");
 				this.tourneySection.innerHTML = "";
 				this.invitesReceived.innerHTML = "<tourney-invites-received></tourney-invites-received>";
 			}
 		});
+
+		const tournamentId = stateManager.getState("tournamentId");
+		if (tournamentId)
+			this.#checkTournamentFinished(tournamentId);
 	}
 
 	#setStateEvent() {
 		stateManager.addEvent("isTournamentChanged", (stateValue) => {
 			if (stateValue) {
-
-				console.log("------------------------Devia sair do play app--------------------");
-
 				this.#checkActiveTournamentCall();
 				stateManager.setState("isTournamentChanged", false);
 			}
@@ -155,12 +176,38 @@ export default class PageTournaments extends HTMLElement {
 		stateManager.addEvent("tournamentGameLobby", (stateValue) => {
 			if (stateValue) {
 				this.btnCreateTourneySection.classList.add("hide");
-				this.tourneySection.innerHTML = `<app-lobby lobby-id=${stateValue} is-tournament="true"></app-lobby>`;
-				this.invitesReceived.innerHTML = "";			
+				this.tourneySection.innerHTML = `<app-lobby 
+					lobby-id=${stateValue} 
+					is-tournament="true"
+				></app-lobby>`;
+				this.invitesReceived.innerHTML = "";		
 				stateManager.setState("tournamentGameLobby", null);
 			}
+		});
+	}
+
+	#checkTournamentFinished(tournamentId) {
+		callAPI("GET", `http://127.0.0.1:8000/api/tournament/is-finished/?id=${tournamentId}`, null, (res, data) => {
+			if (res.ok && data && data.is_finished) {
+				this.btnCreateTourneySection.classList.add("hide");
+				this.tourneySection.innerHTML = `<tourney-graph tournament-id="${tournamentId}"></tourney-graph>`;
+				this.invitesReceived.innerHTML = "";
+				this.exitTournament.classList.remove("hide");
+			}
+		});
+	}
+
+	#setExitTtourneyBtn() {
+		const btn = this.html.querySelector(".btn-exit-tourney");
+		if (!btn)
+			return ;
+		btn.addEventListener("click", () => {
+			stateManager.setState("tournamentId", null);
+			stateManager.setState("isTournamentChanged", true);
 		});
 	}
 }
 
 customElements.define(PageTournaments.componentName, PageTournaments);
+
+

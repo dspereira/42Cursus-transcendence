@@ -83,7 +83,7 @@ export default class AppLobby extends HTMLElement {
 	attributeChangedCallback(name, oldValue, newValue) {
 		if (name == "lobby-id")
 			name = "lobbyId";
-		if (name == "is-tournament")
+		else if (name == "is-tournament")
 			name = "isTournament";
 		this.data[name] = newValue;
 	}

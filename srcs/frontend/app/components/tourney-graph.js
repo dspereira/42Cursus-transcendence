@@ -248,10 +248,6 @@ export default class TourneyGraph extends HTMLElement {
 	}
 
 	#updatePlayerData(gameNum, playerNum, playerInfo, playerScore, playerWinner) {
-
-		console.log("------------------------------");
-		console.log("game num: ", gameNum);
-
 		const player = this.html.querySelector(`.game-${gameNum} .player-${playerNum}`);
 		if (!player)
 			return ;

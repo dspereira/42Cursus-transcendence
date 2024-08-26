@@ -219,20 +219,6 @@ export default class AppPlay extends HTMLElement {
 		});
 	}
 
-	// alterar esta função não pode ir para o play
-	/*#setBtnLeaveEvent() {
-		if (this.data.isTournament) {
-			console.log("-----------Botão de leave--------------");
-			stateManager.setState("isTournamentChanged", true);
-		}
-		else {
-			this.leave.addEventListener("click", () => {
-				redirect("/play");
-			});
-		}
-
-	}*/
-
 	#setBtnLeaveEvent() {
 		this.leave.addEventListener("click", () => {
 			if (this.data.isTournament)
@@ -241,7 +227,6 @@ export default class AppPlay extends HTMLElement {
 				redirect("/play");
 		});
 	}
-
 
 	#openSocket() {
 		gameWebSocket.open(this.data.lobbyId);

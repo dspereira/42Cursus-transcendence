@@ -20,6 +20,9 @@ from .utils import cancel_other_invitations
 from .Lobby import lobby_dict
 
 from tournament.utils import update_next_game
+from tournament.utils import is_final_game
+from tournament.utils import update_tournament_status
+from tournament.utils import TOURNAMENT_STATUS_FINISHED
 
 user_profile_info_model = ModelManager(UserProfileInfo)
 game_req_model = ModelManager(GameRequests)
@@ -54,6 +57,10 @@ class Game(AsyncWebsocketConsumer):
 		lobby_id = int(self.scope['url_route']['kwargs']['lobby_id'])
 		if lobby_id and await sync_to_async(self.__has_access_to_lobby)(lobby_id):
 			self.lobby = lobby_dict[lobby_id]
+		else:
+			self.refresh_token_status = False
+			await self.close(4000)
+			return
 		if self.lobby:
 			self.room_group_name = "game_lobby_" + str(self.lobby.get_host_id())
 		else:
@@ -81,6 +88,8 @@ class Game(AsyncWebsocketConsumer):
 		})
 
 	async def disconnect(self, close_code):
+		if not self.lobby:
+			raise StopConsumer()
 		if not self.refresh_token_status:
 			if not self.game:
 				if self.user.id == self.lobby.get_host_id():
@@ -319,4 +328,8 @@ class Game(AsyncWebsocketConsumer):
 	def __update_tournament_games(self):
 		game = self.game_info
 		tournament = game.tournament
-		update_next_game(tournament, game.winner, game)
+		if tournament and game:
+			if is_final_game(game.id, tournament):
+				update_tournament_status(tournament, TOURNAMENT_STATUS_FINISHED)
+			else:
+				update_next_game(tournament, game.winner, game)

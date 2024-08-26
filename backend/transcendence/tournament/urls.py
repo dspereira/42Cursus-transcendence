@@ -17,4 +17,5 @@ urlpatterns = [
     path('start/', views.start_tournament, name='start_tournament'),
     path('games/', views.games_list, name='games_list'),
     path('next-game/', views.next_game, name='next_game'),
+    path('is-finished/', views.finished_status, name='finished_status'),
 ]

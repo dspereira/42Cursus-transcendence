@@ -220,9 +220,12 @@ def get_next_game(tournament, user):
 
 def is_tournament_finished(tournament):
 	tournament_games = games_model.filter(tournament=tournament)
-	last_game = tournament_games[-1]
-	if last_game.status == GAME_STATUS_FINISHED:
-		return last_game
+	if tournament_games:
+		tournament_games = tournament_games.order_by('id')
+		tournament_games = list(tournament_games)
+		last_game = tournament_games[-1]
+		if last_game.status == GAME_STATUS_FINISHED:
+			return last_game
 	return None
 
 def update_next_game(tournament, user, game):
@@ -241,3 +244,13 @@ def update_next_game(tournament, user, game):
 				else:
 					next_game.user2 = user
 				next_game.save()
+
+def is_final_game(game_id, tournament):
+	tournament_games = games_model.filter(tournament=tournament)
+	if tournament_games:
+		tournament_games = tournament_games.order_by("id")
+		tournament_games = list(tournament_games)
+		last_game = tournament_games[-1]
+		if last_game and last_game.id == game_id:
+			return True
+	return False
