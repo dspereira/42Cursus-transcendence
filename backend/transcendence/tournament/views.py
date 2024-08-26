@@ -222,6 +222,8 @@ def finished_status(request):
 		return JsonResponse({"message": "Error: User is not a member of the tournament!"}, status=409)
 	is_finished = is_tournament_finished(tournament)
 	game_info = None
+	tournament_name = None
 	if is_finished:
 		game_info = get_game_info(is_finished)
-	return JsonResponse({"message": f"Finish tournament status retrived with success!", "is_finished": game_info}, status=200)
+		tournament_name = tournament.name
+	return JsonResponse({"message": f"Finish tournament status retrived with success!", "is_finished": game_info['winner'], "tournament_name": tournament_name}, status=200)
