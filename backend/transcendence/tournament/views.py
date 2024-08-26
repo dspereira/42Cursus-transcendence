@@ -223,7 +223,10 @@ def finished_status(request):
 	is_finished = is_tournament_finished(tournament)
 	game_info = None
 	tournament_name = None
+	winner = None
 	if is_finished:
 		game_info = get_game_info(is_finished)
 		tournament_name = tournament.name
-	return JsonResponse({"message": f"Finish tournament status retrived with success!", "is_finished": game_info['winner'], "tournament_name": tournament_name}, status=200)
+		winner = game_info['winner']
+		is_finished = True
+	return JsonResponse({"message": f"Finish tournament status retrived with success!", "is_finished": is_finished, "tournament_name": tournament_name, "winner": winner}, status=200)
