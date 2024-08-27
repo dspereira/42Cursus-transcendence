@@ -43,11 +43,12 @@ class GameRequestView(View):
 			if user:
 				if has_already_games_accepted(user=user):
 					return JsonResponse({"message": f"Error: User is already playing a game!",}, status=409)
-				if user.id in lobby_dict and lobby_dict[user.id]:
-					lobby_dict[user.id].reset()
+				lobby_id = str(user.id)
+				if lobby_id in lobby_dict and lobby_dict[lobby_id]:
+					lobby_dict[lobby_id].reset()
 				else:
-					lobby_dict[user.id] = Lobby(user.id)
-				if not lobby_dict[user.id]:
+					lobby_dict[lobby_id] = Lobby(user.id)
+				if not lobby_dict[lobby_id]:
 					return JsonResponse({"message": f"Error: Failed to create game lobby!",}, status=409)
 				for friend_id in invites_list:
 					user2 = user_model.get(id=friend_id)
@@ -90,7 +91,8 @@ class GameRequestView(View):
 				if not games_req or games_req.to_user.id != user.id:
 					return JsonResponse({"message": "Error: Invalid game request ID!"}, status=409)
 				if not has_already_games_accepted(user=user):
-					lobby = lobby_dict[games_req.from_user.id]
+					lobby_id = str(games_req.from_user.id)
+					lobby = lobby_dict[lobby_id]
 					if not lobby.is_full():
 						update_request_status(request=games_req, new_status=REQ_STATUS_ACCEPTED)
 						lobby.set_user_2_id(games_req.to_user.id)

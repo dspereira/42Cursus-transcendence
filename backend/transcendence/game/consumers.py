@@ -278,11 +278,19 @@ class Game(AsyncWebsocketConsumer):
 				}
 			)
 
-	def __has_access_to_lobby(self, lobby_id):
+	def __has_access_to_lobby(self, lobby_id: str):
+		print("\n--------------------------------------------------------------------------")
+		print(f"LOBBY ID -> {lobby_id}")
 		if lobby_id in lobby_dict:
 			lobby = lobby_dict[lobby_id]
+			print("PEGAMOS LOBBY")
+			print(f"{lobby}")
 			if lobby.has_access(self.user.id):
+				print("TEMOS ACESSO AO LOBBY")
+				print("--------------------------------------------------------------------------\n")
 				return True
+		print("NAO TEMOS ACESSO AO LOBBY")
+		print("--------------------------------------------------------------------------\n")
 		return False
 
 	def __get_users_info(self):

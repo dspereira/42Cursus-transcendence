@@ -78,6 +78,8 @@ export default class AppPlay extends HTMLElement {
 	}
 
 	attributeChangedCallback(name, oldValue, newValue) {
+		if (newValue == "undefined")
+			newValue = null;
 		if(name == "host-username")
 			name = "hostUsername";
 		else if (name == "host-image")
