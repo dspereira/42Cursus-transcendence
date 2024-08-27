@@ -20,29 +20,15 @@ services:
         image: nginx-server
         container_name: nginx-server
         ports:
-            - 8443:443
-        environment:
-            - NGINX_HOST=blitzpong
-            - NGINX_PORT=443
-        volumes:
-            - ./frontend/nginx_test:/usr/share/nginx/html/app
-        networks:
-            - pong-network
-
-    nginx-web:
-        build: ./frontend/test
-        image: nginx-web
-        container_name: nginx-web
-        ports:
             - 8080:80
         environment:
             - NGINX_HOST=localhost
             - NGINX_PORT=80
         volumes:
-            - ./frontend/test:/usr/share/nginx/html/app
+            - ./frontend/app:/usr/share/nginx/html/app
         networks:
             - pong-network
-        # restart: on-failure
+        restart: on-failure
 
     pgadmin4:
         image: dpage/pgadmin4

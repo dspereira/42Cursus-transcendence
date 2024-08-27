@@ -5,8 +5,6 @@ origin_name = "Access-Control-Allow-Origin"
 origin_data = [
 	"http://127.0.0.1:8080",
 	"http://localhost:8080",
-	"https://127.0.0.1:8443",
-	"https://localhost:8443",
 ]
 
 headers_name = "Access-Control-Allow-Headers"
