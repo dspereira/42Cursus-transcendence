@@ -65,8 +65,6 @@ class TournamentView(View):
 			if tournament and tournament.owner == user:
 				if tournament.status == TOURNAMENT_STATUS_CREATED:
 					invalidate_active_tournament_invites(tournament)
-				elif tournament.status == TOURNAMENT_STATUS_ACTIVE:
-					print(f"Tournament Status:", TOURNAMENT_STATUS_ACTIVE)
 				update_tournament_status(tournament=tournament, new_status=TOURNAMENT_STATUS_ABORTED)
 				return JsonResponse({"message": f"Tournament {tournament_id} new status -> {tournament.status}"}, status=200)
 		return JsonResponse({"message": "Error: Invalid Tournament ID!"}, status=409)

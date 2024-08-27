@@ -53,6 +53,13 @@ class Lobby:
 		return False
 
 	def has_access(self, user_id):
+
+		print("\n----------------------------------------------------------------------------")
+		print("HAS ACCESS")
+		print(f"User_1 -> {self.user_1}")
+		print(f"User_2 -> {self.user_2}")
+		print("----------------------------------------------------------------------------\n")
+
 		if self.user_1 == user_id or self.user_2 == user_id:
 			return True
 		return False

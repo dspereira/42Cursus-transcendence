@@ -101,7 +101,7 @@ def get_games_list(user):
 def has_already_games_accepted(user):
 	user_games = get_user_games(user=user)
 	if user_games:
-		created_game = user_games.filter(status="created")
+		created_game = user_games.filter(status="created", tournament=None)
 		if created_game:
 			return True
 	return False

@@ -344,6 +344,8 @@ export default class TourneyGraph extends HTMLElement {
 		}
 	}
 
+
+/*	
 	#setStartGameEvent() {
 		const btn = this.html.querySelector(".btn-start");
 		if (!btn)
@@ -363,8 +365,37 @@ export default class TourneyGraph extends HTMLElement {
 				else
 					this.startGameBtn.classList.add("hide");
 			}
-		});	
+		});
 	}
+*/
+
+	#setStartGameEvent() {
+		const btn = this.html.querySelector(".btn-start");
+		if (!btn)
+			return ;
+		btn.addEventListener("click", () => {
+			callAPI("GET", `http://127.0.0.1:8000/api/tournament/next-game/?id=${this.data.tournamentId}`, null, (res, data) => {
+				if (res.ok) {
+					if (data && data.lobby_id)
+						stateManager.setState("tournamentGameLobby", data.lobby_id);
+				}
+			});
+			
+		});
+	}
+
+	#getNextGame() {
+		callAPI("GET", `http://127.0.0.1:8000/api/tournament/has-game/?id=${this.data.tournamentId}`, null, (res, data) => {
+			if (res.ok) {
+				if (data && data.has_game)
+					this.startGameBtn.classList.remove("hide");
+				else
+					this.startGameBtn.classList.add("hide");
+			}
+		});
+	}
+
+
 
 	#checkTournamentFinished() {
 		callAPI("GET", `http://127.0.0.1:8000/api/tournament/is-finished/?id=${this.data.tournamentId}`, null, (res, data) => {

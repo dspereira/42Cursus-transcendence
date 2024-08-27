@@ -194,17 +194,36 @@ def next_game(request):
 	if next_game:
 		user1_id = next_game.user1.id if next_game.user1 else None
 		user2_id = next_game.user2.id if next_game.user2 else None
-		game_lobby_id = user1_id
+		game_lobby_id = 't_' + str(user1_id)
 		if game_lobby_id:
 			if not game_lobby_id in lobby_dict:
-				lobby_dict[game_lobby_id] = Lobby(game_lobby_id)
-			else:
-				lobby = lobby_dict[game_lobby_id]
-				if not lobby.is_someone_connected():
-					lobby_dict[game_lobby_id].reset()
-					lobby_dict[game_lobby_id].set_user_2_id(user2_id)
-					lobby_dict[game_lobby_id].set_associated_game_id(next_game.id)
+				lobby_dict[game_lobby_id] = Lobby(user1_id)
+			lobby = lobby_dict[game_lobby_id]
+			if not lobby.is_someone_connected():
+				lobby.reset()
+				lobby.set_user_2_id(user2_id)
+				lobby.set_associated_game_id(next_game.id)
 	return JsonResponse({"message": f"Next game lobby id retrived with success!", "lobby_id": game_lobby_id}, status=200)
+
+@login_required
+@accepted_methods(["GET"])
+def has_game(request):
+	tournament_id = request.GET.get('id')
+	if not tournament_id:
+		return JsonResponse({"message": "Error: Invalid tournament id!"}, status=400)
+	user = user_model.get(id=request.access_data.sub)
+	if not user:
+		return JsonResponse({"message": "Error: Invalid User!"}, status=400)
+	tournament = tournament_model.get(id=tournament_id)
+	if not tournament:
+		return JsonResponse({"message": "Error: Invalid tournament ID!"}, status=409)
+	if not tournament_players_model.get(tournament=tournament, user=user):
+		return JsonResponse({"message": "Error: User is not a member of the tournament!"}, status=409)
+	next_game = get_next_game(tournament, user)
+	has_game = False
+	if next_game:
+		has_game = True
+	return JsonResponse({"message": f"Has next game status retrieved with success!", "has_game": has_game}, status=200)
 
 @login_required
 @accepted_methods(["GET"])

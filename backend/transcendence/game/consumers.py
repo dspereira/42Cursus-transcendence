@@ -54,7 +54,7 @@ class Game(AsyncWebsocketConsumer):
 			self.refresh_token_status = True
 			await self.close(4000)
 			return
-		lobby_id = int(self.scope['url_route']['kwargs']['lobby_id'])
+		lobby_id = self.scope['url_route']['kwargs']['lobby_id']
 		if lobby_id and await sync_to_async(self.__has_access_to_lobby)(lobby_id):
 			self.lobby = lobby_dict[lobby_id]
 		else:
@@ -89,6 +89,13 @@ class Game(AsyncWebsocketConsumer):
 
 	async def disconnect(self, close_code):
 		if not self.lobby:
+
+			print("\n----------------------------------------------------------------")
+			print("----------------------------------------------------------------")
+			print("NAO APANHOU O LOBBY")
+			print("----------------------------------------------------------------")
+			print("----------------------------------------------------------------\n")
+
 			raise StopConsumer()
 		if not self.refresh_token_status:
 			if not self.game:
