@@ -130,6 +130,9 @@ export default class AppLobby extends HTMLElement {
 	}
 
 	#openSocket() {
+
+		console.log("Reopen socket lobby ID: ", this.data.lobbyId);
+
 		gameWebSocket.open(this.data.lobbyId);
 	}
 

@@ -376,8 +376,12 @@ export default class TourneyGraph extends HTMLElement {
 		btn.addEventListener("click", () => {
 			callAPI("GET", `http://127.0.0.1:8000/api/tournament/next-game/?id=${this.data.tournamentId}`, null, (res, data) => {
 				if (res.ok) {
-					if (data && data.lobby_id)
+					if (data && data.lobby_id) {
+						console.log("-------------------------");
+						console.log("lobby id: ", data.lobby_id);
+						console.log("-------------------------");
 						stateManager.setState("tournamentGameLobby", data.lobby_id);
+					}
 				}
 			});
 			

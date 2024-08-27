@@ -9,15 +9,8 @@ this.socket.CLOSED
 this.socket.CLOSING
 */
 
-
-// "ws://127.0.0.1:8000/game/{id_lobby}/"; -> jogo invidual
-
-// "ws://127.0.0.1:8000/tournament-game/{id_lobby}/"; -> jogo de torneio
-
-
-
 const webSocketUrl = "ws://127.0.0.1:8000/game/";
-const webSockettUrlgame = "ws://127.0.0.1:8000/tournament-game/";
+
 
 class GameWebSocket {
 
@@ -30,28 +23,22 @@ class GameWebSocket {
 	}
 
 	open(lobbyId) {
-		if (!lobbyId)
-			lobbyId = "";
-		const url = `${webSocketUrl}${lobbyId}/`;
-		if (this.isClose()) {
-			this.socket = new WebSocket(url);
-			if (this.socket)
-				this.#setSocketCallbacks();
-		}
-	}
 
-	/*
-	gameOpen(lobbyId) {
-		if (!lobbyId)
-			lobbyId = "";
-		const url = `${webSockettUrlgame}${lobbyId}/`;
 		if (this.isClose()) {
+			console.log("::::::::::::::::::::::::::::::::::::::::::::::::::");
+			console.log("LOBBY ID: ", lobbyId);
+			console.log("::::::::::::::::::::::::::::::::::::::::::::::::::");
+
+
+			if (!lobbyId)
+				lobbyId = "";
+			const url = `${webSocketUrl}${lobbyId}/`;
+		
 			this.socket = new WebSocket(url);
 			if (this.socket)
 				this.#setSocketCallbacks();
 		}
 	}
-	*/
 
 	close() {
 		if (this.isOpen())
@@ -81,7 +68,7 @@ class GameWebSocket {
 			this.socket.send(JSON.stringify({
 				type: "refresh_token"
 			}));
-		}		
+		}
 	}
 
 	isOpen() {

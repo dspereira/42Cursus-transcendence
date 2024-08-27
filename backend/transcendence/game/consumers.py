@@ -54,7 +54,7 @@ class Game(AsyncWebsocketConsumer):
 			self.refresh_token_status = True
 			await self.close(4000)
 			return
-		lobby_id = self.scope['url_route']['kwargs']['lobby_id']
+		lobby_id = str(self.scope['url_route']['kwargs']['lobby_id'])
 		if lobby_id and await sync_to_async(self.__has_access_to_lobby)(lobby_id):
 			self.lobby = lobby_dict[lobby_id]
 		else:
@@ -76,6 +76,10 @@ class Game(AsyncWebsocketConsumer):
 		game_id = self.lobby.get_associated_game_id()
 		if game_id and not await sync_to_async(self.lobby.is_tournament_game)():
 			await self.__start_game(game_id)
+		elif game_id and await sync_to_async(self.lobby.is_tournament_game)():
+			game = await sync_to_async(games_dict.get_game_obj)(game_id)
+			if self.game and game.status == GAME_STATUS_PLAYING:
+				await self.__start_game(game_id)
 
 	async def send_users_info_to_group(self):
 		await self.channel_layer.group_send(self.room_group_name, {'type': 'send_users_info'})
@@ -88,16 +92,9 @@ class Game(AsyncWebsocketConsumer):
 		})
 
 	async def disconnect(self, close_code):
-		if not self.lobby:
-
-			print("\n----------------------------------------------------------------")
-			print("----------------------------------------------------------------")
-			print("NAO APANHOU O LOBBY")
-			print("----------------------------------------------------------------")
-			print("----------------------------------------------------------------\n")
-
-			raise StopConsumer()
 		if not self.refresh_token_status:
+			if not self.lobby:
+				raise StopConsumer()
 			if not self.game:
 				if self.user.id == self.lobby.get_host_id():
 					await sync_to_async(cancel_other_invitations)(self.user)
@@ -279,18 +276,10 @@ class Game(AsyncWebsocketConsumer):
 			)
 
 	def __has_access_to_lobby(self, lobby_id: str):
-		print("\n--------------------------------------------------------------------------")
-		print(f"LOBBY ID -> {lobby_id}")
 		if lobby_id in lobby_dict:
 			lobby = lobby_dict[lobby_id]
-			print("PEGAMOS LOBBY")
-			print(f"{lobby}")
 			if lobby.has_access(self.user.id):
-				print("TEMOS ACESSO AO LOBBY")
-				print("--------------------------------------------------------------------------\n")
 				return True
-		print("NAO TEMOS ACESSO AO LOBBY")
-		print("--------------------------------------------------------------------------\n")
 		return False
 
 	def __get_users_info(self):
