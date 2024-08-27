@@ -6,3 +6,4 @@ from .requests_utils import REQ_STATUS_ACCEPTED
 from .requests_utils import REQ_STATUS_ABORTED
 from .requests_utils import update_request_status
 from .requests_utils import set_exp_time
+from .requests_utils import is_valid_request

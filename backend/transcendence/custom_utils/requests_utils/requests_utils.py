@@ -29,3 +29,9 @@ def set_exp_time(request):
 	if request:
 		request.exp = request.created + timedelta(seconds=REQ_EXP_TIME_SECONDS)
 		request.save()
+
+def is_valid_request(request):
+	current_time = datetime.now()
+	if request.exp.timestamp() > current_time.timestamp() and request.status == REQ_STATUS_PENDING:
+		return True
+	return False
