@@ -29,10 +29,10 @@ class Lobby:
 
 	def get_associated_game_id(self):
 		game_id = self.game_id
-		if game_id:
-			game = game_model.get(id=game_id)
-			if game and game.tournament and game.status == GAME_STATUS_CREATED:
-				game_id = None
+		#if game_id:
+			#game = game_model.get(id=game_id)
+			#if game and game.tournament and game.status == GAME_STATUS_CREATED:
+			#	game_id = None
 		return game_id
 
 	def update_ready_status(self, user_id):
