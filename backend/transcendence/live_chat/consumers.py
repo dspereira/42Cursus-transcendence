@@ -223,7 +223,9 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
 	async def __update_online_status(self, is_online):
 		self.user_profile = await sync_to_async(user_profile_model.get)(user=self.user)
-		
+		if not self.user_profile:
+			await self.close(4000)
+			return
 		if is_online:
 			self.user_profile.online += 1
 		else:
