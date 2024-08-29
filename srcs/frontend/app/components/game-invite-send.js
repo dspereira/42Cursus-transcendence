@@ -263,7 +263,6 @@ export default class GameInviteSend extends HTMLElement {
 					contentElm.innerHTML = `
 					<app-lobby 
 						lobby-id="${stateManager.getState("userId")}"
-						player-type="host"
 					></app-lobby>
 					`;
 				}

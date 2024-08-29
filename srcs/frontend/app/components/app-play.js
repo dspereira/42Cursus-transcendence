@@ -58,7 +58,7 @@ const getHtml = function(data) {
 }
 
 export default class AppPlay extends HTMLElement {
-	static observedAttributes = ["host-username", "host-image", "guest-username", "guest-image", "lobby-id"];
+	static observedAttributes = ["host-username", "host-image", "guest-username", "guest-image", "lobby-id", "is-tournament"];
 
 	constructor() {
 		super()
@@ -78,6 +78,8 @@ export default class AppPlay extends HTMLElement {
 	}
 
 	attributeChangedCallback(name, oldValue, newValue) {
+		if (newValue == "undefined")
+			newValue = null;
 		if(name == "host-username")
 			name = "hostUsername";
 		else if (name == "host-image")
@@ -88,6 +90,8 @@ export default class AppPlay extends HTMLElement {
 			name = "guestImage";
 		else if (name == "lobby-id")
 			name = "lobbyId";
+		else if (name == "is-tournament")
+			name = "isTournament"
 		this.data[name] = newValue;
 	}
 
@@ -138,7 +142,6 @@ export default class AppPlay extends HTMLElement {
 		this.#initGame();
 		this.#setWinnerEvent();
 		this.#setBtnLeaveEvent();
-		//this.#onRefreshTokenEvent();
 		this.#onSocketCloseEvent();
 	}
 
@@ -220,7 +223,10 @@ export default class AppPlay extends HTMLElement {
 
 	#setBtnLeaveEvent() {
 		this.leave.addEventListener("click", () => {
-			redirect("/play");
+			if (this.data.isTournament)
+				stateManager.setState("isTournamentChanged", true);
+			else
+				redirect("/play");
 		});
 	}
 
@@ -231,8 +237,10 @@ export default class AppPlay extends HTMLElement {
 	#onSocketCloseEvent() {
 		stateManager.addEvent("gameSocket", (state) => {
 			if (state == "closed") {
-				if (!this.isGameFinished)
-					this.#openSocket();
+				callAPI("GET", "http://127.0.0.1:8000/api/auth/login_status", null, (res, data) => {
+					if (res.ok && data && !this.isGameFinished)
+						this.#openSocket();
+				});
 			}
 		});
 	}

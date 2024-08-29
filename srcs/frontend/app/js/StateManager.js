@@ -1,4 +1,4 @@
-const globalEvents = ["isLoggedIn", "chatSocket"];
+const globalEvents = ["isLoggedIn", "chatSocket", "tournamentId"];
 
 class StateManager {
 
@@ -29,6 +29,9 @@ class StateManager {
 			hasLobbyEnded: null,
 			hasRefreshToken: null,
 			gameSocket: null,
+			isTournamentChanged: null,
+			tournamentGameLobby: null,
+			tournamentId: null
 		}
 		this.stateEvents = {
 			sidePanel: [],
@@ -51,7 +54,11 @@ class StateManager {
 			gameWinner: [],
 			hasLobbyEnded: [],
 			hasRefreshToken: [],
-			gameSocket: []
+			gameSocket: [],
+			isTournamentChanged: [],
+			tournamentGameLobby: [],
+			finishedTournament: [],
+			tournamentId: []
 		}
 
 		StateManager.instance = this;
@@ -99,6 +106,8 @@ class StateManager {
 		});
 	}
 
+
+	// Fazer um loop e passar por todos os eventos e estados
 	cleanAllStatesAndEvents() {
 		this.states.sidePanel = "open";
 		this.states.pageReady = false,

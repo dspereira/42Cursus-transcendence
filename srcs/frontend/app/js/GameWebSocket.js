@@ -9,7 +9,7 @@ this.socket.CLOSED
 this.socket.CLOSING
 */
 
-const webSockettUrl = "ws://127.0.0.1:8000/game/";
+const webSocketUrl = "ws://127.0.0.1:8000/game/";
 
 class GameWebSocket {
 
@@ -21,15 +21,11 @@ class GameWebSocket {
 		this.socket = null;
 	}
 
-	open(gameRequestId) {
-		if (!gameRequestId)
-			gameRequestId = "";
-		const url = `${webSockettUrl}${gameRequestId}/`;
-		
-		//console.log("Tenta abrir o socket open(gameRequestId)");
-		//console.log(url);
-
+	open(lobbyId) {
 		if (this.isClose()) {
+			if (!lobbyId)
+				lobbyId = "";
+			const url = `${webSocketUrl}${lobbyId}/`;
 			this.socket = new WebSocket(url);
 			if (this.socket)
 				this.#setSocketCallbacks();
@@ -64,7 +60,7 @@ class GameWebSocket {
 			this.socket.send(JSON.stringify({
 				type: "refresh_token"
 			}));
-		}		
+		}
 	}
 
 	isOpen() {
