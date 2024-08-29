@@ -108,18 +108,18 @@ export default class AppPlay extends HTMLElement {
 		this.ctx = this.canvas.getContext("2d");
 		this.startTimer = this.html.querySelector(".start-timer");
 		this.leave = this.html.querySelector(".btn-leave");
-		
+
 		// pode receber tamanho por parametro
 		this.canvas.width = "800";
-		this.canvas.height = "400";
+		this.canvas.height = "600";
+
+		//this.canvas.width = "400";
+		//this.canvas.height = "200";
 
 		this.game = new Game(this.ctx, this.canvas.width, this.canvas.height);
-
 		this.keyDownStatus = "released";
 		this.keyUpStatus = "released";
-
 		this.isGameFinished = false;
-
 	}
 
 	#styles() {

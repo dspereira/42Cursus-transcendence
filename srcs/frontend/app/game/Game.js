@@ -27,9 +27,11 @@ export default class Game {
 		this.startCounter = null;
 		this.lastStartCounterValue = null;
 		this.startCounterFont = 200;
-
 		this.winnerUsername = null;
 		this.surrender = null;
+		this.ballRadius = this.#getValueFromPercentage(0.7, this.width);
+		this.paddleWidth = this.#getValueFromPercentage(0.5, this.width);
+		this.paddleHeigth = this.#getValueFromPercentage(13, this.height);
 	}
 
 	updateState(data) {
@@ -132,18 +134,18 @@ export default class Game {
 		if (!pos && !side)
 			return ;
 
-		const paddleWidth = 4;
-		const paddleHeigth = 50;
+		const distanceToWall = 10;
 		let x = 0;
 		if (side == "left")
-			x = 10;
+			x = distanceToWall;
 		else
-			x = this.width - (10 + paddleWidth);
-
+			x = this.width - (distanceToWall + this.paddleWidth);
+		
+		const y = this.#getValueFromPercentage(pos, this.height);
 		this.ctx.strokeStyle = this.colors.paddle;
 		this.ctx.fillStyle = this.colors.paddle;
 		this.ctx.beginPath();
-		this.ctx.rect(x, pos, paddleWidth, paddleHeigth);
+		this.ctx.rect(x, y, this.paddleWidth, this.paddleHeigth);
 		this.ctx.fill();
 		this.ctx.stroke();		
 	}
@@ -152,10 +154,13 @@ export default class Game {
 		if (!x && !y)
 			return ;
 
+		const xCoor = this.#getValueFromPercentage(x, this.width);
+		const yCoor = this.#getValueFromPercentage(y, this.height);
+		
 		this.ctx.strokeStyle = this.colors.ball;
 		this.ctx.fillStyle = this.colors.ball;
 		this.ctx.beginPath();
-		this.ctx.arc(x, y, 5, 0, 2 * Math.PI);
+		this.ctx.arc(xCoor, yCoor, this.ballRadius, 0, 2 * Math.PI);
 		this.ctx.fill();
 		this.ctx.stroke();
 	}
@@ -226,5 +231,9 @@ export default class Game {
 			x: x,
 			y: y
 		}
+	}
+
+	#getValueFromPercentage(valuePercentage, maxValue) {
+		return maxValue * valuePercentage / 100;
 	}
 }
