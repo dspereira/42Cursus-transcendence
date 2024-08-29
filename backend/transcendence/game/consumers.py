@@ -47,7 +47,10 @@ class Game(AsyncWebsocketConsumer):
 
 	async def connect(self):
 		await self.accept()
-		self.access_data = self.scope['access_data']
+		self.access_data = self.scope.get('access_data')
+		if not self.access_data:
+			await self.close(4000)
+			return
 		await self.__check_authentication()
 		self.user = await sync_to_async(get_authenticated_user)(self.access_data.sub)
 		if not self.user:
@@ -56,18 +59,10 @@ class Game(AsyncWebsocketConsumer):
 			return
 		lobby_id = str(self.scope['url_route']['kwargs']['lobby_id'])
 
-		await sync_to_async(print)("-----------------------")
-		await sync_to_async(print)("LOBBY ID: ", lobby_id)
-		await sync_to_async(print)("-----------------------")
-
 		if lobby_id and await self.__has_access_to_lobby(lobby_id):
-
-			
 			self.lobby = await self.get_lobby(lobby_id)
 			#self.lobby = lobby_dict[lobby_id]
-			await sync_to_async(print)("-----------------------")
-			await sync_to_async(print)("LOBBY : ", self.lobby)
-			await sync_to_async(print)("-----------------------")
+
 		else:
 			self.refresh_token_status = False
 			await self.close(4000)
@@ -78,8 +73,6 @@ class Game(AsyncWebsocketConsumer):
 			await self.close(4000)
 			return
 
-		#await sync_to_async(print)(f"Hello World!")
-
 		await sync_to_async(self.lobby.update_connected_status)(self.user.id, True)
 		if self.room_group_name:
 			await self.channel_layer.group_add(
@@ -87,26 +80,20 @@ class Game(AsyncWebsocketConsumer):
 				self.channel_name
 			)
 		await self.send_users_info_to_group()
+
+		#await sync_to_async(print)("-----------------------")
+		#await sync_to_async(print)("Passa aqui quando sou lobby e faço refresh token")
+		#await sync_to_async(print)("-----------------------")
+
 		game_id = await sync_to_async(self.lobby.get_associated_game_id)()
-		await sync_to_async(print)("----------------------GAME ID GAME ID--------------------------------")
-		await sync_to_async(print)(game_id)
-		await sync_to_async(print)("----------------------GAME ID GAME ID--------------------------------")
-		if game_id and not await sync_to_async(self.lobby.is_tournament_game)():
-			await self.__start_game(game_id)
-		elif game_id and await sync_to_async(self.lobby.is_tournament_game)():
-			#await sync_to_async(print)("------------------------------------------------------")
-			#await sync_to_async(print)("---E JOGO DE TORNEIO---")
-			#await sync_to_async(print)("------------------------------------------------------")
-			game = await sync_to_async(games_dict.get_game_obj)(game_id)
-			await sync_to_async(print)("------------------------------------------------------")
-			await sync_to_async(print)("---E JOGO DE TORNEIO---")
-			await sync_to_async(print)(game)
-			if game:
-				await sync_to_async(print)(game.status)
-			await sync_to_async(print)("------------------------------------------------------")
-			#if self.game and game.status == GAME_STATUS_PLAYING:
-			if game and game.status == GAME_STATUS_PLAYING:
-				await self.__start_game(game_id)
+		if game_id:
+			self.game = await sync_to_async(games_dict.get_game_obj)(game_id)
+
+			if self.game:
+				is_tournament = await sync_to_async(self.lobby.is_tournament_game)()
+				if not is_tournament or self.game.status == GAME_STATUS_PLAYING:
+					await self.__start_game(game_id)
+		
 
 	async def send_users_info_to_group(self):
 		await self.channel_layer.group_send(self.room_group_name, {'type': 'send_users_info'})
@@ -191,10 +178,8 @@ class Game(AsyncWebsocketConsumer):
 		await self.__start_game(event['game_id'])
 
 	async def __start_game(self, game_id):
-		await sync_to_async(print)("#####################################################################################")
-		await sync_to_async(print)("GAME ID: ", game_id)
-		await sync_to_async(print)("#####################################################################################  ")
-		self.game = await sync_to_async(games_dict.get_game_obj)(game_id)
+		if not self.game:
+			self.game = await sync_to_async(games_dict.get_game_obj)(game_id)
 		self.game_info = await sync_to_async(game_model.get)(id=game_id)
 		await self.__send_updated_data()
 		self.task = asyncio.create_task(self.__game_routine())
@@ -242,7 +227,7 @@ class Game(AsyncWebsocketConsumer):
 		})
 
 	async def __send_updated_data(self):
-		scores = self.game.get_score_values()
+		scores = await sync_to_async(self.game.get_score_values)()
 		await self.channel_layer.group_send(
 			self.room_group_name,
 			{

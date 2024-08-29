@@ -11,7 +11,6 @@ this.socket.CLOSING
 
 const webSocketUrl = "ws://127.0.0.1:8000/game/";
 
-
 class GameWebSocket {
 
 	constructor() {
@@ -23,17 +22,10 @@ class GameWebSocket {
 	}
 
 	open(lobbyId) {
-
 		if (this.isClose()) {
-			console.log("::::::::::::::::::::::::::::::::::::::::::::::::::");
-			console.log("LOBBY ID: ", lobbyId);
-			console.log("::::::::::::::::::::::::::::::::::::::::::::::::::");
-
-
 			if (!lobbyId)
 				lobbyId = "";
 			const url = `${webSocketUrl}${lobbyId}/`;
-		
 			this.socket = new WebSocket(url);
 			if (this.socket)
 				this.#setSocketCallbacks();

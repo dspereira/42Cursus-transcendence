@@ -231,15 +231,16 @@ export default class AppPlay extends HTMLElement {
 	}
 
 	#openSocket() {
-		console.log("Reopen socket lobby ID: ", this.data.lobbyId);
 		gameWebSocket.open(this.data.lobbyId);
 	}
 
 	#onSocketCloseEvent() {
 		stateManager.addEvent("gameSocket", (state) => {
 			if (state == "closed") {
-				if (!this.isGameFinished)
-					this.#openSocket();
+				callAPI("GET", "http://127.0.0.1:8000/api/auth/login_status", null, (res, data) => {
+					if (res.ok || data)
+						this.#openSocket();
+				});
 			}
 		});
 	}

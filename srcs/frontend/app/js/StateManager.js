@@ -1,4 +1,4 @@
-const globalEvents = ["isLoggedIn", "chatSocket"];
+const globalEvents = ["isLoggedIn", "chatSocket", "tournamentId"];
 
 class StateManager {
 
@@ -106,6 +106,8 @@ class StateManager {
 		});
 	}
 
+
+	// Fazer um loop e passar por todos os eventos e estados
 	cleanAllStatesAndEvents() {
 		this.states.sidePanel = "open";
 		this.states.pageReady = false,

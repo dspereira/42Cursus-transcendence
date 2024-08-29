@@ -296,7 +296,6 @@ export default class TourneyGraph extends HTMLElement {
 	#getTournamentGamesData() {
 		callAPI("GET", `http://127.0.0.1:8000/api/tournament/games/?id=${this.data.tournamentId}`, null, (res, data) => {
 			if (res.ok) {
-				console.log(data);
 				if (data && data.games && data.games.length)
 					this.#updateGames(data.games);
 			}
@@ -376,12 +375,8 @@ export default class TourneyGraph extends HTMLElement {
 		btn.addEventListener("click", () => {
 			callAPI("GET", `http://127.0.0.1:8000/api/tournament/next-game/?id=${this.data.tournamentId}`, null, (res, data) => {
 				if (res.ok) {
-					if (data && data.lobby_id) {
-						console.log("-------------------------");
-						console.log("lobby id: ", data.lobby_id);
-						console.log("-------------------------");
+					if (data && data.lobby_id)
 						stateManager.setState("tournamentGameLobby", data.lobby_id);
-					}
 				}
 			});
 			
