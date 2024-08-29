@@ -53,7 +53,7 @@ const getHtml = function(data) {
 }
 
 export default class AppLobby extends HTMLElement {
-	static observedAttributes = ["lobby-id", "player-type", "is-tournament"];
+	static observedAttributes = ["lobby-id", "is-tournament"];
 
 	constructor() {
 		super()
@@ -228,7 +228,7 @@ export default class AppLobby extends HTMLElement {
 	}
 
 	#setActiveInviteCheckEvent() {
-		if (this.data.playerType == "host") {
+		if (this.data.lobbyId == stateManager.getState("userId")) {
 			this.intervalID = setInterval(() => {
 				if (this.lobbyStatus && this.lobbyStatus.guest)
 					return ;
