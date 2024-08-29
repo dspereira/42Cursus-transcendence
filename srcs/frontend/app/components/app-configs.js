@@ -78,9 +78,13 @@ const styles = `
 		margin-right: 20px;
 	}
 
+	.game-configs {
+		margin-top: 40px;
+	}
+
 	.language-configs h1 {
 		font-size: 36px;
-		margin-top: 30px;
+		margin-top:40px;
 	}
 
 	.submit-options {
@@ -109,7 +113,7 @@ const getHtml = function(data) {
 						<label for="newImage" class="btn btn-secondary image-button">
 							<p class="uploadText">Upload Image</p>
 						</label>
-						<input id="newImage" type="file" accept="image/jpeg, image/png, image/jpg" id="image-input" style="display: none;">
+						<input id="newImage" type="file" accept="image/*" id="image-input" style="display: none;">
 						<button id="seedButton" class="btn btn-secondary image-button">Generate New Avatar</button>
 					</div>
 				</div>
@@ -129,6 +133,18 @@ const getHtml = function(data) {
 							<label for="phone">Phone</label>
 						</div>
 					</div>
+					<div class="game-configs">
+						<h1>Game Settings</h1>
+						<hr>
+						<label for="theme-options">Choose the game theme:</label>
+						<select name="game-theme" id="theme-options">
+						  <option value="0">Classic Retro</option>
+						  <option value="1">Modern Neon</option>
+						  <option value="2">Ocean Vibes</option>
+						  <option value="3">Sunset Glow</option>
+						  <option value="4">Forest Retreat</option>
+						</select>
+					</div>
 					<div class="language-configs">
 						<h1>Language Settings</h1>
 						<hr>
@@ -138,21 +154,9 @@ const getHtml = function(data) {
 							<option value="pt">Portugues 🇵🇹</option>
 						</select>
 					</div>
-				</div>
-				<div class="game-configs">
-					<h1>Game Settings</h1>
-					<hr>
-					<label for="theme-options">Choose the game theme:</label>
-						<select name="game-theme" id="theme-options">
-						  <option value="0">Classic Retro</option>
-						  <option value="1">Modern Neon</option>
-						  <option value="2">Ocean Vibes</option>
-						  <option value="3">Sunset Glow</option>
-						  <option value="4">Forest Retreat</option>
-						</select>
+					<button type="submit" class="btn btn-success btn-submit submit-options">Apply Changes</button>
 				</div>
 			</div>
-			<button type="submit" class="btn btn-success btn-submit submit-options">Apply Changes</button>
 		</form>
 	`;
 	return html;
@@ -169,6 +173,8 @@ export default class AppConfigs extends HTMLElement {
 
 		this.profileForm = {};
 		this.settingsForm = {};
+
+		this.counter = 0;
 	}
 
 	attributeChangedCallback(name, oldValue, newValue) {
@@ -213,7 +219,6 @@ export default class AppConfigs extends HTMLElement {
 
 	#getUserSettings() {
 		callAPI("GET", "http://127.0.0.1:8000/api/settings/", null, (res, data) => {
-			console.log(data);
 			this.settingsForm.newLanguage = data.language;
 			this.settingsForm.newTheme = data.gameTheme;
 			this.#setSelectOptions("language-option" ,this.settingsForm.newLanguage);
@@ -244,7 +249,7 @@ export default class AppConfigs extends HTMLElement {
 			event.preventDefault();
 			let preview = this.html.querySelector(".image-preview");
 			preview.src = URL.createObjectURL(uploadImage.files[0]);
-			this.profileForm.newImage = URL.createObjectURL(uploadImage.files[0]);
+			this.profileForm.newImage = uploadImage.files[0];
 			this.profileForm.newSeed = '';
 		})
 	}
@@ -276,6 +281,16 @@ export default class AppConfigs extends HTMLElement {
 			else
 				this.profileForm.newBio = this.html.querySelector("#new-bio").value.trim();
 
+			if (this.profileForm.newImage)
+			{	
+				const imageData = new FormData();
+            	imageData.append('image', this.profileForm.newImage);
+				fetch('http://127.0.0.1:8000/api/profile/setimage', {
+					method: 'POST',
+					body: imageData,
+					credentials: 'include'
+				})
+			}
 			callAPI("POST", "http://127.0.0.1:8000/api/profile/setnewconfigs", this.profileForm, this.#apiResHandlerCalback);
 			callAPI("POST", "http://127.0.0.1:8000/api/settings/setnewsettings", this.settingsForm);
 		});

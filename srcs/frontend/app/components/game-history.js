@@ -7,8 +7,6 @@ const styles = `
 		width: 100%;
 		flex-direction: column;
 		gap: 40px;
-		overflow-y: scroll;
-		height: 675px;
 	}
 
 	.tab-select {
@@ -51,6 +49,11 @@ const styles = `
 		border-radius: 0px 5px 5px 0px;
 		background-color: #E0E0E0;
 	}
+
+	.list-container {
+		overflow-y: scroll;
+		height: 600px;
+	}
 `;
 
 const getHtml = function(data) {
@@ -63,8 +66,10 @@ const getHtml = function(data) {
 				<div class="select-right">Tournament History</div>
 			</button>
 		</div>
-		<div class="game-list"></div>
-		<div class="tounament-list"></div>
+		<div class="list-container">
+			<div class="game-list"></div>
+			<div class="tounament-list"></div>
+		</div>
 	</div>
 	`;
 
@@ -152,6 +157,7 @@ export default class GameHistory extends HTMLElement {
 		else
 		{
 			gameListHtml.innerHTML= "";
+			let prev_game = null;
 			gameList.forEach(elm => {
 				game = document.createElement("div");
 				game.innerHTML = 
@@ -166,7 +172,8 @@ export default class GameHistory extends HTMLElement {
 					date=${this.#parse_date(elm.date)}
 					>
 				</game-card>`;
-				gameListHtml.appendChild(game);
+				gameListHtml.insertBefore(game, prev_game);
+				prev_game = game;
 			});
 		}
 	}
@@ -183,10 +190,13 @@ export default class GameHistory extends HTMLElement {
 	}
 
 	#parse_date(date) {
-		let date_part = date.split("T")[0];
-		let day = date_part.split("-")[2];
-		let month = date_part.split("-")[1];
-		let new_date = day + "-" + month;
+		let dm_part = date.split("T")[0]; //get the part with the day and month
+		let hm_part = date.split("T")[1]; //get the part with the hour and minute
+		let day = dm_part.split("-")[2];
+		let month = dm_part.split("-")[1];
+		let hour = hm_part.split(":")[0];
+		let minute = hm_part.split(":")[1];
+		let new_date = day + "/" + month + "-" + hour + ":" + minute;
 		return new_date;
 	}
 }

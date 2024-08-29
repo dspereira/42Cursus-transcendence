@@ -27,8 +27,6 @@ def set_new_configs(request):
 				set_new_bio(user_to_alter, req_data.get("newBio"))
 			if req_data.get("newSeed"):
 				set_new_default_seed(user_to_alter, req_data.get("newSeed"))
-			if req_data.get("newImage"):
-				set_new_profile_picture(user_to_alter, req_data.get("newImage"))
 			return JsonResponse({"message": "success"})
 		else:
 			return JsonResponse({"message": "Bad Request: Request body is required"}, status=400)
@@ -82,8 +80,6 @@ def set_profile_picture(request):
 			user_to_alter.compressed_profile_image = compressed_image_data
 
 			user_to_alter.save()
-			return JsonResponse({"message": "success"})
 		else:
 			return JsonResponse({"message": "User not found"}, status=404)
-	else:
-		return JsonResponse({"message": "Bad Request: No image provided"}, status=400)
+	return JsonResponse({"message": "success"})

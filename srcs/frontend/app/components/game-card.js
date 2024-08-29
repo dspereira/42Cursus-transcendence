@@ -44,9 +44,10 @@ const styles = `
 	}
 
 	.score-container {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
 		margin-top: 7px;
-		position: absolute;
-		left: 50%;
 	}
 
 	.score {
@@ -54,12 +55,11 @@ const styles = `
 	}
 
 	.date {
-		font-size: 16px;
+		font-size: 14px;
 	}
 `;
 
 const getHtml = function(data) {
-	console.log(data);
 	const html = `
 		<div class="game-grid-container">
 			<div class="player-container">
@@ -67,7 +67,7 @@ const getHtml = function(data) {
 				<h1 class="username">${data.player1}</h1>
 			</div>
 			<div class="score-container">
-				<h3 class="date">${data.date}</h3>
+				<h1 class="date">${data.date}</h1>
 				<h1 class="score">${data.player1_score} - ${data.player2_score}</h1>
 			</div>
 			<div class="player-container">
