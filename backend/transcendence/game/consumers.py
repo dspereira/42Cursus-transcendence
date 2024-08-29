@@ -149,7 +149,8 @@ class Game(AsyncWebsocketConsumer):
 			if await self.__is_already_ready():
 				await self.__send_start_game_routine()
 		elif data_type == "key":
-			self.game.update_paddle(key=data_json['key'], status=data_json['status'], user_id=self.user.id)
+			if self.game:
+				self.game.update_paddle(key=data_json['key'], status=data_json['status'], user_id=self.user.id)
 		elif data_type == "refresh_token":
 			self.refresh_token_status = True
 
