@@ -15,7 +15,7 @@ const styles = `
 }
 
 .game-board {
-	width: 800px;
+	/*background-color: blue;*/
 }
 
 .btn-leave-div {
@@ -33,12 +33,17 @@ const styles = `
 	display: none;
 }
 
+.board {
+	width: 100%;
+	height: 80vh;
+}
+
 `;
 
 const getHtml = function(data) {
 	const html = `
 	<div class="game-board">
-		<div class="players-info">
+		<div class="players-info hide">
 			<div>
 				<img src="${data.hostImage}" class="profile-photo" alt="profile photo chat">
 				<span>${data.hostUsername}</span>
@@ -48,7 +53,9 @@ const getHtml = function(data) {
 				<img src="${data.guestImage}" class="profile-photo" alt="profile photo chat">
 			</div>
 		</div>
-		<canvas id="canvas"></canvas>
+		<div class="board">
+			<canvas id="canvas"></canvas>
+		</div>
 		<div class="btn-leave-div">
 			<button type="button" class="btn btn-primary btn-leave hide">Leave</button>
 		</div>
@@ -63,6 +70,7 @@ export default class AppPlay extends HTMLElement {
 	constructor() {
 		super()
 		this.data = {};
+		this.game = null;
 	}
 
 	connectedCallback() {
@@ -108,30 +116,11 @@ export default class AppPlay extends HTMLElement {
 		this.ctx = this.canvas.getContext("2d");
 		this.startTimer = this.html.querySelector(".start-timer");
 		this.leave = this.html.querySelector(".btn-leave");
+		this.content = document.querySelector(".content");
+		this.board = this.html.querySelector(".board");
 		this.keyDownStatus = "released";
 		this.keyUpStatus = "released";
 		this.isGameFinished = false;
-
-		/*
-		const contentElmWidth = document.querySelector(".content").offsetWidth;
-		this.canvas.width = contentElmWidth;
-		this.canvas.height = this.canvas.width * 75 / 100;
-		this.game = new Game(this.ctx, this.canvas.width, this.canvas.height);
-		*/
-
-		/*const content = document.querySelector(".content");
-		content.style.height = "90vh";
-		this.canvas.height = content.offsetHeight;
-		this.canvas.width = this.canvas.height / 0.75;
-		
-		
-		console.log("width: ", this.canvas.width);
-		console.log("height: ", this.canvas.height);
-		this.game = new Game(this.ctx, this.canvas.width, this.canvas.height);
-		*/
-
-		this.#setCanvasDimensions();
-		this.game = new Game(this.ctx, this.canvas.width, this.canvas.height);
 	}
 
 	#styles() {
@@ -151,10 +140,14 @@ export default class AppPlay extends HTMLElement {
 	}
 
 	#scripts() {
+		this.#setCanvasDimensions();
+		this.game = new Game(this.ctx, this.canvas.width, this.canvas.height);
 		this.#initGame();
 		this.#setWinnerEvent();
 		this.#setBtnLeaveEvent();
 		this.#onSocketCloseEvent();
+		this.#windowResizingEvent();
+
 	}
 
     #keyEvents() {
@@ -258,19 +251,22 @@ export default class AppPlay extends HTMLElement {
 	}
 
 	#setCanvasDimensions() {
-		const content = document.querySelector(".content");
-		content.style.height = "80vh";
-		if (content.offsetHeight > content.offsetWidth) {
-			this.canvas.width = content.offsetWidth;
-			this.canvas.height = this.canvas.width * 0.75;
+		if (this.board.offsetHeight < this.board.offsetWidth * 0.75) {
+			this.canvas.height = this.board.offsetHeight
+			this.canvas.width = this.canvas.height / 0.75;	
 		}
 		else {
-			if (content.offsetHeight < 600)
-				this.canvas.height = content.offsetHeight - 70;
-			else
-				this.canvas.height = content.offsetHeight
-			this.canvas.width = this.canvas.height / 0.75;
+			this.canvas.width = this.board.offsetWidth;
+			this.canvas.height = this.canvas.width * 0.75;			
 		}
+	}
+
+	#windowResizingEvent() {
+		window.addEventListener("resize", () => {
+			this.#setCanvasDimensions();
+			if (this.game)
+				this.game.resizeGame(this.canvas.width, this.canvas.height);
+		});
 	}
 }
 

@@ -5,6 +5,7 @@ export default class Game {
 		this.height = height;
 		this.animation = null;
 		this.scoreFont = 200;
+		this.startCounterFont = 200;
 		this.scoreLeftPos = this.#calculateScorePosition("left");
 		this.scoreRigthPos = this.#calculateScorePosition("rigth");
 		this.colors = {
@@ -26,7 +27,6 @@ export default class Game {
 		}
 		this.startCounter = null;
 		this.lastStartCounterValue = null;
-		this.startCounterFont = 200;
 		this.winnerUsername = null;
 		this.surrender = null;
 		this.ballRadius = this.#getValueFromPercentage(0.7, this.width);
@@ -69,6 +69,14 @@ export default class Game {
 			window.cancelAnimationFrame(this.animation);
 			this.animation = null;
 		}
+	}
+
+	resizeGame(width, height) {
+		this.width = width;
+		this.height = height;
+		this.ballRadius = this.#getValueFromPercentage(0.7, this.width);
+		this.paddleWidth = this.#getValueFromPercentage(0.5, this.width);
+		this.paddleHeigth = this.#getValueFromPercentage(13, this.height);
 	}
 
 	#animate() {
