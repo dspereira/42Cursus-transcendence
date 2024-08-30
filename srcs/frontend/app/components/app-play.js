@@ -33,9 +33,23 @@ const styles = `
 	display: none;
 }
 
-.board {
+.game-board {
 	width: 100%;
 	height: 80vh;
+}
+
+.board {
+	display: flex;
+	justify-content: center;
+	width: 100%;
+	height: 80vh;
+}
+
+
+.board-2 {
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
 }
 
 `;
@@ -43,18 +57,20 @@ const styles = `
 const getHtml = function(data) {
 	const html = `
 	<div class="game-board">
-		<div class="players-info hide">
-			<div>
-				<img src="${data.hostImage}" class="profile-photo" alt="profile photo chat">
-				<span>${data.hostUsername}</span>
-			</div>
-			<div>
-				<span>${data.guestUsername}</span>
-				<img src="${data.guestImage}" class="profile-photo" alt="profile photo chat">
-			</div>
-		</div>
 		<div class="board">
-			<canvas id="canvas"></canvas>
+			<div class="board-2">
+				<div class="players-info">
+					<div>
+						<img src="${data.hostImage}" class="profile-photo" alt="profile photo chat">
+						<span>${data.hostUsername}</span>
+					</div>
+					<div>
+						<span>${data.guestUsername}</span>
+						<img src="${data.guestImage}" class="profile-photo" alt="profile photo chat">
+					</div>
+				</div>
+				<canvas id="canvas"></canvas>
+			</div>
 		</div>
 		<div class="btn-leave-div">
 			<button type="button" class="btn btn-primary btn-leave hide">Leave</button>
@@ -116,8 +132,8 @@ export default class AppPlay extends HTMLElement {
 		this.ctx = this.canvas.getContext("2d");
 		this.startTimer = this.html.querySelector(".start-timer");
 		this.leave = this.html.querySelector(".btn-leave");
-		this.content = document.querySelector(".content");
 		this.board = this.html.querySelector(".board");
+		this.board2 = this.html.querySelector(".board-2");
 		this.keyDownStatus = "released";
 		this.keyUpStatus = "released";
 		this.isGameFinished = false;
@@ -259,6 +275,7 @@ export default class AppPlay extends HTMLElement {
 			this.canvas.width = this.board.offsetWidth;
 			this.canvas.height = this.canvas.width * 0.75;			
 		}
+		this.board2.style.width =  `${this.canvas.width}px`;
 	}
 
 	#windowResizingEvent() {
