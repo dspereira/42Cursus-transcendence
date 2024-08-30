@@ -108,18 +108,30 @@ export default class AppPlay extends HTMLElement {
 		this.ctx = this.canvas.getContext("2d");
 		this.startTimer = this.html.querySelector(".start-timer");
 		this.leave = this.html.querySelector(".btn-leave");
-
-		// pode receber tamanho por parametro
-		this.canvas.width = "800";
-		this.canvas.height = "600";
-
-		//this.canvas.width = "400";
-		//this.canvas.height = "200";
-
-		this.game = new Game(this.ctx, this.canvas.width, this.canvas.height);
 		this.keyDownStatus = "released";
 		this.keyUpStatus = "released";
 		this.isGameFinished = false;
+
+		/*
+		const contentElmWidth = document.querySelector(".content").offsetWidth;
+		this.canvas.width = contentElmWidth;
+		this.canvas.height = this.canvas.width * 75 / 100;
+		this.game = new Game(this.ctx, this.canvas.width, this.canvas.height);
+		*/
+
+		/*const content = document.querySelector(".content");
+		content.style.height = "90vh";
+		this.canvas.height = content.offsetHeight;
+		this.canvas.width = this.canvas.height / 0.75;
+		
+		
+		console.log("width: ", this.canvas.width);
+		console.log("height: ", this.canvas.height);
+		this.game = new Game(this.ctx, this.canvas.width, this.canvas.height);
+		*/
+
+		this.#setCanvasDimensions();
+		this.game = new Game(this.ctx, this.canvas.width, this.canvas.height);
 	}
 
 	#styles() {
@@ -243,6 +255,22 @@ export default class AppPlay extends HTMLElement {
 				});
 			}
 		});
+	}
+
+	#setCanvasDimensions() {
+		const content = document.querySelector(".content");
+		content.style.height = "80vh";
+		if (content.offsetHeight > content.offsetWidth) {
+			this.canvas.width = content.offsetWidth;
+			this.canvas.height = this.canvas.width * 0.75;
+		}
+		else {
+			if (content.offsetHeight < 600)
+				this.canvas.height = content.offsetHeight - 70;
+			else
+				this.canvas.height = content.offsetHeight
+			this.canvas.width = this.canvas.height / 0.75;
+		}
 	}
 }
 
