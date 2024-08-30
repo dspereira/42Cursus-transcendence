@@ -281,8 +281,9 @@ export default class AppPlay extends HTMLElement {
 	#windowResizingEvent() {
 		window.addEventListener("resize", () => {
 			this.#setCanvasDimensions();
-			if (this.game)
+			if (this.game) {
 				this.game.resizeGame(this.canvas.width, this.canvas.height);
+			}
 		});
 	}
 }

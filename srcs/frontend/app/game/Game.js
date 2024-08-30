@@ -4,10 +4,6 @@ export default class Game {
 		this.width = width;
 		this.height = height;
 		this.animation = null;
-		this.scoreFont = 200;
-		this.startCounterFont = 200;
-		this.scoreLeftPos = this.#calculateScorePosition("left");
-		this.scoreRigthPos = this.#calculateScorePosition("rigth");
 		this.colors = {
 			paddle: "black",
 			ball: "#f9e50c",
@@ -29,6 +25,12 @@ export default class Game {
 		this.lastStartCounterValue = null;
 		this.winnerUsername = null;
 		this.surrender = null;
+
+		this.scoreFont = this.width * 0.25;
+		this.startCounterFontStore = this.width * 0.25;
+		this.startCounterFont = this.startCounterFontStore;
+		this.scoreLeftPos = this.#calculateScorePosition("left");
+		this.scoreRigthPos = this.#calculateScorePosition("rigth");
 		this.ballRadius = this.#getValueFromPercentage(0.7, this.width);
 		this.paddleWidth = this.#getValueFromPercentage(0.5, this.width);
 		this.paddleHeigth = this.#getValueFromPercentage(13, this.height);
@@ -45,7 +47,7 @@ export default class Game {
 			this.startCounter = "GO!"
 
 		if (this.lastStartCounterValue == null || this.lastStartCounterValue != this.startCounter) {
-			this.startCounterFont = 200;
+			this.startCounterFont = this.startCounterFontStore;
 			this.lastStartCounterValue = this.startCounter;
 		}
 	}
@@ -77,6 +79,11 @@ export default class Game {
 		this.ballRadius = this.#getValueFromPercentage(0.7, this.width);
 		this.paddleWidth = this.#getValueFromPercentage(0.5, this.width);
 		this.paddleHeigth = this.#getValueFromPercentage(13, this.height);
+		this.scoreFont = this.width * 0.25;
+		this.startCounterFontStore = this.width * 0.25;
+		this.scoreLeftPos = this.#calculateScorePosition("left");
+		this.scoreRigthPos = this.#calculateScorePosition("rigth");
+		this.#drawAll();
 	}
 
 	#animate() {
@@ -127,7 +134,7 @@ export default class Game {
 	#drawStartCounter() {
 		if (this.startCounter == null)
 			return ;
-		if (this.startCounterFont < 160 && this.startCounter == "GO!") {
+		if (this.startCounterFont < this.startCounterFont * 0.8 && this.startCounter == "GO!") {
 			this.startCounter = null;
 			return ;
 		}
@@ -142,7 +149,7 @@ export default class Game {
 		if (!pos && !side)
 			return ;
 
-		const distanceToWall = 10;
+		const distanceToWall = this.width * 0.0125;
 		let x = 0;
 		if (side == "left")
 			x = distanceToWall;
@@ -177,20 +184,23 @@ export default class Game {
 		if (!this.winnerUsername)
 			return ;
 
-		const fontSize = 70;
-		this.ctx.font = `${fontSize}px VT323`;
+		const fontSizeUsername = this.width * 0.09;
+		const fontSizeWinner = fontSizeUsername * 0.70;
+		const fontSurrender = fontSizeUsername * 0.45;
+		const winnerNameSpacing = fontSizeUsername * 0.85;
+
 		this.ctx.fillStyle = "white";
 
-		let pos = this.#calculateStartWinnerPosition("WINNER", fontSize - 20);
-		this.ctx.fillText("WINNER", pos.x, pos.y - 60);
+		let pos = this.#calculateStartWinnerPosition("WINNER", fontSizeWinner);
+		this.ctx.fillText("WINNER", pos.x, pos.y - winnerNameSpacing);
 
-		pos = this.#calculateStartWinnerPosition(this.winnerUsername, fontSize);
+		pos = this.#calculateStartWinnerPosition(this.winnerUsername, fontSizeUsername);
 		this.ctx.fillText(`${this.winnerUsername}`, pos.x, pos.y);
 
 		if (this.surrender) {
 			const msg = "OPPONENT LEFT THE GAME";
-			pos = this.#calculateStartWinnerPosition(msg, fontSize - 40);
-			this.ctx.fillText(msg, pos.x, pos.y + 200);
+			pos = this.#calculateStartWinnerPosition(msg, fontSurrender);
+			this.ctx.fillText(msg, pos.x, pos.y + this.height * 0.45);
 		}
 	}
 
