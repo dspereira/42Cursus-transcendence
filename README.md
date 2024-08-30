@@ -5,7 +5,7 @@
 - [x] Standart user management
 - [x] Live Chat
 - [x] Implement Two-Factor Authentication (2FA) and JWT
-- [ ] Remote players
+- [x] Remote players
 - [x] Server side pong - API
 
 ## Minor Modules

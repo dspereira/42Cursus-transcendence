@@ -1,4 +1,5 @@
 import { callAPI } from "../utils/callApiUtils.js";
+import stateManager from "../js/StateManager.js";
 
 const styles = `
 .card-container {
@@ -80,7 +81,7 @@ const getHtml = function(data) {
 	return html;
 }
 
-export default class GameInviteCard extends HTMLElement {
+export default class TourneyInviteCard extends HTMLElement {
 	static observedAttributes = ["username", "profile-photo", "invite-id", "exp", "user-id"];
 
 	constructor() {
@@ -144,15 +145,9 @@ export default class GameInviteCard extends HTMLElement {
 		if(!btn)
 			return ;
 		btn.addEventListener("click", () => {
-			callAPI("PUT", `http://127.0.0.1:8000/api/game/request/`, {id: this.data.inviteId}, (res, data) => {
-				if (res.ok) {
-					const contentElm = document.querySelector(".content");
-					contentElm.innerHTML = `
-						<app-lobby 
-							lobby-id="${data.lobby_id}"
-						></app-lobby>
-					`;
-				}
+			callAPI("PUT", `http://127.0.0.1:8000/api/tournament/invite/`, {id: this.data.inviteId}, (res, data) => {
+				if (res.ok)
+					stateManager.setState("isTournamentChanged", true);
 			});
 		});
 	}
@@ -162,7 +157,7 @@ export default class GameInviteCard extends HTMLElement {
 		if(!btn)
 			return ;
 		btn.addEventListener("click", () => {
-			callAPI("DELETE", `http://127.0.0.1:8000/api/game/request/`, {id: this.data.inviteId}, (res, data) => {
+			callAPI("DELETE", `http://127.0.0.1:8000/api/tournament/invite/?id=${this.data.inviteId}`, null, (res, data) => {
 				if (res.ok)
 					this.remove();
 			});
@@ -177,4 +172,4 @@ export default class GameInviteCard extends HTMLElement {
 	}
 }
 
-customElements.define("game-invite-card", GameInviteCard);
+customElements.define("tourney-invite-card", TourneyInviteCard);

@@ -39,6 +39,13 @@ const styles = `
 		margin-right: 12.5%;
 	}
 
+	.image-preview {
+		width: 240px; 
+		height: 240px; 
+		clip-path: circle();
+		object-fit: cover;
+	}
+
 	.image-buttons {
 		display: flex;
 		justify-content: center;
@@ -108,7 +115,7 @@ const getHtml = function(data) {
 					<textarea type="text" class="input-padding form-control form-control-lg" id="new-bio" placeholder="New Bio" rows="3" maxlength="255"></textarea>
 				</div>
 				<div class="image-configs">
-					<img class="image-preview" style="width: 300px; height: 300px; clip-path: circle();">
+					<img class="image-preview">
 					<div class="image-buttons">
 						<label for="newImage" class="btn btn-secondary image-button">
 							<p class="uploadText">Upload Image</p>

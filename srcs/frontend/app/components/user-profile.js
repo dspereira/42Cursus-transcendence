@@ -21,6 +21,7 @@ const styles = `
 		width: 180px;
 		height: 180px;
 		clip-path: circle();
+		object-fit: cover;
 		margin-top: 15px;
 		margin-bottom: 15px;
 	}

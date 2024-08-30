@@ -11,7 +11,7 @@ class InputValidationMiddleware:
 		if request.GET:
 			request.GET = self.__get_query_params_correct(request.GET)
 
-		if request.body:
+		if request.body and not request.FILES:
 			body = self.__get_body_correct(body=request.body.decode('utf-8'))
 			request._body = body.encode('utf-8')
 
@@ -23,9 +23,10 @@ class InputValidationMiddleware:
 			return query_params
 		new_query_params = query_params.copy()
 		for key, values in query_params.lists():
+			new_value = []
 			for value in values:
-				new_value = self.input_checker.get_valid_input(value)
-				new_query_params.setlist(key, new_value)
+				new_value.append(self.input_checker.get_valid_input(value))
+			new_query_params.setlist(key, new_value)
 		return new_query_params
 
 	def __get_body_correct(self, body):
