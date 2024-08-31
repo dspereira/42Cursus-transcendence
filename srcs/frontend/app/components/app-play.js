@@ -65,7 +65,15 @@ const styles = `
 	right: 20px;
 	color: white;
 	cursor: pointer;
-}font-size
+}
+
+.content-small {
+	height: 85vh;
+}
+
+.content-large {
+	height: 85vh;
+}
 
 `;
 
