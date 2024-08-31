@@ -45,12 +45,27 @@ const styles = `
 	height: 80vh;
 }
 
-
 .board-2 {
 	display: flex;
 	flex-direction: column;
 	gap: 10px;
 }
+
+.container-canvas {
+	position: relative;
+	display: flex;
+	justify-content: center;
+
+}
+
+.btn-full-screan {
+	all: unset;
+	position: absolute;
+	bottom: 20px; 
+	right: 20px;
+	color: white;
+	cursor: pointer;
+}font-size
 
 `;
 
@@ -69,7 +84,10 @@ const getHtml = function(data) {
 						<img src="${data.guestImage}" class="profile-photo" alt="profile photo chat">
 					</div>
 				</div>
-				<canvas id="canvas"></canvas>
+				<div class="container-canvas">	
+					<button type="button" class="btn-full-screan"><i class="bi bi-fullscreen icon-full-screan"></i></button>
+					<canvas id="canvas"></canvas>
+				</div>
 			</div>
 		</div>
 		<div class="btn-leave-div">
@@ -134,9 +152,13 @@ export default class AppPlay extends HTMLElement {
 		this.leave = this.html.querySelector(".btn-leave");
 		this.board = this.html.querySelector(".board");
 		this.board2 = this.html.querySelector(".board-2");
+		this.containerCanvas = this.html.querySelector(".container-canvas");
+		this.btnFullScrean = this.html.querySelector(".btn-full-screan");
+		this.iconFullScrean = this.html.querySelector(".icon-full-screan");
 		this.keyDownStatus = "released";
 		this.keyUpStatus = "released";
 		this.isGameFinished = false;
+		this.isFullScrean = false;
 	}
 
 	#styles() {
@@ -156,14 +178,15 @@ export default class AppPlay extends HTMLElement {
 	}
 
 	#scripts() {
-		this.#setCanvasDimensions();
 		this.game = new Game(this.ctx, this.canvas.width, this.canvas.height);
+		this.#resizeGameBoard();
 		this.#initGame();
 		this.#setWinnerEvent();
 		this.#setBtnLeaveEvent();
 		this.#onSocketCloseEvent();
 		this.#windowResizingEvent();
-
+		this.#FullScreanEvent();
+		
 	}
 
     #keyEvents() {
@@ -277,15 +300,65 @@ export default class AppPlay extends HTMLElement {
 		}
 		this.board2.style.width =  `${this.canvas.width}px`;
 	}
+	
+	#changeFullScreenIcon() {
+		this.iconFullScrean.classList.remove("bi-fullscreen");
+		this.iconFullScrean.classList.remove("bi-fullscreen-exit");
+		if (this.isFullScrean)
+			this.iconFullScrean.classList.add("bi-fullscreen-exit");
+		else
+			this.iconFullScrean.classList.add("bi-fullscreen");
+
+		this.iconFullScrean.style.fontSize = `${this.canvas.width * 0.025}px`;
+	}
+
+	#changeFullScreenBtnPosition() {
+		this.btnFullScrean.style.right = `${this.canvas.width * 0.015}px`;
+		this.btnFullScrean.style.bottom = `${this.canvas.height * 0.015}px`;
+		if (this.isFullScrean) {
+			const distBtwCanvasAndRightEdge = window.innerWidth - this.canvas.getBoundingClientRect().right;
+			this.btnFullScrean.style.right = `${distBtwCanvasAndRightEdge + this.canvas.width * 0.015}px`;
+		}
+	}	
+
+	#updateFullScreenButton() {
+		this.#changeFullScreenIcon();
+		this.#changeFullScreenBtnPosition();
+	}
+
+	#resizeGameBoard() {
+		this.#setCanvasDimensions();
+		this.#updateFullScreenButton();
+		if (this.game)
+			this.game.resizeGame(this.canvas.width, this.canvas.height);
+	}
 
 	#windowResizingEvent() {
 		window.addEventListener("resize", () => {
-			this.#setCanvasDimensions();
-			if (this.game) {
-				this.game.resizeGame(this.canvas.width, this.canvas.height);
-			}
+			if (!this.isFullScrean)
+				this.#resizeGameBoard();
 		});
 	}
+
+	#FullScreanEvent() {
+		this.btnFullScrean.addEventListener("click", () => {
+			if (!this.isFullScrean && this.containerCanvas.requestFullscreen)
+				this.containerCanvas.requestFullscreen();
+			if (this.isFullScrean && document.exitFullscreen)
+				document.exitFullscreen();
+		});
+
+		document.addEventListener("fullscreenchange", () => {
+			if (document.fullscreenElement)
+				this.isFullScrean = true;
+			else {
+				this.isFullScrean = false;
+				this.#resizeGameBoard();
+			}
+			this.#updateFullScreenButton();
+		});
+	}
+	
 }
 
 customElements.define("app-play", AppPlay);
