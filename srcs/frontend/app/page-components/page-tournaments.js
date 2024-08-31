@@ -1,552 +1,53 @@
-import {redirect} from "../js/router.js";
 import { adjustContent } from "../utils/adjustContent.js";
 import stateManager from "../js/StateManager.js";
 import { callAPI } from "../utils/callApiUtils.js";
 import {colors} from "../js/globalStyles.js";
 
 const styles = `
+.border-separation {
+	width: 60%;
+	margin: 0 auto;
+	margin-top: 25px;
+	margin-bottom: 25px;
+	border-bottom: 3px solid #EEEDEB;
+}
+
+.create-tourney {
+	display: flex;
+	justify-content: center;
+}
+
+.btn-create-tourney {
+	padding: 10px 70px 10px 70px;
+}
+
+.exit-tourney {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
+.hide {
+	display: none;
+}
 
-	create-join-tourn, app-past-tourn, current-tournament {
-		width: 100%;
-	}
-
-	.page-container {
-		display: flex;
-		width: 100%;
-		flex-direction: column;
-		justify-content: center;
-		align-items: center;
-	}
-
-	.tab-select {
-		display: flex;
-		width: 100%;
-		height: 50px;
-		justify-content: start;
-		align-items: start;
-	}
-
-	.tab-select-btn, .test-change {
-		display: flex;
-		width: 600px;
-		height: 50px;
-		border-style: hidden;
-		border-radius: 5px;
-	}
-
-	.select-left, .select-right{
-		display: flex;
-		width: 50%;
-		height: 100%;
-		border-style: hidden;
-		justify-content: center;
-		align-items: center;
-		--toggled: off;
-		font-size: 16px;
-		font-weight: bold;
-		transition: .5s;
-	}
-
-	.select-left {
-			border-radius: 5px 0px 0px 5px;
-	}
-
-	.select-right {
-		border-radius: 0px 5px 5px 0px;
-	}
-
-	.active-tournaments, .past-tournaments {
-		width: 100%;
-		flex-direction: column;
-		justify-content: start;
-		align-items: start;
-		border-style: hidden;
-		border-radius: 10px;
-		margin: 20px 20px 0px 20px;
-	}
-
-	.active-tournaments {
-		display: flex;
-	}
-
-	.creation-top-bar, .creation-bottom-bar {
-		display: flex;
-		width: 100%;
-		height: 100px;
-	}
-
-	.creation-top-bar {
-		justify-content: space-between;
-	}
-
-	.creation-bottom-bar {
-		justify-content: center;
-		position: fixed;
-		bottom: 0;
-	}
-
-	.friend-search; {
-		width: 200px;
-	}
-
-	.tournament-name {
-		width: 400px;
-	}
-
-	.friend-search, .tournament-name {
-		height: 50px;
-		color: #C2C2C2;
-		text-align: center;
-		border-style: hidden;
-		border-radius: 5px;
-	}
-
-	.friend-search:focus, .tournament-name:focus {
-		box-shadow: none;
-		border: none;
-		border-radius: 5px;
-	}
-
-	.friend-search:focus-visible, .tournament-name:focus-visible {
-		outline: 3px solid #C2C2C2;
-	}
-
-	.submit-button {
-		display: flex;
-		width: 180px;
-		height: 60%;
-		margin: 0px 20px 0px 20px;
-		justify-content: center;
-		align-items: center;
-		font-size: 16px;
-		font-weight: bold;
-		border-style: hidden;
-		border-radius: 5px;
-	}
-
-	.submit-button:disabled {
-		background-color: #FFBAAB;
-		cursor: not-allowed;
-	}
-
-	.search {
-		background-color: ${colors.main_card};
-	}
-
-	.search-icon {
-		position: absolute;
-		margin-top: 6px;
-		margin-left: 15px;
-		font-size: 16px;
-		color: ${colors.second_text};
-	}
-
-	.form-control {
-		border-radius: 5px;
-		border-style: hidden;
-		background-color: ${colors.input_background};
-		color: ${colors.second_text};
-	}
-
-	.form-control::placeholder {
-		color: ${colors.second_text};
-	}
-
-	.form-control:focus {
-		background-color: ${colors.input_background};
-		color:  ${colors.second_text};
-	}
-
-	.search input {
-		color:  ${colors.second_text};
-	}
-
-	.form-control + input:focus {
-		color:  ${colors.second_text};
-	}
-
-
-	.search-bar input {
-		padding-left: 40px;
-	}
-
-	.search-bar {
-		margin-bottom: 25px;
-	}
-
-	.profile-photo {
-		width: 120px;
-		height: auto;
-	}
-
-	.profile-photo-status {
-		position: relative;
-	}
-
-	.online-status {
-		position: absolute;
-		display: inline-block;
-		width: 20px;
-		height: 20px;
-		border-radius: 50%;
-		background-color: green;
-		z-index: 2;
-		top: 100px;
-		right: 2px;
-		border: 2px solid white;
-	}
-
-	.create-btn {
-		display: flex;
-		width: 250px;
-		height: 50px;
-		justify-content: center;
-		align-items: center;
-	}
-
-	.back-btn {
-		width: 100px;
-		height: 50px;
-		padding: 10px 20px;
-		cursor: pointer;
-		margin-right: 10px;
-	}
-
-	.create-btn, .back-btn {
-		color: white;
-		border-style: hidden;
-		border-radius: 5px;
-		font-size: 16px;
-		font-weight: bold;
-	}
-
-	.hide {
-		display: none;
-	}
-
-	.create-join-tournament, .tournament-creation {
-		width: 100%;
-		display: flex;
-		justify-content: center;
-		align-items: center;
-		flex-direction: column;
-	}
-
-	.friend-search::placeholder, .tournament-name::placeholder {
-		color: #C2C2C2;
-	}
-
-	.current-tourn {
-		display: flex;
-		width: 100%;
-		flex-direction: column;
-	}
-
-	.tourn-name {
-		display: flex;
-		width: 100%;
-		max-width: 1000px;
-		border-radius: 10px;
-		border-style: hidden;
-		justify-content: center;
-		align-items: center;
-		margin: 0px 10px 0px 10px;
-		font-size: 24px;
-		font-weight: bold;
-	}
-	
-	.tourn-card {
-		display: flex;
-		width: 100%;
-		height: 300px;
-		flex-direction: column;
-		justify-content: center;
-		align-items: center;
-		border-radius: 10px;
-		border-style: hidden;
-	}
-
-	.tourn-div-top {
-		display: flex;
-		width: 100%;
-		height: 20%;
-		flex-direction: row;
-		justify-content: center;
-		align-items: center;
-	}
-
-	.tourn-div-mid {
-		display: flex;
-		width: 100%;
-		height: 70%;
-		flex-direction: row;
-		justify-content: center;
-		align-items: center;
-	}
-
-	.tourn-s-bar, .tourn-m-bar {
-		display: flex;
-		width: 30%;
-		height: 80%;
-		justify-content: center;
-		align-items: center;
-		margin: 20px;
-	}
-
-	.tourn-s-bar {
-		width: 20%;
-		flex-direction: column;
-	}
-
-	.tourn-m-bar {
-		width: 50%;
-		flex-direction: row;
-	}
-
-	.tourn-p-img {
-		width: 50px;
-		height: 50px;
-	}
-
-	.tourn-inv .tourn-p-img {
-		width: 100px;
-		height: 100px;
-	}
-
-	.tourn-p-card {
-		display: flex;
-		width: 100%;
-		max-width: 300px;
-		height: 40%;
-		justify-content: center;
-		align-items: center;
-		border-radius: 10px;
-		border-style: hidden;
-		margin: 5px;
-		font-size: 16px;
-		font-weight: bold;
-	}
-
-	.tourn-inv {
-		display: flex;
-		width: 400px;
-		height: 300px;
-		flex-direction: row;
-		justify-content: center;
-		align-items: center;
-		border-radius: 10px;
-		border-style: hidden;
-		padding: 0px 20px 0px 20px;
-		font-size: 16px;
-		font-weight: bold;
-	}
-
-	.tourn-inv-inner {
-		display: flex;
-		width: 40%;
-		height: 100%;
-		flex-direction: column;
-		margin: 20px;
-		justify-content: center;
-		align-items: center;
-		font-align: center;
-		font-size: 24px;
-		font-weight: bold;
-	}
-
-	.tourn-inv-status, .tourn-inv-time {
-		display: flex;
-		width: 100%;
-		font-size: 24px;
-		justify-content: center;
-		align-items: center;
-		text-align: center;
-	}
-
-	.tourn-inv-status {
-		color: green;
-		margin-bottom: 20px;
-	}
-
-	.tourn-inv-box {
-		display: flex;
-		width: 100%;
-		flex-direction: row;
-		justify-content: space-between;
-		padding: 0px 200px 0px 200px;
-	}
-
-	.separator {
-		display: flex;
-		width: 50%;
-		height: 5px;
-		border-radius: 10px;
-		justify-content: center;
-		align-items: center;
-		margin: 20px 0px 20px 0px;
-	}
-
-	.separator-v {
-		display: flex;
-		width: 5px;
-		height: 80%;
-		border-radius: 10px;
-		justify-content: center;
-		align-items: center;
-		margin: 0px 20px 0px 20px;
-	}
-
-	.separator-v-light {
-		display: flex;
-		width: 5px;
-		height: 80%;
-		border-radius: 10px;
-		justify-content: center;
-		align-items: center;
-		margin: 0px 20px 0px 20px;
-	}
-
-	.friend-invites {
-		display: flex;
-		width: 100%;
-		flex-direction: column;
-		justify-content: center;
-		align-items: center;
-		border-radius: 10px;
-	}
-
-	.inv-bot {
-		display: flex;
-		width: 100%;
-		height: 30%;
-		font-size: 16px;
-		font-weight: bold;
-	}
-
-	.inv-header {
-		display: flex;
-		width: 100%;
-		height: 30%;
-		font-size: 24px;
-		font-weight: bold;
-		justify-content: center;
-		align-items: center;
-	}
-
-	.inv-players {
-		display: flex;
-		width: 60%;
-		height: 30%;
-		font-size: 16px;
-		font-weight: bold;
-	}
-
-	.inv-players, .inv-bot, inv-players {
-		flex-direction: row;
-		justify-content: space-between;
-		align-items: center;
-	}
-
-	.invited-btn, .inv-decline-btn {
-		display: flex;
-		height: 80%;
-		justify-content: center;
-		align-items: center;
-	}
-
-	.invited-btn, .inv-decline-btn {
-		color: black;
-		border-style: hidden;
-		border-radius: 5px;
-	}
-
-	.invited-btn, .inv-decline-btn {
-		font-size: 16px;
-		font-weight: bold;
-	}
-
-	.invited-btn, .inv-decline-btn {
-		width: 180px;
-	}
-
-	.invited-card {
-		display: flex;
-		flex-direction: column;
-		min-width: 400px;
-		width: 80%;
-		height: 300px;
-		border-radius: 20px;
-		border-style: hidden;
-		justify-content: space-between;
-		align-items: center;
-		margin-bottom: 20px;
-		padding: 20px;
-	}
-
-	.inv-header, .invited-btn, .inv-decline-btn, .select-left {
-		color: ${colors.primary_text};
-	}
-
-	.select-right {
-		color: ${colors.second_card};
-	}
-
-	.tourn-name, .tab-select-btn, .test-change, .submit-button, .tourn-inv-inner, .inv-players, .inv-bot {
-		color: ${colors.second_text};
-	}
-
-	 .tourn-p-card, .tourn-inv-time {
-		color: ${colors.third_text};
-	}
-
-	.box-off, .friend-search, .tournament-name, .tab-select-btn, .test-change, .tourn-card, .tourn-inv, .select-right {
-		background-color: ${colors.main_card};
-	}
-
-	.select-left, .invited-card {
-		background-color: ${colors.second_card};
-	}
-
-	.create-btn:hover, .submit-button:not(:disabled):hover, .back-btn:hover, .invited-btn:hover, .inv-decline-btn:hover, .box-on {
-		background-color: ${colors.button_hover};
-	}
-
-	.create-btn, .back-btn, .submit-button:not(disabled), .invited-btn, .inv-decline-btn, .tourn-name, .tourn-p-card {
-		background-color: ${colors.button};
-	}
-
-	.separator {
-		background-color: ${colors.divider};
-	}
-
-	.separator-v {
-		background-color: ${colors.page_background};
-	}
-
-	.hide {
-		display: none;
-	}
 `;
 
 const getHtml = function(data) {
 	const html = `
-		<app-header></app-header>
-		<side-panel selected="tournaments"></side-panel>
-		<div class="content content-small">
-		<div class="page-container">
-				<div class="tab-select">
-					<button class="tab-select-btn">
-						<div class="select-left">New/Current tournament</div>
-						<div class="select-right">Tournament History</div>
-					</button>
-				</div>
-				<div class="active-tournaments">
-					<current-tournament></current-tournament>
-					<create-join-tourn></create-join-tourn>
-				</div>
-				<app-past-tourn class="hide"></app-past-tourn>
+	<app-header></app-header>
+	<side-panel selected="tournaments"></side-panel>
+	<div class="content content-small">
+		<div class="btn-create-tourney-section hide">
+			<div class="create-tourney">
+				<button type="button" class="btn btn-primary btn-create-tourney">Create Tornement</button>
 			</div>
+			<div class="border-separation"></div>
 		</div>
+		<div class="tourney-section"></div>
+		<div class="invites-received"></div>
+		<div class="exit-tourney hide"><button type="button" class="btn btn-primary btn-exit-tourney">Exit Tournament</button></div>
+	</div>
 	`;
 	return html;
 }
@@ -558,11 +59,6 @@ export default class PageTournaments extends HTMLElement {
 
 	constructor() {
 		super()
-		this.friendBoxData = [];
-		this.tournInfo = getFakeActiveTourn();
-		this.tournInv = getFakeTournInvites();
-		this.inTournament = this.tournInfo.inTourn;
-		console.log(this.tournInfo);
 		this.#initComponent();
 		this.#render();
 		this.#scripts();
@@ -581,6 +77,10 @@ export default class PageTournaments extends HTMLElement {
 			this.styles.textContent = this.#styles();
 			this.html.classList.add(`${this.elmtId}`);
 		}
+		this.btnCreateTourneySection = this.html.querySelector(".btn-create-tourney-section");
+		this.tourneySection = this.html.querySelector(".tourney-section");
+		this.invitesReceived = this.html.querySelector(".invites-received");
+		this.exitTournament = this.html.querySelector(".exit-tourney");
 	}
 
 	#styles() {
@@ -589,7 +89,7 @@ export default class PageTournaments extends HTMLElement {
 		return null;
 	}
 
-	#html(data) {
+	#html(data){
 		return getHtml(data);
 	}
 
@@ -601,96 +101,107 @@ export default class PageTournaments extends HTMLElement {
 	}
 
 	#scripts() {
-		// const pastTournamentsList = getFakeTournaments();
 		adjustContent(this.html.querySelector(".content"));
-		this.#toggleTabSelector();
-		this.#activeTournaments();
-		// this.#testChangePage();
+		this.#createTournamentEvent();
+		this.#checkActiveTournamentCall();
+		this.#setStateEvent();
+		this.#setExitTtourneyBtn();
 	}
 
-	#createJoinTourn(activeTournamentsHtml) {
-		const currentTournHtml = activeTournamentsHtml.querySelector("current-tournament");
-		currentTournHtml.classList.add("hide");
-		const createJoinHtml = activeTournamentsHtml.querySelector("create-join-tourn");
-		createJoinHtml.classList.remove("hide");
+	#createTournamentEvent() {
+		const btn = this.html.querySelector(".btn-create-tourney");
+		btn.addEventListener("click", () => {
+			callAPI("POST", `http://127.0.0.1:8000/api/tournament/`, null, (res, data) => {					
+				if (res.ok && data) {
+					stateManager.setState("tournamentId", data.tournament_id);
+					this.btnCreateTourneySection.classList.add("hide");
+					this.tourneySection.innerHTML = `
+					<tourney-lobby
+						tournament-id="${data.tournament_id}"
+						owner-id="${stateManager.getState("userId")}"
+					></tourney-lobby>`;
+					this.invitesReceived.innerHTML = "";
+				}
+			});
+		});
 	}
 
-	#currentTourn(activeTournamentsHtml) {
-		const currentTournHtml = activeTournamentsHtml.querySelector("current-tournament");
-		currentTournHtml.classList.remove("hide");
-		const createJoinHtml = activeTournamentsHtml.querySelector("create-join-tourn");
-		createJoinHtml.classList.add("hide");
+	#checkActiveTournamentCall() {
+		callAPI("GET", `http://127.0.0.1:8000/api/tournament/active-tournament/`, null, (res, data) => {
+			if (res.ok && data && data.tournament) {
+				const torneyData = data.tournament;
+				stateManager.setState("tournamentId", torneyData.id);
+				this.btnCreateTourneySection.classList.add("hide");
+				this.exitTournament.classList.add("hide");
+				if (torneyData.status == "created") {
+					this.tourneySection.innerHTML = `
+					<tourney-lobby
+						tournament-id="${torneyData.id}"
+						owner-id="${torneyData.owner}"
+					></tourney-lobby>`;
+					this.invitesReceived.innerHTML = "";
+				}
+				else if (torneyData.status == "active") {
+					this.tourneySection.innerHTML = `<tourney-graph tournament-id="${torneyData.id}" tournament-name="${torneyData.name}"></tourney-graph>`;
+					this.invitesReceived.innerHTML = "";
+				}
+			}
+			else if (res.ok && data && !data.tournament) {
+				this.btnCreateTourneySection.classList.remove("hide");
+				this.exitTournament.classList.add("hide");
+				this.tourneySection.innerHTML = "";
+				this.invitesReceived.innerHTML = "<tourney-invites-received></tourney-invites-received>";
+			}
+		});
+
+		const tournamentId = stateManager.getState("tournamentId");
+		if (tournamentId)
+			this.#checkTournamentFinished(tournamentId);
 	}
 
-	#activeTournaments() {
-		const activeTournamentsHtml = this.html.querySelector(".active-tournaments");
-		// console.log("inTourn", "val = ", this.tournInfo.inTourn === "true", " | ", this.tournInfo.inTourn);
-		if (this.tournInfo.inTourn !== "true")
-			this.#createJoinTourn(activeTournamentsHtml);
-		else 
-			this.#currentTourn(activeTournamentsHtml);
-	}
+	#setStateEvent() {
+		stateManager.addEvent("isTournamentChanged", (stateValue) => {
+			if (stateValue) {
+				this.#checkActiveTournamentCall();
+				stateManager.setState("isTournamentChanged", false);
+			}
+		});
 
-	#toggleTabSelector() {
-		this.html.querySelector(".tab-select-btn").addEventListener("click", () => {
-			const leftSlct = this.html.querySelector(".select-left");
-			const rightSlct = this.html.querySelector(".select-right");
-			const newTournaments = this.html.querySelector(".active-tournaments");
-			const pastTournaments = this.html.querySelector("app-past-tourn");
-			const isToggled = leftSlct.style.getPropertyValue('--toggled') === 'on';
-			const highlight = colors.second_card;
-			const background = colors.main_card;
-			leftSlct.style.setProperty('--toggled', isToggled ? 'off' : 'on');
-			if (isToggled) {
-				leftSlct.style.backgroundColor = highlight;
-				rightSlct.style.backgroundColor = background;
-				leftSlct.style.color = "white";
-				rightSlct.style.color = highlight;
-				newTournaments.style.display = "flex";
-				pastTournaments.classList.add("hide");
-			} else {
-				leftSlct.style.backgroundColor = background;
-				rightSlct.style.backgroundColor = highlight;
-				leftSlct.style.color = highlight;
-				rightSlct.style.color = "white";
-				newTournaments.style.display = "none";
-				pastTournaments.classList.remove("hide");
+		stateManager.addEvent("tournamentGameLobby", (stateValue) => {
+			if (stateValue) {
+				this.btnCreateTourneySection.classList.add("hide");
+				this.tourneySection.innerHTML = `<app-lobby 
+					lobby-id=${stateValue} 
+					is-tournament="true"
+				></app-lobby>`;
+				this.invitesReceived.innerHTML = "";		
+				stateManager.setState("tournamentGameLobby", null);
 			}
 		});
 	}
+
+	#checkTournamentFinished(tournamentId) {
+		callAPI("GET", `http://127.0.0.1:8000/api/tournament/is-finished/?id=${tournamentId}`, null, (res, data) => {
+			if (res.ok && data && data.is_finished) {
+				this.btnCreateTourneySection.classList.add("hide");
+				this.tourneySection.innerHTML = `<tourney-graph tournament-id="${tournamentId}" tournament-name="${data.tournament_name}"></tourney-graph>`;
+				this.invitesReceived.innerHTML = "";
+				this.exitTournament.classList.remove("hide");
+			}
+		});
+	}
+
+	#setExitTtourneyBtn() {
+		const btn = this.html.querySelector(".btn-exit-tourney");
+		if (!btn)
+			return ;
+		btn.addEventListener("click", () => {
+			stateManager.setState("tournamentId", null);
+			stateManager.setState("isTournamentChanged", true);
+		});
+	}
 }
+
 customElements.define(PageTournaments.componentName, PageTournaments);
 
-const getFakeActiveTourn = function () {
-	const data = `{
-		"name": "Manga's Tourn",
-		"inTourn": "true",
-		"p1": "Manga",
-		"p2": "candeia",
-		"p3": "diogo",
-		"p4": "pedro",
-		"status": "ongoing",
-		"left": "none",
-		"right": "p3"
-	}`;
-	return JSON.parse(data);
-}
 
-const getFakeTournInvites = function() {
-
-	const data = `[
-	{
-		"name": "Jhonny's tournament 2",
-		"owner": "Jhonny",
-		"p1": "Marth",
-		"p2": "Clara"
-	},
-	{
-		"name": "Frutinha",
-		"owner": "Morango",
-		"p1": "Manga",
-		"p2": "Diogo"
-	}
-	]`;
-	return JSON.parse(data);
-}

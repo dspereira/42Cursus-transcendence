@@ -1,4 +1,4 @@
-const globalEvents = ["isLoggedIn", "chatSocket"];
+const globalEvents = ["isLoggedIn", "chatSocket", "tournamentId"];
 
 class StateManager {
 
@@ -10,7 +10,7 @@ class StateManager {
 		this.states = {
 			sidePanel: "open",
 			pageReady: false,
-			isLoggedIn: null,
+			isLoggedIn: null,   // realy change when user logout and not when chage refresh token
 			friendChatId: null,
 			newChatMessage: null,
 			chatMessagesCounter: 0,
@@ -21,7 +21,17 @@ class StateManager {
 			userImage: null,
 			messageSend: null,
 			onlineStatus: null,
-			blockStatus: null
+			blockStatus: null,
+			gameStatus: null,
+			lobbyStatus: null,
+			gameTimeToStart: null,
+			gameWinner: null,
+			hasLobbyEnded: null,
+			hasRefreshToken: null,
+			gameSocket: null,
+			isTournamentChanged: null,
+			tournamentGameLobby: null,
+			tournamentId: null
 		}
 		this.stateEvents = {
 			sidePanel: [],
@@ -38,6 +48,17 @@ class StateManager {
 			messageSend: [],
 			onlineStatus: [],
 			blockStatus: [],
+			gameStatus: [],
+			lobbyStatus: [],
+			gameTimeToStart: [],
+			gameWinner: [],
+			hasLobbyEnded: [],
+			hasRefreshToken: [],
+			gameSocket: [],
+			isTournamentChanged: [],
+			tournamentGameLobby: [],
+			finishedTournament: [],
+			tournamentId: []
 		}
 
 		StateManager.instance = this;
@@ -73,6 +94,11 @@ class StateManager {
 		}
 	}
 
+	cleanStateEvents(name) {
+		if (name)
+			this.stateEvents[name] = [];
+	}
+
 	// DEBUG
 	showAllStates() {
 		Object.entries(this.states).forEach(([key, value]) => {
@@ -80,6 +106,8 @@ class StateManager {
 		});
 	}
 
+
+	// Fazer um loop e passar por todos os eventos e estados
 	cleanAllStatesAndEvents() {
 		this.states.sidePanel = "open";
 		this.states.pageReady = false,

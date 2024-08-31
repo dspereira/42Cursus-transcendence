@@ -1,15 +1,9 @@
 from custom_utils.jwt_utils import JwtData
 from channels.middleware import BaseMiddleware
-from user_auth.models import User
-from live_chat.models import ChatRoom
-from custom_utils.models_utils import ModelManager
-
-from asgiref.sync import sync_to_async
 
 class ChannelsAuthMiddleware(BaseMiddleware):
 
 	async def __call__(self, scope, receive, send):
-
 		scope['access_data'] = JwtData(self.__getAccessToken(scope))
 		return await super().__call__(scope, receive, send)
 
