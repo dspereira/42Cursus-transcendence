@@ -194,6 +194,7 @@ export default class AppPlay extends HTMLElement {
 		this.#onSocketCloseEvent();
 		this.#windowResizingEvent();
 		this.#FullScreanEvent();
+		this.#btnFullScreenHover();
 		
 	}
 
@@ -364,6 +365,16 @@ export default class AppPlay extends HTMLElement {
 				this.#resizeGameBoard();
 			}
 			this.#updateFullScreenButton();
+		});
+	}
+
+	#btnFullScreenHover() {
+		this.btnFullScrean.addEventListener('mouseover', () => {
+			this.iconFullScrean.style.fontSize = `${this.canvas.width * 0.028}px`;
+		});
+		
+		this.btnFullScrean.addEventListener('mouseout', () => {
+			this.iconFullScrean.style.fontSize = `${this.canvas.width * 0.025}px`;
 		});
 	}
 	
