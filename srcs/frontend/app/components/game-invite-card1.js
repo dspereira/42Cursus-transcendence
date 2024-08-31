@@ -1,9 +1,11 @@
 import { callAPI } from "../utils/callApiUtils.js";
+import { colors } from "../js/globalStyles.js";
 
 const styles = `
 .card-container {
 	display: inline-block;
-	background-color: #EEEDEB;
+	background-color: ${colors.input_background};
+	color: ${colors.second_text};
 	border-radius: 8px;
 	padding: 20px 30px 20px 30px;
 	cursor: pointer;
@@ -30,7 +32,8 @@ const styles = `
 }
 
 .selected {
-	background-color: red;
+	background-color: ${colors.button_hover};
+	color: ${colors.primary_text};
 }
 
 `;

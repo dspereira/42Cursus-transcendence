@@ -1,4 +1,5 @@
 import { callAPI } from "../utils/callApiUtils.js";
+import { colors } from "../js/globalStyles.js";
 
 const styles = `
 .invites-section {
@@ -10,14 +11,14 @@ const styles = `
 
 .friend-list {
 	width: 70%;
-	background-color: #D3D3D3;
+	background-color: ${colors.second_card};
 	border-radius: 5px;
 	padding: 20px;
 }
 
 .invites-send {
 	width: 30%;
-	background-color: #D3D3D3;
+	background-color: ${colors.second_card};
 	border-radius: 5px;
 	padding: 20px;
 }
@@ -29,16 +30,10 @@ const styles = `
 	margin-bottom: 20px;
 }
 
-.search-icon {
-	position: absolute;
-	margin-top: 6px;
-	margin-left: 15px;
-	font-size: 16px;
-}
-
 .refresh-icon {
 	font-size: 22px;
 	cursor: pointer;
+	color: ${colors.second_text};
 }
 
 .search-bar input {
@@ -47,6 +42,37 @@ const styles = `
 
 .search-bar {
 	width: 93%;
+}
+
+.search-icon {
+	position: absolute;
+	margin-top: 6px;
+	margin-left: 15px;
+	font-size: 16px;
+	color: ${colors.second_text};
+}
+
+.search-bar input, .search-bar input:hover, .search-bar input:focus{
+	padding-left: 40px;
+	color:  ${colors.second_text};
+}
+
+.search-bar {
+	margin-bottom: 25px;
+}
+
+.form-control {
+	border-radius: 5px;
+	border-style: hidden;
+	background-color: ${colors.input_background};
+}
+
+.form-control::placeholder {
+	color: ${colors.second_text};
+}
+
+.form-control:focus {
+	background-color: ${colors.input_background};
 }
 
 .friends {
@@ -62,6 +88,7 @@ const styles = `
 	justify-content: space-between;
 	align-items: center;
 	margin-bottom: 10px;
+	color: ${colors.second_text};
 }
 
 .player-invite-send span {

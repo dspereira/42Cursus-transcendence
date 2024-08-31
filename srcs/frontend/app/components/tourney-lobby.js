@@ -1,11 +1,15 @@
 import { callAPI } from "../utils/callApiUtils.js";
 import stateManager from "../js/StateManager.js";
+import { colors } from "../js/globalStyles.js";
+
 
 const styles = `
 .players {
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
+	border-radius: 10px;
+	background-color: ${colors.second_card};
 }
 
 .player {
@@ -14,6 +18,8 @@ const styles = `
 	justify-content: center;
 	align-items: center;
 	gap: 10px;
+	color: ${colors.second_text};
+	padding: 10px 30px 10px 30px;
 }
 
 .profile-photo {
@@ -45,9 +51,9 @@ const styles = `
 .border-separation {
 	width: 60%;
 	margin: 0 auto;
-	margin-top: 50px;
-	margin-bottom: 50px;
-	border-bottom: 3px solid #EEEDEB;
+	margin-top: 40px;
+	margin-bottom: 40px;
+	border-bottom: 3px solid ${colors.second_card};
 }
 
 .hiden {

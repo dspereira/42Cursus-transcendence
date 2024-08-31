@@ -1,10 +1,11 @@
 import { callAPI } from "../utils/callApiUtils.js";
 import stateManager from "../js/StateManager.js";
+import { colors } from "../js/globalStyles.js";
 
 const styles = `
 .card-container {
 	display: inline-block;
-	background-color: #EEEDEB;
+	background-color: ${colors.input_background};
 	border-radius: 8px;
 	padding: 20px 30px 20px 30px;
 }

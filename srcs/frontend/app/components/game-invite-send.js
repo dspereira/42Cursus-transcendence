@@ -1,21 +1,38 @@
 import { callAPI } from "../utils/callApiUtils.js";
 import stateManager from "../js/StateManager.js";
+import { colors } from "../js/globalStyles.js";
 
 const styles = `
 	.search-icon {
-		position: absolute;
-		margin-top: 6px;
-		margin-left: 15px;
-		font-size: 16px;
-	}
+	position: absolute;
+	margin-top: 6px;
+	margin-left: 15px;
+	font-size: 16px;
+	color: ${colors.second_text};
+}
 
-	.search-bar input {
-		padding-left: 40px;
-	}
+.search-bar input, .search-bar input:hover, .search-bar input:focus{
+	padding-left: 40px;
+	color:  ${colors.second_text};
+}
 
-	.search-bar {
-		margin-bottom: 25px;
-	}
+.search-bar {
+	margin-bottom: 25px;
+}
+
+.form-control {
+	border-radius: 5px;
+	border-style: hidden;
+	background-color: ${colors.input_background};
+}
+
+.form-control::placeholder {
+	color: ${colors.second_text};
+}
+
+.form-control:focus {
+	background-color: ${colors.input_background};
+}
 
 	.friend-list {
 		display: flex;
@@ -34,7 +51,7 @@ const styles = `
 		padding: 20px;
 		border-radius: 5px;
 		height: 90vh;
-		background-color: #D3D3D3;
+		background-color:  ${colors.second_card};
 	}
 
 	.selcted-list-section {
@@ -42,7 +59,7 @@ const styles = `
 		padding: 20px;
 		border-radius: 5px;
 		height: 90vh;
-		background-color: #D3D3D3;
+		background-color:  ${colors.second_card};
 	}
 		
 	.friend-right-list {
