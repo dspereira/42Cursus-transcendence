@@ -1,5 +1,6 @@
 import { adjustContent } from "../utils/adjustContent.js";
 import stateManager from "../js/StateManager.js";
+import { colors } from "../js/globalStyles.js";
 
 const styles = `
 	.invite-game {
@@ -9,15 +10,23 @@ const styles = `
 	.div-border {
 		display: inline-block;
 		text-align: center;
-		border-bottom: 3px solid #EEEDEB;
+		border-bottom: 3px solid ${colors.second_card};
 		width: 60%;
 		margin-bottom: 25px;
 	}
 
 	.invite-game-btn {
+		background-color: ${colors.button_hover};
+		color: ${colors.second_text};
 		padding: 10px 70px 10px 70px;
 		margin-bottom: 25px;
 	}
+
+	.invite-game-btn:hover {
+		background-color: ${colors.button_hover};
+		color: ${colors.primary_text};
+	}
+
 `;
 
 const getHtml = function(data) {

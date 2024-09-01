@@ -58,8 +58,13 @@ div {
 	display: none;
 }
 
-#email, #password {
+#email, #password, #email::placeholder, #password::placeholder {
+	color: ${colors.primary_text};
 	background-image: none;
+}
+
+#email:focus::placeholder, #password:focus::placeholder {
+	color: ${colors.second_text};
 }
 
 h1 {
@@ -71,26 +76,25 @@ h1 {
 .btn-submit {
 	width: 100%;
 	margin-top: 30px;
-	color: ${colors.second_text};
+	color: ${colors.primary_text};
 	background-color: ${colors.button_hover};
 }
 
 .btn-submit:hover {
 	background-color: ${colors.button_hover};
-	color: ${colors.primary_text};
+	color: ${colors.second_text};
 }
 
 .btn-signup {
 	width: 100%;
 	border: 2px solid ${colors.button_hover};
-	color: ${colors.button_hover};
+	color: ${colors.second_text};
 }
 
 .btn-signup:hover {
 	background-color: ${colors.button_hover};
 	color: ${colors.primary_text};
 }
-
 `;
 
 const getHtml = function(data) {

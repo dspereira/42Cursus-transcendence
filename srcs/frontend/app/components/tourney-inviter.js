@@ -22,6 +22,7 @@ const styles = `
 	border-radius: 5px;
 	padding: 20px;
 }
+
 .search-bar-section {
 	display: flex;
 	justify-content: space-between;
@@ -57,10 +58,6 @@ const styles = `
 	color:  ${colors.second_text};
 }
 
-.search-bar {
-	margin-bottom: 25px;
-}
-
 .form-control {
 	border-radius: 5px;
 	border-style: hidden;
@@ -80,7 +77,6 @@ const styles = `
 	flex-wrap: wrap;
 	gap: 30px;
 	justify-content: center;
-
 }
 
 .player-invite-send {
@@ -88,6 +84,10 @@ const styles = `
 	justify-content: space-between;
 	align-items: center;
 	margin-bottom: 10px;
+	background-color: ${colors.third_card};
+	padding: 0px 10px 0px 10px;
+	border-radius: 5px;
+	border-style: hidden;
 	color: ${colors.second_text};
 }
 
@@ -264,8 +264,8 @@ export default class TourneyInviter extends HTMLElement {
 			elm.classList.add("player-invite-send");
 			elm.classList.add(`id-${invite.req_id}`);
 			elm.innerHTML = `
-				<div><span>${invite.username}</span></div>
-				<div class="cross-icon btn-cancel-invite" id="id-${invite.req_id}"><i class="bi bi-x-lg"></i></div>
+				<span>${invite.username}</span>
+				<div class="cross-icon btn-cancel-invite" id="id-${invite.req_id}">x</div>
 			`;
 			listHtml.appendChild(elm);
 			this.#setCancelInviteEvent(elm);

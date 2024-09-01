@@ -18,13 +18,13 @@ const styles = `
 }
 
 .link {
-	color: blue;
+	color: ${colors.link};
 	text-decoration: underline;
 	cursor: pointer;
 }
 
 .link:hover {
-	color: darkblue;
+	color: ${colors.link_hover};
 }
 
 .friends-list {
@@ -43,7 +43,7 @@ const styles = `
 	border: var(--bs-border-width) solid ${colors.toggle_deselected};
 }
 
-.no-friends-selected-msg {
+.no-friends-selected-msg, .no-friends-msg {
 	color: ${colors.second_text};
 }
 `;

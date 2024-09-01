@@ -6,6 +6,7 @@ export const colors = {
 	side_panel_background: "#202225",
 	page_background: "#292B2F", //extra_background
 	second_card: "#36393F", //primary_background
+	third_card: "#40444B",
 	input_background: "#40444B",
 	scroll_hover: "#63686F",
 	// Divider Colors
@@ -13,7 +14,8 @@ export const colors = {
 	// Text Colors
 	primary_text: "#FFFFFF",
 	second_text: "#B9BBBE",
-
+	link: "#17F5F9",
+	link_hover: "#25B3B7",
 	//unused
 	third_text: "#72767D",
 	extra_text: "#00AFF4",

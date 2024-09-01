@@ -3,6 +3,7 @@ import gameWebSocket from "../js/GameWebSocket.js";
 import { callAPI } from "../utils/callApiUtils.js";
 import stateManager from "../js/StateManager.js";
 import { redirect } from "../js/router.js";
+import { colors } from "../js/globalStyles.js";
 
 const styles = `
 .profile-photo {
@@ -31,6 +32,10 @@ const styles = `
 
 .hide {
 	display: none;
+}
+
+.btn-primary {
+	background-color: ${colors.button_hover};
 }
 
 `;

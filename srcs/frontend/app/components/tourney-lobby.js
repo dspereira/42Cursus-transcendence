@@ -5,6 +5,7 @@ import { colors } from "../js/globalStyles.js";
 
 const styles = `
 .players {
+	min-width: 750px;
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
@@ -31,8 +32,8 @@ const styles = `
 .default-photo {
 	width: 120px;
 	height: auto;
-	background-color: #7D8ABC;
-	border: 5px solid #7D8ABC;
+	background-color: ${colors.second_card};
+	border: 5px solid ${colors.page_background};
 	border-radius: 50%;
 	clip-path:circle();
 }
@@ -41,7 +42,8 @@ const styles = `
 	display: flex;
 	justify-content: center;
 	gap: 30px;
-	margin-top: 50px;
+	margin-top: 25px;
+	min-width: 750px;
 }
 
 .btn-success, .btn-cancel {

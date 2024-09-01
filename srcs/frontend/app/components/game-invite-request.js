@@ -1,7 +1,9 @@
 import { callAPI } from "../utils/callApiUtils.js";
+import { colors } from "../js/globalStyles.js";
 
 const styles = `
 	h3 {
+		color: ${colors.second_text};
 		margin-bottom: 20px;
 		font-size: 22px;
 		text-align: center;

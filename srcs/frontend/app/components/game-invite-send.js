@@ -83,6 +83,17 @@ const styles = `
 	.cross-icon:hover {
 		color: blue; /* outra cor igual mas mais carregada */
 	}
+
+	.btn-primary {
+		background-color: ${colors.button_hover};
+		color: ${colors.second_text};
+	}
+
+	.btn-primary:hover {
+		background-color: ${colors.button_hover};
+		color: ${colors.primary_text};
+	}
+
 }
 `;
 

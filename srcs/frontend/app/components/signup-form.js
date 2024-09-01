@@ -1,15 +1,24 @@
 import {redirect} from "../js/router.js";
 import {callAPI} from "../utils/callApiUtils.js";
+import { colors } from "../js/globalStyles.js";
 
 const styles = `
 form {
 	position: relative;
 }
 
+.alert.alert-danger {
+	--bs-alert-color: ${colors.primary_text};
+    --bs-alert-bg: #FFBAAB;
+    --bs-alert-border-color: #FFBAAB;
+    --bs-alert-link-color: var(--bs-danger-text-emphasis);
+}
+
 .icon {
 	position: absolute;
 	margin-top: 3px;
 	font-size: 28px;
+	color: ${colors.second_text};
 }
 
 .right-icon {
@@ -43,6 +52,7 @@ div {
 }
 
 h1 {
+	color: ${colors.primary_text};
 	text-align: center;
 	margin-top: 30px;
 	margin-bottom: 30px;
@@ -51,10 +61,34 @@ h1 {
 .btn-submit {
 	width: 100%;
 	margin-top: 30px;
+	color: ${colors.primary_text};
+	background-color: ${colors.button_hover};
+}
+
+.btn-submit:hover {
+	background-color: ${colors.button_hover};
+	color: ${colors.second_text};
 }
 
 .btn-signin {
 	width: 100%;
+	border: 2px solid ${colors.button_hover};
+	color: ${colors.second_text};
+}
+
+.btn-signxin:hover {
+	background-color: ${colors.button_hover};
+	color: ${colors.primary_text};
+}
+
+.form-control,.form-control:focus, .form-control::placeholder {
+	background-color: ${colors.main_card};
+	color: ${colors.primary_text};
+	background-image: none;
+}
+
+.form-control:focus::placeholder {
+	color: ${colors.second_text};
 }
 
 `;
