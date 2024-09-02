@@ -58,7 +58,7 @@ const styles = `
 
 }
 
-.btn-full-screan {
+.btn-full-screen {
 	all: unset;
 	position: absolute;
 	bottom: 20px; 
@@ -93,7 +93,7 @@ const getHtml = function(data) {
 					</div>
 				</div>
 				<div class="container-canvas">	
-					<button type="button" class="btn-full-screan"><i class="bi bi-fullscreen icon-full-screan"></i></button>
+					<button type="button" class="btn-full-screen"><i class="bi bi-fullscreen icon-full-screen"></i></button>
 					<canvas id="canvas"></canvas>
 				</div>
 			</div>
@@ -161,12 +161,12 @@ export default class AppPlay extends HTMLElement {
 		this.board = this.html.querySelector(".board");
 		this.board2 = this.html.querySelector(".board-2");
 		this.containerCanvas = this.html.querySelector(".container-canvas");
-		this.btnFullScrean = this.html.querySelector(".btn-full-screan");
-		this.iconFullScrean = this.html.querySelector(".icon-full-screan");
+		this.btnFullScreen = this.html.querySelector(".btn-full-screen");
+		this.iconFullScreen = this.html.querySelector(".icon-full-screen");
 		this.keyDownStatus = "released";
 		this.keyUpStatus = "released";
 		this.isGameFinished = false;
-		this.isFullScrean = false;
+		this.isFullScreen = false;
 	}
 
 	#styles() {
@@ -193,7 +193,7 @@ export default class AppPlay extends HTMLElement {
 		this.#setBtnLeaveEvent();
 		this.#onSocketCloseEvent();
 		this.#windowResizingEvent();
-		this.#FullScreanEvent();
+		this.#FullScreenEvent();
 		this.#btnFullScreenHover();
 		
 	}
@@ -313,22 +313,22 @@ export default class AppPlay extends HTMLElement {
 	}
 	
 	#changeFullScreenIcon() {
-		this.iconFullScrean.classList.remove("bi-fullscreen");
-		this.iconFullScrean.classList.remove("bi-fullscreen-exit");
-		if (this.isFullScrean)
-			this.iconFullScrean.classList.add("bi-fullscreen-exit");
+		this.iconFullScreen.classList.remove("bi-fullscreen");
+		this.iconFullScreen.classList.remove("bi-fullscreen-exit");
+		if (this.isFullScreen)
+			this.iconFullScreen.classList.add("bi-fullscreen-exit");
 		else
-			this.iconFullScrean.classList.add("bi-fullscreen");
+			this.iconFullScreen.classList.add("bi-fullscreen");
 
-		this.iconFullScrean.style.fontSize = `${this.canvas.width * 0.025}px`;
+		this.iconFullScreen.style.fontSize = `${this.canvas.width * 0.025}px`;
 	}
 
 	#changeFullScreenBtnPosition() {
-		this.btnFullScrean.style.right = `${this.canvas.width * 0.015}px`;
-		this.btnFullScrean.style.bottom = `${this.canvas.height * 0.015}px`;
-		if (this.isFullScrean) {
+		this.btnFullScreen.style.right = `${this.canvas.width * 0.015}px`;
+		this.btnFullScreen.style.bottom = `${this.canvas.height * 0.015}px`;
+		if (this.isFullScreen) {
 			const distBtwCanvasAndRightEdge = window.innerWidth - this.canvas.getBoundingClientRect().right;
-			this.btnFullScrean.style.right = `${distBtwCanvasAndRightEdge + this.canvas.width * 0.015}px`;
+			this.btnFullScreen.style.right = `${distBtwCanvasAndRightEdge + this.canvas.width * 0.015}px`;
 		}
 	}	
 
@@ -346,41 +346,40 @@ export default class AppPlay extends HTMLElement {
 
 	#windowResizingEvent() {
 		window.addEventListener("resize", () => {
-			if (!this.isFullScrean)
+			if (!this.isFullScreen)
 				this.#resizeGameBoard();
 		});
 	}
 
-	#FullScreanEvent() {
-		this.btnFullScrean.addEventListener("click", () => {
-			if (!this.isFullScrean && this.containerCanvas.requestFullscreen)
+	#FullScreenEvent() {
+		this.btnFullScreen.addEventListener("click", () => {
+			if (!this.isFullScreen && this.containerCanvas.requestFullscreen)
 				this.containerCanvas.requestFullscreen();
-			if (this.isFullScrean && document.exitFullscreen)
+			if (this.isFullScreen && document.exitFullscreen)
 				document.exitFullscreen();
 		});
 
 		document.addEventListener("fullscreenchange", () => {
 			if (document.fullscreenElement)
-				this.isFullScrean = true;
+				this.isFullScreen = true;
 			else {
-				this.isFullScrean = false;
+				this.isFullScreen = false;
 				this.#resizeGameBoard();
 			}
 			this.#updateFullScreenButton();
-			this.game.setIsFullScreen(this.isFullScrean);
+			this.game.setIsFullScreen(this.isFullScreen);
 		});
 	}
 
 	#btnFullScreenHover() {
-		this.btnFullScrean.addEventListener('mouseover', () => {
-			this.iconFullScrean.style.fontSize = `${this.canvas.width * 0.028}px`;
+		this.btnFullScreen.addEventListener('mouseover', () => {
+			this.iconFullScreen.style.fontSize = `${this.canvas.width * 0.028}px`;
 		});
 		
-		this.btnFullScrean.addEventListener('mouseout', () => {
-			this.iconFullScrean.style.fontSize = `${this.canvas.width * 0.025}px`;
+		this.btnFullScreen.addEventListener('mouseout', () => {
+			this.iconFullScreen.style.fontSize = `${this.canvas.width * 0.025}px`;
 		});
 	}
-	
 }
 
 customElements.define("app-play", AppPlay);
