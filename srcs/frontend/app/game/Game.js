@@ -98,7 +98,6 @@ export default class Game {
 	}
 
 	#animate() {
-		//console.log("animacao here");
 		this.#drawAll();
 		this.animation = window.requestAnimationFrame(this.#animate.bind(this));
 		if (this.winnerUsername)
@@ -107,7 +106,6 @@ export default class Game {
 
 	#drawAll() {
 		this.#drawField();
-		this.#drawBall(this.gameData.ball.x, this.gameData.ball.y);
 		this.#drawPaddle(this.gameData.paddle_left_pos, "left");
 		this.#drawPaddle(this.gameData.paddle_right_pos, "rigth");
 		this.#drawScore(this.gameData.player_1_score, "left");
@@ -115,6 +113,7 @@ export default class Game {
 		this.#drawStartCounter();
 		this.#drawWinner();
 		this.#drawPlayers();
+		this.#drawBall(this.gameData.ball.x, this.gameData.ball.y);
 	}
 
 	#drawField() {
@@ -132,7 +131,7 @@ export default class Game {
 
 	#drawScore(score, side) {
 		if (!score && !side)
-        	return ;
+			return ;
 
 		this.ctx.font = `${this.scoreFont}px VT323`;
 		this.ctx.fillStyle = this.colors.score;
@@ -225,18 +224,27 @@ export default class Game {
 		this.ctx.fillText(`${this.player2}`, pos.x, pos.y);
 	}
 
-	// Criar função que calcula o tamanho da palavra
-	#calculatePlayersPosition(playerName, side) {
-		this.ctx.font = `${this.width * 0.05}px VT323`;
-		const metrics = this.ctx.measureText(`${playerName}`);
+	#getWordHalfDimensions(word, fontSize) {
+		this.ctx.font = `${fontSize}px VT323`;
+		const metrics = this.ctx.measureText(`${word}`);
 		const halfTextHeight = metrics.actualBoundingBoxAscent / 2;
 		const halfTextWidth = metrics.width / 2;
-		let y = (this.height / 10) + halfTextHeight;
+		return {
+			halfTextWidth: halfTextWidth,
+			halfTextHeight: halfTextHeight
+		}
+	}
+
+	#calculatePlayersPosition(playerName, side) {
+		let word = this.#getWordHalfDimensions(playerName, this.width * 0.05);
+		let y = (this.height / 10) + word.halfTextHeight;
 		let x;
+
 		if (side == "left")
-			x = (this.width / 4) - halfTextWidth;
+			x = (this.width / 4) - word.halfTextWidth;
 		else
-			x = (this.width / 4) * 3 - halfTextWidth;
+			x = (this.width / 4) * 3 - word.halfTextWidth;
+
 		return {
 			x: x,
 			y: y
@@ -244,17 +252,14 @@ export default class Game {
 	}
 
 	#calculateScorePosition(side) {
-		this.ctx.font = `${this.scoreFont}px VT323`;
-		const metrics = this.ctx.measureText("5");
-		const halfTextHeight = metrics.actualBoundingBoxAscent / 2;
-		const halfTextWidth = metrics.width / 2;
-		let y = (this.height / 2) + halfTextHeight;
+		let word = this.#getWordHalfDimensions(5, this.scoreFont);
+		let y = (this.height / 2) + word.halfTextHeight;
 		let x = 0;
 
 		if (side == "left")
-			x = (this.width / 4) - halfTextWidth;
+			x = (this.width / 4) - word.halfTextWidth;
 		else
-			x = (this.width / 4) * 3 - halfTextWidth;
+			x = (this.width / 4) * 3 - word.halfTextWidth;
 
 		return {
 			x: x,
@@ -263,12 +268,9 @@ export default class Game {
 	}
 
 	#calculateStartCounterPosition(value, fontSize) {
-		this.ctx.font = `${fontSize}px VT323`;
-		const metrics = this.ctx.measureText(`${value}`);
-		const halfTextHeight = metrics.actualBoundingBoxAscent / 2;
-		const halfTextWidth = metrics.width / 2;
-		let y = (this.height / 2) + halfTextHeight;
-		let x = (this.width / 2) - halfTextWidth;
+		let word = this.#getWordHalfDimensions(value, fontSize);
+		let y = (this.height / 2) + word.halfTextHeight;
+		let x = (this.width / 2) - word.halfTextWidth;
 
 		return {
 			x: x,
@@ -277,12 +279,9 @@ export default class Game {
 	}
 
 	#calculateStartWinnerPosition(value, fontSize) {
-		this.ctx.font = `${fontSize}px VT323`;
-		const metrics = this.ctx.measureText(`${value}`);
-		const halfTextHeight = metrics.actualBoundingBoxAscent / 2;
-		const halfTextWidth = metrics.width / 2;
-		let y = (this.height / 4) + halfTextHeight;
-		let x = (this.width / 2) - halfTextWidth;
+		let word = this.#getWordHalfDimensions(value, fontSize);
+		let y = (this.height / 4) + word.halfTextHeight;
+		let x = (this.width / 2) - word.halfTextWidth;
 
 		return {
 			x: x,
