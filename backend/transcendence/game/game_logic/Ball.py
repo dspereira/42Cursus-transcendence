@@ -100,10 +100,7 @@ class Ball:
 		self.__set_angle(self.__get_start_angle())
 
 	def __set_angle(self, angle_deg):
-		if angle_deg < 0:
-			angle_deg += 360
-		elif angle_deg > 360:
-			angle_deg -= 360
+		angle_deg = self.__get_normalized_angle(angle_deg)
 		self.angle_deg = angle_deg
 		self.angle_rad = math.radians(angle_deg)
 		self.__set_trig_values(self.angle_rad)
@@ -117,9 +114,9 @@ class Ball:
 
 	def __set_new_paddle_angle(self, hit_percentage):
 		if self.angle_deg > 90 and self.angle_deg < 270:
-			result_angle = 420 + (hit_percentage/100) * (300 - 420)
+			result_angle = 395 + (hit_percentage/100) * (325 - 395)
 		else:
-			result_angle = 120 + (hit_percentage/100) * (240 - 120)
+			result_angle = 145 + (hit_percentage/100) * (215 - 145)
 		self.__set_angle(result_angle)
 
 	def __get_start_angle(self):
@@ -128,3 +125,12 @@ class Ball:
 		while start_angle == 180 or start_angle == 360:
 			start_angle = random.randint(chosen_interval[0], chosen_interval[1])
 		return start_angle
+
+	def __get_normalized_angle(self, angle):
+		result_angle = angle
+		while result_angle < 0 or result_angle > 360:
+			if result_angle < 0:
+				result_angle += 360
+			elif result_angle > 360:
+				result_angle -= 360
+		return result_angle
