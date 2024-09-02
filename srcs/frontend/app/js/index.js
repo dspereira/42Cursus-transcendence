@@ -35,9 +35,11 @@ stateManager.addEvent("chatSocket", (stateValue) => {
 	}
 	else if (stateValue == "open") {
 		chatWebSocket.connect(stateManager.getState("friendChatId"));
-		let elm = document.querySelector("#text-area");
-		if (elm && elm.value)
-			chatWebSocket.send(elm.value);
+		if (stateManager.getState("isChatMsgReadyToSend")) {
+			let elm = document.querySelector("#text-area");
+			if (elm && elm.value)
+				chatWebSocket.send(elm.value);
+		}
 	}
 });
 
@@ -55,7 +57,8 @@ const setupLoginStateChecker  = function(intervalSeconds) {
 }
 
 const startApp = function() {
-	setupLoginStateChecker(5);
+	//setupLoginStateChecker(5);
+	setupLoginStateChecker(30);
 	router();
 	setHistoryEvents();
 }
