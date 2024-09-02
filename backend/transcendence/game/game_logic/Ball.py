@@ -97,8 +97,7 @@ class Ball:
 		self.__set_angle(360 - self.angle_deg)
 
 	def __set_start_angle(self):
-		chosen_interval = random.choice(ANGLES_INTERVALS)
-		self.__set_angle(random.randint(chosen_interval[0], chosen_interval[1]))
+		self.__set_angle(self.__get_start_angle())
 
 	def __set_angle(self, angle_deg):
 		if angle_deg < 0:
@@ -122,3 +121,16 @@ class Ball:
 		else:
 			result_angle = 120 + (hit_percentage/100) * (240 - 120)
 		self.__set_angle(result_angle)
+
+	def __get_start_angle(self):
+		chosen_interval = random.choice(ANGLES_INTERVALS)
+		start_angle = 180
+		while start_angle == 180 or start_angle == 360:
+			start_angle = random.randint(chosen_interval[0], chosen_interval[1])
+		
+		if start_angle == 180 or start_angle == 360:
+			print("\n------------------------------------------------------------------")
+			print(f"START ANGLE -> {start_angle}")
+			print("------------------------------------------------------------------\n")
+
+		return start_angle
