@@ -226,6 +226,8 @@ export default class AppPlay extends HTMLElement {
 	#initGame() {
 		this.#getGameColorPallet();
 		this.#setGameStatusEvent();
+		this.game.setPlayers(this.data.hostUsername, this.data.guestUsername);
+		this.game.setIsFullScreen(false);
 		this.game.start();
 		this.#keyEvents();
 		this.#setGameTimeToStartEvent();
@@ -240,7 +242,7 @@ export default class AppPlay extends HTMLElement {
 		5: Forest Retreat
 	*/
 	#getGameColorPallet() {
-		const queryParam = `?id=${2}`;
+		const queryParam = `?id=${1}`;
 
 		callAPI("GET", `http://127.0.0.1:8000/api/game/color_pallet/${queryParam}`, null, (res, data) => {
 			if (res.ok) {
@@ -365,6 +367,7 @@ export default class AppPlay extends HTMLElement {
 				this.#resizeGameBoard();
 			}
 			this.#updateFullScreenButton();
+			this.game.setIsFullScreen(this.isFullScrean);
 		});
 	}
 

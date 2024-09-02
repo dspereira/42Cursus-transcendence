@@ -25,7 +25,9 @@ export default class Game {
 		this.lastStartCounterValue = null;
 		this.winnerUsername = null;
 		this.surrender = null;
-
+		this.player1 = null;
+		this.player2 = null;
+		this.isFullScreen = null;
 		this.scoreFont = this.width * 0.25;
 		this.startCounterFontStore = this.width * 0.25;
 		this.startCounterFont = this.startCounterFontStore;
@@ -60,6 +62,15 @@ export default class Game {
 
 	setColorPallet(color_pallet) {
 		this.colors = color_pallet;
+	}
+
+	setPlayers(player1, player2) {
+		this.player1 = player1;
+		this.player2 = player2;
+	}
+
+	setIsFullScreen(isFullScreen) {
+		this.isFullScreen = isFullScreen;
 	}
 
 	start() {
@@ -103,13 +114,13 @@ export default class Game {
 		this.#drawScore(this.gameData.player_2_score, "rigth");
 		this.#drawStartCounter();
 		this.#drawWinner();
+		this.#drawPlayers();
 	}
 
 	#drawField() {
 		this.ctx.fillStyle = this.colors.ground;
 		this.ctx.fillRect(0, 0, this.width, this.height);
 		this.ctx.fillRect(100, 100, this.width, 2);
-
 		this.ctx.setLineDash([5, 5]);
 		this.ctx.strokeStyle = this.colors.middleLine;
 		this.ctx.beginPath();
@@ -201,6 +212,34 @@ export default class Game {
 			const msg = "OPPONENT LEFT THE GAME";
 			pos = this.#calculateStartWinnerPosition(msg, fontSurrender);
 			this.ctx.fillText(msg, pos.x, pos.y + this.height * 0.45);
+		}
+	}
+
+	#drawPlayers() {
+		if (!this.isFullScreen)
+			return ;
+		this.ctx.fillStyle = this.colors.score;
+		let pos = this.#calculatePlayersPosition(this.player1, "left");
+		this.ctx.fillText(`${this.player1}`, pos.x, pos.y);
+		pos = this.#calculatePlayersPosition(this.player2, "right");
+		this.ctx.fillText(`${this.player2}`, pos.x, pos.y);
+	}
+
+	// Criar função que calcula o tamanho da palavra
+	#calculatePlayersPosition(playerName, side) {
+		this.ctx.font = `${this.width * 0.05}px VT323`;
+		const metrics = this.ctx.measureText(`${playerName}`);
+		const halfTextHeight = metrics.actualBoundingBoxAscent / 2;
+		const halfTextWidth = metrics.width / 2;
+		let y = (this.height / 10) + halfTextHeight;
+		let x;
+		if (side == "left")
+			x = (this.width / 4) - halfTextWidth;
+		else
+			x = (this.width / 4) * 3 - halfTextWidth;
+		return {
+			x: x,
+			y: y
 		}
 	}
 
