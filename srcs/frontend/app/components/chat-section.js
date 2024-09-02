@@ -321,8 +321,8 @@ export default class ChatSection extends HTMLElement {
 	#sendMessage() {
 		const submitForm = this.html.querySelector("#msg-submit");
 		submitForm.addEventListener("submit", (event) => {
-			event.preventDefault();
-			let input = this.html.querySelector("#text-area");
+			event.preventDefault();	
+			stateManager.setState("isChatMsgReadyToSend", true);
 			const msg = this.#getMessageToSend();
 			if (!msg)
 				return ;
