@@ -1,4 +1,4 @@
-const globalEvents = ["isLoggedIn", "chatSocket", "tournamentId"];
+const globalEvents = ["isLoggedIn", "chatSocket", "tournamentId", "idBrowser"];
 
 class StateManager {
 
