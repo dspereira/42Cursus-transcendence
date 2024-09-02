@@ -127,10 +127,4 @@ class Ball:
 		start_angle = 180
 		while start_angle == 180 or start_angle == 360:
 			start_angle = random.randint(chosen_interval[0], chosen_interval[1])
-		
-		if start_angle == 180 or start_angle == 360:
-			print("\n------------------------------------------------------------------")
-			print(f"START ANGLE -> {start_angle}")
-			print("------------------------------------------------------------------\n")
-
 		return start_angle
