@@ -1,3 +1,4 @@
+from .logic_utils import get_position_percentage
 from datetime import datetime
 from .const_vars import *
 
@@ -5,8 +6,8 @@ class Paddle:
 	def __init__(self, side):
 		self.screen_height = SCREEN_HEIGHT
 		self.screen_width = SCREEN_WIDTH
-		self.height = 50
-		self.width = 4
+		self.height = PADDLE_HEIGHT
+		self.width = PADDLE_WIDTH
 		self.wall_distance = 10
 		self.half_height = self.height / 2
 		self.half_width = self.width / 2
@@ -18,7 +19,7 @@ class Paddle:
 		self.last_time = None
 
 	def get_position(self):
-		return self.y - self.half_height
+		return get_position_percentage(self.y - self.half_height, SCREEN_HEIGHT)
 
 	def update(self):
 		if self.state:
