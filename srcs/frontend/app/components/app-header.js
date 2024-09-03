@@ -48,14 +48,6 @@ header {
 	cursor: pointer;
 }
 
-.bell {
-	font-size: 22px;
-}
-
-.notif-bell {
-	cursor: pointer;
-}
-
 .number {
 	position: fixed;
 	right: 112px;
@@ -80,12 +72,7 @@ const getHtml = function(data) {
 				<span class="logo-text"><strong>BlitzPong</strong></span>
 			</div>
 		</div>
-
 		<div class="right-side">
-			<div class="notif-bell">
-				<span class="number">99</span>
-				<i class="bell bi bi-bell"></i>
-			</div>
 			<img src="${data.userImage}" class="profile-photo"  alt="avatar"/>
 		</div>
 	</header>
@@ -93,13 +80,8 @@ const getHtml = function(data) {
 	return html;
 }
 
-const bellIcon = {
-    selected: "bi-bell-fill",
-    unselected: "bi-bell",
-};
-
 export default class AppHeader extends HTMLElement {
-	static observedAttributes = ["bell"];
+	static observedAttributes = [];
 
 	constructor() {
 		super();
@@ -116,8 +98,7 @@ export default class AppHeader extends HTMLElement {
 	}
 
 	attributeChangedCallback(name, oldValue, newValue) {
-		/*if (name === "bell")
-			this.#changeBellIcon(newValue);*/
+
 	}
 
 	#initComponent() {
@@ -149,16 +130,8 @@ export default class AppHeader extends HTMLElement {
 
 	#scripts() {
 		this.#getUserImage();
-		this.#addPageRedirection("notifications", "notif-bell");
 		this.#addPageRedirection("profile", "profile-photo");
 		this.#addPageRedirection("home", "logo");
-	}
-
-	#changeBellIcon(newValue) {
-		const bell = this.html.querySelector(".bell");
-		bell.classList.remove(bellIcon["selected"]);
-		bell.classList.remove(bellIcon["unselected"]);
-		bell.classList.add(bellIcon[newValue]);
 	}
 
 	#addPageRedirection(page, classIdentifier) {
