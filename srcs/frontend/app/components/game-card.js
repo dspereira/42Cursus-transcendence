@@ -7,12 +7,12 @@ const styles = `
 		display: flex;
 		justify-content: space-between;
 		align-items: center;
-		position: relative;
 		margin-left: 30px;
 		margin-right: 30px;
 		margin-bottom: 20px;
 		height: 80px;
 		border-radius: 10px;
+		width; 100%;
 	}
 
 	.game-win {
@@ -36,6 +36,7 @@ const styles = `
 		width: 50px;
 		height: 50px;
 		clip-path: circle();
+		object-fit: cover;
 	}
 
 	.username {
@@ -57,23 +58,41 @@ const styles = `
 	.date {
 		font-size: 14px;
 	}
+	
+	.left {
+		display: flex;
+		justify-content: flex-start;
+		width: 33.33%;
+	}
+
+	.center {
+		display: flex;
+		justify-content: center;
+		width: 33.33%;
+	}
+
+	.right {
+		display: flex;
+		justify-content: flex-end;
+		width: 33.33%;
+	}
 `;
 
 const getHtml = function(data) {
 	const html = `
 		<div class="game-grid-container">
-			<div class="player-container">
-				<img class="profile-picture" src=${data.player1_image}>
-				<h1 class="username">${data.player1}</h1>
-			</div>
-			<div class="score-container">
-				<h1 class="date">${data.date}</h1>
-				<h1 class="score">${data.player1_score} - ${data.player2_score}</h1>
-			</div>
-			<div class="player-container">
-			<h1 class="username">${data.player2}</h1>
-			<img class="profile-picture" src=${data.player2_image}>
-			</div>
+				<div class="player-container left">
+					<img class="profile-picture" src=${data.player1_image}>
+					<h1 class="username">${data.player1}</h1>
+				</div>
+				<div class="score-container center">
+					<h1 class="date">${data.date}</h1>
+					<h1 class="score">${data.player1_score} - ${data.player2_score}</h1>
+				</div>
+				<div class="player-container right">
+					<h1 class="username">${data.player2}</h1>
+					<img class="profile-picture" src=${data.player2_image}>
+				</div>
 		</div>
 	`;
 
