@@ -1,4 +1,5 @@
 import chatWebSocket from "../js/ChatWebSocket.js";
+import stateManager from "../js/StateManager.js";
 
 const refreshUrl = "http://127.0.0.1:8000/api/auth/refresh_token";
 const refreshMethod = "POST";
@@ -9,7 +10,11 @@ export const callAPI = async function (method, url, data, callback_sucess, callb
 	if (!resApi.error && resApi.data && resApi.res) {
 		if (resApi.res.status == 401 || ("logged_in" in resApi.data && resApi.data.logged_in == false)) {
 			let resRefresh = await fetchApi(refreshMethod, refreshUrl, null);
+			if (!resRefresh.res.ok || resRefresh.error)
+				resRefresh = await fetchApi(refreshMethod, refreshUrl, null);
 			if (resRefresh.data && resRefresh.data.message == "success") {
+				stateManager.setState("hasRefreshToken", true);
+				stateManager.setState("hasRefreshToken", false);
 				chatWebSocket.close();
 				resApi = await fetchApi(method, url, data);
 			}

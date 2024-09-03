@@ -1,27 +1,56 @@
-import {redirect} from "../js/router.js";
 import { adjustContent } from "../utils/adjustContent.js";
 import stateManager from "../js/StateManager.js";
 import { callAPI } from "../utils/callApiUtils.js";
+import { callAPI } from "../utils/callApiUtils.js";
 
-const styles = ``;
+const styles = `
+.border-separation {
+	width: 60%;
+	margin: 0 auto;
+	margin-top: 25px;
+	margin-bottom: 25px;
+	border-bottom: 3px solid #EEEDEB;
+}
+
+.create-tourney {
+	display: flex;
+	justify-content: center;
+}
+
+.btn-create-tourney {
+	padding: 10px 70px 10px 70px;
+}
+
+.exit-tourney {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
+.hide {
+	display: none;
+}
+
+`;
 
 const getHtml = function(data) {
 	const html = `
-		<app-header></app-header>
-		<side-panel selected="tournaments" language=${data.language}></side-panel>
-		<div class="content content-small">
-			<h1>Page Tournaments</h1>
-			<p>
-			Rump drumstick tri-tip alcatra. Flank ground round pastrami beef short ribs pork belly jowl. Spare ribs beef ribs andouille, frankfurter short loin shankle venison salami turducken. Beef ribs alcatra capicola shoulder pork loin sirloin biltong turkey pancetta flank pork andouille bacon. Doner hamburger shoulder tenderloin flank prosciutto corned beef. Chislic tongue doner porchetta pastrami sirloin filet mignon leberkas brisket ribeye pork chop shank cupim corned beef sausage.
-			</p>
-			<p>
-			Rump drumstick tri-tip alcatra. Flank ground round pastrami beef short ribs pork belly jowl. Spare ribs beef ribs andouille, frankfurter short loin shankle venison salami turducken. Beef ribs alcatra capicola shoulder pork loin sirloin biltong turkey pancetta flank pork andouille bacon. Doner hamburger shoulder tenderloin flank prosciutto corned beef. Chislic tongue doner porchetta pastrami sirloin filet mignon leberkas brisket ribeye pork chop shank cupim corned beef sausage.
-			</p>
+	<app-header></app-header>
+	<side-panel selected="tournaments" language=${data.language}></side-panel>
+	<div class="content content-small">
+		<div class="btn-create-tourney-section hide">
+			<div class="create-tourney">
+				<button type="button" class="btn btn-primary btn-create-tourney">Create Tornement</button>
+			</div>
+			<div class="border-separation"></div>
 		</div>
+		<div class="tourney-section"></div>
+		<div class="invites-received"></div>
+		<div class="exit-tourney hide"><button type="button" class="btn btn-primary btn-exit-tourney">Exit Tournament</button></div>
+	</div>
 	`;
 	return html;
 }
-
 
 const title = "Tournaments";
 
@@ -67,6 +96,10 @@ export default class PageTournaments extends HTMLElement {
 			this.styles.textContent = this.#styles();
 			this.html.classList.add(`${this.elmtId}`);
 		}
+		this.btnCreateTourneySection = this.html.querySelector(".btn-create-tourney-section");
+		this.tourneySection = this.html.querySelector(".tourney-section");
+		this.invitesReceived = this.html.querySelector(".invites-received");
+		this.exitTournament = this.html.querySelector(".exit-tourney");
 	}
 
 	#styles() {
@@ -88,7 +121,106 @@ export default class PageTournaments extends HTMLElement {
 
 	#scripts() {
 		adjustContent(this.html.querySelector(".content"));
+		this.#createTournamentEvent();
+		this.#checkActiveTournamentCall();
+		this.#setStateEvent();
+		this.#setExitTtourneyBtn();
+	}
+
+	#createTournamentEvent() {
+		const btn = this.html.querySelector(".btn-create-tourney");
+		btn.addEventListener("click", () => {
+			callAPI("POST", `http://127.0.0.1:8000/api/tournament/`, null, (res, data) => {					
+				if (res.ok && data) {
+					stateManager.setState("tournamentId", data.tournament_id);
+					this.btnCreateTourneySection.classList.add("hide");
+					this.tourneySection.innerHTML = `
+					<tourney-lobby
+						tournament-id="${data.tournament_id}"
+						owner-id="${stateManager.getState("userId")}"
+					></tourney-lobby>`;
+					this.invitesReceived.innerHTML = "";
+				}
+			});
+		});
+	}
+
+	#checkActiveTournamentCall() {
+		callAPI("GET", `http://127.0.0.1:8000/api/tournament/active-tournament/`, null, (res, data) => {
+			if (res.ok && data && data.tournament) {
+				const torneyData = data.tournament;
+				stateManager.setState("tournamentId", torneyData.id);
+				this.btnCreateTourneySection.classList.add("hide");
+				this.exitTournament.classList.add("hide");
+				if (torneyData.status == "created") {
+					this.tourneySection.innerHTML = `
+					<tourney-lobby
+						tournament-id="${torneyData.id}"
+						owner-id="${torneyData.owner}"
+					></tourney-lobby>`;
+					this.invitesReceived.innerHTML = "";
+				}
+				else if (torneyData.status == "active") {
+					this.tourneySection.innerHTML = `<tourney-graph tournament-id="${torneyData.id}" tournament-name="${torneyData.name}"></tourney-graph>`;
+					this.invitesReceived.innerHTML = "";
+				}
+			}
+			else if (res.ok && data && !data.tournament) {
+				this.btnCreateTourneySection.classList.remove("hide");
+				this.exitTournament.classList.add("hide");
+				this.tourneySection.innerHTML = "";
+				this.invitesReceived.innerHTML = "<tourney-invites-received></tourney-invites-received>";
+			}
+		});
+
+		const tournamentId = stateManager.getState("tournamentId");
+		if (tournamentId)
+			this.#checkTournamentFinished(tournamentId);
+	}
+
+	#setStateEvent() {
+		stateManager.addEvent("isTournamentChanged", (stateValue) => {
+			if (stateValue) {
+				this.#checkActiveTournamentCall();
+				stateManager.setState("isTournamentChanged", false);
+			}
+		});
+
+		stateManager.addEvent("tournamentGameLobby", (stateValue) => {
+			if (stateValue) {
+				this.btnCreateTourneySection.classList.add("hide");
+				this.tourneySection.innerHTML = `<app-lobby 
+					lobby-id=${stateValue} 
+					is-tournament="true"
+				></app-lobby>`;
+				this.invitesReceived.innerHTML = "";		
+				stateManager.setState("tournamentGameLobby", null);
+			}
+		});
+	}
+
+	#checkTournamentFinished(tournamentId) {
+		callAPI("GET", `http://127.0.0.1:8000/api/tournament/is-finished/?id=${tournamentId}`, null, (res, data) => {
+			if (res.ok && data && data.is_finished) {
+				this.btnCreateTourneySection.classList.add("hide");
+				this.tourneySection.innerHTML = `<tourney-graph tournament-id="${tournamentId}" tournament-name="${data.tournament_name}"></tourney-graph>`;
+				this.invitesReceived.innerHTML = "";
+				this.exitTournament.classList.remove("hide");
+			}
+		});
+	}
+
+	#setExitTtourneyBtn() {
+		const btn = this.html.querySelector(".btn-exit-tourney");
+		if (!btn)
+			return ;
+		btn.addEventListener("click", () => {
+			stateManager.setState("tournamentId", null);
+			stateManager.setState("isTournamentChanged", true);
+		});
 	}
 }
 
 customElements.define(PageTournaments.componentName, PageTournaments);
+
+

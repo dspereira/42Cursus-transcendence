@@ -167,6 +167,12 @@ const getHtml = function(data) {
 							<span class="icon-text">${data.langDict.chat}</span>
 						</span>
 					</button>
+					<button id="game">
+						<span>
+							<i class="icon bi bi-controller"></i>
+							<span class="icon-text">Game</span>
+						</span>
+					</button>
 					<button id="tournaments">
 						<span>
 							<i class="icon bi bi-trophy"></i>
@@ -217,7 +223,8 @@ const navigation = [
 	"logout",
 	"configurations",
 	"friends",
-	"play"
+	"play",
+	"game"
 ]
 
 const selectedIcon  = {
@@ -227,7 +234,8 @@ const selectedIcon  = {
 	tournaments: "bi-trophy-fill",
 	configurations: "bi-gear-fill",
 	friends: "bi-people-fill",
-	play: "bi-dpad-fill"
+	play: "bi-dpad-fill",
+	game: "bi-controller"
 }
 
 const deselectedIcon = {
@@ -237,7 +245,8 @@ const deselectedIcon = {
 	tournaments: "bi-trophy",
 	configurations: "bi-gear",
 	friends: "bi-people",
-	play: "bi-dpad"
+	play: "bi-dpad",
+	game: "bi-controller"
 }
 
 export default class SidePanel extends HTMLElement {

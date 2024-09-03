@@ -9,7 +9,7 @@ this.socket.CLOSED
 this.socket.CLOSING
 */
 
-const webSockettUrl = "ws://127.0.0.1:8000/game/";
+const webSocketUrl = "ws://127.0.0.1:8000/game/";
 
 class GameWebSocket {
 
@@ -21,18 +21,20 @@ class GameWebSocket {
 		this.socket = null;
 	}
 
-	open(game_id) {
+	open(lobbyId) {
 		if (this.isClose()) {
-			this.socket = new WebSocket(webSockettUrl + game_id + "/");
+			if (!lobbyId)
+				lobbyId = "";
+			const url = `${webSocketUrl}${lobbyId}/`;
+			this.socket = new WebSocket(url);
 			if (this.socket)
 				this.#setSocketCallbacks();
 		}
 	}
 
 	close() {
-		if (this.isOpen()) {
+		if (this.isOpen())
 			this.socket.close();
-		}
 	}
 
 	send(key, status) {
@@ -45,10 +47,18 @@ class GameWebSocket {
 		}
 	}
 
-	ready() {
+	updateReadyStatus() {
 		if (this.isOpen()) {
 			this.socket.send(JSON.stringify({
-				type: "ready"
+				type: "update_ready_status"
+			}));
+		}
+	}
+
+	refreshToken() {
+		if (this.isOpen()) {
+			this.socket.send(JSON.stringify({
+				type: "refresh_token"
 			}));
 		}
 	}
@@ -79,13 +89,23 @@ class GameWebSocket {
 		this.socket.onmessage = (event) => {
 			if (event.data) {
 				const data = JSON.parse(event.data);
-				stateManager.setState("gameStatus", data.game_state);
+				if (data.type == "users_info")
+					stateManager.setState("lobbyStatus", data.users_info);
+				else if (data.type == "game_state")
+					stateManager.setState("gameStatus", data.game_state);
+				else if (data.type == "time_to_start")
+					stateManager.setState("gameTimeToStart", data.time);
+				else if (data.type == "finished_game")
+					stateManager.setState("gameWinner", data.finish_data);
+				else if (data.type == "end_lobby_session")
+					stateManager.setState("hasLobbyEnded", true);
 			}
 		};
 
 		this.socket.onclose = (event) => {
 			console.log('WebSocket game close: ', event);
 			this.socket = null;
+			stateManager.setState("gameSocket", "closed");
 		};
 	}
 }

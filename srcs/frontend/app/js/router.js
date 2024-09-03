@@ -2,7 +2,8 @@
 import PageHome from "../page-components/page-home.js";
 import PageProfile from "../page-components/page-profile.js";
 import PageChat from "../page-components/page-chat.js";
-import PageTournaments from "../page-components/page-tournaments.js";
+//import PageTournaments from "../page-components/page-tournaments_old.js";
+import  PageTournaments from "../page-components/page-tournaments.js";
 import PageNotifications from "../page-components/page-notifications.js";
 import PageConfigs from "../page-components/page-configs.js";
 import PageLogin from "../page-components/page-login.js";
@@ -12,9 +13,9 @@ import PageInitial from "../page-components/page-initial.js";
 import PageLogout from "../page-components/page-logout.js";
 import PageFriends from "../page-components/page-friends.js";
 import PagePlay from "../page-components/page-play.js";
+import PageGame from "../page-components/page-game.js";
 
 // Components
-import AppTest from "../components/app-test.js";
 import AppHeader from "../components/app-header.js";
 import LoginForm from "../components/login-form.js";
 import SignupForm from "../components/signup-form.js";
@@ -25,7 +26,17 @@ import AppFriends from "../components/app-friends.js";
 import UserCard from "../components/user-card.js";
 import ChatFriendsList from "../components/chat-friends-list.js";
 import ChatSection from "../components/chat-section.js";
-import AppGame from "../components/app-game.js";
+import AppPlay from "../components/app-play.js";
+import GameInviteRequest from "../components/game-invite-request.js";
+import GameInviteCard from "../components/game-invite-card.js";
+import GameInviteSend from "../components/game-invite-send.js";
+import GameInviteCard1 from "../components/game-invite-card1.js";
+import AppLobby from "../components/app-lobby.js";
+import TourneyGraph from "../components/tourney-graph.js";
+import TourneyLobby from "../components/tourney-lobby.js";
+import TourneyInviter from "../components/tourney-inviter.js";
+import TourneyInvitesReceived from "../components/tourney-invites-received.js";
+import TourneyInviteCard from "../components/tourney-invite-card.js";
 
 // Others
 import stateManager from "./StateManager.js";
@@ -47,7 +58,8 @@ const routes = {
 	"/notifications"	: PageNotifications.componentName,
 	"/configurations"	: PageConfigs.componentName,
 	"/friends"			: PageFriends.componentName,
-	"/play"				: PagePlay.componentName
+	"/play"				: PagePlay.componentName,
+	"/game"				: PageGame.componentName,
 }
 
 const publicRoutes = ["/initial", "/login", "/signup"];
