@@ -2,7 +2,7 @@
 import PageHome from "../page-components/page-home.js";
 import PageProfile from "../page-components/page-profile.js";
 import PageChat from "../page-components/page-chat.js";
-import  PageTournaments from "../page-components/page-tournaments.js";
+import PageTournaments from "../page-components/page-tournaments.js";
 import PageConfigs from "../page-components/page-configs.js";
 import PageLogin from "../page-components/page-login.js";
 import PageSignup from "../page-components/page-signup.js";
@@ -13,6 +13,7 @@ import PageFriends from "../page-components/page-friends.js";
 import PagePlay from "../page-components/page-play.js";
 
 // Components
+
 import AppHeader from "../components/app-header.js";
 import LoginForm from "../components/login-form.js";
 import SignupForm from "../components/signup-form.js";
