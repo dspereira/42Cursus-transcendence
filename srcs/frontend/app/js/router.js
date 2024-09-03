@@ -13,7 +13,6 @@ import PageInitial from "../page-components/page-initial.js";
 import PageLogout from "../page-components/page-logout.js";
 import PageFriends from "../page-components/page-friends.js";
 import PagePlay from "../page-components/page-play.js";
-import PageGame from "../page-components/page-game.js";
 
 // Components
 import AppHeader from "../components/app-header.js";
@@ -59,7 +58,6 @@ const routes = {
 	"/configurations"	: PageConfigs.componentName,
 	"/friends"			: PageFriends.componentName,
 	"/play"				: PagePlay.componentName,
-	"/game"				: PageGame.componentName,
 }
 
 const publicRoutes = ["/initial", "/login", "/signup"];
