@@ -1,7 +1,6 @@
 import { router, setHistoryEvents } from "./router.js"
 import stateManager from "./StateManager.js";
 import chatWebSocket from "./ChatWebSocket.js";
-//import notifyWebSocket from "./NotifyWebSocket.js";
 import checkUserLoginState from "../utils/checkUserLoginState.js";
 
 stateManager.addEvent("isLoggedIn", (stateValue) => {
@@ -9,11 +8,9 @@ stateManager.addEvent("isLoggedIn", (stateValue) => {
 	if (stateValue) {
 		stateManager.setState("idBrowser", Math.floor(Math.random() * 100000000));
 		chatWebSocket.open();
-		//notifyWebSocket.open();
 	}
 	else {
 		chatWebSocket.close();
-		//notifyWebSocket.close();
 	}
 });
 
@@ -24,8 +21,6 @@ stateManager.addEvent("chatSocket", (stateValue) => {
 	if (stateValue == "closed") {
 		checkUserLoginState((state, userId) => {
 			stateManager.setState("userId", userId);
-			//if (state != stateManager.getState("isLoggedIn"))
-			//	stateManager.setState("isLoggedIn", state);
 			if (state)
 				chatWebSocket.open();
 		});

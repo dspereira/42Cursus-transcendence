@@ -44,10 +44,8 @@ import checkUserLoginState from "../utils/checkUserLoginState.js";
 //  /user/:id devo poder configurar neste formato
 //  /play/:id devo poder configurar neste formato
 const routes = {
-	//""					: PageHome.componentName,
 	"/initial"			: PageInitial.componentName,
 	"/"					: PageHome.componentName,
-	//"/index.html"		: PageHome.componentName,
 	"/login"			: PageLogin.componentName,
 	"/signup"			: PageSignup.componentName,
 	"/logout"			: PageLogout.componentName,
