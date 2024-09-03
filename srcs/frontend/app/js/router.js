@@ -2,9 +2,7 @@
 import PageHome from "../page-components/page-home.js";
 import PageProfile from "../page-components/page-profile.js";
 import PageChat from "../page-components/page-chat.js";
-//import PageTournaments from "../page-components/page-tournaments_old.js";
 import  PageTournaments from "../page-components/page-tournaments.js";
-import PageNotifications from "../page-components/page-notifications.js";
 import PageConfigs from "../page-components/page-configs.js";
 import PageLogin from "../page-components/page-login.js";
 import PageSignup from "../page-components/page-signup.js";
@@ -52,7 +50,6 @@ const routes = {
 	"/profile"			: PageProfile.componentName,
 	"/chat"				: PageChat.componentName,
 	"/tournaments"		: PageTournaments.componentName,
-	"/notifications"	: PageNotifications.componentName,
 	"/configurations"	: PageConfigs.componentName,
 	"/friends"			: PageFriends.componentName,
 	"/play"				: PagePlay.componentName,
