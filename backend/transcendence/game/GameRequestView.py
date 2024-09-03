@@ -41,6 +41,8 @@ class GameRequestView(View):
 			user = user_model.get(id=request.access_data.sub)
 			invites_list = req_data["invites_list"]
 			if user:
+				if not len(invites_list):
+					return JsonResponse({"message": f"Error: Please invite players to play!",}, status=409)
 				if has_already_games_accepted(user=user):
 					return JsonResponse({"message": f"Error: User is already playing a game!",}, status=409)
 				lobby_id = str(user.id)

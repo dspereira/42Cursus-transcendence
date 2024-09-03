@@ -1,16 +1,13 @@
 import { router, setHistoryEvents } from "./router.js"
 import stateManager from "./StateManager.js";
 import chatWebSocket from "./ChatWebSocket.js";
-import notifyWebSocket from "./NotifyWebSocket.js";
+//import notifyWebSocket from "./NotifyWebSocket.js";
 import checkUserLoginState from "../utils/checkUserLoginState.js";
-
-// Cada vez que o estado do evento altera entre true or false deve fechar ou abrir as ligações websockets
-
-stateManager.setState("idBrowser", Math.floor(Math.random() * 100000000000));
 
 stateManager.addEvent("isLoggedIn", (stateValue) => {
 	stateManager.cleanAllStatesAndEvents();
 	if (stateValue) {
+		stateManager.setState("idBrowser", Math.floor(Math.random() * 100000000));
 		chatWebSocket.open();
 		//notifyWebSocket.open();
 	}
@@ -35,9 +32,11 @@ stateManager.addEvent("chatSocket", (stateValue) => {
 	}
 	else if (stateValue == "open") {
 		chatWebSocket.connect(stateManager.getState("friendChatId"));
-		let elm = document.querySelector("#text-area");
-		if (elm && elm.value)
-			chatWebSocket.send(elm.value);
+		if (stateManager.getState("isChatMsgReadyToSend")) {
+			let elm = document.querySelector("#text-area");
+			if (elm && elm.value)
+				chatWebSocket.send(elm.value);
+		}
 	}
 });
 
