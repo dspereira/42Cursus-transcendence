@@ -60,7 +60,6 @@ header {
     font-size: 9px;
 	padding: 0px 2px 0px 2px;
 }
-
 `;
 
 const getHtml = function(data) {
@@ -73,7 +72,7 @@ const getHtml = function(data) {
 			</div>
 		</div>
 		<div class="right-side">
-			<img src="${data.userImage}" class="profile-photo"  alt="avatar"/>
+			<!--<img src="" class="profile-photo"  alt="avatar"/>-->
 		</div>
 	</header>
 	`;
@@ -89,11 +88,13 @@ export default class AppHeader extends HTMLElement {
 	}
 
 	connectedCallback() {
-		const userImage = stateManager.getState("userImage");
-		if (userImage)
-			this.data["userImage"] = userImage;
 		this.#initComponent();
 		this.#render();
+		
+		const userImage = stateManager.getState("userImage");
+		if (userImage)
+			this.#createImgTag(userImage);
+
 		this.#scripts();
 	}
 
@@ -130,27 +131,33 @@ export default class AppHeader extends HTMLElement {
 
 	#scripts() {
 		this.#getUserImage();
-		this.#addPageRedirection("profile", "profile-photo");
 		this.#addPageRedirection("home", "logo");
 	}
 
 	#addPageRedirection(page, classIdentifier) {
 		const elm = this.html.querySelector(`.${classIdentifier}`);
+		if (!elm)
+			return ;
 		if (page === "/home" || page === "home")
 			page = "";
 		elm.addEventListener("click", () => redirect(`/${page}`));		
 	}
 
+	#createImgTag(imageSrc) {
+		const elmHtml = this.html.querySelector(".right-side");
+		if (!elmHtml)
+			return ;
+		elmHtml.innerHTML = `<img src="${imageSrc}" class="profile-photo"  alt="avatar"/>`;
+		this.#addPageRedirection("profile", "profile-photo");
+	}
+
 	#getUserImage() {
 		callAPI("GET", "http://127.0.0.1:8000/api/profile/image", null, (res, data) => {
 			if (res.ok) {
-				const imageSaved = stateManager.getState("userImage");
-				const image = this.html.querySelector(".profile-photo");
-
-				if (image && data.image) {
-					if (imageSaved != data.image) {
+				if (data && data.image) {
+					if (stateManager.getState("userImage") != data.image) {
+						this.#createImgTag(data.image);
 						stateManager.setState("userImage", data.image);
-						image.setAttribute("src", `${data.image}`);
 					}
 				}
 			}
