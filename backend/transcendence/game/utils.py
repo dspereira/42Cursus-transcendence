@@ -94,7 +94,7 @@ def get_games_list(user):
 	games = get_user_games(user=user)
 	if games:
 		for game in games:
-			if game.status == GAME_STATUS_FINISHED or game.status == GAME_STATUS_ABORTED:
+			if (game.status == GAME_STATUS_FINISHED or game.status == GAME_STATUS_ABORTED) and not game.tournament:
 				game_info = get_game_info(game=game, user=user)
 				games_list.append(game_info)
 	return games_list

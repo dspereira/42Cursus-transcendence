@@ -93,10 +93,14 @@ def get_tournament_list(user):
 	tournaments = tournament_players_model.filter(user=user)
 	if tournaments:
 		for tournament in tournaments:
-			tournament_info = {
-				'name': tournament.tournament.name
-			}
-			tournaments_list.append(tournament_info)
+			current_tournament = tournament.tournament
+			if current_tournament.status == TOURNAMENT_STATUS_FINISHED:
+				tournament_info = {
+					"id": current_tournament.id,
+					'name': current_tournament.name,
+					"winner": get_tournament_winner(current_tournament)
+				}
+				tournaments_list.append(tournament_info)
 		return tournaments_list
 	return None
 
@@ -266,3 +270,14 @@ def cancel_active_tournament_invites(tournament):
 	for req in tournament_requests:
 		if is_valid_request(req):
 			update_request_status(req, REQ_STATUS_ABORTED)
+
+def get_tournament_winner(tournament):
+	tournament_games = games_model.filter(tournament=tournament)
+	winner = None
+	if tournament_games:
+		tournament_games = tournament_games.order_by("id")
+		tournament_games = list(tournament_games)
+		last_game = tournament_games[-1]
+		if last_game.status == GAME_STATUS_FINISHED:
+			winner = get_single_user_info(get_user_profile(last_game.winner))
+	return winner

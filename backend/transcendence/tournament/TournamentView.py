@@ -28,7 +28,11 @@ class TournamentView(View):
 
 	@method_decorator(login_required)
 	def get(self, request):
-		user = user_model.get(id=request.access_data.sub)
+		username = request.GET.get('username')
+		if username:
+			user = user_model.get(username=username)
+		else:
+			user = user_model.get(id=request.access_data.sub)
 		if user:
 			tournaments_list = get_tournament_list(user=user)
 			return JsonResponse({"message": f"Tournament list retrieved with success.", "tournaments_list": tournaments_list}, status=200)
