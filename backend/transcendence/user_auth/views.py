@@ -20,10 +20,11 @@ from user_profile.models import UserProfileInfo
 
 from custom_utils.models_utils import ModelManager
 
+user_model = ModelManager(User)
+
 @accepted_methods(["POST"])
 def register(request):
 	if request.body:
-		user_model = ModelManager(User)
 		req_data = json.loads(request.body)
 		if req_data:
 			email = req_data.get('email')
@@ -89,7 +90,6 @@ def refresh_token(request):
 @accepted_methods(["GET"])
 @login_required
 def info(request):
-	user_model = ModelManager(User)
 	if request.access_data:
 		user = user_model.get(id=request.access_data.sub)
 	else:
@@ -109,8 +109,6 @@ def info(request):
 @accepted_methods(["GET"])
 @login_required
 def apiGetUserInfo(request):
-
-	user_model = ModelManager(User)
 	user = user_model.get(id=request.access_data.sub)
 	res_data = {
 		"id": user.id,
@@ -152,7 +150,6 @@ def apiGetUsersList(request):
 @accepted_methods(["GET"])
 @login_required
 def get_user_id(request):
-	user_model = ModelManager(User)
 	if request.access_data:
 		user = user_model.get(id=request.access_data.sub)
 	else:
@@ -171,7 +168,6 @@ def get_user_id(request):
 @accepted_methods(["GET"])
 @login_required
 def get_username(request):
-	user_model = ModelManager(User)
 	if request.access_data:
 		user = user_model.get(id=request.access_data.sub)
 	else:
@@ -191,7 +187,6 @@ def get_username(request):
 @accepted_methods(["GET"])
 @login_required
 def get_user_email(request):
-	user_model = ModelManager(User)
 	if request.access_data:
 		user = user_model.get(id=request.access_data.sub)
 	else:
@@ -212,10 +207,13 @@ def check_login_status(request):
 	if request.access_data:
 		is_logged_in = True
 		user_id = request.access_data.sub
+		user = user_model.get(id=user_id)
+		if user:
+			username = user.username
 	else:
 		is_logged_in = False
 		user_id = None
-	return JsonResponse({"logged_in": is_logged_in, "id": user_id})
+	return JsonResponse({"logged_in": is_logged_in, "id": user_id, "username": username})
 
 @accepted_methods(["POST"])
 def validate_email(request):
@@ -234,7 +232,6 @@ def validate_email(request):
 
 		if email_token_data:
 			if email_token_data.type == "email_verification":
-				user_model = ModelManager(User)
 				user = user_model.get(id=email_token_data.sub)
 				if user and user.active == False:
 					user.active = True
