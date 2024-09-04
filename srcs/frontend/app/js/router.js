@@ -13,7 +13,6 @@ import PageFriends from "../page-components/page-friends.js";
 import PagePlay from "../page-components/page-play.js";
 
 // Components
-
 import AppHeader from "../components/app-header.js";
 import LoginForm from "../components/login-form.js";
 import SignupForm from "../components/signup-form.js";
@@ -39,6 +38,7 @@ import TourneyLobby from "../components/tourney-lobby.js";
 import TourneyInviter from "../components/tourney-inviter.js";
 import TourneyInvitesReceived from "../components/tourney-invites-received.js";
 import TourneyInviteCard from "../components/tourney-invite-card.js";
+import TournamentCard from "../components/tournament-card.js";
 
 // Others
 import stateManager from "./StateManager.js";

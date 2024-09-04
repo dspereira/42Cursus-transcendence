@@ -1,8 +1,6 @@
 import {callAPI} from "../utils/callApiUtils.js";
 
-
 const styles = `
-
 	.game-grid-container {
 		display: flex;
 		justify-content: space-between;
@@ -81,18 +79,18 @@ const styles = `
 const getHtml = function(data) {
 	const html = `
 		<div class="game-grid-container">
-				<div class="player-container left">
-					<img class="profile-picture" src=${data.player1_image}>
-					<h1 class="username">${data.player1}</h1>
-				</div>
-				<div class="score-container center">
-					<h1 class="date">${data.date}</h1>
-					<h1 class="score">${data.player1_score} - ${data.player2_score}</h1>
-				</div>
-				<div class="player-container right">
-					<h1 class="username">${data.player2}</h1>
-					<img class="profile-picture" src=${data.player2_image}>
-				</div>
+			<div class="player-container left">
+				<img class="profile-picture" src=${data.player1_image}>
+				<h1 class="username">${data.player1}</h1>
+			</div>
+			<div class="score-container center">
+				<h1 class="date">${data.date}</h1>
+				<h1 class="score">${data.player1_score} - ${data.player2_score}</h1>
+			</div>
+			<div class="player-container right">
+				<h1 class="username">${data.player2}</h1>
+				<img class="profile-picture" src=${data.player2_image}>
+			</div>
 		</div>
 	`;
 

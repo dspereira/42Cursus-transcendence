@@ -1,7 +1,10 @@
 import {callAPI} from "../utils/callApiUtils.js";
 
-const styles = `
+// Solo Games History
+// Tournament History
 
+
+const styles = `
 	.page-container {
 		display: flex;
 		width: 100%;
@@ -17,6 +20,24 @@ const styles = `
 		align-items: center;
 	}
 
+	.btn-solo-games {
+		border-radius: 5px 0 0 5px;
+		width: 40%;
+	}
+	
+	.btn-tournament-games {
+		border-radius: 0 5px 5px 0;
+		width: 40%;
+	}
+
+	.btn-primary:focus {
+		background-color: #0056b3;
+		border-color: #004494;
+		outline: none;
+		transition: background-color 0.3s ease, box-shadow 0.3s ease;
+	}
+
+	/*
 	.tab-select-btn{
 		display: flex;
 		width: 600px;
@@ -26,7 +47,10 @@ const styles = `
 		border-style: hidden;
 		border-radius: 5px;
 	}
+	*/
+	
 
+	/*
 	.select-left, .select-right{
 		display: flex;
 		width: 50%;
@@ -39,20 +63,22 @@ const styles = `
 		font-weight: bold;
 		transition: .5s;
 	}
+	*/
 
+	/*
 	.select-left {
 		border-radius: 5px 0px 0px 5px;
 		background-color: #C2C2C2;
-}
+	}
 
 	.select-right {
 		border-radius: 0px 5px 5px 0px;
 		background-color: #E0E0E0;
 	}
+	*/
 
 	.list-container {
-		overflow-y: scroll;
-		height: 600px;
+		overflow-y: auto;
 	}
 `;
 
@@ -60,10 +86,19 @@ const getHtml = function(data) {
 	const html = `
 	<div class="page-container">
 		<div class="tab-select">
+
+			<button type="button" class="btn btn-primary btn-solo-games">Solo Games</button>
+			<button type="button" class="btn btn-primary btn-tournament-games">Tournament Games</button>
+
+		
+			<!--
 			<button class="tab-select-btn">
 				<div class="select-left">Game History</div>
 				<div class="select-right">Tournament History</div>
 			</button>
+			-->
+		
+
 		</div>
 		<div class="list-container">
 			<div class="game-list"></div>
@@ -121,9 +156,13 @@ export default class GameHistory extends HTMLElement {
 
 	#scripts() {
 		this.#getGameList();
-		this.#toggleTabSelector();
+		this.#getTournamentList();
+		//this.#toggleTabSelector();
+		this.#soloGamesBtn();
+		this.#tournamentsGamesBtn();
 	}
 
+	/*
 	#toggleTabSelector() {
 		this.html.querySelector(".tab-select-btn").addEventListener("click", () => {
 			const leftSlct = this.html.querySelector(".select-left");
@@ -147,6 +186,7 @@ export default class GameHistory extends HTMLElement {
 			}
 		});
 	}
+	*/
 
 	#insertGames(gameList) {
 		let game = null;
@@ -186,9 +226,20 @@ export default class GameHistory extends HTMLElement {
 	};
 
 	#getTournamentList() {
+		callAPI("GET", `http://127.0.0.1:8000/api/tournament/?username=${this.data.username}`, null, (res, data) => {
+			console.log("Tornament");
+			console.log(res);
+			console.log(data);
+		});		
+	}
+
+
+	/*
+	#getTournamentList() {
 		const gameListHtml = this.html.querySelector(".game-list");
 		gameListHtml.innerHTML = '<h1>No tournaments played yet.</h1>';
 	}
+	*/
 
 	#parse_date(date) {
 		let dm_part = date.split("T")[0]; //get the part with the day and month
@@ -199,6 +250,24 @@ export default class GameHistory extends HTMLElement {
 		let minute = hm_part.split(":")[1];
 		let new_date = day + "/" + month + "-" + hour + ":" + minute;
 		return new_date;
+	}
+
+	#soloGamesBtn() {
+		const btn = this.html.querySelector(".btn-solo-games");
+		if (!btn)
+			return ;
+		btn.addEventListener("click", () => {
+			console.log("soloGamesBtn");
+		});
+	}
+
+	#tournamentsGamesBtn() {
+		const btn = this.html.querySelector(".btn-tournament-games");
+		if (!btn)
+			return ;
+		btn.addEventListener("click", () => {
+			console.log("tournamentsGamesBtn");
+		});
 	}
 }
 
