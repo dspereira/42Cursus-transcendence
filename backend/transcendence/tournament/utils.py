@@ -14,6 +14,7 @@ from user_auth.models import User
 
 from custom_utils.requests_utils import REQ_STATUS_PENDING, REQ_STATUS_ABORTED, REQ_STATUS_DECLINED, REQ_STATUS_ACCEPTED
 from custom_utils.requests_utils import update_request_status
+from custom_utils.requests_utils import is_valid_request
 from .consts import *
 from game.utils import GAME_STATUS_CREATED, GAME_STATUS_FINISHED
 
@@ -254,3 +255,14 @@ def is_final_game(game_id, tournament):
 		if last_game and last_game.id == game_id:
 			return True
 	return False
+
+def is_tournament_full(tournament):
+	if tournament.nbr_players == tournament.nbr_max_players:
+		return True
+	return False
+
+def cancel_active_tournament_invites(tournament):
+	tournament_requests = tournament_requests_model.filter(tournament=tournament)
+	for req in tournament_requests:
+		if is_valid_request(req):
+			update_request_status(req, REQ_STATUS_ABORTED)
