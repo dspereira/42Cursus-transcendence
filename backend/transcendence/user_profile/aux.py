@@ -1,6 +1,6 @@
 from custom_utils.models_utils import ModelManager
+from user_profile.models import UserProfileInfo
 from user_auth.models import User
-
 from io import BytesIO
 from PIL import Image
 
@@ -8,6 +8,7 @@ import base64
 import imghdr
 
 user_model = ModelManager(User)
+user_profile_info_model = ModelManager(UserProfileInfo)
 
 def get_image_url(user):
     if user.compressed_profile_image:
@@ -49,3 +50,19 @@ def set_new_username(user, new_username):
     user.username = new_username
     user.save()
     return True
+
+def get_user_profile_data(user):
+    user_profile = user_profile_info_model.get(user_id=user.id)
+    image_url = get_image_url(user_profile)
+    username = user.username
+    user_profile_data = {
+    	"username": username,
+    	"bio": user_profile.bio,
+    	"image_url": image_url,
+    	"total_games": user_profile.total_games,
+    	"victories": user_profile.victories,
+    	"defeats": user_profile.defeats,
+    	"win_rate": user_profile.win_rate,
+    	"tournaments_won": user_profile.tournaments_won,
+    }
+    return user_profile_data

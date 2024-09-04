@@ -10,6 +10,8 @@ import json
 from PIL import Image
 from io import BytesIO
 
+from .aux import get_user_profile_data
+
 user_model = ModelManager(User)
 user_profile_info_model = ModelManager(UserProfileInfo)
 
@@ -35,24 +37,16 @@ def set_new_configs(request):
 
 @login_required
 @accepted_methods(["GET"])
-def get_all_info(request):
-	user = user_profile_info_model.get(user_id=request.access_data.sub)
-	if user:
-		image_url = get_image_url(user)
-		username = user_model.get(id=request.access_data.sub).username
-		data = {
-			"username": username,
-			"bio": user.bio,
-			"image_url": image_url,
-			"total_games": user.total_games,
-			"victories": user.victories,
-			"defeats": user.defeats,
-			"win_rate": user.win_rate,
-			"tournaments_won": user.tournaments_won,
-		}
+def get_profile_data(request):
+	username = request.GET.get('username')
+	if username:
+		user = user_model.get(username=username)
 	else:
-		return JsonResponse({"message": "User not found"}, status=404)
-	return JsonResponse(data)
+		user = user_model.get(id=request.access_data.sub)
+	if not user:
+		return JsonResponse({"message": "User not found"}, status=409)
+	profile_data = get_user_profile_data(user)
+	return JsonResponse({"message": "Profile data retrieved with success!", "data": profile_data}, status=200)
 
 @login_required
 @accepted_methods(["GET"])
@@ -78,7 +72,6 @@ def set_profile_picture(request):
 			image.save(output, format='JPEG', quality=25) #quality goes from 1 up to 95 (the lower the number the lighter and lower quality the image)
 			compressed_image_data = output.getvalue()
 			user_to_alter.compressed_profile_image = compressed_image_data
-
 			user_to_alter.save()
 		else:
 			return JsonResponse({"message": "User not found"}, status=404)
