@@ -57,7 +57,6 @@ const styles = `
 `;
 
 const getHtml = function(data) {
-
 	const html = `
 	<div class="page-container">
 		<div class="tab-select">
@@ -72,15 +71,15 @@ const getHtml = function(data) {
 		</div>
 	</div>
 	`;
-
 	return html;
 }
 
 export default class GameHistory extends HTMLElement {
-	static observedAttributes = [];
+	static observedAttributes = ["username"];
 
 	constructor() {
 		super();
+		this.data = {};
 	}
 
 	connectedCallback() {
@@ -90,7 +89,7 @@ export default class GameHistory extends HTMLElement {
 	}
 
 	attributeChangedCallback(name, oldValue, newValue) {
-		
+		this.data[name] = newValue;
 	}
 
 	#initComponent() {
@@ -152,34 +151,36 @@ export default class GameHistory extends HTMLElement {
 	#insertGames(gameList) {
 		let game = null;
 		const gameListHtml = this.html.querySelector(".game-list");
-		if (gameList.length === 0)
+
+		if (!gameList || !gameList.length) {
 			gameListHtml.innerHTML = '<h1>No games played yet.</h1>';
-		else
-		{
-			gameListHtml.innerHTML= "";
-			let prev_game = null;
-			gameList.forEach(elm => {
-				game = document.createElement("div");
-				game.innerHTML = 
-				`<game-card
-					player1=${elm.user1}
-					player1_image=${elm.user1_image}
-					player1_score=${elm.user1_score}
-					player2=${elm.user2}
-					player2_image=${elm.user2_image}
-					player2_score=${elm.user2_score}
-					win=${elm.winner}
-					date=${this.#parse_date(elm.date)}
-					>
-				</game-card>`;
-				gameListHtml.insertBefore(game, prev_game);
-				prev_game = game;
-			});
+			return ;
 		}
+
+		gameListHtml.innerHTML= "";
+		let prev_game = null;
+		gameList.forEach(elm => {
+			game = document.createElement("div");
+			game.innerHTML = 
+			`<game-card
+				player1="${elm.user1}"
+				player1_image="${elm.user1_image}"
+				player1_score="${elm.user1_score}"
+				player2="${elm.user2}"
+				player2_image="${elm.user2_image}"
+				player2_score="${elm.user2_score}"
+				win="${elm.winner}"
+				date="${this.#parse_date(elm.date)}"
+				>
+			</game-card>`;
+			gameListHtml.insertBefore(game, prev_game);
+			prev_game = game;
+		});
 	}
 
 	#getGameList() {
-		callAPI("GET", "http://127.0.0.1:8000/api/game/get-games/", null, (res, data) => {
+		callAPI("GET", `http://127.0.0.1:8000/api/game/get-games/?username=${this.data.username}`, null, (res, data) => {
+			if (res.ok && data && data.games_list)
 				this.#insertGames(data.games_list);
 		});
 	};

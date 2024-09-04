@@ -28,7 +28,7 @@ const getHtml = function(data) {
 					<user-profile username="${data.username}"></user-profile>
 				</div>
 				<div class="history">
-					<game-history></game-history>
+					<game-history username="${data.username}"></game-history>
 				</div>
 			</div>
 		</div>

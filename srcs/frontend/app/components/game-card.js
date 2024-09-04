@@ -150,7 +150,6 @@ export default class GameCard extends HTMLElement {
 
 	#setColor() {
 		const gameContainer = this.html.querySelector(".game-grid-container");
-		
 		if (this.data.win == "true")
 			gameContainer.classList.add("game-win");
 		else

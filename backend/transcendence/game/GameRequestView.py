@@ -27,11 +27,7 @@ class GameRequestView(View):
 
 	@method_decorator(login_required)
 	def get(self, request):
-		username = request.GET.get('username')
-		if username:
-			user = user_model.get(username=username)
-		else:
-			user = user_model.get(id=request.access_data.sub)
+		user = user_model.get(id=request.access_data.sub)
 		if user:
 			requests_list = get_game_requests_list(user=user)
 			return JsonResponse({"message": f"Game request list retrieved with success.", "requests_list": requests_list}, status=200)
