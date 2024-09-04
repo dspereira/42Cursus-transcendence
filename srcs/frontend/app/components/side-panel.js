@@ -52,7 +52,7 @@ const styles = `
 	}
 
 	.list-btn button:hover {
-		background-color: ${colors.button_hover};
+		background-color: ${colors.button_default};
 		border-radius: 5px;
 	}
 
@@ -101,7 +101,7 @@ const styles = `
 	}
 
 	.open .link-btn button:hover {
-		background-color: ${colors.button_hover};
+		background-color: ${colors.button_default};
 		background: solid;
 		border-radius: 5px;
 		width: 200px;
@@ -143,12 +143,12 @@ const styles = `
 
 	.close .link-btn button:hover {
 		background-color: transparent;
-		background-color: ${colors.button_hover};
+		background-color: ${colors.button_default};
 		border-radius: 5px;
 	}
 
 	.close .link-btn .icon:hover {
-		background-color: ${colors.button_hover};
+		background-color: ${colors.button_default};
 		border-radius: 5px;
 	}
 `;

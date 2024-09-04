@@ -85,8 +85,8 @@ const styles = `
 	}
 
 	#login:hover {
-		border: 2px solid ${colors.button_hover};
-		background-color: ${colors.button_hover};
+		border: 2px solid ${colors.button_default};
+		background-color: ${colors.button_default};
 		color: ${colors.primary_text};
 	}
 
@@ -97,8 +97,8 @@ const styles = `
 	}
 
 	#signup:hover {
-		border: 2px solid ${colors.button_hover};
-		background-color: ${colors.button_hover};
+		border: 2px solid ${colors.button_default};
+		background-color: ${colors.button_default};
 		color: ${colors.primary_text};
 	}
 

@@ -35,12 +35,12 @@ const styles = `
 }
 
 .user:hover {
-	background-color: ${colors.button_hover};
+	background-color: ${colors.button_default};
 	border-radius: 8px;
 }
 
 .friend-selected {
-	background-color: ${colors.button_hover};
+	background-color: ${colors.button_default};
 	color: ${colors.primary_text};
 	border-radius: 5px;
 }

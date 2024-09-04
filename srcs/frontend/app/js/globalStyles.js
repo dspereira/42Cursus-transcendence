@@ -2,7 +2,7 @@ export const colors = {
 	// Background Colors
 	main_card: "#2F3136",  //second_background
 	button: "#32353B", //hover_background and active_background
-	button_hover: "#5865F2", //button_background
+	button_default: "#5865F2", //button_background
 	side_panel_background: "#202225",
 	page_background: "#292B2F", //extra_background
 	second_card: "#36393F", //primary_background
@@ -25,8 +25,9 @@ export const colors = {
 	placeholder_text: "#72767D",
 	// Interaction Colors
 	hover_background: "#32353B",
-	button_hover2: "#4752C4",
-	button_active: "#4E5D94"
+	button_default2: "#4752C4",
+	button_active: "#4E5D94",
+	button_disabled: "#FFBAAB"
 };
 
 //gpt chat test

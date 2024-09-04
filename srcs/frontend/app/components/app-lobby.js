@@ -37,6 +37,18 @@ const styles = `
 		height: auto;
 		clip-path:circle();
 	}
+
+	.default-photo {
+		width: 145px;
+		height: auto;
+		margin-bottom: 20px;
+	}
+
+	.ready-btn {
+		border-style: hidden;
+		border-radius: 5px;
+		background-color: ${colors.button_default};
+	}
 `;
 
 const getHtml = function(data) {
@@ -178,7 +190,10 @@ export default class AppLobby extends HTMLElement {
 		const playerImage = this.html.querySelector(`.${playerType}`);
 		if (!playerImage)
 			return ;
-		playerImage.innerHTML = "";
+		playerImage.innerHTML = `
+			<img src="../img/default_profile.png" class="default-photo" alt="avatar">
+			<div class="text-color">waiting...</div>
+			`;
 	}
 
 	#setReadyBtnEvent() {

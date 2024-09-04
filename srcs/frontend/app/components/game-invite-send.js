@@ -54,12 +54,9 @@ const styles = `
 		background-color:  ${colors.second_card};
 	}
 
-	.selcted-list-section {
-		width: 20%;
+	.selected-list-section {
+		width: 100%;
 		padding: 20px;
-		border-radius: 5px;
-		height: 90vh;
-		background-color:  ${colors.second_card};
 	}
 		
 	.friend-right-list {
@@ -67,6 +64,11 @@ const styles = `
 		justify-content: space-between;
 		align-items: center;
 		margin-bottom: 10px;
+		background-color: ${colors.third_card};
+		padding: 0px 10px 0px 10px;
+		border-radius: 5px;
+		border-style: hidden;
+		color: ${colors.primary_text};
 	}
 	
 	.friend-right-list span {
@@ -84,24 +86,61 @@ const styles = `
 		color: blue; /* outra cor igual mas mais carregada */
 	}
 
-	.btn-primary {
-		background-color: ${colors.button_hover};
+	.btn-primary:not(disabled) {
+		background-color: ${colors.button_default};
 		color: ${colors.second_text};
 	}
 
-	.btn-primary:hover {
-		background-color: ${colors.button_hover};
+	.btn-primary:not(:disabled):hover {
+		background-color: ${colors.button_default};
 		color: ${colors.primary_text};
+	}
+
+	.btn-primary:disabled {
+		background-color: ${colors.main_card};
+		cursor: not-allowed;
+		border-style: hidden;
 	}
 
 	.btn-invite {
 		display: flex;
 		justify-content: center;
+		align-items: center;
 		position: absolute;
+		border-style: hidden;
+		border-radius: 5px;
 		bottom: 20px;
-		width: 200px;
+		width: 100px;
+		height: 40px;
 		left: 50%;
 		transform: translateX(-50%);
+	}
+
+	.players-invited {
+		margin-top: 20px;
+		color: ${colors.second_text};
+	}
+
+	.separator {
+		display: flex;
+		width: 80%;
+		height: 5px;
+		border-radius: 10px;
+		justify-content: center;
+		align-items: center;
+		margin: 20px 0px 20px 0px;
+		background-color: ${colors.main_card};
+	}
+
+	.selected-list-container {
+		display: flex;
+		flex-direction: column;
+		position: relative;
+		align-items: center;
+		width: 20%;
+		height: 90vh;
+		border-radius: 5px;
+		background-color: ${colors.second_card};
 	}
 }
 `;
@@ -120,8 +159,12 @@ const getHtml = function(data) {
 			</div>
 			<div class="friend-list"></div>
 		</div>
-		<div class="selcted-list-section"></div>
-		<div><button type="button" class="btn btn-primary" id="submit-invite">Invite</button><div>
+		<div class="selected-list-container">
+			<div class=players-invited>players invited</div>
+			<div class=separator></div>
+			<div class="selected-list-section"></div>
+			<button type="button" class="btn-primary btn-invite" id="submit-invite">Invite</button>
+		<div>
 	</div>
 	`;
 	return html;
@@ -157,7 +200,7 @@ export default class GameInviteSend extends HTMLElement {
 			this.styles.textContent = this.#styles();
 			this.html.classList.add(`${this.elmtId}`);
 		}
-		this.rightFriendListElm = this.html.querySelector(".selcted-list-section");
+		this.rightFriendListElm = this.html.querySelector(".selected-list-section");
 	}
 
 	#styles() {
@@ -180,6 +223,8 @@ export default class GameInviteSend extends HTMLElement {
 		this.#getFriendsCallApi();
 		this.#setFriendsSearchEvent();
 		this.#setInviteSubmitEvent();
+		const inviteButton = document.querySelector(".btn-primary");
+		inviteButton.disabled = this.selectedElm == 0;
 	}
 
 	#setFriendsSearchEvent() {
@@ -236,26 +281,21 @@ export default class GameInviteSend extends HTMLElement {
 	#selectFriend(friendCard) {
 		const rightListFriendHtml = this.#getFriendHtmlForRightList(friendCard.id);
 		const listLength = this.rightFriendListElm.length;
-
+		const inviteButton = document.querySelector(".btn-primary");
 		if (!listLength)
 			this.rightFriendListElm.appendChild(rightListFriendHtml);
 		else
-			this.rightFriendListElm.insertBefore(this.rightFriendListElm[listLength - 1], rightListFriendHtml);
-		
-		friendCard.setAttribute("selected", "true");
+		this.rightFriendListElm.insertBefore(this.rightFriendListElm[listLength - 1], rightListFriendHtml);
+	
 		this.selectedElm.push(friendCard.id);
-		// var button = document.createElement("button");
-		// button.setAttribute("type", "button");
-		// button.className = "btn btn-primary btn-invite";
-		// button.textContent = "Invite";	
-		// rightListFriendHtml.appendChild(button);
-		// this.#setInviteSubmitEvent();
+		inviteButton.disabled = this.selectedElm == 0;
+		friendCard.setAttribute("selected", "true");
 	}
 
 	#unselectFriend(elmId) {
 		const friendCard = this.html.querySelector(`#${elmId}`);
 		const friendRightList = this.rightFriendListElm.querySelector(`.${elmId}`);
-
+		const inviteButton = document.querySelector(".btn-primary");
 		if (!friendCard && !friendRightList)
 			return ;
 		friendCard.setAttribute("selected", "false");
@@ -263,6 +303,7 @@ export default class GameInviteSend extends HTMLElement {
 		const index = this.selectedElm.indexOf(elmId);
 		if (index > -1)
 			this.selectedElm.splice(index, 1);
+		inviteButton.disabled = this.selectedElm == 0;
 	}
 
 	#getFriendHtmlForRightList(elmId) {

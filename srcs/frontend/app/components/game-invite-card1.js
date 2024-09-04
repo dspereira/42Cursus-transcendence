@@ -32,7 +32,7 @@ const styles = `
 }
 
 .selected {
-	background-color: ${colors.button_hover};
+	background-color: ${colors.button_default};
 	color: ${colors.primary_text};
 }
 

@@ -37,6 +37,43 @@ button {
 	margin-left: 5px;
 }
 
+.alert-div {
+	animation: disappear linear 10s forwards;
+}
+
+.alert-bar {
+	width: 80%;
+	height: 5px;
+	border-style: hidden;
+	border-radius: 2px;
+	background-color: black;
+	position: absolute;
+	top: 20px;
+	animation: expire linear 10s forwards;
+}
+
+@keyframes expire {
+	from {
+		width: 80%;
+	}
+	to {
+		width: 0%;
+	}
+}
+
+@keyframes disappear {
+	0% {
+		visibility: visible;
+		opacity: 1;
+	}
+	99% {
+		visibility: visible;
+		opacity: 1;
+	}
+	100% {
+		visibility: hidden;
+		opacity: 0;
+		display: none;
 `;
 
 const getBtn = function(type) {
@@ -201,6 +238,25 @@ export default class UserCard extends HTMLElement {
 		callAPI(method, "http://127.0.0.1:8000/api/friends/friendships/", body, (res, data) => {
 			if (res.ok)
 				callback(data);
+			else
+			{
+				const alertBefore  = this.html.querySelector(".alert");
+				if (alertBefore)
+					alertBefore.remove();
+				console.log("HIIII");
+				const userCard = this.html.querySelector(".user-card");
+				var alertCard = document.createElement("div");
+				alertCard.className = "alert alert-danger hide from alert-div";
+				alertCard.role = "alert";
+				alertCard.innerHTML = `
+						Request Expired
+						<div class=alert-bar></div>
+					`;
+				// button.textContent = "Invite";
+				// rightListFriendHtml.appendChild(button);
+				// this.#setInviteSubmitEvent();
+				userCard.insertBefore(alertCard ,this.html.querySelector(".user"));
+			}
 		});
 	}
 

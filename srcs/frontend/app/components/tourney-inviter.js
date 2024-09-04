@@ -108,14 +108,39 @@ const styles = `
 	color: blue; /* outra cor igual mas mais carregada */
 }
 
+
+.invite-btn.btn-primary:not(disabled) {
+	background-color: ${colors.button_default};
+	color: ${colors.second_text};
+}
+
+.invite-btn.btn-primary:not(:disabled):hover {
+	background-color: ${colors.button_default};
+	color: ${colors.primary_text};
+}
+
+.invite-btn.btn-primary:disabled {
+	background-color: ${colors.main_card};
+	cursor: not-allowed;
+	border-style: hidden;
+}
+
 .btn-invite {
 	display: flex;
 	justify-content: center;
 	position: absolute;
 	bottom: 20px;
 	width: 200px;
+	height: 40px;
+	align-items: center;
 	left: 50%;
 	transform: translateX(-50%);
+	border-style: hidden;
+	border-radius: 5px;
+}
+
+.btn-invite:hover {
+	color: ${colors.second_text};
 }
 
 `;
@@ -203,6 +228,8 @@ export default class TourneyInviter extends HTMLElement {
 		this.#getListPendingInvites();
 		this.#setRefreshFriendsListEvent();
 		this.#checkInvitesPolling();
+		const inviteButton = document.querySelector(".btn-primary");
+		inviteButton.disabled = this.selectedElm == 0;
 	}
 
 	#setFriendsSearchEvent() {
@@ -238,6 +265,9 @@ export default class TourneyInviter extends HTMLElement {
 	#selectFriend(friendCard) {
 		friendCard.setAttribute("selected", "true");
 		this.selectedElm.push(friendCard.id);
+		const inviteButton = document.querySelector(".invite-btn");
+		console.log("selecting", this.selectedElm);
+		inviteButton.disabled = this.selectedElm == 0;
 	}
 
 	#unselectFriend(friendCard) {
@@ -245,6 +275,9 @@ export default class TourneyInviter extends HTMLElement {
 		const index = this.selectedElm.indexOf(friendCard.id);
 		if (index > -1)
 			this.selectedElm.splice(index, 1);
+		const inviteButton = document.querySelector(".invite-btn");
+		inviteButton.disabled = this.selectedElm == 0;
+
 	}
 
 	#selectFriendEvent() {
@@ -284,10 +317,14 @@ export default class TourneyInviter extends HTMLElement {
 		}
 		var button = document.createElement("button");
 		button.setAttribute("type", "button");
-		button.className = "btn btn-primary btn-invite";
+		button.className = "btn-primary btn-invite invite-btn";
 		button.textContent = "Invite";
 		listHtml.appendChild(button);
 		this.#setBtnInviteEvent();
+		const inviteButton = document.querySelector(".invite-btn");
+		console.log("createInvitesSendList", this.selectedElm);
+		console.log("button!!: ", inviteButton.innerHTML);
+		inviteButton.disabled = this.selectedElm == 0;
 	}
 
 	#removeInvitesSendFromList(inviteId) {

@@ -103,7 +103,7 @@ form {
 
 .icon:hover {
 	cursor: pointer;
-	color: ${colors.button_hover};
+	color: ${colors.button_default};
 	transform: scale(1.3);
 	transition: transform 0.3s ease, color 0.3s ease;
 }

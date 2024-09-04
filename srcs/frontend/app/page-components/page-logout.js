@@ -19,7 +19,7 @@ const styles = `
 }
 
 .logout-btn:hover {
-	background-color: ${colors.button_hover};
+	background-color: ${colors.button_default};
 	color: ${colors.primary_text};
 }
 

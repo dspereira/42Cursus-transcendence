@@ -107,7 +107,7 @@ user-card {
 
 
 .selected-option {
-	background-color: ${colors.button_hover};
+	background-color: ${colors.button_default};
 	border-radius: 5px;
 	transition: 0.5s;
 }

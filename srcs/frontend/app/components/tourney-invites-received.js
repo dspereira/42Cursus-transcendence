@@ -1,3 +1,4 @@
+import { colors } from "../js/globalStyles.js";
 import { callAPI } from "../utils/callApiUtils.js";
 
 const styles = `	
@@ -13,11 +14,15 @@ h1 {
 	gap: 30px;
 	justify-content: center;
 }
+
+.main-text {
+	color: ${colors.second_text};
+}
 `;
 
 const getHtml = function(data) {
 	const html = `
-		<h1>Tournaments Invites</h1>
+		<h1 class=main-text>Tournaments Invites</h1>
 		<div class="requests-list"></div>
 	`;
 	return html;

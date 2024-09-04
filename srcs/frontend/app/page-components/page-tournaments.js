@@ -19,7 +19,7 @@ const styles = `
 
 .btn-create-tourney {
 	padding: 10px 70px 10px 70px;
-	background-color: ${colors.button_hover};
+	background-color: ${colors.button_default};
 }
 
 .exit-tourney {

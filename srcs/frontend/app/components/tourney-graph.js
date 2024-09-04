@@ -4,6 +4,9 @@ import { colors } from "../js/globalStyles.js";
 
 const styles = `
 	.tournament-container {
+		display: flex;
+		align-items: center;
+		flex-direction: column;
 	}
 
 	.winner {
@@ -12,10 +15,21 @@ const styles = `
 		justify-content: center;
 		flex-direction: column;
 		gap: 10px;
+		width: 250px;
+		height: 150px;
+		border: 5px hidden;
+		background-color: ${colors.second_card};
+		border-radius: 25px;
+		margin: 20px 0px 20px 0px;
+	}
+
+	.winner-text {
+		color: ${colors.primary_text};
 	}
 
 	.graph {
 		display: flex;
+		width: 80%;
 		justify-content: flex-start;
 		// background-color: ${colors.second_card};
 		border-radius: 8px;
@@ -155,7 +169,7 @@ const getHtml = function(data) {
 			<div class="tournament-container">
 				<div class="winner hide">
 					<div><img src="" class="profile-photo" alt="profile photo chat"/></div>
-					<div>WINNER</div>
+					<div class="winner-text">WINNER</div>
 				</div>
 				<div class="graph">
 					<div class="game-size-1 padding-35 game-flex game-flex-column game-0">
