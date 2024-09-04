@@ -104,10 +104,11 @@ const getHtml = function(data) {
 }
 
 export default class UserProfile extends HTMLElement {
-	static observedAttributes = [];
+	static observedAttributes = ["username"];
 
 	constructor() {
 		super();
+		this.data = {};
 	}
 
 	connectedCallback() {
@@ -117,7 +118,7 @@ export default class UserProfile extends HTMLElement {
 	}
 
 	attributeChangedCallback(name, oldValue, newValue) {
-		
+		this.data[name] = newValue;
 	}
 
 	#initComponent() {
@@ -148,14 +149,15 @@ export default class UserProfile extends HTMLElement {
 	}
 
 	#scripts() {
-
-		this.#getUserInfo();
-
+		this.#getProfileInfo();
 	}
 
-	#getUserInfo() {
-		callAPI("GET", "http://127.0.0.1:8000/api/profile/", null, (res, data) => {
-			this.#updateProfile(data);
+	#getProfileInfo() {
+		callAPI("GET", `http://127.0.0.1:8000/api/profile/?username=${this.data.username}`, null, (res, resData) => {
+			if (res.ok && resData && resData.data) {
+				const data = resData.data;
+				this.#updateProfile(data);
+			}
 		});
 	}
 
@@ -169,23 +171,20 @@ export default class UserProfile extends HTMLElement {
 
 	#updateImage(image_url) {
 		const htmlElement = this.html.querySelector('.profile-picture');
-		if (htmlElement) {
+		if (htmlElement)
 			htmlElement.src = image_url;
-		}
 	}
 
 	#updateUsername(username) {
 		const htmlElement = this.html.querySelector('.username');
-		if (htmlElement) {
+		if (htmlElement)
 			htmlElement.textContent = username;
-		}
 	}
 
 	#updateBio(bio) {
 		const htmlElement = this.html.querySelector('.bio');
-		if (htmlElement) {
+		if (htmlElement)
 			htmlElement.textContent = bio;
-		}
 	}
 
 	#updateWinRate(wins, losses, win_rate, total_games) {
@@ -193,30 +192,25 @@ export default class UserProfile extends HTMLElement {
 		const lossesElement = this.html.querySelector('.losses');
 		const winRateBarElement = this.html.querySelector('#win-rate-bar');
 
-		if (winsElement) {
+		if (winsElement)
 			winsElement.textContent = `W: ${wins}`;
-		}
 		if (lossesElement) {
 			lossesElement.textContent = `L: ${losses}`;
 		}
 		if (winRateBarElement) {
-			if (total_games == 0) {
+			if (!total_games)
 				winRateBarElement.style.background = `linear-gradient(to right, blue 0%, red 100%)`;
-			}
-			else if (win_rate == 0) {
+			else if (!win_rate)
 				winRateBarElement.style.background = `red`;
-			}
-			else {
+			else
 				winRateBarElement.style.background = `linear-gradient(to right, blue ${win_rate}%, red ${win_rate}%)`;
-			}
 		}
 	}
 
 	#updateTournaments(tournaments) {
 		const htmlElement = this.html.querySelector('.tournements-won');
-		if (htmlElement) {
+		if (htmlElement)
 			htmlElement.textContent = `Tournements won: ${tournaments}`;
-		}
 	}
 }
 

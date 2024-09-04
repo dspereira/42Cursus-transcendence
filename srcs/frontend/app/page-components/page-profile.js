@@ -23,10 +23,9 @@ const getHtml = function(data) {
 		<app-header></app-header>
 		<side-panel selected="profile"></side-panel>
 		<div class="content content-small">
-			<h1>${data.username}</h1>
 			<div class="profile-container">
 				<div class="profile">
-					<user-profile></user-profile>
+					<user-profile username="${data.username}"></user-profile>
 				</div>
 				<div class="history">
 					<game-history></game-history>
@@ -51,16 +50,16 @@ export default class PageProfile extends HTMLElement {
 	connectedCallback() {
 		if (!this.data.username) {
 			this.data.username = stateManager.getState("username");
+			this.#start();
 		}
 		else {
 			callAPI("GET", `http://127.0.0.1:8000/api/profile/exists/?username=${this.data.username}`, null, (res, data) => {
 				if (!res.ok || (data && !data.exists))
 					render("<page-404></page-404>");
+				else
+					this.#start();
 			});
 		}
-		this.#initComponent();
-		this.#render();
-		this.#scripts();
 	}
 
 	attributeChangedCallback(name, oldValue, newValue) {
@@ -69,6 +68,12 @@ export default class PageProfile extends HTMLElement {
 
 	static get componentName() {
 		return this.#componentName;
+	}
+
+	#start() {
+		this.#initComponent();
+		this.#render();
+		this.#scripts();
 	}
 
 	#initComponent() {
