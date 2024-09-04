@@ -83,3 +83,14 @@ def set_profile_picture(request):
 		else:
 			return JsonResponse({"message": "User not found"}, status=404)
 	return JsonResponse({"message": "success"})
+
+@login_required
+@accepted_methods(["POST"])
+def exist_user_profile(request):
+	username = request.GET.get('username')
+	if not username:
+		return JsonResponse({"message": "Invalid Request"}, status=400)
+	exist = False
+	if user_model.get(username=username):
+		exist = True
+	return JsonResponse({"message": "User existence verified successfully!", "exists": exist}, status=200)
