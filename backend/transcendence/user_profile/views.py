@@ -85,7 +85,7 @@ def set_profile_picture(request):
 	return JsonResponse({"message": "success"})
 
 @login_required
-@accepted_methods(["POST"])
+@accepted_methods(["GET"])
 def exist_user_profile(request):
 	username = request.GET.get('username')
 	if not username:
