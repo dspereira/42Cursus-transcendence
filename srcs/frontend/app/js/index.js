@@ -19,8 +19,7 @@ stateManager.addEvent("isLoggedIn", (stateValue) => {
 stateManager.addEvent("chatSocket", (stateValue) => {
 	console.log(`Chat socket: ${stateValue}`);
 	if (stateValue == "closed") {
-		checkUserLoginState((state, userId) => {
-			stateManager.setState("userId", userId);
+		checkUserLoginState((state) => {
 			if (state)
 				chatWebSocket.open();
 		});
@@ -40,8 +39,7 @@ stateManager.addEvent("chatSocket", (stateValue) => {
 // The user's logged-in state should not change because of the expired refresh token.
 const setupLoginStateChecker  = function(intervalSeconds) {
 	setInterval(() => {
-		checkUserLoginState((state, userId) => {
-			stateManager.setState("userId", userId);
+		checkUserLoginState((state) => {
 			if (state != stateManager.getState("isLoggedIn"))
 				stateManager.setState("isLoggedIn", state);
 		});

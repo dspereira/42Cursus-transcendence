@@ -1,6 +1,7 @@
-import { redirect } from "../js/router.js";
+import { redirect, render } from "../js/router.js";
 import { adjustContent } from "../utils/adjustContent.js";
 import stateManager from "../js/StateManager.js";
+import { callAPI } from "../utils/callApiUtils.js";
 
 const styles = `
 	.profile-container {
@@ -22,6 +23,7 @@ const getHtml = function(data) {
 		<app-header></app-header>
 		<side-panel selected="profile"></side-panel>
 		<div class="content content-small">
+			<h1>${data.username}</h1>
 			<div class="profile-container">
 				<div class="profile">
 					<user-profile></user-profile>
@@ -35,17 +37,34 @@ const getHtml = function(data) {
 	return html;
 }
 
-
 const title = "Profile";
 
 export default class PageProfile extends HTMLElement {
 	static #componentName = "page-profile";
+	static observedAttributes = ["username"];
 
 	constructor() {
 		super()
+		this.data = {};
+	}
+
+	connectedCallback() {
+		if (!this.data.username) {
+			this.data.username = stateManager.getState("username");
+		}
+		else {
+			callAPI("GET", `http://127.0.0.1:8000/api/profile/exists/?username=${this.data.username}`, null, (res, data) => {
+				if (!res.ok || (data && !data.exists))
+					render("<page-404></page-404>");
+			});
+		}
 		this.#initComponent();
 		this.#render();
 		this.#scripts();
+	}
+
+	attributeChangedCallback(name, oldValue, newValue) {
+		this.data[name] = newValue;
 	}
 
 	static get componentName() {
@@ -54,7 +73,7 @@ export default class PageProfile extends HTMLElement {
 
 	#initComponent() {
 		this.html = document.createElement("div");
-		this.html.innerHTML = this.#html();
+		this.html.innerHTML = this.#html(this.data);
 		if (styles) {
 			this.elmtId = `elmtId_${Math.floor(Math.random() * 100000000000)}`;
 			this.styles = document.createElement("style");
@@ -77,7 +96,6 @@ export default class PageProfile extends HTMLElement {
 		if (styles)
 			this.appendChild(this.styles);
 		this.appendChild(this.html);
-		stateManager.setState("pageReady", true);
 	}
 
 	#scripts() {

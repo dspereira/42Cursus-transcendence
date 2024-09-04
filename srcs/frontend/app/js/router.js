@@ -62,12 +62,16 @@ const routes = {
 }
 
 const dynamicRoutes = {
-	"/profile": key => `<${PageProfile.componentName} key="${key}"></${PageProfile.componentName}>`
+	"/profile": key => `<${PageProfile.componentName} username="${key}"></${PageProfile.componentName}>`
 }
 
 const publicRoutes = ["/initial", "/login", "/signup"];
 const initialRoute = "/initial";
 
+
+// remover o page ready state
+
+/*
 const render = function(page) {
 	const app = document.querySelector("#app");
 	const oldElm = app.querySelector("#app > div");
@@ -82,6 +86,19 @@ const render = function(page) {
 				app.replaceChild(newElm, oldElm);
 		}
 	});
+	newElm.innerHTML = page;
+}
+	*/
+
+
+export const render = function(page) {
+	const app = document.querySelector("#app");
+	const oldElm = app.querySelector("#app > div");
+	const newElm = document.createElement("div");
+	if (!oldElm)
+		app.appendChild(newElm);
+	else
+		app.replaceChild(newElm, oldElm);
 	newElm.innerHTML = page;
 }
 
@@ -161,7 +178,7 @@ const normalizeRoute = function(route) {
 let init = true;
 export const router = function(route) {
 	stateManager.cleanEvents();
-	checkUserLoginState((state, userId) => {
+	checkUserLoginState((state) => {
 		if (!route)
 			route = getCurrentRoute();
 		route = normalizeRoute(route);
@@ -172,7 +189,6 @@ export const router = function(route) {
 			pushNewRoute(normalizeRouteForHistory(authorizedRoute));
 		render(getPageComponent(authorizedRoute));
 		updateIsLoggedInState(state);
-		stateManager.setState("userId", userId);
 		init = false;
 	});
 }
