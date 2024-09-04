@@ -213,6 +213,7 @@ def check_login_status(request):
 	else:
 		is_logged_in = False
 		user_id = None
+		username = None
 	return JsonResponse({"logged_in": is_logged_in, "id": user_id, "username": username})
 
 @accepted_methods(["POST"])
