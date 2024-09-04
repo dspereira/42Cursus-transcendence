@@ -2,12 +2,17 @@ import { callAPI } from "../utils/callApiUtils.js";
 import gameWebSocket from "../js/GameWebSocket.js";
 import stateManager from "../js/StateManager.js";
 import { redirect } from "../js/router.js";
+import { colors } from "../js/globalStyles.js";
 
 const styles = `
 	.lobby {
 		display: flex;
 		justify-content: center;
 		text-align: center;
+	}
+
+	.text-color {
+		color: ${colors.primary_text};
 	}
 
 	.host {
@@ -161,8 +166,8 @@ export default class AppLobby extends HTMLElement {
 			return ;
 		playerImage.innerHTML = `
 			<img src="${playerInfo.image}" class="profile-photo" alt="avatar">
-			<div>${playerInfo.username}</div>
-			<div>${playerInfo.is_ready ? "ready" : "not ready"}</div>
+			<div class=text-color>${playerInfo.username}</div>
+			<div class=text-color>${playerInfo.is_ready ? "ready" : "not ready"}</div>
 		`;
 
 		if (playerInfo.id == stateManager.getState("userId"))

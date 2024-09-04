@@ -9,7 +9,7 @@ const styles = `
 	margin: 0 auto;
 	margin-top: 25px;
 	margin-bottom: 25px;
-	border-bottom: 3px solid #EEEDEB;
+	border-bottom: 3px solid ${colors.third_card};
 }
 
 .create-tourney {
@@ -19,6 +19,7 @@ const styles = `
 
 .btn-create-tourney {
 	padding: 10px 70px 10px 70px;
+	background-color: ${colors.button_hover};
 }
 
 .exit-tourney {

@@ -17,6 +17,8 @@ const styles = `
 }
 
 .invites-send {
+	position: relative;
+	align-items: center;
 	width: 30%;
 	background-color: ${colors.second_card};
 	border-radius: 5px;
@@ -106,6 +108,16 @@ const styles = `
 	color: blue; /* outra cor igual mas mais carregada */
 }
 
+.btn-invite {
+	display: flex;
+	justify-content: center;
+	position: absolute;
+	bottom: 20px;
+	width: 200px;
+	left: 50%;
+	transform: translateX(-50%);
+}
+
 `;
 
 const getHtml = function(data) {
@@ -123,9 +135,9 @@ const getHtml = function(data) {
 				</div>
 				<div class="friends"></div>
 			</div>
-			<div class="invites-send"></div>
+			<div class="invites-send">
+			</div>
 		</div>
-		<button type="button" class="btn btn-primary btn-invite">Invite</button>
 	`;
 	return html;
 }
@@ -253,23 +265,29 @@ export default class TourneyInviter extends HTMLElement {
 	#createInvitesSendList(list) {
 		const listHtml = this.html.querySelector(".invites-send");
 		listHtml.innerHTML = "";
-		if (!list || !list.length)
-			return ;
-
-		let elm = null;
-		list.forEach((invite) => {
-			elm = document.createElement("div");
-			if (!elm)
-				return ;
-			elm.classList.add("player-invite-send");
-			elm.classList.add(`id-${invite.req_id}`);
-			elm.innerHTML = `
+		if (!(!list || !list.length))
+		{
+			let elm = null;
+			list.forEach((invite) => {
+				elm = document.createElement("div");
+				if (!elm)
+					return ;
+				elm.classList.add("player-invite-send");
+				elm.classList.add(`id-${invite.req_id}`);
+				elm.innerHTML = `
 				<span>${invite.username}</span>
-				<div class="cross-icon btn-cancel-invite" id="id-${invite.req_id}">x</div>
-			`;
-			listHtml.appendChild(elm);
-			this.#setCancelInviteEvent(elm);
-		});
+					<div class="cross-icon btn-	-invite btn-cancel-invite" id="id-${invite.req_id}">x</div>
+				`;
+				listHtml.appendChild(elm);
+				this.#setCancelInviteEvent(elm);
+			});
+		}
+		var button = document.createElement("button");
+		button.setAttribute("type", "button");
+		button.className = "btn btn-primary btn-invite";
+		button.textContent = "Invite";
+		listHtml.appendChild(button);
+		this.#setBtnInviteEvent();
 	}
 
 	#removeInvitesSendFromList(inviteId) {

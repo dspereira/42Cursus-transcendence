@@ -10,7 +10,8 @@ const styles = `
 	justify-content: space-between;
 	align-items: center;
 	border-radius: 10px;
-	background-color: ${colors.second_card};
+	border: 2px solid #495057;
+	/*background-color: ${colors.second_card};*/
 }
 
 .player {
@@ -32,6 +33,7 @@ const styles = `
 .default-photo {
 	width: 120px;
 	height: auto;
+	color: red;
 	background-color: ${colors.second_card};
 	border: 5px solid ${colors.page_background};
 	border-radius: 50%;
@@ -60,6 +62,12 @@ const styles = `
 
 .hiden {
 	display: none;
+}
+
+.test-img {
+	font-size: 120px;
+
+	color: green;
 }
 `;
 

@@ -15,6 +15,7 @@ const styles = `
 	flex-direction: column;
 	justify-content: center;
 	align-items: center;
+	color: ${colors.primary_text};
 }
 
 .join-btn {

@@ -1,9 +1,9 @@
 import stateManager from "../js/StateManager.js";
 import { callAPI } from "../utils/callApiUtils.js";
+import { colors } from "../js/globalStyles.js";
 
 const styles = `
 	.tournament-container {
-		background-color: #939185;
 	}
 
 	.winner {
@@ -17,8 +17,10 @@ const styles = `
 	.graph {
 		display: flex;
 		justify-content: flex-start;
-		background-color: #939185;
+		// background-color: ${colors.second_card};
 		border-radius: 8px;
+		border-style: hidden;
+		border: 2px solid ${colors.third_card};
 	}
 
 	.game-size-1 {
@@ -51,7 +53,8 @@ const styles = `
 	.player-1, .player-2 {
 		display: flex;
 		align-items: center;
-		background-color: #F6F5F5;
+		background-color: ${colors.second_card};
+		color: ${colors.primary_text};
 		width: 100%;
 		height: 60px;
 		border-radius: 8px;
@@ -130,6 +133,14 @@ const styles = `
 		justify-content: center;
 		align-items: center;
 		font-size: 20px;
+		color: ${colors.second_text};
+	}
+
+	.btn-container {
+		display: flex;
+		width: 100%;
+		align-items: center;
+		justify-content: center;
 	}
 
 	.hide {
@@ -139,89 +150,92 @@ const styles = `
 
 const getHtml = function(data) {
 	const html = `
-	<div class="tourney-title">${data.tournamentName}</div>
-		<div class="tournament-container">
-			<div class="winner hide">
-				<div><img src="" class="profile-photo" alt="profile photo chat"/></div>
-				<div>WINNER</div>
+	<div class=tourney-div>
+		<div class="tourney-title">${data.tournamentName}</div>
+			<div class="tournament-container">
+				<div class="winner hide">
+					<div><img src="" class="profile-photo" alt="profile photo chat"/></div>
+					<div>WINNER</div>
+				</div>
+				<div class="graph">
+					<div class="game-size-1 padding-35 game-flex game-flex-column game-0">
+						<div class="player-1">
+							<div class="player-info hide">
+								<div class="img-name-info">
+									<img src="https://api.dicebear.com/8.x/bottts/svg?seed=dsilveri" class="profile-photo" alt="profile photo chat"/>
+									<span class="username">username</span>
+								</div>
+								<div class="score-info">
+									<span class="score hide">7</span>
+								</div>
+							</div>
+						</div>
+						<div class="player-2">
+							<div class="player-info hide">
+								<div class="img-name-info">
+									<img src="https://api.dicebear.com/8.x/bottts/svg?seed=dsilveri" class="profile-photo" alt="profile photo chat"/>
+									<span class="username">username</span>
+								</div>
+								<div class="score-info">
+									<span class="score hide">7</span>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="game-size-2 game-flex game-flex-row game-2">
+						<div class="player-1 justify-start">
+							<div class="player-info hide">
+								<div class="img-name-info">
+									<img src="https://api.dicebear.com/8.x/bottts/svg?seed=dsilveri" class="profile-photo" alt="profile photo chat"/>
+									<span class="username">username</span>
+								</div>
+								<div class="score-info">
+									<span class="score hide">7</span>
+								</div>
+							</div>
+						</div>
+						<div class="player-2">
+							<div class="player-info hide">
+								<div class="score-info">
+									<span class="score hide">7</span>
+								</div>
+								<div class="img-name-info justify-end">
+									<span class="username">username</span>
+									<img src="https://api.dicebear.com/8.x/bottts/svg?seed=dsilveri" class="profile-photo" alt="profile photo chat"/>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="game-size-1 padding-35 game-flex game-flex-column game-1">
+						<div class="player-1">
+							<div class="player-info hide">
+								<div class="score-info">
+									<span class="score hide">7</span>
+								</div>
+								<div class="img-name-info justify-end">
+									<span class="username">username</span>
+									<img src="https://api.dicebear.com/8.x/bottts/svg?seed=dsilveri" class="profile-photo" alt="profile photo chat"/>
+								</div>
+							</div>
+						</div>
+						<div class="player-2">
+							<div class="player-info hide">
+								<div class="score-info">
+									<span class="score hide">7</span>
+								</div>
+								<div class="img-name-info justify-end">
+									<span class="username">username</span>
+									<img src="https://api.dicebear.com/8.x/bottts/svg?seed=dsilveri" class="profile-photo" alt="profile photo chat"/>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
 			</div>
-			<div class="graph">
-				<div class="game-size-1 padding-35 game-flex game-flex-column game-0">
-					<div class="player-1">
-						<div class="player-info hide">
-							<div class="img-name-info">
-								<img src="https://api.dicebear.com/8.x/bottts/svg?seed=dsilveri" class="profile-photo" alt="profile photo chat"/>
-								<span class="username">username</span>
-							</div>
-							<div class="score-info">
-								<span class="score hide">7</span>
-							</div>
-						</div>
-					</div>
-					<div class="player-2">
-						<div class="player-info hide">
-							<div class="img-name-info">
-								<img src="https://api.dicebear.com/8.x/bottts/svg?seed=dsilveri" class="profile-photo" alt="profile photo chat"/>
-								<span class="username">username</span>
-							</div>
-							<div class="score-info">
-								<span class="score hide">7</span>
-							</div>
-						</div>
-					</div>
-				</div>
-				<div class="game-size-2 game-flex game-flex-row game-2">
-					<div class="player-1 justify-start">
-						<div class="player-info hide">
-							<div class="img-name-info">
-								<img src="https://api.dicebear.com/8.x/bottts/svg?seed=dsilveri" class="profile-photo" alt="profile photo chat"/>
-								<span class="username">username</span>
-							</div>
-							<div class="score-info">
-								<span class="score hide">7</span>
-							</div>
-						</div>
-					</div>
-					<div class="player-2">
-						<div class="player-info hide">
-							<div class="score-info">
-								<span class="score hide">7</span>
-							</div>
-							<div class="img-name-info justify-end">
-								<span class="username">username</span>
-								<img src="https://api.dicebear.com/8.x/bottts/svg?seed=dsilveri" class="profile-photo" alt="profile photo chat"/>
-							</div>
-						</div>
-					</div>
-				</div>
-				<div class="game-size-1 padding-35 game-flex game-flex-column game-1">
-					<div class="player-1">
-						<div class="player-info hide">
-							<div class="score-info">
-								<span class="score hide">7</span>
-							</div>
-							<div class="img-name-info justify-end">
-								<span class="username">username</span>
-								<img src="https://api.dicebear.com/8.x/bottts/svg?seed=dsilveri" class="profile-photo" alt="profile photo chat"/>
-							</div>
-						</div>
-					</div>
-					<div class="player-2">
-						<div class="player-info hide">
-							<div class="score-info">
-								<span class="score hide">7</span>
-							</div>
-							<div class="img-name-info justify-end">
-								<span class="username">username</span>
-								<img src="https://api.dicebear.com/8.x/bottts/svg?seed=dsilveri" class="profile-photo" alt="profile photo chat"/>
-							</div>
-						</div>
-					</div>
-				</div>
-			</div>
+			<br></br>
+		<div class="btn-container">
+			<button type="button" class="btn btn-success btn-start hide">Start Game</button>
 		</div>
-		<br></br>
-		<button type="button" class="btn btn-success btn-start hide">Start Game</button>
 	`;
 	return html;
 }
