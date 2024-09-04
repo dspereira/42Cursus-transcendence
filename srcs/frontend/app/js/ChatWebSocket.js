@@ -118,6 +118,7 @@ class ChatWebSocket {
 				if (dataType == "message") {
 					this.#updateMessageCounterState(stateManager.getState("chatMessagesCounter"));
 					stateManager.setState("newChatMessage", data);
+					stateManager.setState("isChatMsgReadyToSend", false);
 				}
 				else if (dataType == "get_message" && data['requester_id'] == stateManager.getState("userId")) {
 					if (data['idBrowser'] == stateManager.getState("idBrowser")) {

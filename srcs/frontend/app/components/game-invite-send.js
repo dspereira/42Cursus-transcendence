@@ -244,12 +244,12 @@ export default class GameInviteSend extends HTMLElement {
 		
 		friendCard.setAttribute("selected", "true");
 		this.selectedElm.push(friendCard.id);
-		var button = document.createElement("button");
-		button.setAttribute("type", "button");
-		button.className = "btn btn-primary btn-invite";
-		button.textContent = "Invite";	
-		rightListFriendHtml.appendChild(button);
-		this.#setInviteSubmitEvent();
+		// var button = document.createElement("button");
+		// button.setAttribute("type", "button");
+		// button.className = "btn btn-primary btn-invite";
+		// button.textContent = "Invite";	
+		// rightListFriendHtml.appendChild(button);
+		// this.#setInviteSubmitEvent();
 	}
 
 	#unselectFriend(elmId) {

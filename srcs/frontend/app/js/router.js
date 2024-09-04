@@ -2,9 +2,7 @@
 import PageHome from "../page-components/page-home.js";
 import PageProfile from "../page-components/page-profile.js";
 import PageChat from "../page-components/page-chat.js";
-//import PageTournaments from "../page-components/page-tournaments_old.js";
-import  PageTournaments from "../page-components/page-tournaments.js";
-import PageNotifications from "../page-components/page-notifications.js";
+import PageTournaments from "../page-components/page-tournaments.js";
 import PageConfigs from "../page-components/page-configs.js";
 import PageLogin from "../page-components/page-login.js";
 import PageSignup from "../page-components/page-signup.js";
@@ -13,9 +11,9 @@ import PageInitial from "../page-components/page-initial.js";
 import PageLogout from "../page-components/page-logout.js";
 import PageFriends from "../page-components/page-friends.js";
 import PagePlay from "../page-components/page-play.js";
-import PageGame from "../page-components/page-game.js";
 
 // Components
+
 import AppHeader from "../components/app-header.js";
 import LoginForm from "../components/login-form.js";
 import SignupForm from "../components/signup-form.js";
@@ -45,21 +43,17 @@ import checkUserLoginState from "../utils/checkUserLoginState.js";
 //  /user/:id devo poder configurar neste formato
 //  /play/:id devo poder configurar neste formato
 const routes = {
-	//""					: PageHome.componentName,
 	"/initial"			: PageInitial.componentName,
 	"/"					: PageHome.componentName,
-	//"/index.html"		: PageHome.componentName,
 	"/login"			: PageLogin.componentName,
 	"/signup"			: PageSignup.componentName,
 	"/logout"			: PageLogout.componentName,
 	"/profile"			: PageProfile.componentName,
 	"/chat"				: PageChat.componentName,
 	"/tournaments"		: PageTournaments.componentName,
-	"/notifications"	: PageNotifications.componentName,
 	"/configurations"	: PageConfigs.componentName,
 	"/friends"			: PageFriends.componentName,
 	"/play"				: PagePlay.componentName,
-	"/game"				: PageGame.componentName,
 }
 
 const publicRoutes = ["/initial", "/login", "/signup"];

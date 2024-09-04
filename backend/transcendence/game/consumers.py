@@ -58,11 +58,8 @@ class Game(AsyncWebsocketConsumer):
 			await self.close(4000)
 			return
 		lobby_id = str(self.scope['url_route']['kwargs']['lobby_id'])
-
 		if lobby_id and await self.__has_access_to_lobby(lobby_id):
 			self.lobby = await self.get_lobby(lobby_id)
-			#self.lobby = lobby_dict[lobby_id]
-
 		else:
 			self.refresh_token_status = False
 			await self.close(4000)
@@ -72,7 +69,6 @@ class Game(AsyncWebsocketConsumer):
 		else:
 			await self.close(4000)
 			return
-
 		await sync_to_async(self.lobby.update_connected_status)(self.user.id, True)
 		if self.room_group_name:
 			await self.channel_layer.group_add(
@@ -80,20 +76,13 @@ class Game(AsyncWebsocketConsumer):
 				self.channel_name
 			)
 		await self.send_users_info_to_group()
-
-		#await sync_to_async(print)("-----------------------")
-		#await sync_to_async(print)("Passa aqui quando sou lobby e faço refresh token")
-		#await sync_to_async(print)("-----------------------")
-
 		game_id = await sync_to_async(self.lobby.get_associated_game_id)()
 		if game_id:
 			self.game = await sync_to_async(games_dict.get_game_obj)(game_id)
-
 			if self.game:
 				is_tournament = await sync_to_async(self.lobby.is_tournament_game)()
 				if not is_tournament or self.game.status == GAME_STATUS_PLAYING:
 					await self.__start_game(game_id)
-		
 
 	async def send_users_info_to_group(self):
 		await self.channel_layer.group_send(self.room_group_name, {'type': 'send_users_info'})
@@ -358,7 +347,7 @@ class Game(AsyncWebsocketConsumer):
 				update_tournament_status(tournament, TOURNAMENT_STATUS_FINISHED)
 			else:
 				update_next_game(tournament, game.winner, game)
-	
+
 	async def get_lobby(self, lobby_id: str):
 		if not lobby_id:
 			return None

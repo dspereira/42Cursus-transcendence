@@ -27,10 +27,12 @@ body {
 */
 
 .content-small {
+	/*height: 85vh;*/
 	margin: 72px 24px 0px 224px;
 }
 
 .content-large {
+	/*height: 85vh;*/
 	margin: 72px 24px 0px 84px;
 }
 
