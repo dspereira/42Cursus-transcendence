@@ -44,20 +44,25 @@ import TourneyInviteCard from "../components/tourney-invite-card.js";
 import stateManager from "./StateManager.js";
 import checkUserLoginState from "../utils/checkUserLoginState.js";
 
-//  /user/:id devo poder configurar neste formato
-//  /play/:id devo poder configurar neste formato
+
+const getHtmlElm = pageObj => `<${pageObj.componentName}></${pageObj.componentName}>`;
+
 const routes = {
-	"/initial"			: PageInitial.componentName,
-	"/"					: PageHome.componentName,
-	"/login"			: PageLogin.componentName,
-	"/signup"			: PageSignup.componentName,
-	"/logout"			: PageLogout.componentName,
-	"/profile"			: PageProfile.componentName,
-	"/chat"				: PageChat.componentName,
-	"/tournaments"		: PageTournaments.componentName,
-	"/configurations"	: PageConfigs.componentName,
-	"/friends"			: PageFriends.componentName,
-	"/play"				: PagePlay.componentName,
+	"/initial"			: getHtmlElm(PageInitial),
+	"/"					: getHtmlElm(PageHome),
+	"/login"			: getHtmlElm(PageLogin),
+	"/signup"			: getHtmlElm(PageSignup),
+	"/logout"			: getHtmlElm(PageLogout),
+	"/profile"			: getHtmlElm(PageProfile),
+	"/chat"				: getHtmlElm(PageChat),
+	"/tournaments"		: getHtmlElm(PageTournaments),
+	"/configurations"	: getHtmlElm(PageConfigs),
+	"/friends"			: getHtmlElm(PageFriends),
+	"/play"				: getHtmlElm(PagePlay),
+}
+
+const dynamicRoutes = {
+	"/profile": key => `<${PageProfile.componentName} key="${key}"></${PageProfile.componentName}>`
 }
 
 const publicRoutes = ["/initial", "/login", "/signup"];
@@ -77,23 +82,45 @@ const render = function(page) {
 				app.replaceChild(newElm, oldElm);
 		}
 	});
-
-	newElm.innerHTML = `<${page}></${page}>`;
+	newElm.innerHTML = page;
 }
 
-const getPageName = function(route) {
-	let pageName = null;
+const getPageComponent = function(route) {
+	let pageHtml = null;
+	let dynamicRouteData = null;
 
 	if (route)
-		pageName = routes[route];
+		pageHtml = routes[route];
 	else
-		pageName = routes[getCurrentRoute()];
+		pageHtml = routes[getCurrentRoute()];
 
-	if (pageName)
-		return pageName;
-	else
-		return Page404.componentName;
+	if (!pageHtml)
+		dynamicRouteData = getDinamycRoute(route);
+	if (dynamicRouteData) {
+		if (dynamicRoutes[dynamicRouteData.route])
+			pageHtml = dynamicRoutes[dynamicRouteData.route](dynamicRouteData.key);
+	}
+	if (!pageHtml)
+		pageHtml = getHtmlElm(Page404);
+
+	return pageHtml;
 }
+
+const getDinamycRoute = function(route) {
+	const lastSlashIdx = route.lastIndexOf("/");
+	let key = null;
+	let newRoute = null;
+	if (lastSlashIdx > 0 && lastSlashIdx < route.length - 1) {
+		key = route.substring(lastSlashIdx + 1);
+		newRoute = route.substring(0, lastSlashIdx);
+	}
+	if (!key || !newRoute)
+		return null;
+	return {
+		"key": key,
+		"route": newRoute
+	}
+} 
 
 const updateIsLoggedInState = function(state) {
 	if (state === undefined || state === null)
@@ -143,7 +170,7 @@ export const router = function(route) {
 			replaceCurrentRoute(normalizeRouteForHistory(authorizedRoute));
 		else
 			pushNewRoute(normalizeRouteForHistory(authorizedRoute));
-		render(getPageName(authorizedRoute));
+		render(getPageComponent(authorizedRoute));
 		updateIsLoggedInState(state);
 		stateManager.setState("userId", userId);
 		init = false;
@@ -155,7 +182,7 @@ const routingHistory = function() {
 	checkUserLoginState((state) => {
 		const authorizedRoute = getRouteByPermissions(getCurrentRoute(), state);
 		replaceCurrentRoute(normalizeRouteForHistory(authorizedRoute));
-		render(getPageName(authorizedRoute));
+		render(getPageComponent(authorizedRoute));
 		updateIsLoggedInState(state);
 	});
 }
