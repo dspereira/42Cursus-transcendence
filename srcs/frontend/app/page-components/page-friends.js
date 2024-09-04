@@ -10,9 +10,7 @@ const getHtml = function(data) {
 		<app-header bell="selected"></app-header>
 		<side-panel selected="friends" language=${data.language}></side-panel>
 		<div class="content content-small">
-			<app-friends
-				language=${data.language}
-			></app-friends>
+			<app-friends language=${data.language}></app-friends>
 		</div>
 	`;
 	return html;

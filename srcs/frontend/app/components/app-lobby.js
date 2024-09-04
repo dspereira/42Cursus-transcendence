@@ -2,6 +2,8 @@ import { callAPI } from "../utils/callApiUtils.js";
 import gameWebSocket from "../js/GameWebSocket.js";
 import stateManager from "../js/StateManager.js";
 import { redirect } from "../js/router.js";
+import { enAppLobbyDict } from "../lang-dicts/enLangDict.js";
+import { ptAppLobbyDict } from "../lang-dicts/ptLangDict.js";
 
 const styles = `
 	.lobby {
@@ -35,6 +37,7 @@ const styles = `
 `;
 
 const getHtml = function(data) {
+	console.log(data);
 	const html = `
 		<div class="lobby">
 			<div class="host">
@@ -46,14 +49,14 @@ const getHtml = function(data) {
 		</div>
 
 		<div class="btn-section">
-			<button type="button" class="btn btn-primary ready-btn">ready</button>
+			<button type="button" class="btn btn-primary ready-btn">${data.langDict.ready_button}</button>
 		</div>
 	`;
 	return html;
 }
 
 export default class AppLobby extends HTMLElement {
-	static observedAttributes = ["lobby-id", "is-tournament"];
+	static observedAttributes = ["lobby-id", "is-tournament", "language"];
 
 	constructor() {
 		super()
@@ -86,6 +89,18 @@ export default class AppLobby extends HTMLElement {
 		else if (name == "is-tournament")
 			name = "isTournament";
 		this.data[name] = newValue;
+		if (name == "language")
+			this.data.langDict = this.#getLanguage(newValue);
+	}
+
+	#getLanguage(language) {
+		switch (language) {
+			case "en":
+				return enAppLobbyDict;
+			case "pt":
+				return ptAppLobbyDict;
+			default:
+		}
 	}
 
 	#initComponent() {

@@ -1,5 +1,7 @@
 import { callAPI } from "../utils/callApiUtils.js";
 import stateManager from "../js/StateManager.js";
+import { enGameInviteSendDict } from "../lang-dicts/enLangDict.js";
+import { ptGameInviteSendDict } from "../lang-dicts/ptLangDict.js";
 
 const styles = `
 	.search-icon {
@@ -78,20 +80,20 @@ const getHtml = function(data) {
 			<div class="search-bar">
 				<div class="form-group">
 					<i class="search-icon bi bi-search"></i>
-					<input type="text" class="form-control form-control-md" id="search" placeholder="Search friends..." maxlength="50">
+					<input type="text" class="form-control form-control-md" id="search" placeholder="${data.langDict.search_bar_placeholder_search}" maxlength="50">
 				</div>
 			</div>
 			<div class="friend-list"></div>
 		</div>
 		<div class="selcted-list-section"></div>
-		<div><button type="button" class="btn btn-primary" id="submit-invite">Invite</button><div>
+		<div><button type="button" class="btn btn-primary" id="submit-invite">${data.langDict.invite_button}</button><div>
 	</div>
 	`;
 	return html;
 }
 
 export default class GameInviteSend extends HTMLElement {
-	static observedAttributes = ["username", "profile-photo"];
+	static observedAttributes = ["username", "profile-photo", "language"];
 
 	constructor() {
 		super()
@@ -109,6 +111,18 @@ export default class GameInviteSend extends HTMLElement {
 		if (name == "profile-photo")
 			name = "profilePhoto";
 		this.data[name] = newValue;
+		if (name == "language")
+			this.data.langDict = this.#getLanguage(newValue);
+	}
+
+	#getLanguage(language) {
+		switch (language) {
+			case "en":
+				return enGameInviteSendDict;
+			case "pt":
+				return ptGameInviteSendDict;
+			default:
+		}
 	}
 
 	#initComponent() {
@@ -263,6 +277,7 @@ export default class GameInviteSend extends HTMLElement {
 					contentElm.innerHTML = `
 					<app-lobby 
 						lobby-id="${stateManager.getState("userId")}"
+						language="${this.data.language}"
 					></app-lobby>
 					`;
 				}

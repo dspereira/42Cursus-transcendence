@@ -11,9 +11,7 @@ const getHtml = function(data) {
 		<app-header></app-header>
 		<side-panel selected="chat" language=${data.language}></side-panel>
 		<div class="content content-small">
-			<app-chat
-				language=${data.language}
-			></app-chat>
+			<app-chat language=${data.language}></app-chat>
 		</div>
 	`;
 	return html;

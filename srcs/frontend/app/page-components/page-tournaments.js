@@ -1,7 +1,8 @@
 import { adjustContent } from "../utils/adjustContent.js";
 import stateManager from "../js/StateManager.js";
 import { callAPI } from "../utils/callApiUtils.js";
-import { callAPI } from "../utils/callApiUtils.js";
+import { enPageTournamentsDict } from "../lang-dicts/enLangDict.js";
+import { ptPageTournamentsDict } from "../lang-dicts/ptLangDict.js";
 
 const styles = `
 .border-separation {
@@ -40,13 +41,13 @@ const getHtml = function(data) {
 	<div class="content content-small">
 		<div class="btn-create-tourney-section hide">
 			<div class="create-tourney">
-				<button type="button" class="btn btn-primary btn-create-tourney">Create Tornement</button>
+				<button type="button" class="btn btn-primary btn-create-tourney">${data.langDict.create_tornement_button}</button>
 			</div>
 			<div class="border-separation"></div>
 		</div>
 		<div class="tourney-section"></div>
 		<div class="invites-received"></div>
-		<div class="exit-tourney hide"><button type="button" class="btn btn-primary btn-exit-tourney">Exit Tournament</button></div>
+		<div class="exit-tourney hide"><button type="button" class="btn btn-primary btn-exit-tourney">${data.langDict.exit_tournament_button}</button></div>
 	</div>
 	`;
 	return html;
@@ -73,6 +74,7 @@ export default class PageTournaments extends HTMLElement {
 			if (res.ok) {
 				if (data && data.language){
 					this.data.language = data.language;
+					this.data.langDict = this.#getLanguage(data.language);
 				}
 		}
 		});
@@ -85,6 +87,16 @@ export default class PageTournaments extends HTMLElement {
 
 	static get componentName() {
 		return this.#componentName;
+	}
+
+	#getLanguage(language) {
+		switch (language) {
+			case "en":
+				return enPageTournamentsDict;
+			case "pt":
+				return ptPageTournamentsDict;
+			default:
+		}
 	}
 
 	#initComponent() {
@@ -138,6 +150,7 @@ export default class PageTournaments extends HTMLElement {
 					<tourney-lobby
 						tournament-id="${data.tournament_id}"
 						owner-id="${stateManager.getState("userId")}"
+						language="${this.data.language}"
 					></tourney-lobby>`;
 					this.invitesReceived.innerHTML = "";
 				}
@@ -157,11 +170,12 @@ export default class PageTournaments extends HTMLElement {
 					<tourney-lobby
 						tournament-id="${torneyData.id}"
 						owner-id="${torneyData.owner}"
+						language="${this.data.language}"
 					></tourney-lobby>`;
 					this.invitesReceived.innerHTML = "";
 				}
 				else if (torneyData.status == "active") {
-					this.tourneySection.innerHTML = `<tourney-graph tournament-id="${torneyData.id}" tournament-name="${torneyData.name}"></tourney-graph>`;
+					this.tourneySection.innerHTML = `<tourney-graph tournament-id="${torneyData.id}" tournament-name="${torneyData.name}" language="${this.data.language}"></tourney-graph>`;
 					this.invitesReceived.innerHTML = "";
 				}
 			}
@@ -169,7 +183,7 @@ export default class PageTournaments extends HTMLElement {
 				this.btnCreateTourneySection.classList.remove("hide");
 				this.exitTournament.classList.add("hide");
 				this.tourneySection.innerHTML = "";
-				this.invitesReceived.innerHTML = "<tourney-invites-received></tourney-invites-received>";
+				this.invitesReceived.innerHTML = `<tourney-invites-received language="${this.data.language}"></tourney-invites-received>`;
 			}
 		});
 
@@ -192,6 +206,7 @@ export default class PageTournaments extends HTMLElement {
 				this.tourneySection.innerHTML = `<app-lobby 
 					lobby-id=${stateValue} 
 					is-tournament="true"
+					language="${this.data.language}"
 				></app-lobby>`;
 				this.invitesReceived.innerHTML = "";		
 				stateManager.setState("tournamentGameLobby", null);

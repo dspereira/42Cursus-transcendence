@@ -3,6 +3,8 @@ import gameWebSocket from "../js/GameWebSocket.js";
 import { callAPI } from "../utils/callApiUtils.js";
 import stateManager from "../js/StateManager.js";
 import { redirect } from "../js/router.js";
+import { enAppPlayDict } from "../lang-dicts/enLangDict.js";
+import { ptAppPlayDict } from "../lang-dicts/ptLangDict.js";
 
 const styles = `
 .profile-photo {

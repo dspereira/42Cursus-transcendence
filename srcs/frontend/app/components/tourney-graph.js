@@ -1,5 +1,7 @@
 import stateManager from "../js/StateManager.js";
 import { callAPI } from "../utils/callApiUtils.js";
+import { enTourneyGraphDict } from "../lang-dicts/enLangDict.js";
+import { ptTourneyGraphDict } from "../lang-dicts/ptLangDict.js";
 
 const styles = `
 	.tournament-container {
@@ -143,7 +145,7 @@ const getHtml = function(data) {
 		<div class="tournament-container">
 			<div class="winner hide">
 				<div><img src="" class="profile-photo" alt="profile photo chat"/></div>
-				<div>WINNER</div>
+				<div>${data.langDict.tournamment_winner}</div>
 			</div>
 			<div class="graph">
 				<div class="game-size-1 padding-35 game-flex game-flex-column game-0">
@@ -221,13 +223,13 @@ const getHtml = function(data) {
 			</div>
 		</div>
 		<br></br>
-		<button type="button" class="btn btn-success btn-start hide">Start Game</button>
+		<button type="button" class="btn btn-success btn-start hide">${data.langDict.start_game_button}</button>
 	`;
 	return html;
 }
 
 export default class TourneyGraph extends HTMLElement {
-	static observedAttributes = ["tournament-id", "tournament-name"];
+	static observedAttributes = ["tournament-id", "tournament-name", "language"];
 
 	constructor() {
 		super()
@@ -252,7 +254,19 @@ export default class TourneyGraph extends HTMLElement {
 			name = "tournamentId";
 		if (name == "tournament-name")
 			name = "tournamentName";
+		if (name == "language")
+			this.data.langDict = this.#getLanguage(newValue);
 		this.data[name] = newValue;
+	}
+
+	#getLanguage(language) {
+		switch (language) {
+			case "en":
+				return enTourneyGraphDict;
+			case "pt":
+				return ptTourneyGraphDict;
+			default:
+		}
 	}
 
 	#initComponent() {

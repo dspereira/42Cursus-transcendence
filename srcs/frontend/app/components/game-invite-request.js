@@ -1,4 +1,6 @@
 import { callAPI } from "../utils/callApiUtils.js";
+import { enGameInviteRequestDict } from "../lang-dicts/enLangDict.js";
+import { ptGameInviteRequestDict } from "../lang-dicts/ptLangDict.js";
 
 const styles = `
 	h3 {
@@ -18,14 +20,14 @@ const styles = `
 const getHtml = function(data) {
 
 	const html = `
-		<h3>Game Invites</h3>
+		<h3>${data.langDict.game_invites}</h3>
 		<div class="requests-list"></div>
 	`;
 	return html;
 }
 
 export default class GameInviteRequest extends HTMLElement {
-	static observedAttributes = [];
+	static observedAttributes = ["language"];
 
 	constructor() {
 		super()
@@ -45,7 +47,20 @@ export default class GameInviteRequest extends HTMLElement {
 	}
 
 	attributeChangedCallback(name, oldValue, newValue) {
+		if (name == "language") {
+			this.data.langDict = this.#getLanguage(newValue);
+			this.data.language = newValue;
+		}
+	}
 
+	#getLanguage(language) {
+		switch (language) {
+			case "en":
+				return enGameInviteRequestDict;
+			case "pt":
+				return ptGameInviteRequestDict;
+			default:
+		}
 	}
 
 	#initComponent() {
@@ -98,6 +113,7 @@ export default class GameInviteRequest extends HTMLElement {
 		requestCard.setAttribute("profile-photo", requestData.image);
 		requestCard.setAttribute("exp", requestData.exp);
 		requestCard.setAttribute("user-id", requestData.id);
+		requestCard.setAttribute("language", this.data.language);
 		this.reqListHtml.appendChild(requestCard);
 	}
 

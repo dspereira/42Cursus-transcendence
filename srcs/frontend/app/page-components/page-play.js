@@ -1,6 +1,8 @@
 import { adjustContent } from "../utils/adjustContent.js";
 import stateManager from "../js/StateManager.js";
 import { callAPI } from "../utils/callApiUtils.js";
+import { enPagePlayDict } from "../lang-dicts/enLangDict.js";
+import { ptPagePlayDict } from "../lang-dicts/ptLangDict.js";
 
 const styles = `
 	.invite-game {
@@ -28,11 +30,11 @@ const getHtml = function(data) {
 	<div class="content content-small">
 		<div class="page-1">
 			<div class="invite-game">
-				<button type="button" class="btn btn-primary invite-game-btn">Invite to Game</button>
+				<button type="button" class="btn btn-primary invite-game-btn">${data.langDict.invite_button}</button>
 				<div></div>
 				<div class="div-border"></div>
 			</div>
-			<game-invite-request></game-invite-request>
+			<game-invite-request language=${data.language}></game-invite-request>
 		</div>
 	</div>
 	`;
@@ -60,6 +62,7 @@ export default class PagePlay extends HTMLElement {
 			if (res.ok) {
 				if (data && data.language){
 					this.data.language = data.language;
+					this.data.langDict = this.#getLanguage(data.language);
 				}
 		}
 		});
@@ -69,6 +72,15 @@ export default class PagePlay extends HTMLElement {
 		this.#scripts();
 	}
 
+	#getLanguage(language) {
+		switch (language) {
+			case "en":
+				return enPagePlayDict
+			case "pt":
+				return ptPagePlayDict
+			default:
+		}
+	}
 
 	static get componentName() {
 		return this.#componentName;
@@ -117,7 +129,7 @@ export default class PagePlay extends HTMLElement {
 
 			// api/game/game
 			content.removeChild(page1);
-			content.innerHTML = "<game-invite-send></game-invite-send>";
+			content.innerHTML = `<game-invite-send language=${this.data.language}></game-invite-send>`;
 		});
 	}
 }

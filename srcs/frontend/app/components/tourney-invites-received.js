@@ -1,4 +1,6 @@
 import { callAPI } from "../utils/callApiUtils.js";
+import { enTourneyInvitesReceivedDict } from "../lang-dicts/enLangDict.js";
+import { ptTourneyInvitesReceivedDict } from "../lang-dicts/ptLangDict.js";
 
 const styles = `	
 h1 {
@@ -17,14 +19,14 @@ h1 {
 
 const getHtml = function(data) {
 	const html = `
-		<h1>Tournaments Invites</h1>
+		<h1>${data.langDict.tournaments_invites}</h1>
 		<div class="requests-list"></div>
 	`;
 	return html;
 }
 
 export default class TourneyInvitesReceived extends HTMLElement {
-	static observedAttributes = [];
+	static observedAttributes = ["language"];
 
 	constructor() {
 		super()
@@ -44,7 +46,18 @@ export default class TourneyInvitesReceived extends HTMLElement {
 	}
 
 	attributeChangedCallback(name, oldValue, newValue) {
+		if (name == "language")
+			this.data.langDict = this.#getLanguage(newValue);
+	}
 
+	#getLanguage(language) {
+		switch (language) {
+			case "en":
+				return enTourneyInvitesReceivedDict;
+			case "pt":
+				return ptTourneyInvitesReceivedDict;
+			default:
+		}
 	}
 
 	#initComponent() {
@@ -88,6 +101,7 @@ export default class TourneyInvitesReceived extends HTMLElement {
 		requestCard.setAttribute("profile-photo", requestData.image);
 		requestCard.setAttribute("exp", requestData.exp);
 		requestCard.setAttribute("user-id", requestData.id);
+		requestCard.setAttribute("language", this.data.language);
 		this.reqListHtml.appendChild(requestCard);
 	}
 

@@ -139,7 +139,6 @@ const getHtml = function(data) {
 	let onlineVisibility = "";
 	if (data.online == "false")
 		onlineVisibility = "hide";
-	console.log(data.langDict.message_placeholder)
 	const html = `
 		<div class="chat-section">
 			<div class="chat-header">

@@ -8,7 +8,6 @@ const getHtml = function(data) {
 	const html = `
 	<app-header></app-header>
 	<side-panel selected="logout" language=${data.language}></side-panel>
-
 	<div class="content content-small">
 		<h1>logout</h1>
 			<button type="button" class="btn btn-primary" id="logout-submit">Logout</button>
@@ -55,7 +54,7 @@ export default class PageLogout extends HTMLElement {
 
 	#initComponent() {
 		this.html = document.createElement("div");
-		this.html.innerHTML = this.#html();
+		this.html.innerHTML = this.#html(this.data);
 		if (styles) {
 			this.elmtId = `elmtId_${Math.floor(Math.random() * 100000000000)}`;
 			this.styles = document.createElement("style");

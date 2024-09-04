@@ -119,7 +119,7 @@ const getHtml = function(data) {
 				<div class="search-bar">
 					<div class="form-group">
 						<i class="search-icon bi bi-search"></i>
-						<input type="text" class="form-control form-control-md" id="search" placeholder="Search Friends..." maxlength="50">
+						<input type="text" class="form-control form-control-md" id="search" placeholder="${data.langDict.search_bar_placeholder_search}" maxlength="50">
 					</div>
 				</div>
 				<div class="user-list"></div>
@@ -291,7 +291,7 @@ export default class AppFriends extends HTMLElement {
 				if (data.users)
 					this.#insertUsersCards(data.users, "search");
 				else
-					listPanel.innerHTML = "<h1>There are no users to search for!</h1>";
+					listPanel.innerHTML = `<h1>${this.data.langDict.no_users_to_search}</h1>`;
 		});
 	}
 
@@ -311,6 +311,7 @@ export default class AppFriends extends HTMLElement {
 			}
 		});	
 	}
+	/* ${this.data.langDict.create_friends_no_friends} */
 
 	#createRequestsPage() {
 		const listPanel = this.html.querySelector(".list-panel");
@@ -345,11 +346,7 @@ export default class AppFriends extends HTMLElement {
 		const searchBar = document.createElement("div");
 		searchBar.classList.add("search-bar");
 
-		let placeholder = "";
-		if (type == "friends")
-			placeholder = this.data.langDict.search_bar_placeholder_friends;
-		if (type == "search")
-			placeholder = this.data.langDict.search_bar_placeholder_search;
+		let placeholder = this.data.langDict.search_bar_placeholder_search;
 
 		searchBar.innerHTML = `
 		<div class="form-group">
@@ -388,7 +385,7 @@ export default class AppFriends extends HTMLElement {
 				else if (type=="friends" && data.friends)
 					this.#insertUsersCards(data.friends, "friends");
 				else {
-					userList.innerHTML = "<h1>Username not Found!</h1>";
+					userList.innerHTML = `<h1>${this.data.langDict.username_not_found}</h1>`;
 				}
 			}
 		});

@@ -1,4 +1,6 @@
 import { callAPI } from "../utils/callApiUtils.js";
+import { enTourneyInviterDict } from "../lang-dicts/enLangDict.js";
+import { ptTourneyInviterDict } from "../lang-dicts/ptLangDict.js";
 
 const styles = `
 .invites-section {
@@ -89,7 +91,7 @@ const getHtml = function(data) {
 					<div class="search-bar">
 						<div class="form-group">
 							<i class="search-icon bi bi-search"></i>
-							<input type="text" class="form-control form-control-md" id="search" placeholder="Search friends..." maxlength="50">
+							<input type="text" class="form-control form-control-md" id="search" placeholder="${data.langDict.search_bar_placeholder_search}" maxlength="50">
 						</div>
 					</div>
 					<div><i class="bi bi-arrow-clockwise refresh-icon"></i></div>
@@ -98,13 +100,13 @@ const getHtml = function(data) {
 			</div>
 			<div class="invites-send"></div>
 		</div>
-		<button type="button" class="btn btn-primary btn-invite">Invite</button>
+		<button type="button" class="btn btn-primary btn-invite">${data.langDict.invite_button}</button>
 	`;
 	return html;
 }
 
 export default class TourneyInviter extends HTMLElement {
-	static observedAttributes = ["tournament-id"];
+	static observedAttributes = ["tournament-id", "language"];
 
 	constructor() {
 		super()
@@ -127,7 +129,19 @@ export default class TourneyInviter extends HTMLElement {
 	attributeChangedCallback(name, oldValue, newValue) {
 		if (name == "tournament-id")
 			name = "tournamentId";
+		if (name == "language")
+			this.data.langDict = this.#getLanguage(newValue);
 		this.data[name] = newValue;
+	}
+
+	#getLanguage(language) {
+		switch (language) {
+			case "en":
+				return enTourneyInviterDict;
+			case "pt":
+				return ptTourneyInviterDict;
+			default:
+		}
 	}
 
 	#initComponent() {

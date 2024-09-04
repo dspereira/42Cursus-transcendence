@@ -1,5 +1,7 @@
 import { callAPI } from "../utils/callApiUtils.js";
 import stateManager from "../js/StateManager.js";
+import { enTourneyLobbyDict } from "../lang-dicts/enLangDict.js";
+import { ptTourneyLobbyDict } from "../lang-dicts/ptLangDict.js";
 
 const styles = `
 .players {
@@ -57,12 +59,12 @@ const styles = `
 
 const getHtml = function(data) {
 	const tournamentInviterHtml = `<div class="border-separation"></div>
-	<tourney-inviter tournament-id="${data.tournamentId}"></tourney-inviter>`;
+	<tourney-inviter tournament-id="${data.tournamentId}" language="${data.language}"></tourney-inviter>`;
 
-	const ownerBtns = `<button type="button" class="btn btn-success btn-start">Start</button>
-			<button type="button" class="btn btn-danger btn-cancel">Cancel</button>`;
+	const ownerBtns = `<button type="button" class="btn btn-success btn-start">${data.langDict.start_button}</button>
+			<button type="button" class="btn btn-danger btn-cancel">${data.langDict.cancel_button}</button>`;
 	
-	const guestBtns = `<button type="button" class="btn btn-danger btn-leave">Leave</button>`;
+	const guestBtns = `<button type="button" class="btn btn-danger btn-leave">${data.langDict.leave_button}</button>`;
 
 	const html = `
 	<div class="players">
@@ -96,7 +98,7 @@ const getHtml = function(data) {
 }
 
 export default class TourneyLobby extends HTMLElement {
-	static observedAttributes = ["tournament-id", "owner-id"];
+	static observedAttributes = ["tournament-id", "owner-id", "language"];
 
 	constructor() {
 		super()
@@ -123,8 +125,20 @@ export default class TourneyLobby extends HTMLElement {
 			name = "ownerId";
 			this.data.isOwner = stateManager.getState("userId") == newValue;
 		}
+		if (name == "language") {
+			this.data.langDict = this.#getLanguage(newValue);
+		}
 		this.data[name] = newValue;
+	}
 
+	#getLanguage(language) {
+		switch (language) {
+			case "en":
+				return enTourneyLobbyDict;
+			case "pt":
+				return ptTourneyLobbyDict;
+			default:
+		}
 	}
 
 	#initComponent() {
@@ -155,6 +169,7 @@ export default class TourneyLobby extends HTMLElement {
 	}
 
 	#scripts() {
+		console.log("arroz doce:", this.data);
 		this.#joinedPlayersCall();
 		this.#joinedPlayersPolling();
 		this.#setCancelTournamentEvent();
@@ -195,7 +210,7 @@ export default class TourneyLobby extends HTMLElement {
 		img.setAttribute("src", "../img/default_profile.png");
 		img.classList.remove("profile-photo");
 		img.classList.add("default-photo");
-		elmHtml.querySelector(".username").innerHTML = "waiting...";
+		elmHtml.querySelector(".username").innerHTML = `${this.data.langDict.player_username_placeholder}`;
 		elmHtml.querySelector(".player-id").innerHTML = "";
 	}
 
