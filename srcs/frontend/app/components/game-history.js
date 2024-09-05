@@ -30,12 +30,20 @@ const styles = `
 		width: 40%;
 	}
 
+	.btn-selected {
+		background-color: #0056b3;
+		border-color: #004494;
+		transition: background-color 0.3s ease, box-shadow 0.3s ease;
+	}
+
+	/*
 	.btn-primary:focus {
 		background-color: #0056b3;
 		border-color: #004494;
 		outline: none;
 		transition: background-color 0.3s ease, box-shadow 0.3s ease;
 	}
+	*/
 
 	/*
 	.tab-select-btn{
@@ -87,7 +95,7 @@ const getHtml = function(data) {
 	<div class="page-container">
 		<div class="tab-select">
 
-			<button type="button" class="btn btn-primary btn-solo-games">Solo Games</button>
+			<button type="button" class="btn btn-primary btn-solo-games btn-selected">Solo Games</button>
 			<button type="button" class="btn btn-primary btn-tournament-games">Tournament Games</button>
 
 		
@@ -101,8 +109,11 @@ const getHtml = function(data) {
 
 		</div>
 		<div class="list-container">
+			<!--
 			<div class="game-list"></div>
 			<div class="tounament-list"></div>
+			-->
+			<div class="games-list"></div>
 		</div>
 	</div>
 	`;
@@ -136,6 +147,9 @@ export default class GameHistory extends HTMLElement {
 			this.styles.textContent = this.#styles();
 			this.html.classList.add(`${this.elmtId}`);
 		}
+		this.btnTournamentGames = this.html.querySelector(".btn-tournament-games");
+		this.btnSoloGames = this.html.querySelector(".btn-solo-games");
+		this.gamesListHtml = this.html.querySelector(".games-list");
 	}
 
 	#styles() {
@@ -190,15 +204,13 @@ export default class GameHistory extends HTMLElement {
 
 	#insertGames(gameList) {
 		let game = null;
-		const gameListHtml = this.html.querySelector(".game-list");
+		let prev_game = null;
 
+		this.gamesListHtml.innerHTML = "";
 		if (!gameList || !gameList.length) {
-			gameListHtml.innerHTML = '<h1>No games played yet.</h1>';
+			this.gamesListHtml.innerHTML = '<h1>No games played yet.</h1>';
 			return ;
 		}
-
-		gameListHtml.innerHTML= "";
-		let prev_game = null;
 		gameList.forEach(elm => {
 			game = document.createElement("div");
 			game.innerHTML = 
@@ -213,8 +225,26 @@ export default class GameHistory extends HTMLElement {
 				date="${this.#parse_date(elm.date)}"
 				>
 			</game-card>`;
-			gameListHtml.insertBefore(game, prev_game);
+			this.gamesListHtml.insertBefore(game, prev_game);
 			prev_game = game;
+		});
+	}
+
+	#insertTournaments(tournamentList) {
+		let tournament = null;
+		let prev_tournament = null;
+
+		this.gamesListHtml.innerHTML = "";
+		if (!tournamentList || !tournamentList.length) {
+			this.gamesListHtml.innerHTML =  "<h1>No tournaments played yet.</h1>";
+			return ;
+		}
+		tournamentList.forEach(elm => {
+			tournament = document.createElement("div");
+			tournament.innerHTML = 
+			`<tournament-card></tournament-card>`;
+			this.gamesListHtml.insertBefore(tournament, prev_tournament);
+			prev_tournament = tournament;
 		});
 	}
 
@@ -227,9 +257,8 @@ export default class GameHistory extends HTMLElement {
 
 	#getTournamentList() {
 		callAPI("GET", `http://127.0.0.1:8000/api/tournament/?username=${this.data.username}`, null, (res, data) => {
-			console.log("Tornament");
-			console.log(res);
-			console.log(data);
+			if (res.ok && data)
+				this.#insertTournaments(data.tournaments_list);
 		});		
 	}
 
@@ -241,6 +270,26 @@ export default class GameHistory extends HTMLElement {
 	}
 	*/
 
+	#soloGamesBtn() {
+		this.btnSoloGames.addEventListener("click", () => {
+			this.#setBtnFocus(this.btnSoloGames);
+			this.#getGameList();
+		});
+	}
+
+	#tournamentsGamesBtn() {
+		this.btnTournamentGames.addEventListener("click", () => {
+			this.#setBtnFocus(this.btnTournamentGames);
+			this.#getTournamentList();
+		});
+	}
+
+	#setBtnFocus(btnElmHtml) {
+		this.btnTournamentGames.classList.remove("btn-selected");
+		this.btnSoloGames.classList.remove("btn-selected");
+		btnElmHtml.classList.add("btn-selected");
+	}
+
 	#parse_date(date) {
 		let dm_part = date.split("T")[0]; //get the part with the day and month
 		let hm_part = date.split("T")[1]; //get the part with the hour and minute
@@ -250,24 +299,6 @@ export default class GameHistory extends HTMLElement {
 		let minute = hm_part.split(":")[1];
 		let new_date = day + "/" + month + "-" + hour + ":" + minute;
 		return new_date;
-	}
-
-	#soloGamesBtn() {
-		const btn = this.html.querySelector(".btn-solo-games");
-		if (!btn)
-			return ;
-		btn.addEventListener("click", () => {
-			console.log("soloGamesBtn");
-		});
-	}
-
-	#tournamentsGamesBtn() {
-		const btn = this.html.querySelector(".btn-tournament-games");
-		if (!btn)
-			return ;
-		btn.addEventListener("click", () => {
-			console.log("tournamentsGamesBtn");
-		});
 	}
 }
 
