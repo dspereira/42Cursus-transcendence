@@ -94,12 +94,11 @@ def get_tournament_list(user):
 		for tournament in tournaments:
 			current_tournament = tournament.tournament
 			if current_tournament.status == TOURNAMENT_STATUS_FINISHED:
-				winner = get_tournament_winner(current_tournament)
 				tournament_info = {
 					"id": current_tournament.id,
 					'name': current_tournament.name,
-					"winner": winner,
-					"is_winner": is_user_tournament_winner(user.id, winner['id'])
+					"is_winner": is_user_tournament_winner(user.id, get_tournament_winner(current_tournament)['id']),
+					"creation_date": current_tournament.created
 				}
 				tournaments_list.append(tournament_info)
 		return tournaments_list
