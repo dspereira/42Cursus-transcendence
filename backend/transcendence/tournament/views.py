@@ -261,6 +261,6 @@ def info(request):
 		return JsonResponse({"message": "Error: Invalid tournament id!"}, status=400)
 	tournament = tournament_model.get(id=tournament_id)
 	if not tournament:
-		return JsonResponse({"message": "Error: Invalid tournament ID!"}, status=409)
+		return JsonResponse({"message": "Error: Invalid tournament ID!"}, status=404)
 	tournament_info = get_all_tournament_info(tournament)
 	return JsonResponse({"message": f"Tournament info retrieved with success!", "info": tournament_info}, status=200)
