@@ -199,7 +199,7 @@ class Game(AsyncWebsocketConsumer):
 			self.game.update()
 			await asyncio.sleep(SLEEP_TIME_SECONDS)
 		await self.__finish_game(GAME_STATUS_FINISHED)
-		await sync_to_async(self.update_users)()
+		await self.update_users()
 
 	async def __send_timer_data(self, time):
 		await self.channel_layer.group_send(
@@ -267,13 +267,12 @@ class Game(AsyncWebsocketConsumer):
 			self.game_info.user2_score = scores['player_2_score']
 			self.game_info.status = finish_status
 			self.game_info.winner = winner
+			self.game_info.played = await sync_to_async(datetime.now)()
 			await sync_to_async(self.game_info.save)()
 			games_dict.remove_game_obj(self.game_info.id)
 			surrender = True if finish_status == GAME_STATUS_SURRENDER else False
-
 			if await sync_to_async(self.lobby.is_tournament_game)():
 				await sync_to_async(self.__update_tournament_games)()
-
 			await self.channel_layer.group_send(
 				self.room_group_name,
 				{
@@ -284,7 +283,7 @@ class Game(AsyncWebsocketConsumer):
 					}
 				}
 			)
-	
+
 	async def __has_access_to_lobby(self, lobby_id: str):
 		if lobby_id in lobby_dict:
 			#lobby = lobby_dict[lobby_id]
@@ -354,22 +353,13 @@ class Game(AsyncWebsocketConsumer):
 			return None
 		return lobby_dict[lobby_id]
 
-	def update_users(self):
-		print("_____________________aqui__________________________")
-		game_info = self.__get_game_info(self.game_info.id)
-
-		user_profile = user_profile_info_model.get(user=self.user)
+	async def update_users(self):
+		game_info = await self.__get_game_info(self.game_info.id)
+		user_profile = await sync_to_async(user_profile_info_model.get)(user=self.user)
 		user_profile.total_games = user_profile.total_games + 1
-		print(game_info)
-		print("---depois---")
-
-		if self.game_info.winner.id == self.user.id:
-			print("---ganhou---")
+		if game_info.winner.id == self.user.id:
 			user_profile.victories = user_profile.victories + 1
 		else:
-			print("---perdeu---")
 			user_profile.defeats = user_profile.defeats + 1
-
 		user_profile.win_rate = user_profile.victories / user_profile.total_games * 100
-
-		user_profile.save()
+		await sync_to_async(user_profile.save)()
