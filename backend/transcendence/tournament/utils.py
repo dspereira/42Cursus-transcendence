@@ -281,3 +281,14 @@ def get_tournament_winner(tournament):
 		if last_game.status == GAME_STATUS_FINISHED:
 			winner = get_single_user_info(get_user_profile(last_game.winner))
 	return winner
+
+def get_all_tournament_info(tournament):
+	all_tournament_info = None
+	if tournament:
+		all_tournament_info = {
+			"id": tournament.id,
+			"name": tournament.name,
+			"players": get_tournament_players(tournament),
+			"games": get_tournament_games_list(tournament)
+		}
+	return all_tournament_info

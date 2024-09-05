@@ -22,6 +22,7 @@ from .utils import get_tournament_games_list
 from .utils import get_next_game
 from .utils import is_tournament_finished
 from .utils import get_game_info
+from .utils import get_all_tournament_info
 from .consts import TOURNAMENT_STATUS_ACTIVE
 
 tournament_requests_model = ModelManager(TournamentRequests)
@@ -249,3 +250,17 @@ def finished_status(request):
 		winner = game_info['winner']
 		is_finished = True
 	return JsonResponse({"message": f"Finish tournament status retrived with success!", "is_finished": is_finished, "tournament_name": tournament_name, "winner": winner}, status=200)
+
+@login_required
+@accepted_methods(["GET"])
+def info(request):
+	if not user_model.get(id=request.access_data.sub):
+		return JsonResponse({"message": "Error: Invalid User!"}, status=400)
+	tournament_id = request.GET.get('id')
+	if not tournament_id:
+		return JsonResponse({"message": "Error: Invalid tournament id!"}, status=400)
+	tournament = tournament_model.get(id=tournament_id)
+	if not tournament:
+		return JsonResponse({"message": "Error: Invalid tournament ID!"}, status=409)
+	tournament_info = get_all_tournament_info(tournament)
+	return JsonResponse({"message": f"Tournament info retrieved with success!", "info": tournament_info}, status=200)
