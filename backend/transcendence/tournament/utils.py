@@ -175,7 +175,8 @@ def get_game_info(game):
 		"player2": get_single_user_info(user2_profile),
 		"player1_score": game.user1_score,
 		"player2_score": game.user2_score,
-		"winner": get_single_user_info(winner)
+		"winner": get_single_user_info(winner),
+		"played_time": game.played
 	}
 	return game_info
 
