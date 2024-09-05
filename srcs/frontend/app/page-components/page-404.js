@@ -26,7 +26,6 @@ const styles = `
 
 const getHtml = function(data) {
 	const html = `
-		<h1>404 Not Found</h1>-->
 		<div class=page-container>
 			<div class="image-container">
 				<img src="/img/not_found.jpg" alt="404 Not Found Image">

@@ -1,9 +1,5 @@
 import {callAPI} from "../utils/callApiUtils.js";
 
-// Solo Games History
-// Tournament History
-
-
 const styles = `
 	.page-container {
 		display: flex;
@@ -36,55 +32,6 @@ const styles = `
 		transition: background-color 0.3s ease, box-shadow 0.3s ease;
 	}
 
-	/*
-	.btn-primary:focus {
-		background-color: #0056b3;
-		border-color: #004494;
-		outline: none;
-		transition: background-color 0.3s ease, box-shadow 0.3s ease;
-	}
-	*/
-
-	/*
-	.tab-select-btn{
-		display: flex;
-		width: 600px;
-		height: 50px;
-		color: white;
-		background-color: #EEEEEE;
-		border-style: hidden;
-		border-radius: 5px;
-	}
-	*/
-	
-
-	/*
-	.select-left, .select-right{
-		display: flex;
-		width: 50%;
-		height: 100%;
-		border-style: hidden;
-		justify-content: center;
-		align-items: center;
-		--toggled: off;
-		font-size: 16px;
-		font-weight: bold;
-		transition: .5s;
-	}
-	*/
-
-	/*
-	.select-left {
-		border-radius: 5px 0px 0px 5px;
-		background-color: #C2C2C2;
-	}
-
-	.select-right {
-		border-radius: 0px 5px 5px 0px;
-		background-color: #E0E0E0;
-	}
-	*/
-
 	.list-container {
 		overflow-y: auto;
 	}
@@ -94,25 +41,10 @@ const getHtml = function(data) {
 	const html = `
 	<div class="page-container">
 		<div class="tab-select">
-
 			<button type="button" class="btn btn-primary btn-solo-games btn-selected">Solo Games</button>
 			<button type="button" class="btn btn-primary btn-tournament-games">Tournament Games</button>
-
-		
-			<!--
-			<button class="tab-select-btn">
-				<div class="select-left">Game History</div>
-				<div class="select-right">Tournament History</div>
-			</button>
-			-->
-		
-
 		</div>
 		<div class="list-container">
-			<!--
-			<div class="game-list"></div>
-			<div class="tounament-list"></div>
-			-->
 			<div class="games-list"></div>
 		</div>
 	</div>
@@ -170,37 +102,9 @@ export default class GameHistory extends HTMLElement {
 
 	#scripts() {
 		this.#getGameList();
-		this.#getTournamentList();
-		//this.#toggleTabSelector();
 		this.#soloGamesBtn();
 		this.#tournamentsGamesBtn();
 	}
-
-	/*
-	#toggleTabSelector() {
-		this.html.querySelector(".tab-select-btn").addEventListener("click", () => {
-			const leftSlct = this.html.querySelector(".select-left");
-			const rightSlct = this.html.querySelector(".select-right");
-			const isToggled = leftSlct.style.getPropertyValue('--toggled') === 'on';
-			const highlight = "#C2C2C2";
-			const background = "#EEEEEE";
-			leftSlct.style.setProperty('--toggled', isToggled ? 'off' : 'on');
-			if (isToggled) {
-				leftSlct.style.backgroundColor = highlight;
-				rightSlct.style.backgroundColor = background;
-				leftSlct.style.color = "white";
-				rightSlct.style.color = highlight;
-				this.#getGameList();
-			} else {
-				leftSlct.style.backgroundColor = background;
-				rightSlct.style.backgroundColor = highlight;
-				leftSlct.style.color = highlight;
-				rightSlct.style.color = "white";
-				this.#getTournamentList();
-			}
-		});
-	}
-	*/
 
 	#insertGames(gameList) {
 		let game = null;
@@ -221,7 +125,7 @@ export default class GameHistory extends HTMLElement {
 				player2="${elm.user2}"
 				player2_image="${elm.user2_image}"
 				player2_score="${elm.user2_score}"
-				win="${elm.winner}"
+				is-winner="${elm.winner}"
 				date="${this.#parse_date(elm.date)}"
 				>
 			</game-card>`;
@@ -240,9 +144,17 @@ export default class GameHistory extends HTMLElement {
 			return ;
 		}
 		tournamentList.forEach(elm => {
+
+			console.log(elm);
+
 			tournament = document.createElement("div");
 			tournament.innerHTML = 
-			`<tournament-card></tournament-card>`;
+			`<tournament-card
+				id="${elm.id}"
+				name="${elm.name}"
+				is-winner="${elm.is_winner}"
+				date="${this.#parse_date(elm.creation_date)}";
+			></tournament-card>`;
 			this.gamesListHtml.insertBefore(tournament, prev_tournament);
 			prev_tournament = tournament;
 		});
@@ -250,7 +162,7 @@ export default class GameHistory extends HTMLElement {
 
 	#getGameList() {
 		callAPI("GET", `http://127.0.0.1:8000/api/game/get-games/?username=${this.data.username}`, null, (res, data) => {
-			if (res.ok && data && data.games_list)
+			if (res.ok && data)
 				this.#insertGames(data.games_list);
 		});
 	};
@@ -261,14 +173,6 @@ export default class GameHistory extends HTMLElement {
 				this.#insertTournaments(data.tournaments_list);
 		});		
 	}
-
-
-	/*
-	#getTournamentList() {
-		const gameListHtml = this.html.querySelector(".game-list");
-		gameListHtml.innerHTML = '<h1>No tournaments played yet.</h1>';
-	}
-	*/
 
 	#soloGamesBtn() {
 		this.btnSoloGames.addEventListener("click", () => {
