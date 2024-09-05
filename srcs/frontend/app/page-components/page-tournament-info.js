@@ -4,15 +4,109 @@ import { callAPI } from "../utils/callApiUtils.js";
 import { render } from "../js/router.js";
 
 const styles = `
+	.bracket {
+		display: flex;
+		width: 100%;
+	}
+
+	.game {
+		width: 33.33%;
+	}
+	
+	.profile-photo {
+		width: 45px;
+		height: auto;
+		clip-path:circle();
+		cursor: pointer;
+	}
+
+	.player {
+		display: flex;
+		width: 100%;
+	}
+
+	.border-container-1 {
+		width: 40%;
+		background-color: green;
+	}
+
+	.border-container-2 {
+		width: 100%;
+		background-color: blue;
+	}
+
+	.border-t {
+		width: 100%;
+		border-top: 2px solid red;
+	}
+
+	.border-b {
+		width: 100%;
+		border-bottom: 2px solid red;
+	}
+
+	.border-r {
+		width: 100%;
+		border-right: 2px solid red;
+	}
 
 `;
 
 const getHtml = function(data) {
+	console.log(data);
+
 	const html = `
 	<app-header></app-header>
 	<side-panel selected="tournaments"></side-panel>
 	<div class="content content-small">
-        <h1>Touenament info</h1>
+        <h1>${data.info.name}</h1>
+
+		<div class="bracket">
+		
+			<div class="game">
+				<div class="player">
+					<div><img src="https://api.dicebear.com/8.x/bottts/svg?seed=dsilveri" class="profile-photo" alt="profile photo"/></div>
+					<div class="border-container-1">
+						<div>1</div>
+						<div class="border-t border-r">2</div>
+					</div>
+					<div class="border-container-2">
+						<div>1</div>
+						<div class="border-b">2</div>
+					</div>
+				</div>
+				<div class="player">
+					<img src="https://api.dicebear.com/8.x/bottts/svg?seed=dsilveri" class="profile-photo" alt="profile photo"/>
+					<div class="border-container-1">
+						<div class="border-b border-r">1</div>
+						<div>2</div>
+					</div>
+					<div class="border-container-2"></div>
+				</div>
+			</div>
+
+
+			<div class="game">
+				<div>
+					<img src="https://api.dicebear.com/8.x/bottts/svg?seed=dsilveri" class="profile-photo" alt="profile photo"/>
+				</div>
+				<div>
+					<img src="https://api.dicebear.com/8.x/bottts/svg?seed=dsilveri" class="profile-photo" alt="profile photo"/>
+				</div>
+			</div>
+
+
+			<div class="game">
+				<div>
+					<img src="https://api.dicebear.com/8.x/bottts/svg?seed=dsilveri" class="profile-photo" alt="profile photo"/>
+				</div>
+				<div>
+					<img src="https://api.dicebear.com/8.x/bottts/svg?seed=dsilveri" class="profile-photo" alt="profile photo"/>
+				</div>
+			</div>
+
+		</div>
+
     </div>
 	`;
 	return html;
@@ -27,6 +121,7 @@ export default class PageTournamentInfo extends HTMLElement {
 	constructor() {
 		super()
 		this.data = {};
+		this.info = null;
 	}
 
 	connectedCallback() {
@@ -35,8 +130,10 @@ export default class PageTournamentInfo extends HTMLElement {
 		}
 		else {
 			callAPI("GET", `http://127.0.0.1:8000/api/tournament/info/?id=${this.data.id}`, null, (res, data) => {
-				if (res.ok && data && data.info)
+				if (res.ok && data && data.info) {
+					this.data["info"] = data.info;
 					this.#start();
+				}
 				else
 					render("<page-404></page-404>");
 			});
@@ -59,7 +156,7 @@ export default class PageTournamentInfo extends HTMLElement {
 
 	#initComponent() {
 		this.html = document.createElement("div");
-		this.html.innerHTML = this.#html();
+		this.html.innerHTML = this.#html(this.data);
 		if (styles) {
 			this.elmtId = `elmtId_${Math.floor(Math.random() * 100000000000)}`;
 			this.styles = document.createElement("style");
