@@ -11,6 +11,7 @@ import PageInitial from "../page-components/page-initial.js";
 import PageLogout from "../page-components/page-logout.js";
 import PageFriends from "../page-components/page-friends.js";
 import PagePlay from "../page-components/page-play.js";
+import PageTournamentInfo from "../page-components/page-tournament-info.js";
 
 // Components
 import AppHeader from "../components/app-header.js";
@@ -62,7 +63,8 @@ const routes = {
 }
 
 const dynamicRoutes = {
-	"/profile": key => `<${PageProfile.componentName} username="${key}"></${PageProfile.componentName}>`
+	"/profile": key => `<${PageProfile.componentName} username="${key}"></${PageProfile.componentName}>`,
+	"/tournament": key => `<${PageTournamentInfo.componentName} id="${key}"></${PageTournamentInfo.componentName}>`
 }
 
 const publicRoutes = ["/initial", "/login", "/signup"];

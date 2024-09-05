@@ -1,46 +1,28 @@
-import { redirect, render } from "../js/router.js";
 import { adjustContent } from "../utils/adjustContent.js";
 import stateManager from "../js/StateManager.js";
 import { callAPI } from "../utils/callApiUtils.js";
+import { render } from "../js/router.js";
 
 const styles = `
-	.profile-container {
-		display: flex;
-		justify-content: flex-start;
-	}
 
-	.profile {
-		width: 30%;
-	}
-
-	.history {
-		width: 70%;
-	}
 `;
 
 const getHtml = function(data) {
 	const html = `
-		<app-header></app-header>
-		<side-panel selected="profile"></side-panel>
-		<div class="content content-small">
-			<div class="profile-container">
-				<div class="profile">
-					<user-profile username="${data.username}"></user-profile>
-				</div>
-				<div class="history">
-					<game-history username="${data.username}"></game-history>
-				</div>
-			</div>
-		</div>
+	<app-header></app-header>
+	<side-panel selected="tournaments"></side-panel>
+	<div class="content content-small">
+        <h1>Touenament info</h1>
+    </div>
 	`;
 	return html;
 }
 
-const title = "Profile";
+const title = "Tournament Info";
 
-export default class PageProfile extends HTMLElement {
-	static #componentName = "page-profile";
-	static observedAttributes = ["username"];
+export default class PageTournamentInfo extends HTMLElement {
+	static #componentName = "page-tournament-info";
+	static observedAttributes = ["id"];
 
 	constructor() {
 		super()
@@ -48,13 +30,12 @@ export default class PageProfile extends HTMLElement {
 	}
 
 	connectedCallback() {
-		if (!this.data.username) {
-			this.data.username = stateManager.getState("username");
-			this.#start();
+		if (!this.data.id) {
+			render("<page-404></page-404>");
 		}
 		else {
-			callAPI("GET", `http://127.0.0.1:8000/api/profile/exists/?username=${this.data.username}`, null, (res, data) => {
-				if (res.ok && data && data.exists)
+			callAPI("GET", `http://127.0.0.1:8000/api/tournament/info/?id=${this.data.id}`, null, (res, data) => {
+				if (res.ok && data && data.info)
 					this.#start();
 				else
 					render("<page-404></page-404>");
@@ -64,7 +45,7 @@ export default class PageProfile extends HTMLElement {
 
 	attributeChangedCallback(name, oldValue, newValue) {
 		this.data[name] = newValue;
-	}
+	}	
 
 	static get componentName() {
 		return this.#componentName;
@@ -78,7 +59,7 @@ export default class PageProfile extends HTMLElement {
 
 	#initComponent() {
 		this.html = document.createElement("div");
-		this.html.innerHTML = this.#html(this.data);
+		this.html.innerHTML = this.#html();
 		if (styles) {
 			this.elmtId = `elmtId_${Math.floor(Math.random() * 100000000000)}`;
 			this.styles = document.createElement("style");
@@ -108,4 +89,4 @@ export default class PageProfile extends HTMLElement {
 	}
 }
 
-customElements.define(PageProfile.componentName, PageProfile);
+customElements.define(PageTournamentInfo.componentName, PageTournamentInfo);
