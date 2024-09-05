@@ -10,14 +10,18 @@ const styles = `
 	}
 
 	.game {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
 		width: 33.33%;
 	}
 	
 	.profile-photo {
-		width: 45px;
+		width: 50px;
 		height: auto;
 		clip-path:circle();
 		cursor: pointer;
+		margin: 10px;
 	}
 
 	.player {
@@ -26,28 +30,44 @@ const styles = `
 	}
 
 	.border-container-1 {
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+		align-items: center;
 		width: 40%;
-		background-color: green;
 	}
 
 	.border-container-2 {
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+		align-items: center;
 		width: 100%;
-		background-color: blue;
 	}
 
 	.border-t {
-		width: 100%;
 		border-top: 2px solid red;
 	}
 
 	.border-b {
-		width: 100%;
 		border-bottom: 2px solid red;
 	}
 
 	.border-r {
-		width: 100%;
 		border-right: 2px solid red;
+	}
+
+	.elm {
+		width: 100%;
+		height: 50%;	
+	}
+
+	.color-purple {
+		background-color: purple;
+	}
+
+	.color-orange {
+		background-color: orange;
 	}
 
 `;
@@ -62,24 +82,23 @@ const getHtml = function(data) {
         <h1>${data.info.name}</h1>
 
 		<div class="bracket">
-		
 			<div class="game">
 				<div class="player">
 					<div><img src="https://api.dicebear.com/8.x/bottts/svg?seed=dsilveri" class="profile-photo" alt="profile photo"/></div>
 					<div class="border-container-1">
-						<div>1</div>
-						<div class="border-t border-r">2</div>
+						<div class="elm">&nbsp;</div>
+						<div class="elm border-t border-r">&nbsp;</div>
 					</div>
 					<div class="border-container-2">
-						<div>1</div>
-						<div class="border-b">2</div>
+						<div class="elm">&nbsp;</div>
+						<div class="elm border-b">&nbsp;</div>
 					</div>
 				</div>
 				<div class="player">
 					<img src="https://api.dicebear.com/8.x/bottts/svg?seed=dsilveri" class="profile-photo" alt="profile photo"/>
 					<div class="border-container-1">
-						<div class="border-b border-r">1</div>
-						<div>2</div>
+						<div class="elm border-b border-r">&nbsp;</div>
+						<div class="elm">&nbsp;</div>
 					</div>
 					<div class="border-container-2"></div>
 				</div>
