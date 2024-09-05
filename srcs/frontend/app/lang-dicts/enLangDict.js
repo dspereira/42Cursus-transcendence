@@ -71,11 +71,11 @@ export const enSignupFormDict = {
 
 export const enTourneyGraphDict = {
     start_game_button: "Start Game",
-    tournamment_winner: "WINNER",
+    tournamment_winner: "WINNER"
 }
 
 export const enTourneyInviteCardDict = {
-    join_button: "Join",
+    join_button: "Join"
 }
 
 export const enTourneyInviterDict = {

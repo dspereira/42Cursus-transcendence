@@ -156,4 +156,4 @@ def get_image(request):
 @login_required
 @accepted_methods(["GET"])
 def get_language(request):
-	return JsonResponse({"language": "en"})
+	return JsonResponse({"language": "pt"})
