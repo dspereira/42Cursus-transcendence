@@ -17,7 +17,6 @@ from custom_utils.requests_utils import update_request_status
 from custom_utils.requests_utils import is_valid_request
 from .consts import *
 from game.utils import GAME_STATUS_CREATED, GAME_STATUS_FINISHED
-
 from friendships.friendships import get_single_user_info
 
 tournament_requests_model = ModelManager(TournamentRequests)
@@ -95,10 +94,12 @@ def get_tournament_list(user):
 		for tournament in tournaments:
 			current_tournament = tournament.tournament
 			if current_tournament.status == TOURNAMENT_STATUS_FINISHED:
+				winner = get_tournament_winner(current_tournament)
 				tournament_info = {
 					"id": current_tournament.id,
 					'name': current_tournament.name,
-					"winner": get_tournament_winner(current_tournament)
+					"winner": winner,
+					"is_winner": is_user_tournament_winner(user.id, winner['id'])
 				}
 				tournaments_list.append(tournament_info)
 		return tournaments_list
@@ -292,3 +293,8 @@ def get_all_tournament_info(tournament):
 			"games": get_tournament_games_list(tournament)
 		}
 	return all_tournament_info
+
+def is_user_tournament_winner(user_id, winner_id):
+	if user_id == winner_id:
+		return True
+	return False
