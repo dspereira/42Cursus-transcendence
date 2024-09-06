@@ -5,6 +5,7 @@ from datetime import datetime
 from django.db.models import Q
 import random
 import math
+import re
 
 from user_profile.models import UserProfileInfo
 from .models import TournamentRequests
@@ -297,4 +298,11 @@ def get_all_tournament_info(tournament):
 def is_user_tournament_winner(user_id, winner_id):
 	if user_id == winner_id:
 		return True
+	return False
+
+def is_valid_tournament_name(tournament_name):
+	valid_tournament_name_pattern = r'^[A-Za-z0-9_\-\s]+$'
+	if tournament_name and len(tournament_name) <= 50:
+		if bool(re.match(valid_tournament_name_pattern, tournament_name)):
+			return True
 	return False

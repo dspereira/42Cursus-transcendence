@@ -19,6 +19,7 @@ from .utils import get_tournament_list
 from .utils import update_tournament_status
 from .utils import add_player_to_tournament
 from .utils import invalidate_active_tournament_invites
+from .utils import is_valid_tournament_name
 
 from .consts import TOURNAMENT_STATUS_ABORTED
 from .consts import TOURNAMENT_STATUS_ACTIVE
@@ -74,7 +75,7 @@ class TournamentView(View):
 		return JsonResponse({"message": "Error: Invalid Tournament ID!"}, status=409)
 
 	@method_decorator(login_required)
-	def put(self, request):
+	def patch(self, request):
 		if request.body:
 			req_data = json.loads(request.body)
 			user = user_model.get(id=request.access_data.sub)
@@ -82,12 +83,15 @@ class TournamentView(View):
 			new_tournament_name = req_data["new_name"].strip()
 			if not tournament:
 					return JsonResponse({"message": "Error: Invalid tournament ID!"}, status=409)
-			if not new_tournament_name:
-				return JsonResponse({"message": "Invalid new Tournament Name!"}, status=409)
 			if not user:
 				return JsonResponse({"message": "Error: Invalid User!"}, status=400)
-			tournament.name = new_tournament_name
-			tournament.save()
-			return JsonResponse({"message": "Tournament name changed with success!"}, status=200)
+			if tournament.owner.id != user.id:
+				return JsonResponse({"message": "Error: User is not the owner of the Tournament!"}, status=409)
+			if new_tournament_name:
+				if is_valid_tournament_name(new_tournament_name):
+					tournament.name = new_tournament_name
+					tournament.save()
+					return JsonResponse({"message": "Tournament name changed with success!"}, status=200)
+			return JsonResponse({"message": "Error: Invalid Tournament Name!"}, status=409)
 		else:
 			return JsonResponse({"message": "Error: Empty Body!"}, status=400)
