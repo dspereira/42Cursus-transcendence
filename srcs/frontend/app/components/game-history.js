@@ -144,9 +144,6 @@ export default class GameHistory extends HTMLElement {
 			return ;
 		}
 		tournamentList.forEach(elm => {
-
-			console.log(elm);
-
 			tournament = document.createElement("div");
 			tournament.innerHTML = 
 			`<tournament-card
