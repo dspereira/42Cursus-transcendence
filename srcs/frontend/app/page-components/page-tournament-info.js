@@ -7,6 +7,7 @@ const styles = `
 	.bracket {
 		display: flex;
 		width: 100%;
+		/*background-color: blue;*/
 	}
 
 	.game {
@@ -14,10 +15,18 @@ const styles = `
 		flex-direction: column;
 		align-items: center;
 		width: 33.33%;
+		/*background-color: green;*/
+	}
+
+	.game-center {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		width: 33.33%;
 	}
 	
 	.profile-photo {
-		width: 50px;
+		width: 65px;
 		height: auto;
 		clip-path:circle();
 		cursor: pointer;
@@ -27,6 +36,14 @@ const styles = `
 	.player {
 		display: flex;
 		width: 100%;
+	}
+
+	.players-center {
+		display: flex;
+		justify-content: space-between;
+		 align-items: center;
+		width: 100%
+
 	}
 
 	.border-container-1 {
@@ -57,19 +74,26 @@ const styles = `
 		border-right: 2px solid red;
 	}
 
+	.border-l {
+		border-left: 2px solid red;
+	}
+	
 	.elm {
 		width: 100%;
 		height: 50%;	
 	}
 
-	.color-purple {
-		background-color: purple;
+	.trophy {
+		width: 70px;
 	}
-
-	.color-orange {
-		background-color: orange;
+		
+	.winner {
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+		align-items: center;
+		width: 100%;	
 	}
-
 `;
 
 const getHtml = function(data) {
@@ -79,7 +103,7 @@ const getHtml = function(data) {
 	<app-header></app-header>
 	<side-panel selected="tournaments"></side-panel>
 	<div class="content content-small">
-        <h1>${data.info.name}</h1>
+		<h1>${data.info.name}</h1>
 
 		<div class="bracket">
 			<div class="game">
@@ -105,31 +129,56 @@ const getHtml = function(data) {
 			</div>
 
 
-			<div class="game">
-				<div>
-					<img src="https://api.dicebear.com/8.x/bottts/svg?seed=dsilveri" class="profile-photo" alt="profile photo"/>
-				</div>
-				<div>
-					<img src="https://api.dicebear.com/8.x/bottts/svg?seed=dsilveri" class="profile-photo" alt="profile photo"/>
-				</div>
-			</div>
-
-
-			<div class="game">
-				<div>
-					<img src="https://api.dicebear.com/8.x/bottts/svg?seed=dsilveri" class="profile-photo" alt="profile photo"/>
-				</div>
-				<div>
-					<img src="https://api.dicebear.com/8.x/bottts/svg?seed=dsilveri" class="profile-photo" alt="profile photo"/>
+			<div class="game-center">
+				<div class="players-center">
+					<div>
+						<img src="https://api.dicebear.com/8.x/bottts/svg?seed=dsilveri" class="profile-photo" alt="profile photo"/>
+					</div>
+					<div><img src="/img/trophy-icon.png" class="trophy" alt="trophy"></div>
+					<div>
+						<img src="https://api.dicebear.com/8.x/bottts/svg?seed=dsilveri" class="profile-photo" alt="profile photo"/>
+					</div>
 				</div>
 			</div>
 
+
+			<div class="game">
+				<div class="player">
+					<div class="border-container-2">
+						<div class="elm">&nbsp;</div>
+						<div class="elm border-b">&nbsp;</div>
+					</div>
+					<div class="border-container-1">
+						<div class="elm">&nbsp;</div>
+						<div class="elm border-t border-l">&nbsp;</div>
+					</div>
+					<div><img src="https://api.dicebear.com/8.x/bottts/svg?seed=dsilveri" class="profile-photo" alt="profile photo"/></div>
+				</div>
+				<div class="player">
+					<div class="border-container-2">
+						<div class="elm">&nbsp;</div>
+						<div class="elm">&nbsp;</div>
+					</div>
+					<div class="border-container-1">
+						<div class="elm border-l">&nbsp;</div>
+						<div class="elm border-t ">&nbsp;</div>
+					</div>
+					<div><img src="https://api.dicebear.com/8.x/bottts/svg?seed=dsilveri" class="profile-photo" alt="profile photo"/></div>
+				</div>
+			</div>
+		</div>
+		
+		<div class="winner">
+			<div>
+				<img src="https://api.dicebear.com/8.x/bottts/svg?seed=dsilveri" class="profile-photo" alt="profile photo"/>
+			</div>
 		</div>
 
-    </div>
+	</div>
 	`;
 	return html;
 }
+
 
 const title = "Tournament Info";
 

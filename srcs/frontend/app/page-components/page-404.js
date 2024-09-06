@@ -8,7 +8,6 @@ const styles = `
 	}
 
 	img {
-		/*display: inline-block;*/
 		width: auto;
 		height: 60vh;
 		align: center;
