@@ -20,6 +20,7 @@ from .utils import update_tournament_status
 from .utils import add_player_to_tournament
 from .utils import invalidate_active_tournament_invites
 from .utils import is_valid_tournament_name
+from .utils import get_tournament_info
 
 from .consts import TOURNAMENT_STATUS_ABORTED
 from .consts import TOURNAMENT_STATUS_ACTIVE
@@ -53,7 +54,8 @@ class TournamentView(View):
 			if not add_player_to_tournament(new_tournament, user):
 				new_tournament.delete()
 				return JsonResponse({"message": f"Error: Failed to add player to Tournament.",}, status=409)
-			return JsonResponse({"message": f"Tournament Created With Success!", "tournament_id": new_tournament.id}, status=201)
+			tournament_info = get_tournament_info(new_tournament)
+			return JsonResponse({"message": f"Tournament Created With Success!", "tournament_info": tournament_info}, status=201)
 		else:
 			return JsonResponse({"message": "Error: Invalid User, Requested Friend!"}, status=400)
 

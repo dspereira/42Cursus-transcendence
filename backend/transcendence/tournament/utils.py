@@ -306,3 +306,14 @@ def is_valid_tournament_name(tournament_name):
 		if bool(re.match(valid_tournament_name_pattern, tournament_name)):
 			return True
 	return False
+
+def get_tournament_info(tournament):
+	if not tournament:
+		return None
+	tournament_info = {
+		"id": tournament.id,
+		"name": tournament.name,
+		"status": tournament.status,
+		"owner": tournament.owner.id
+	}
+	return tournament_info

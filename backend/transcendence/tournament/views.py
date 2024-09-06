@@ -23,6 +23,7 @@ from .utils import get_next_game
 from .utils import is_tournament_finished
 from .utils import get_game_info
 from .utils import get_all_tournament_info
+from .utils import get_tournament_info
 from .consts import TOURNAMENT_STATUS_ACTIVE
 
 tournament_requests_model = ModelManager(TournamentRequests)
@@ -68,12 +69,7 @@ def active_tournament(request):
 	tournament = has_active_tournament(user)
 	tournament_data = None
 	if tournament:
-		tournament_data = {
-			"id": tournament.id,
-			"name": tournament.name,
-			"status": tournament.status,
-			"owner": tournament.owner.id
-		}
+		tournament_data = get_tournament_info(tournament)
 	return JsonResponse({"message": f"Tournament status returned with success!", "tournament": tournament_data}, status=200)
 
 @login_required
