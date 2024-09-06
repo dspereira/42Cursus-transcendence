@@ -50,6 +50,27 @@ const styles = `
 	border-bottom: 3px solid #EEEDEB;
 }
 
+.tournament-name-update {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	gap: 10px;
+	width: 100%;
+	margin-bottom: 50px;
+}
+
+.input-container {
+	width: 80%;
+}
+
+.button-container {
+	width: 20%;
+}
+
+.btn-update {
+	width: 100%;
+}
+
 .hiden {
 	display: none;
 }
@@ -64,7 +85,17 @@ const getHtml = function(data) {
 	
 	const guestBtns = `<button type="button" class="btn btn-danger btn-leave">Leave</button>`;
 
+	const updateNameForm = `<div class="form-group tournament-name-update">
+		<div class="input-container">
+			<input type="text" class="form-control form-control-md name-input" value="${data.tournamentName}" placeholder="Tournament Name" maxlength="50">
+		</div>
+		<div class="button-container">
+			<button type="button" class="btn btn-primary btn-update">Update Name</button>
+		</div>
+	</div>`;
+
 	const html = `
+	${data.isOwner ? updateNameForm : ""}
 	<div class="players">
 		<div class="player">
 			<div><img src="../img/default_profile.png" class="default-photo" alt="avatar"></div>
@@ -96,7 +127,7 @@ const getHtml = function(data) {
 }
 
 export default class TourneyLobby extends HTMLElement {
-	static observedAttributes = ["tournament-id", "owner-id"];
+	static observedAttributes = ["tournament-id", "owner-id", "tournament-name"];
 
 	constructor() {
 		super()
@@ -119,12 +150,13 @@ export default class TourneyLobby extends HTMLElement {
 	attributeChangedCallback(name, oldValue, newValue) {
 		if (name == "tournament-id")
 			name = "tournamentId";
+		else if (name == "tournament-name")
+			name = "tournamentName";
 		else if (name == "owner-id") {
 			name = "ownerId";
 			this.data.isOwner = stateManager.getState("userId") == newValue;
 		}
 		this.data[name] = newValue;
-
 	}
 
 	#initComponent() {
@@ -160,6 +192,7 @@ export default class TourneyLobby extends HTMLElement {
 		this.#setCancelTournamentEvent();
 		this.#setLeaveTournamentEvent();
 		this.#setStartTournamentEvent();
+		this.#updateTournamentNameBtn();
 	}
 
 	#isFriendExistsInList(list, playerId) {
@@ -307,6 +340,24 @@ export default class TourneyLobby extends HTMLElement {
 			callAPI("POST", `http://127.0.0.1:8000/api/tournament/start/`, {id: this.data.tournamentId}, (res, data) => {
 				if (res.ok)
 					stateManager.setState("isTournamentChanged", true);	
+			});
+		});
+	}
+
+	#updateTournamentNameBtn() {
+		const btn = this.html.querySelector(".btn-update");
+		const nameInput = this.html.querySelector(".name-input");
+		if(!btn || !nameInput)
+			return ;
+
+		btn.addEventListener("click", () => {
+			const name = nameInput.value.trim();
+			callAPI("PATCH", `http://127.0.0.1:8000/api/tournament/`, {id: this.data.tournamentId, new_name: name}, (res, data) => {
+				console.log(res);
+				console.log(data);
+				
+				if (res.status == 409)
+					nameInput.value = data.tournament_name;	
 			});
 		});
 	}
