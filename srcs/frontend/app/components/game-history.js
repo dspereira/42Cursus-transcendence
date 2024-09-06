@@ -5,15 +5,16 @@ const styles = `
 		display: flex;
 		width: 100%;
 		flex-direction: column;
-		gap: 40px;
+		gap: 20px;
 	}
 
 	.tab-select {
 		display: flex;
 		width: 100%;
-		height: 50px;
+		/*height: 50px;*/
 		justify-content: center;
 		align-items: center;
+		margin-bottom: 20px;
 	}
 
 	.btn-solo-games {
@@ -35,6 +36,34 @@ const styles = `
 	.list-container {
 		overflow-y: auto;
 	}
+
+	.caption-color {
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		gap: 33%;
+		width: 100%;
+	}
+
+	.victory-container, .defeat-container {
+		display: flex;
+		align-items: center;
+		gap: 10px;
+	}
+
+	.color-victory {
+		width: 20px;
+		height: 20px;
+		border-radius: 50% ;
+		background-color: #00CCCC;
+	}
+
+	.color-defeat {
+		width: 20px;
+		height: 20px;
+		border-radius: 50% ;
+		background-color: #FF6666;
+	}
 `;
 
 const getHtml = function(data) {
@@ -43,6 +72,16 @@ const getHtml = function(data) {
 		<div class="tab-select">
 			<button type="button" class="btn btn-primary btn-solo-games btn-selected">Solo Games</button>
 			<button type="button" class="btn btn-primary btn-tournament-games">Tournament Games</button>
+		</div>
+		<div class="caption-color">
+			<div class="victory-container">
+				<div class="color-victory"></div>
+				<div class="word-victory">Victory</div>
+			</div>
+			<div class="defeat-container">
+				<div class="word-defeat">Defeat</div>
+				<div class="color-defeat"></div>
+			</div>
 		</div>
 		<div class="list-container">
 			<div class="games-list"></div>
