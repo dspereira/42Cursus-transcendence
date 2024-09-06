@@ -80,13 +80,15 @@ class TournamentView(View):
 	def patch(self, request):
 		if request.body:
 			req_data = json.loads(request.body)
+			if not "new_name" in req_data or not "id" in req_data:
+				return JsonResponse({"message": "Error: Invalid request body!"}, status=400)
 			user = user_model.get(id=request.access_data.sub)
+			if not user:
+				return JsonResponse({"message": "Error: Invalid User!"}, status=400)
 			tournament = tournament_model.get(id=req_data["id"])
 			new_tournament_name = req_data["new_name"].strip()
 			if not tournament:
 					return JsonResponse({"message": "Error: Invalid tournament ID!"}, status=409)
-			if not user:
-				return JsonResponse({"message": "Error: Invalid User!"}, status=400)
 			if tournament.owner.id != user.id:
 				return JsonResponse({"message": "Error: User is not the owner of the Tournament!"}, status=409)
 			if new_tournament_name:
