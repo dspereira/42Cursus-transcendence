@@ -40,6 +40,7 @@ import TourneyInviter from "../components/tourney-inviter.js";
 import TourneyInvitesReceived from "../components/tourney-invites-received.js";
 import TourneyInviteCard from "../components/tourney-invite-card.js";
 import TournamentCard from "../components/tournament-card.js";
+import TourneyInfo from "../components/tourney-info.js";
 
 // Others
 import stateManager from "./StateManager.js";
