@@ -99,28 +99,32 @@ const styles = `
 		cursor: pointer;
 	}
 
-	.container {
+	.container-bracket {
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+		align-items: center;
 		background-color: #EAE4DD;
-		padding: 50px;
 		border-radius: 10px;
+		padding: 30px;
+		width: 100%;
 	}
-
 `;
 
 const getHtml = function(data) {
-	console.log(data);
+	console.log(data.info);
 
 	const html = `
 	<app-header></app-header>
 	<side-panel selected="tournaments"></side-panel>
 	<div class="content content-small">
+		
 		<h1>${data.info.name}</h1>
-
-		<div class="container">
+		<div class="container-bracket">
 			<div class="bracket">
 				<div class="game">
 					<div class="player">
-						<div><img src="https://api.dicebear.com/8.x/bottts/svg?seed=dsilveri" class="profile-photo" alt="profile photo"/></div>
+						<div><img src="${data.info.games[0].player1.image}" class="profile-photo" alt="profile photo"/></div>
 						<div class="border-container-1">
 							<div class="elm">&nbsp;</div>
 							<div class="elm border-t border-r">&nbsp;</div>
@@ -131,7 +135,7 @@ const getHtml = function(data) {
 						</div>
 					</div>
 					<div class="player">
-						<img src="https://api.dicebear.com/8.x/bottts/svg?seed=dsilveri" class="profile-photo" alt="profile photo"/>
+						<img src="${data.info.games[0].player2.image}" class="profile-photo" alt="profile photo"/>
 						<div class="border-container-1">
 							<div class="elm border-b border-r">&nbsp;</div>
 							<div class="elm">&nbsp;</div>
@@ -144,11 +148,11 @@ const getHtml = function(data) {
 				<div class="game-center">
 					<div class="players-center">
 						<div>
-							<img src="https://api.dicebear.com/8.x/bottts/svg?seed=dsilveri" class="profile-photo" alt="profile photo"/>
+							<img src="${data.info.games[2].player1.image}" class="profile-photo" alt="profile photo"/>
 						</div>
 						<div><img src="/img/trophy-icon.png" class="trophy" alt="trophy"></div>
 						<div>
-							<img src="https://api.dicebear.com/8.x/bottts/svg?seed=dsilveri" class="profile-photo" alt="profile photo"/>
+							<img src="${data.info.games[2].player2.image}" class="profile-photo" alt="profile photo"/>
 						</div>
 					</div>
 				</div>
@@ -164,7 +168,7 @@ const getHtml = function(data) {
 							<div class="elm">&nbsp;</div>
 							<div class="elm border-t border-l">&nbsp;</div>
 						</div>
-						<div><img src="https://api.dicebear.com/8.x/bottts/svg?seed=dsilveri" class="profile-photo" alt="profile photo"/></div>
+						<div><img src="${data.info.games[1].player1.image}" class="profile-photo" alt="profile photo"/></div>
 					</div>
 					<div class="player">
 						<div class="border-container-2">
@@ -175,19 +179,20 @@ const getHtml = function(data) {
 							<div class="elm border-l">&nbsp;</div>
 							<div class="elm border-t ">&nbsp;</div>
 						</div>
-						<div><img src="https://api.dicebear.com/8.x/bottts/svg?seed=dsilveri" class="profile-photo" alt="profile photo"/></div>
+						<div><img src="${data.info.games[1].player2.image}" class="profile-photo" alt="profile photo"/></div>
 					</div>
 				</div>
 			</div>
 			
 			<div class="winner">
 				<div>
-					<img src="https://api.dicebear.com/8.x/bottts/svg?seed=dsilveri" class="profile-photo-winner" alt="profile photo"/>
+					<img src="${data.info.games[2].winner.image}" class="profile-photo-winner" alt="profile photo"/>
 				</div>
 				<div>
 					WINNER
 				</div>
 			</div>
+
 		</div>
 
 	</div>
