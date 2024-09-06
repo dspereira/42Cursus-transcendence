@@ -47,7 +47,7 @@ class TournamentView(View):
 		if user:
 			if has_active_tournament(user):
 				return JsonResponse({"message": f"Error: User has already an active Tournament.",}, status=409)
-			new_tournament_name = f'{user.username}\'s Tournament'
+			new_tournament_name = f'Tournament of {user.username}'
 			new_tournament = tournament_model.create(name=new_tournament_name, owner=user)
 			if not new_tournament:
 				return JsonResponse({"message": f"Error: Failed to create Tournament.",}, status=409)
