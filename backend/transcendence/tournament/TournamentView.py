@@ -90,7 +90,7 @@ class TournamentView(View):
 			if not tournament:
 					return JsonResponse({"message": "Error: Invalid tournament ID!"}, status=409)
 			if tournament.owner.id != user.id:
-				return JsonResponse({"message": "Error: User is not the owner of the Tournament!"}, status=401)
+				return JsonResponse({"message": "Error: User is not the owner of the Tournament!"}, status=403)
 			if new_tournament_name:
 				if is_valid_tournament_name(new_tournament_name):
 					tournament.name = new_tournament_name
