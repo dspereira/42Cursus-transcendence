@@ -45,9 +45,6 @@ const styles = `
 `;
 
 const getHtml = function(data) {
-
-	console.log(data);
-
 	const html = `
 		<div class="game-grid-container ${data.isWinner == "true" ? "tournament-win" : "tournament-loss"}">
 			<div class="left">

@@ -1,5 +1,6 @@
 import stateManager from "../js/StateManager.js";
 import { callAPI } from "../utils/callApiUtils.js";
+import parseDate from "../utils/timeDateUtils.js";
 
 const styles = `
 	.bracket {
@@ -109,20 +110,6 @@ const styles = `
 	}
 `;
 
-
-const parse_date = function(date) {
-	if (!date)
-		return ;
-	let dm_part = date.split("T")[0]; //get the part with the day and month
-	let hm_part = date.split("T")[1]; //get the part with the hour and minute
-	let day = dm_part.split("-")[2];
-	let month = dm_part.split("-")[1];
-	let hour = hm_part.split(":")[0];
-	let minute = hm_part.split(":")[1];
-	let new_date = day + "/" + month + "-" + hour + ":" + minute;
-	return new_date;
-}
-
 const getHtml = function(data) {
 	
 	console.log(data);
@@ -218,7 +205,7 @@ const getHtml = function(data) {
 			player2_image="${game_0.player2.image}"
 			player2_score="${game_0.player2_score}"
 			is-winner="${"true"}"
-			date="${parse_date(game_0.played_time)}"
+			date="${parseDate(game_0.played_time)}"
 		></game-card>
 
 		<game-card
@@ -229,7 +216,7 @@ const getHtml = function(data) {
 			player2_image="${game_1.player2.image}"
 			player2_score="${game_1.player2_score}"
 			is-winner="${"true"}"
-			date="${parse_date(game_1.played_time)}"
+			date="${parseDate(game_1.played_time)}"
 		></game-card>
 
 		<game-card
@@ -240,7 +227,7 @@ const getHtml = function(data) {
 			player2_image="${game_2.player2.image}"
 			player2_score="${game_2.player2_score}"
 			is-winner="${"true"}"
-			date="${parse_date(game_2.played_time)}"
+			date="${parseDate(game_2.played_time)}"
 		></game-card>
 	`;
 	return html;

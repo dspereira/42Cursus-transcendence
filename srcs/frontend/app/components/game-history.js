@@ -1,4 +1,5 @@
 import {callAPI} from "../utils/callApiUtils.js";
+import parseDate from "../utils/timeDateUtils.js";
 
 const styles = `
 	.page-container {
@@ -11,7 +12,6 @@ const styles = `
 	.tab-select {
 		display: flex;
 		width: 100%;
-		/*height: 50px;*/
 		justify-content: center;
 		align-items: center;
 		margin-bottom: 20px;
@@ -165,7 +165,7 @@ export default class GameHistory extends HTMLElement {
 				player2_image="${elm.user2_image}"
 				player2_score="${elm.user2_score}"
 				is-winner="${elm.winner}"
-				date="${this.#parse_date(elm.date)}"
+				date="${parseDate(elm.date)}"
 				>
 			</game-card>`;
 			this.gamesListHtml.insertBefore(game, prev_game);
@@ -189,7 +189,7 @@ export default class GameHistory extends HTMLElement {
 				id="${elm.id}"
 				name="${elm.name}"
 				is-winner="${elm.is_winner}"
-				date="${this.#parse_date(elm.creation_date)}";
+				date="${parseDate(elm.creation_date)}";
 			></tournament-card>`;
 			this.gamesListHtml.insertBefore(tournament, prev_tournament);
 			prev_tournament = tournament;
@@ -228,17 +228,6 @@ export default class GameHistory extends HTMLElement {
 		this.btnTournamentGames.classList.remove("btn-selected");
 		this.btnSoloGames.classList.remove("btn-selected");
 		btnElmHtml.classList.add("btn-selected");
-	}
-
-	#parse_date(date) {
-		let dm_part = date.split("T")[0]; //get the part with the day and month
-		let hm_part = date.split("T")[1]; //get the part with the hour and minute
-		let day = dm_part.split("-")[2];
-		let month = dm_part.split("-")[1];
-		let hour = hm_part.split(":")[0];
-		let minute = hm_part.split(":")[1];
-		let new_date = day + "/" + month + "-" + hour + ":" + minute;
-		return new_date;
 	}
 }
 
