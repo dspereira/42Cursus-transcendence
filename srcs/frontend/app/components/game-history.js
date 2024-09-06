@@ -19,12 +19,12 @@ const styles = `
 
 	.btn-solo-games {
 		border-radius: 5px 0 0 5px;
-		width: 40%;
+		width: 50%;
 	}
 	
 	.btn-tournament-games {
 		border-radius: 0 5px 5px 0;
-		width: 40%;
+		width: 50%;
 	}
 
 	.btn-selected {

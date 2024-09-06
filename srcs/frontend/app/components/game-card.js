@@ -5,12 +5,10 @@ const styles = `
 		display: flex;
 		justify-content: space-between;
 		align-items: center;
-		margin-left: 30px;
-		margin-right: 30px;
-		margin-bottom: 20px;
-		height: 80px;
 		border-radius: 10px;
-		width; 100%;
+		width: 100%;
+		padding: 5px 15px 5px 15px;
+		margin-bottom: 20px;
 	}
 
 	.game-win {
@@ -26,8 +24,7 @@ const styles = `
 	.player-container {
 		display: flex;
 		align-items: center;
-		margin: 20px;
-		gap: 25px;
+		gap: 10px;
 	}
 
 	.profile-picture {
@@ -46,7 +43,7 @@ const styles = `
 		display: flex;
 		flex-direction: column;
 		align-items: center;
-		margin-top: 7px;
+		gap: 3px;
 	}
 
 	.score {
@@ -81,14 +78,14 @@ const getHtml = function(data) {
 		<div class="game-grid-container ${data.isWinner == "true" ? "game-win" : "game-loss"}">
 			<div class="player-container left">
 				<img class="profile-picture" src=${data.player1_image}>
-				<h1 class="username">${data.player1}</h1>
+				<div class="username">${data.player1}</div>
 			</div>
 			<div class="score-container center">
-				<h1 class="date">${data.date}</h1>
-				<h1 class="score">${data.player1_score} - ${data.player2_score}</h1>
+				<div class="date">${data.date}</div>
+				<div class="score">${data.player1_score} - ${data.player2_score}</div>
 			</div>
 			<div class="player-container right">
-				<h1 class="username">${data.player2}</h1>
+				<div class="username">${data.player2}</div>
 				<img class="profile-picture" src=${data.player2_image}>
 			</div>
 		</div>

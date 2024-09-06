@@ -7,6 +7,7 @@ const styles = `
 	.profile-container {
 		display: flex;
 		justify-content: flex-start;
+		gap: 50px;
 	}
 
 	.profile {
