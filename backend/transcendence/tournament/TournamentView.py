@@ -95,7 +95,7 @@ class TournamentView(View):
 				if is_valid_tournament_name(new_tournament_name):
 					tournament.name = new_tournament_name
 					tournament.save()
-					return JsonResponse({"message": "Tournament name changed with success!"}, status=200)
-			return JsonResponse({"message": "Error: Invalid Tournament Name!"}, status=409)
+					return JsonResponse({"message": "Tournament name changed with success!", "tournament_name": tournament.name}, status=200)
+			return JsonResponse({"message": "Error: Invalid Tournament Name!", "tournament_name": tournament.name}, status=409)
 		else:
 			return JsonResponse({"message": "Error: Empty Body!"}, status=400)
