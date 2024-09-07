@@ -159,11 +159,11 @@ export default class GameHistory extends HTMLElement {
 			game.innerHTML = 
 			`<game-card
 				player1="${elm.user1}"
-				player1_image="${elm.user1_image}"
-				player1_score="${elm.user1_score}"
+				player1-image="${elm.user1_image}"
+				player1-score="${elm.user1_score}"
 				player2="${elm.user2}"
-				player2_image="${elm.user2_image}"
-				player2_score="${elm.user2_score}"
+				player2-image="${elm.user2_image}"
+				player2-score="${elm.user2_score}"
 				is-winner="${elm.winner}"
 				date="${parseDate(elm.date)}"
 				>

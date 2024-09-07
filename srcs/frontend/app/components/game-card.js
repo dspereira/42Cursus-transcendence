@@ -77,25 +77,24 @@ const getHtml = function(data) {
 	const html = `
 		<div class="game-grid-container ${data.isWinner == "true" ? "game-win" : "game-loss"}">
 			<div class="player-container left">
-				<img class="profile-picture" src=${data.player1_image}>
+				<img class="profile-picture" src=${data.player1Image}>
 				<div class="username">${data.player1}</div>
 			</div>
 			<div class="score-container center">
 				<div class="date">${data.date}</div>
-				<div class="score">${data.player1_score} - ${data.player2_score}</div>
+				<div class="score">${data.player1Score} - ${data.player2Score}</div>
 			</div>
 			<div class="player-container right">
 				<div class="username">${data.player2}</div>
-				<img class="profile-picture" src=${data.player2_image}>
+				<img class="profile-picture" src=${data.player2Image}>
 			</div>
 		</div>
 	`;
-
 	return html;
 }
 
 export default class GameCard extends HTMLElement {
-	static observedAttributes = ["player1", "player1_image", "player1_score", "player2", "player2_image", "player2_score", "is-winner", "date"];
+	static observedAttributes = ["player1", "player1-image", "player1-score", "player2", "player2-image", "player2-score", "is-winner", "date"];
 
 	constructor() {
 		super();
@@ -109,7 +108,15 @@ export default class GameCard extends HTMLElement {
 	}
 
 	attributeChangedCallback(name, oldValue, newValue) {
-		if (name == "is-winner")
+		if (name == "player1-image")
+			name = "player1Image";
+		else if (name == "player1-score")
+			name = "player1Score";
+		else if (name == "player2-image")
+			name = "player2Image";
+		else if (name == "player2-score")
+			name = "player2Score";
+		else if (name == "is-winner")
 			name = "isWinner";
 		this.data[name] = newValue;
 	}
