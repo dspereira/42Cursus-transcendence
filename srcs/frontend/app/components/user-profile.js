@@ -1,5 +1,5 @@
 import {callAPI} from "../utils/callApiUtils.js";
-
+import stateManager from "../js/StateManager.js";
 
 const styles = `
 
@@ -72,6 +72,15 @@ const styles = `
 `;
 
 const getHtml = function(data) {
+	
+	
+	
+	// Verificar se é amigo ou não é amigo e trocar os botões
+	let addFriendBtn = "";
+	if (stateManager.getState("username") != data.username)
+		addFriendBtn = `<button class="btn btn-success"><i class="icon-add bi bi-person-plus"></i></button>`;
+
+
 
 	const html = `
 		<div class="profile-grid-container">
@@ -81,9 +90,7 @@ const getHtml = function(data) {
 				</div>
 				<div class="username-container">
 					<h1 class="username"></h1>
-					<button class="btn btn-success">
-						<i class="icon-add bi bi-person-plus"></i>
-					</button>
+					${addFriendBtn}
 				</div>
 			</div>
 			<div class="game-stats">

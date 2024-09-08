@@ -4,13 +4,13 @@ import chatWebSocket from "./ChatWebSocket.js";
 import checkUserLoginState from "../utils/checkUserLoginState.js";
 
 stateManager.addEvent("isLoggedIn", (stateValue) => {
-	stateManager.cleanAllStatesAndEvents();
 	if (stateValue) {
 		stateManager.setState("idBrowser", Math.floor(Math.random() * 100000000));
 		chatWebSocket.open();
 	}
 	else {
 		chatWebSocket.close();
+		stateManager.cleanAllStatesAndEvents();
 	}
 });
 
