@@ -89,18 +89,30 @@ const getHtml = function(data) {
 					<img class="profile-picture" src="" alt="Profile Picture">
 				</div>
 				<div class="username-container">
-					<h1 class="username"></h1>
+					<div class="username"></div>
 					${addFriendBtn}
 				</div>
 			</div>
 			<div class="game-stats">
-				<div id="win-rate-bar" class="win-rate-bar"></div>
-				<div class="wins-losses">
-					<p class="wins"></p>
-					<p class="losses"></p>
+				<!-- Total games tournaments included -->
+				<div class="total-games"></div>
+				<div class="games-win-rate"></div>
+				<div class="win-rate-bar game"></div>
+				<div class="wins-losses game">
+					<div class="wins game"></div>
+					<div class="losses game"></div>
 				</div>
-				<p class="tournements-won"></p>
+
+				<div class="total-tournaments"></div>
+				<div class="tournaments-win-rate"></div>
+				<div class="win-rate-bar tournament"></div>
+				<div class="wins-losses tournament">
+					<div class="wins tournament"></div>
+					<div class="losses tournament"></div>
+				</div>
 			</div>
+
+			<br></br>
 			<div class="bio-box">
 				<span class="bio"></span>
 			</div>
@@ -137,6 +149,17 @@ export default class UserProfile extends HTMLElement {
 			this.styles.textContent = this.#styles();
 			this.html.classList.add(`${this.elmtId}`);
 		}
+		this.totalGames = this.html.querySelector('.total-games');
+		this.gameWinRate = this.html.querySelector('.games-win-rate');
+		this.winRateBarGame = this.html.querySelector('.win-rate-bar.game');
+		this.gamesWins = this.html.querySelector('.wins.game');
+		this.gamesLoses = this.html.querySelector('.losses.game');
+
+		this.totalTournaments = this.html.querySelector('.total-tournaments');
+		this.tournamentWinRate = this.html.querySelector('.tournaments-win-rate');
+		this.winRateBarTournaments = this.html.querySelector('.win-rate-bar.tournament');
+		this.tournamentWins = this.html.querySelector('.wins.tournament');
+		this.tournamentLoses = this.html.querySelector('.losses.tournament');
 	}
 
 	#styles() {
@@ -161,10 +184,8 @@ export default class UserProfile extends HTMLElement {
 
 	#getProfileInfo() {
 		callAPI("GET", `http://127.0.0.1:8000/api/profile/?username=${this.data.username}`, null, (res, resData) => {
-			if (res.ok && resData && resData.data) {
-				const data = resData.data;
-				this.#updateProfile(data);
-			}
+			if (res.ok && resData && resData.data)
+				this.#updateProfile(resData.data);
 		});
 	}
 
@@ -172,8 +193,7 @@ export default class UserProfile extends HTMLElement {
 		this.#updateImage(data.image_url);
 		this.#updateUsername(data.username);
 		this.#updateBio(data.bio);
-		this.#updateWinRate(data.victories, data.defeats, data.win_rate, data.total_games);
-		this.#updateTournaments(data.tournaments_won);
+		this.#updateStats(this.#getPlayedStatsObj(data));
 	}
 
 	#updateImage(image_url) {
@@ -194,30 +214,43 @@ export default class UserProfile extends HTMLElement {
 			htmlElement.textContent = bio;
 	}
 
-	#updateWinRate(wins, losses, win_rate, total_games) {
-		const winsElement = this.html.querySelector('.wins');
-		const lossesElement = this.html.querySelector('.losses');
-		const winRateBarElement = this.html.querySelector('#win-rate-bar');
+	#updateStats(stats) {
+		console.log(stats);
 
-		if (winsElement)
-			winsElement.textContent = `W: ${wins}`;
-		if (lossesElement) {
-			lossesElement.textContent = `L: ${losses}`;
-		}
-		if (winRateBarElement) {
-			if (!total_games)
-				winRateBarElement.style.background = `linear-gradient(to right, blue 0%, red 100%)`;
-			else if (!win_rate)
-				winRateBarElement.style.background = `red`;
-			else
-				winRateBarElement.style.background = `linear-gradient(to right, blue ${win_rate}%, red ${win_rate}%)`;
-		}
+		this.totalGames.innerHTML = `Total games: ${stats.totalGames}`;
+		this.gameWinRate.innerHTML = `Games win rate: ${stats.gamesWinRate}`;
+
+		if (!stats.gamesWinRate && !stats.totalGames)
+			this.winRateBarGame.style.background = `linear-gradient(to right, blue 0%, red 100%)`;
+		else
+			this.winRateBarGame.style.background = `linear-gradient(to right, blue ${stats.gamesWinRate}%, red ${stats.gamesWinRate}%)`;
+		
+		this.gamesWins.innerHTML = `W: ${stats.gamesWon}`;
+		this.gamesLoses.innerHTML = `L: ${stats.gamesLost}`;
+
+		this.totalTournaments.innerHTML = `Total tornaments: ${stats.totalTournaments}`;
+		this.tournamentWinRate.innerHTML = `Tornaments win rate: ${stats.tournamentsWinRate}`;
+		
+		if (!stats.tournamentsWinRate && !stats.totalTournaments)
+			this.winRateBarTournaments.style.background = `linear-gradient(to right, blue 0%, red 100%)`;
+		else
+			this.winRateBarTournaments.style.background = `linear-gradient(to right, blue ${stats.tournamentsWinRate}%, red ${stats.tournamentsWinRate}%)`;
+
+		this.tournamentWins.innerHTML = `W: ${stats.tournamentsWon}`;
+		this.tournamentLoses.innerHTML = `L: ${stats.tournamentsLost}`;
 	}
 
-	#updateTournaments(tournaments) {
-		const htmlElement = this.html.querySelector('.tournements-won');
-		if (htmlElement)
-			htmlElement.textContent = `Tournements won: ${tournaments}`;
+	#getPlayedStatsObj(data) {
+		return {
+			totalGames: data.total_games,
+			gamesWon: data.victories,
+			gamesLost: data.defeats,
+			gamesWinRate: data.win_rate,
+			totalTournaments: data.tournaments_played,
+			tournamentsWon: data.tournaments_won,
+			tournamentsLost: data.tournaments_lost,
+			tournamentsWinRate: data.tournaments_win_rate,
+		}
 	}
 }
 

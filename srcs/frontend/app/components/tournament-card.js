@@ -42,7 +42,6 @@ const styles = `
 		border: 3px solid red;
 		background-color: #FF6666;
 	}
-
 `;
 
 const getHtml = function(data) {
