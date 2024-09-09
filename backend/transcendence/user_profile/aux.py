@@ -64,5 +64,8 @@ def get_user_profile_data(user):
     	"defeats": user_profile.defeats,
     	"win_rate": user_profile.win_rate,
     	"tournaments_won": user_profile.tournaments_won,
+    	"tournaments_lost": user_profile.tournaments_lost,
+    	"tournaments_played": user_profile.tournaments_played,
+    	"tournaments_win_rate": user_profile.tournaments_win_rate
     }
     return user_profile_data

@@ -22,6 +22,7 @@ from .Lobby import lobby_dict
 from tournament.utils import update_next_game
 from tournament.utils import is_final_game
 from tournament.utils import update_tournament_status
+from tournament.utils import update_users_tournament_stats
 from tournament.utils import TOURNAMENT_STATUS_FINISHED
 
 user_profile_info_model = ModelManager(UserProfileInfo)
@@ -345,6 +346,7 @@ class Game(AsyncWebsocketConsumer):
 		if tournament and game:
 			if is_final_game(game.id, tournament):
 				update_tournament_status(tournament, TOURNAMENT_STATUS_FINISHED)
+				update_users_tournament_stats(tournament)
 			else:
 				update_next_game(tournament, game.winner, game)
 

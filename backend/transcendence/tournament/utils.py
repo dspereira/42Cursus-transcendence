@@ -317,3 +317,19 @@ def get_tournament_info(tournament):
 		"owner": tournament.owner.id
 	}
 	return tournament_info
+
+def update_users_tournament_stats(tournament):
+	last_game = is_tournament_finished(tournament)
+	if last_game:
+		winner_id = last_game.winner.id
+		players = tournament_players_model.filter(tournament=tournament)
+		for player in players:
+			player_id = player.user.id
+			player_profile = user_profile_model.get(user=player.user)
+			player_profile.tournaments_played = player_profile.tournaments_played + 1
+			if player_id == winner_id:
+				player_profile.tournaments_won = player_profile.tournaments_won + 1
+			else:
+				player_profile.tournaments_lost = player_profile.tournaments_lost + 1
+			player_profile.tournaments_win_rate = player_profile.tournaments_won / player_profile.tournaments_played * 100
+			player_profile.save()
