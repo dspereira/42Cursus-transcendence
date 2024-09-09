@@ -119,6 +119,7 @@ class Game(AsyncWebsocketConsumer):
 			await sync_to_async(self.lobby.update_connected_status)(self.user.id, False)
 			await self.send_users_info_to_group()
 		await self.__stop_game_routine()
+		await sync_to_async(self.update_users)()
 		if self.room_group_name:
 			await self.channel_layer.group_discard(
 				self.room_group_name,
@@ -283,7 +284,6 @@ class Game(AsyncWebsocketConsumer):
 					}
 				}
 			)
-		await sync_to_async(self.update_users)()
 
 	async def __has_access_to_lobby(self, lobby_id: str):
 		if lobby_id in lobby_dict:
