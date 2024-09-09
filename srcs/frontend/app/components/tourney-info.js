@@ -199,33 +199,33 @@ const getHtml = function(data) {
 
 		<game-card
 			player1="${game_0.player1.username}"
-			player1_image="${game_0.player1.image}"
-			player1_score="${game_0.player1_score}"
+			player1-image="${game_0.player1.image}"
+			player1-score="${game_0.player1_score}"
 			player2="${game_0.player2.username}"
-			player2_image="${game_0.player2.image}"
-			player2_score="${game_0.player2_score}"
+			player2-image="${game_0.player2.image}"
+			player2-score="${game_0.player2_score}"
 			is-winner="${"true"}"
 			date="${parseDate(game_0.played_time)}"
 		></game-card>
 
 		<game-card
 			player1="${game_1.player1.username}"
-			player1_image="${game_1.player1.image}"
-			player1_score="${game_1.player1_score}"
+			player1-image="${game_1.player1.image}"
+			player1-score="${game_1.player1_score}"
 			player2="${game_1.player2.username}"
-			player2_image="${game_1.player2.image}"
-			player2_score="${game_1.player2_score}"
+			player2-image="${game_1.player2.image}"
+			player2-score="${game_1.player2_score}"
 			is-winner="${"true"}"
 			date="${parseDate(game_1.played_time)}"
 		></game-card>
 
 		<game-card
 			player1="${game_2.player1.username}"
-			player1_image="${game_2.player1.image}"
-			player1_score="${game_2.player1_score}"
+			player1-image="${game_2.player1.image}"
+			player1-score="${game_2.player1_score}"
 			player2="${game_2.player2.username}"
-			player2_image="${game_2.player2.image}"
-			player2_score="${game_2.player2_score}"
+			player2-image="${game_2.player2.image}"
+			player2-score="${game_2.player2_score}"
 			is-winner="${"true"}"
 			date="${parseDate(game_2.played_time)}"
 		></game-card>
