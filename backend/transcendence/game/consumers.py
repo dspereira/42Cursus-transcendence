@@ -199,7 +199,6 @@ class Game(AsyncWebsocketConsumer):
 			self.game.update()
 			await asyncio.sleep(SLEEP_TIME_SECONDS)
 		await self.__finish_game(GAME_STATUS_FINISHED)
-		await self.update_users()
 
 	async def __send_timer_data(self, time):
 		await self.channel_layer.group_send(
@@ -283,6 +282,7 @@ class Game(AsyncWebsocketConsumer):
 					}
 				}
 			)
+		await sync_to_async(self.update_users)()
 
 	async def __has_access_to_lobby(self, lobby_id: str):
 		if lobby_id in lobby_dict:
@@ -353,13 +353,13 @@ class Game(AsyncWebsocketConsumer):
 			return None
 		return lobby_dict[lobby_id]
 
-	async def update_users(self):
-		game_info = await self.__get_game_info(self.game_info.id)
-		user_profile = await sync_to_async(user_profile_info_model.get)(user=self.user)
+	def update_users(self):
+		game_info = async_to_sync(self.__get_game_info)(self.game_info.id)
+		user_profile = user_profile_info_model.get(user=self.user)
 		user_profile.total_games = user_profile.total_games + 1
 		if game_info.winner.id == self.user.id:
 			user_profile.victories = user_profile.victories + 1
 		else:
 			user_profile.defeats = user_profile.defeats + 1
 		user_profile.win_rate = user_profile.victories / user_profile.total_games * 100
-		await sync_to_async(user_profile.save)()
+		user_profile.save()
