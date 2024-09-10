@@ -33,7 +33,7 @@ def get_all_info(request):
 			"message": "User settings retrieved with success!",
 			"language": user_settings.language,
 			"gameTheme": user_settings.game_theme
-		}, status=200)		
+		}, status=200)
 	return JsonResponse({"message": "User not found"}, status=409)
 
 @login_required
