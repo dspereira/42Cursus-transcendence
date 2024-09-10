@@ -72,16 +72,6 @@ const styles = `
 `;
 
 const getHtml = function(data) {
-	
-	
-	
-	// Verificar se é amigo ou não é amigo e trocar os botões
-	let addFriendBtn = "";
-	if (stateManager.getState("username") != data.username)
-		addFriendBtn = `<button class="btn btn-success"><i class="icon-add bi bi-person-plus"></i></button>`;
-
-
-
 	const html = `
 		<div class="profile-grid-container">
 			<div class="profile-info">
@@ -90,7 +80,6 @@ const getHtml = function(data) {
 				</div>
 				<div class="username-container">
 					<div class="username"></div>
-					${addFriendBtn}
 				</div>
 			</div>
 			<div class="game-stats">

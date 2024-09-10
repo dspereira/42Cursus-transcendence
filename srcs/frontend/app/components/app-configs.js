@@ -1,170 +1,128 @@
-import {redirect} from "../js/router.js";
 import {callAPI} from "../utils/callApiUtils.js";
 
 const styles = `
+.main-container {
+	display: flex;
+	gap: 10px;
+	width: 100%;
+}
 
-	.configs-container {
-		display: flex;
-		justify-content: space-between;
-		margin-bottom: 15px;
-	}
+.general-settings-container {
+	width: 70%;
+	/*background-color: red;*/
+}
 
-	.configs-container h1 {
-		font-size: 36px;
-	}
+.image-settings-container {
+	dispay: flex;
+	flex-direction: column; 	
+	justify-content: center;
+	width: 30%;
 
-	.text-configs {
-		display: flex;
-		flex-direction: column;
-		width: 50%;
-	}
+	/*background-color: blue;*/
+}
 
-	.hide {
-		display: none;
-	}
+.img-container {
+	display: flex;
+	justify-content: center;
+}
 
-	.show {
-		display: block;
-	}
+.image-preview {
+	width: 100%;
+	height: auto;
+	clip-path:circle();
+	max-width: 300px;
+}
 
-	#new-username {
-		margin-bottom: 30px;
-	}
+.img-buttons {
+	display: flex;
+	justify-content: center;
+	width: 100%;
+	gap: 2%;
+}
 
-	.image-configs{
-		display: flex;
-		flex-direction: column;
-		align-items: center;
-		margin-top: 20px;
-		margin-right: 12.5%;
-	}
+.btn-img {
+	width: 50%;
+	max-width: 150px;
+	font-size: clamp(0.5rem, 1vw, 1rem);
+}
 
-	.image-preview {
-		width: 240px; 
-		height: 240px; 
-		clip-path: circle();
-		object-fit: cover;
-	}
+legend {
+	font-size: 16px
+}
 
-	.image-buttons {
-		display: flex;
-		justify-content: center;
-		gap: 15px;
-		margin-top: 10px;
-	}
 
-	.input-image-icon {
-		font-size: 50px;
-		cursor: pointer;
-	}
-
-	.image-button {
-		height: 50px;
-	}
-
-	.uploadText {
-		margin-top: 5px;
-	}
-
-	.non-profile-configs {
-		display: flex;
-		gap: 25%;
-		margin-top: 30px;
-	}
-
-	.two-factor-configs h1 {
-		font-size: 36px;
-	}
-
-	.two-factor-options {
-		display: flex;
-	}
-
-	.two-factor-options label {
-		margin-left: 5px;
-		margin-right: 20px;
-	}
-
-	.game-configs {
-		margin-top: 40px;
-	}
-
-	.language-configs h1 {
-		font-size: 36px;
-		margin-top:40px;
-	}
-
-	.submit-options {
-		margin-top: 30px;
-	}
 `;
 
 const getHtml = function(data) {
 	const html = `
-		<form id="settings-form">
-			<div class="configs-container">
-				<div class="text-configs">
-					<h1>Profile Settings</h1>
-					<hr>
-					<label for="new-username">Change Username</label>
-					<div class="alert alert-danger username-error-message hide" role="alert">
-						Username already in use.
-					</div>
-					<input type="text" class="input-padding form-control form-control-lg" id="new-username" placeholder="New Username" maxlength="50">
-					<label for="new-bio">Change Bio</label>
-					<textarea type="text" class="input-padding form-control form-control-lg" id="new-bio" placeholder="New Bio" rows="3" maxlength="255"></textarea>
-				</div>
-				<div class="image-configs">
-					<img class="image-preview">
-					<div class="image-buttons">
-						<label for="newImage" class="btn btn-secondary image-button">
-							<p class="uploadText">Upload Image</p>
+	<form id="settings-form">
+		<div class="main-container">
+			<div class="general-settings-container">
+				<h2>Profile Settings</h2>
+				<hr>
+				<label for="new-username">Change Username</label>
+				<input type="text" class="input-padding form-control form-control-md" id="new-username" placeholder="New Username" maxlength="15">
+				<label for="new-bio">Change Bio</label>
+				<textarea type="text" class="input-padding form-control form-control-md" id="new-bio" placeholder="New Bio" rows="3" maxlength="255"></textarea>
+
+				<h2>Scurity Settings</h2>
+				<hr>
+				<fieldset>
+					<legend>Choose where to receive your two-factor authentication:</legend>
+					<div class="form-check">
+						<input class="form-check-input" type="checkbox" value="qrcode" id="qrcode">
+						<label class="form-check-label" for="qrcode">
+							QR Code
 						</label>
-						<input id="newImage" type="file" accept="image/*" id="image-input" style="display: none;">
-						<button id="seedButton" class="btn btn-secondary image-button">Generate New Avatar</button>
 					</div>
+					<div class="form-check">
+						<input class="form-check-input" type="checkbox" value="email" id="email">
+						<label class="form-check-label" for="email">
+							Email
+						</label>
+					</div>
+					<div class="form-check">
+						<input class="form-check-input" type="checkbox" value="phone" id="phone">
+						<label class="form-check-label" for="phone">
+							Phone
+						</label>
+					</div>
+				</fieldset>
+
+				<h2>Game Settings</h2>
+				<hr>
+				<label for="theme-options">Choose the game theme:</label>
+				<select class="form-select" id="theme-options" aria-label="Game theme selection">
+					<option value="0" selected>Classic Retro</option>
+					<option value="1">Modern Neon</option>
+					<option value="2">Ocean Vibes</option>
+					<option value="3">Sunset Glow</option>
+					<option value="4">Forest Retreat</option>
+				</select>
+			
+				<h2>Language Settings</h2>
+				<hr>
+				<label for="language-option">Choose language:</label>
+				<select name="language" id="language-option">
+					<option value="en">English &#x1F1EC;&#x1F1E7;</option>
+					<option value="pt">Português &#x1F1F5;&#x1F1F9;</option>
+					<option value="es">Espanhol &#x1F1EA;&#x1F1F8;</option>
+				</select>
+
+				<div><button type="submit" class="btn btn-primary btn-submit">Apply Changes</button></div>
+			</div>
+
+			<div class="image-settings-container">
+				<div class="img-container">
+					<img src="https://api.dicebear.com/8.x/bottts/svg?seed=7weil" class="image-preview" alt="Preview of the Image to be Changed">
+				</div>
+				<div class="img-buttons">
+					<button class="btn btn-primary btn-img">Upload Image</button>
+					<button class="btn btn-primary btn-img">New Avatar</button>
 				</div>
 			</div>
-			<div class="non-profile-configs">
-				<div>
-					<div class="two-factor-configs">
-						<h1>Security Settings</h1>
-						<hr>
-						<label for="two-factor-options">Choose where to recieve your two factor authentication:</label>
-						<div class="two-factor-options">
-							<input type="checkbox" id="qrcode" name="2FAOptions" />
-							<label for="qrcode">QR Code</label>
-							<input type="checkbox" id="email" name="2FAOptions" />
-							<label for="email">Email</label>
-							<input type="checkbox" id="phone" name="2FAOptions" />
-							<label for="phone">Phone</label>
-						</div>
-					</div>
-					<div class="game-configs">
-						<h1>Game Settings</h1>
-						<hr>
-						<label for="theme-options">Choose the game theme:</label>
-						<select name="game-theme" id="theme-options">
-						  <option value="0">Classic Retro</option>
-						  <option value="1">Modern Neon</option>
-						  <option value="2">Ocean Vibes</option>
-						  <option value="3">Sunset Glow</option>
-						  <option value="4">Forest Retreat</option>
-						</select>
-					</div>
-					<div class="language-configs">
-						<h1>Language Settings</h1>
-						<hr>
-						<label for="language-option">Choose language:</label>
-						<select name="language" id="language-option">
-							<option value="en">English 🇬🇧</option>
-							<option value="pt">Portugues 🇵🇹</option>
-						</select>
-					</div>
-					<button type="submit" class="btn btn-success btn-submit submit-options">Apply Changes</button>
-				</div>
-			</div>
-		</form>
+		</div>
+	</form>
 	`;
 	return html;
 }
@@ -177,11 +135,6 @@ export default class AppConfigs extends HTMLElement {
 		this.#initComponent();
 		this.#render();
 		this.#scripts();
-
-		this.profileForm = {};
-		this.settingsForm = {};
-
-		this.counter = 0;
 	}
 
 	attributeChangedCallback(name, oldValue, newValue) {
@@ -197,6 +150,11 @@ export default class AppConfigs extends HTMLElement {
 			this.styles.textContent = this.#styles();
 			this.html.classList.add(`${this.elmtId}`);
 		}
+		this.usernameInp = this.html.querySelector("#new-username");
+		this.bioInp = this.html.querySelector("#new-bio");
+		this.gameThemeOption = this.html.querySelector("#theme-options");
+		this.languageOption = this.html.querySelector("#language-option");
+		this.imagePreview = this.html.querySelector(".image-preview");
 	}
 
 	#styles() {
@@ -216,142 +174,34 @@ export default class AppConfigs extends HTMLElement {
 	}
 
 	#scripts() {
-
-		this.#getUserSettings();
-		this.#getUserInfo();
 		this.#submit();
-		this.#uploadImage();
-		this.#generateNewSeed();
-	}
-
-	#getUserSettings() {
-		callAPI("GET", "http://127.0.0.1:8000/api/settings/", null, (res, data) => {
-			this.settingsForm.newLanguage = data.language;
-			this.settingsForm.newTheme = data.gameTheme;
-			this.#setSelectOptions("language-option" ,this.settingsForm.newLanguage);
-			this.#setSelectOptions("theme-options" ,this.settingsForm.newTheme);
-		});
-	}
-
-	#setSelectOptions(selector, data) {
-		const elem = this.html.querySelector(`#${selector}`);
-		elem.value = data;
-	}
-
-	#generateNewSeed() {
-		const seedButton = this.html.querySelector("#seedButton")
-		seedButton.addEventListener('click', (event) => {
-			event.preventDefault();
-			const newSeed = Math.random().toString(36).substring(2,7);
-			let preview = this.html.querySelector(".image-preview");
-			preview.src = "https://api.dicebear.com/8.x/bottts/svg?seed=" + newSeed;
-			this.profileForm.newImage = '';
-			this.profileForm.newSeed = newSeed;
-		})
-	}
-
-	#uploadImage() {
-		const uploadImage = this.html.querySelector("#newImage")
-		uploadImage.addEventListener('change', (event) => {
-			event.preventDefault();
-			let preview = this.html.querySelector(".image-preview");
-			preview.src = URL.createObjectURL(uploadImage.files[0]);
-			this.profileForm.newImage = uploadImage.files[0];
-			this.profileForm.newSeed = '';
-		})
+		this.#getUserSettings();
 	}
 
 	#submit() {
 		const settingsForm = this.html.querySelector("#settings-form");
+
 		settingsForm.addEventListener("submit", (event) => {
 			event.preventDefault();
+		
 
-			const languageOption = this.html.querySelector("#language-option");
-			if (this.settingsForm.newLanguage == languageOption.options[languageOption.selectedIndex].value)
-				this.settingsForm.newLanguage = '';
-			else
-				this.settingsForm.newLanguage = languageOption.options[languageOption.selectedIndex].value;
-
-			const themeOptions = this.html.querySelector("#theme-options");
-			if (this.settingsForm.newTheme == themeOptions.options[themeOptions.selectedIndex].value)
-				this.settingsForm.newTheme = '';
-			else
-				this.settingsForm.newTheme = themeOptions.options[themeOptions.selectedIndex].value;
-
-			if (this.profileForm.newUsername == this.html.querySelector("#new-username").value.trim())
-				this.profileForm.newUsername = '';
-			else
-				this.profileForm.newUsername = this.html.querySelector("#new-username").value.trim();
-			
-			if (this.profileForm.newBio == this.html.querySelector("#new-bio").value.trim())
-				this.profileForm.newBio = '';
-			else
-				this.profileForm.newBio = this.html.querySelector("#new-bio").value.trim();
-
-			if (this.profileForm.newImage)
-			{	
-				const imageData = new FormData();
-            	imageData.append('image', this.profileForm.newImage);
-				fetch('http://127.0.0.1:8000/api/profile/setimage', {
-					method: 'POST',
-					body: imageData,
-					credentials: 'include'
-				})
-			}
-			callAPI("POST", "http://127.0.0.1:8000/api/profile/setnewconfigs", this.profileForm, this.#apiResHandlerCalback);
-			callAPI("POST", "http://127.0.0.1:8000/api/settings/setnewsettings", this.settingsForm);
 		});
 	}
 
-
-	#apiResHandlerCalback = (res, data) => {
-		if (res.ok && data.message === "success")
-			this.#hideErrorMessage("username-error-message");
-		else
-			this.#showErrorMessage("username-error-message");
-	}
-
-	#hideErrorMessage(elementClass) {
-		const errorMessage = this.html.querySelector("." + elementClass);
-		errorMessage.classList.remove("show");
-		errorMessage.classList.add("hide");
-	}
-
-	#showErrorMessage(elementClass) {
-		const errorMessage = this.html.querySelector("." + elementClass);
-		errorMessage.classList.remove("hide");
-		errorMessage.classList.add("show");
-	}
-
-	#getUserInfo() {
-		callAPI("GET", "http://127.0.0.1:8000/api/profile/", null, (res, data) => {
-			this.#loadProfile(data);
+	#getUserSettings() {
+		callAPI("GET", "http://127.0.0.1:8000/api/settings/", null, (res, resData) => {
+			if (res.ok && resData && resData.settings)
+				this.#loadData(resData.settings);
 		});
 	}
 
-	#loadProfile(data) {
-		this.#loadImage(data.image_url);
-		this.#loadUsername(data.username);
-		this.#loadBio(data.bio);
+	#loadData(data) {
+		this.usernameInp.value = data.username;
+		this.bioInp.value = data.bio;
+		this.gameThemeOption.value = data.game_theme;
+		this.languageOption.value = data.language;
+		this.imagePreview.setAttribute("src", data.image);
 	}
-
-	#loadImage(image_url) {
-		const htmlElement = this.html.querySelector('.image-preview');
-		htmlElement.src = image_url;
-	}
-
-	#loadUsername(username) {
-		const htmlElement = this.html.querySelector('#new-username');
-		htmlElement.value = username;
-		this.profileForm.newUsername = username
-	}
-
-	#loadBio(bio) {
-		const htmlElement = this.html.querySelector('#new-bio');
-		htmlElement.value = bio;
-		this.profileForm.newBio = bio;
-	}
-
 }
 
 customElements.define("app-configs", AppConfigs);
