@@ -29,15 +29,24 @@ class SettingsView(View):
 		user = user_model.get(id=request.access_data.sub)
 		if user:
 			user_settings_manager = SettingsManager(user)
-			req_data = json.loads(request.body.decode('utf-8'))
-			if req_data.get('username'):
-				user_settings_manager.update_username(req_data['username'])
-			if req_data.get('bio'):
-				user_settings_manager.update_bio(req_data['bio'])
-			if req_data.get('language'):
-				user_settings_manager.update_language(req_data['language'])
-			if req_data.get('game_theme'):
-				user_settings_manager.update_game_theme(req_data['game_theme'])
+			req_data = json.loads(request.POST.get('json'))
+
+			if not req_data.get('username'):
+				if not user_settings_manager.update_username(req_data.get('username')):
+					return JsonResponse({"message": f"Error: Username already in use!"}, status=409)
+				return JsonResponse({"message": f"Error: Invalid username!"}, status=409)
+
+			fields_to_update = {
+				'bio': user_settings_manager.update_bio,
+				'language': user_settings_manager.update_language,
+				'game_theme': user_settings_manager.update_game_theme,
+				'image_seed': user_settings_manager.update_image_seed
+			}
+
+			for field, update_method in fields_to_update.items():
+				if not update_method(req_data.get(field)):
+					return JsonResponse({"message": f"Error: Invalid {field}!"}, status=409)
+
 			return JsonResponse({"message": f"User settings updated with success.", "settings": user_settings_manager.get_current_settings()}, status=200)
 		else:
 			return JsonResponse({"message": "Error: Invalid User!"}, status=400)
