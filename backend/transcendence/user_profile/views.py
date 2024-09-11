@@ -15,6 +15,8 @@ from .aux import get_user_profile_data
 user_model = ModelManager(User)
 user_profile_info_model = ModelManager(UserProfileInfo)
 
+import os
+
 @login_required
 @accepted_methods(["POST"])
 def set_new_configs(request):
@@ -61,12 +63,30 @@ def get_image(request):
 @login_required
 @accepted_methods(["POST"])
 def set_profile_picture(request):
+
+	print("---------------")
+	print("POST")
+	print(request.POST)
+	print("---------------")
+	print("FILES")
+	print(request.FILES)
+	print("---------------")
+
 	user_to_alter = user_profile_info_model.get(user_id=request.access_data.sub)
 	form = ImageForm(request.POST, request.FILES)
 	if form.is_valid():
-		new_image_data = request.FILES['image'].read()
+		file = request.FILES['image']
+		new_image_data = file.read()
 		if user_to_alter:
 			user_to_alter.profile_image = new_image_data
+
+			nome_arquivo, extensao = os.path.splitext(file.name)
+			print()
+			print("Image:")
+			print(request.FILES['image'])
+			print("Extenção:", extensao)
+			print()
+
 			image = Image.open(BytesIO(new_image_data))
 			output = BytesIO()
 			image.save(output, format='JPEG', quality=25) #quality goes from 1 up to 95 (the lower the number the lighter and lower quality the image)

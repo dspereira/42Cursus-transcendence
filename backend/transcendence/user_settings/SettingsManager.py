@@ -4,6 +4,10 @@ from user_auth.models import User
 from .models import UserSettings
 
 from user_profile.aux import get_image_url
+from user_profile.forms import ImageForm
+from PIL import Image
+from io import BytesIO
+import os
 
 user_profile_model = ModelManager(UserProfileInfo)
 user_settings_model = ModelManager(UserSettings)
@@ -66,8 +70,46 @@ class SettingsManager:
 	def update_image_seed(self, new_image_seed):
 		image_seed = new_image_seed.strip()
 		if image_seed:
+			self.__remove_image_from_profile()
 			if image_seed != self.user_profile.default_image_seed:
 				self.user_profile.default_image_seed = image_seed
 				self.user_profile.save()
-			return True
+		return True
+
+	def update_image(self, request_body, request_file):
+		form = ImageForm(request_body, request_file)
+		if form.is_valid():
+			file = request_file['image']
+			if file and self.__is_valid_image_file(file.name):
+				file_extension = self.__get_file_extension(file.name)
+				new_image_data = file.read()
+				if self.user_profile:
+					image = Image.open(BytesIO(new_image_data))
+					output = BytesIO()
+					# quality goes from 1 up to 95 (the lower the number the lighter and lower quality the image)
+					image.save(output, format=file_extension, quality=25)
+					compressed_image_data = output.getvalue()
+					self.user_profile.profile_image = new_image_data
+					self.user_profile.compressed_profile_image = compressed_image_data
+					self.user_profile.save()
+					return True
 		return False
+
+	def __remove_image_from_profile(self):
+		if self.user_profile.compressed_profile_image:
+			self.user_profile.compressed_profile_image = None
+			self.user_profile.profile_image = None
+			self.user_profile.save()
+
+	def __is_valid_image_file(self, file_name):
+		extension = self.__get_file_extension(file_name)
+		if extension:
+			if extension == 'PNG' or extension == 'JPEG':
+				return True
+		return False
+
+	def __get_file_extension(self, filename):
+		filename, extension = os.path.splitext(filename)
+		if filename and extension:
+			return extension[1:].upper()
+		return None
