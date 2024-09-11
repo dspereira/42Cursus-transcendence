@@ -42,12 +42,10 @@ class SettingsManager:
 
 	def update_bio(self, new_bio):
 		bio = new_bio.strip()
-		if bio:
-			if bio != self.user_profile.bio:
-				self.user_profile.bio = bio
-				self.user_profile.save()
-			return True
-		return False
+		if bio != self.user_profile.bio:
+			self.user_profile.bio = bio
+			self.user_profile.save()
+		return True
 
 	def update_language(self, new_language):
 		language = new_language.strip()
