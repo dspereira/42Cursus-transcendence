@@ -50,7 +50,13 @@ legend {
 	font-size: 16px
 }
 
+#new-username {
+	background-image: none;
+}
 
+.hide {
+	display: none;
+}
 `;
 
 const getHtml = function(data) {
@@ -60,10 +66,11 @@ const getHtml = function(data) {
 			<div class="general-settings-container">
 				<h2>Profile Settings</h2>
 				<hr>
+				<div class="alert alert-danger alert-username hide" role="alert"></div>
 				<label for="new-username">Change Username</label>
-				<input type="text" class="input-padding form-control form-control-md" id="new-username" placeholder="New Username" maxlength="15">
+				<input type="text" class="form-control form-control-md" id="new-username" placeholder="New Username" maxlength="15">
 				<label for="new-bio">Change Bio</label>
-				<textarea type="text" class="input-padding form-control form-control-md" id="new-bio" placeholder="New Bio" rows="3" maxlength="255"></textarea>
+				<textarea type="text" class="form-control form-control-md" id="new-bio" placeholder="New Bio" rows="3" maxlength="255"></textarea>
 
 				<h2>Scurity Settings</h2>
 				<hr>
@@ -114,11 +121,12 @@ const getHtml = function(data) {
 
 			<div class="image-settings-container">
 				<div class="img-container">
-					<img src="https://api.dicebear.com/8.x/bottts/svg?seed=7weil" class="image-preview" alt="Preview of the Image to be Changed">
+					<img src="../img/default_profile.png" class="image-preview" alt="Preview of the Image to be Changed">
 				</div>
 				<div class="img-buttons">
-					<button class="btn btn-primary btn-img">Upload Image</button>
-					<button class="btn btn-primary btn-img">New Avatar</button>
+					<label for="new-image" class="btn btn-primary btn-img">Upload Image</label>
+					<input id="new-image" class="hide" type="file" accept="image/png, image/jpeg">
+					<button class="btn btn-primary btn-img btn-new-seed">New Avatar</button>
 				</div>
 			</div>
 		</div>
@@ -127,11 +135,15 @@ const getHtml = function(data) {
 	return html;
 }
 
+const IMG_PATH = "https://api.dicebear.com/8.x/bottts/svg?seed=";
+
 export default class AppConfigs extends HTMLElement {
 	static observedAttributes = [];
 
 	constructor() {
 		super()
+		this.imageSeed = "";
+		this.imageFile = "";
 		this.#initComponent();
 		this.#render();
 		this.#scripts();
@@ -150,11 +162,15 @@ export default class AppConfigs extends HTMLElement {
 			this.styles.textContent = this.#styles();
 			this.html.classList.add(`${this.elmtId}`);
 		}
+		this.settingsForm = this.html.querySelector("#settings-form");
 		this.usernameInp = this.html.querySelector("#new-username");
 		this.bioInp = this.html.querySelector("#new-bio");
 		this.gameThemeOption = this.html.querySelector("#theme-options");
 		this.languageOption = this.html.querySelector("#language-option");
 		this.imagePreview = this.html.querySelector(".image-preview");
+		this.usernameAlert =  this.html.querySelector(".alert-username");
+		this.newSeedBtn = this.html.querySelector(".btn-new-seed");
+		this.newImageInp = this.html.querySelector("#new-image");
 	}
 
 	#styles() {
@@ -176,15 +192,44 @@ export default class AppConfigs extends HTMLElement {
 	#scripts() {
 		this.#submit();
 		this.#getUserSettings();
+		this.#newSeedBtn();
+		this.#setNewImageInput();
 	}
 
 	#submit() {
-		const settingsForm = this.html.querySelector("#settings-form");
-
-		settingsForm.addEventListener("submit", (event) => {
+		this.settingsForm.addEventListener("submit", (event) => {
 			event.preventDefault();
-		
 
+			const username = this.usernameInp.value.trim();
+			if (!this.#isValidUsername(username)) {
+				this.usernameInp.classList.add("is-invalid");
+				this.usernameAlert.classList.remove("hide");
+				this.usernameAlert.innerHTML = "Invalid username";
+				return ;
+			}
+
+			const data = JSON.stringify({
+				"username": username,
+				"bio": this.bioInp.value.trim(),
+				"game_theme": this.gameThemeOption.value.trim(),
+				"language": this.languageOption.value.trim(),
+				"image_seed": this.imageSeed.trim()
+			});
+
+
+			const formData = new FormData();
+			if (data)
+				formData.append('json', data);
+			if (this.imageFile)
+				formData.append('image', this.imageFile);
+
+			callAPI("POST", "http://127.0.0.1:8000/api/settings/", formData, (res, resData) => {
+				
+				console.log(res);
+				console.log(resData);
+
+
+			});
 		});
 	}
 
@@ -201,6 +246,29 @@ export default class AppConfigs extends HTMLElement {
 		this.gameThemeOption.value = data.game_theme;
 		this.languageOption.value = data.language;
 		this.imagePreview.setAttribute("src", data.image);
+	}
+
+	#isValidUsername(username) {
+		let regex = /^[a-zA-Z0-9_-]+$/;
+		return regex.test(username);
+	}
+
+	#newSeedBtn() {
+		this.newSeedBtn.addEventListener("click", () => {
+			this.imageSeed = `${this.usernameInp.value}-${Math.floor(Math.random() * 1000000)}`;
+			this.imagePreview.setAttribute("src", `${IMG_PATH}${this.imageSeed}`);
+			this.imageFile = "";
+		});
+	}
+
+	#setNewImageInput() {
+		this.newImageInp.addEventListener("change", () => {
+			this.imageFile = this.newImageInp.files[0];
+			if (!this.imageFile)
+				return ;
+			this.imagePreview.setAttribute("src", URL.createObjectURL(this.imageFile));
+			this.imageSeed = "";
+		});
 	}
 }
 
