@@ -179,7 +179,7 @@ export default class SignupForm extends HTMLElement {
 	}
 
 	#isValidUsername(username) {
-		var regex = /^[a-zA-Z0-9_-]+$/;
+		let regex = /^[a-zA-Z0-9_-]+$/;
 		return regex.test(username);
 	}
 

@@ -224,8 +224,8 @@ export default class AppConfigs extends HTMLElement {
 
 	#getUserSettings() {
 		callAPI("GET", "http://127.0.0.1:8000/api/settings/", null, (res, data) => {
-			this.settingsForm.newLanguage = data.language;
-			this.settingsForm.newTheme = data.gameTheme;
+			this.settingsForm.newLanguage = data.settings.language;
+			this.settingsForm.newTheme = data.settings.game_theme;
 			this.#setSelectOptions("language-option" ,this.settingsForm.newLanguage);
 			this.#setSelectOptions("theme-options" ,this.settingsForm.newTheme);
 		});
@@ -296,6 +296,11 @@ export default class AppConfigs extends HTMLElement {
 					credentials: 'include'
 				})
 			}
+
+			console.log(this.profileForm);
+			console.log(this.settingsForm);
+
+
 			callAPI("POST", "http://127.0.0.1:8000/api/profile/setnewconfigs", this.profileForm, this.#apiResHandlerCalback);
 			callAPI("POST", "http://127.0.0.1:8000/api/settings/setnewsettings", this.settingsForm);
 		});
