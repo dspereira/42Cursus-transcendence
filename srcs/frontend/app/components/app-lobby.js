@@ -47,7 +47,7 @@ const styles = `
 	.ready-btn {
 		border-style: hidden;
 		border-radius: 5px;
-		background-color: ${colors.button_default};
+		background-color: ${colors.btn_default};
 	}
 `;
 

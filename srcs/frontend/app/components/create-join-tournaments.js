@@ -308,7 +308,7 @@ const styles = `
 	}
 
 	.create-btn:hover, .submit-button:not(:disabled):hover, .back-btn:hover, .invited-btn:hover, .inv-decline-btn:hover, .box-on {
-		background-color: ${colors.button_default};
+		background-color: ${colors.btn_default};
 	}
 
 	.create-btn, .back-btn, .submit-button:not(disabled), .invited-btn, .inv-decline-btn {

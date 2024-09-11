@@ -2,6 +2,8 @@ import { callAPI } from "../utils/callApiUtils.js";
 import stateManager from "../js/StateManager.js";
 import { colors } from "../js/globalStyles.js"
 import { chatColors } from "../js/globalStyles.js";
+import { charLimiter } from "../utils/characterLimit.js";
+import charLimit from "../utils/characterLimit.js";
 
 const styles = `
 .friend-list {
@@ -35,12 +37,13 @@ const styles = `
 }
 
 .user:hover {
-	background-color: ${colors.button_default};
+	background-color: ${colors.btn_hover};
+	color: ${colors.second_text};
 	border-radius: 8px;
 }
 
 .friend-selected {
-	background-color: ${colors.button_default};
+	background-color: ${colors.btn_default};
 	color: ${colors.primary_text};
 	border-radius: 5px;
 }
@@ -224,7 +227,7 @@ export default class ChatFriendsList extends HTMLElement {
 			<img src="${friendObj.image}" class="profile-photo" alt="profile photo chat">
 			<div class="online-status ${visibility}"></div>
 		</div>
-		<span class="name">${friendObj.username}</span>`;
+		<span class="name">${charLimiter(friendObj.username, charLimit)}</span>`;
 		if (list == "friend") {
 			this.friendListHtml.appendChild(friendHtml);
 			this.#setFriendClickEventHandler(friendHtml);

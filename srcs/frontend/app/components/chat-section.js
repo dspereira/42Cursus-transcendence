@@ -2,6 +2,9 @@ import chatWebSocket from "../js/ChatWebSocket.js";
 import stateManager from "../js/StateManager.js";
 import { callAPI } from "../utils/callApiUtils.js";
 import { chatColors, colors } from "../js/globalStyles.js";
+import { charLimiter } from "../utils/characterLimit.js";
+import charLimit from "../utils/characterLimit.js";
+import { redirect } from "../js/router.js";
 
 const styles = `
 /* Chat section */
@@ -189,6 +192,23 @@ form {
 	border: 3px solid transparent;
 	background-clip: content-box;
 }
+
+.clickable {
+	cursor: pointer;
+}
+
+.hover-popup {
+	position: fixed;
+	padding: 10px;
+	background-color: ${colors.main_card};
+	color: ${colors.primary_text};
+	opacity: 0.9;
+	border-radius: 5px;
+	white-space: nowrap;
+	display: none;
+	pointer-events: none;
+	z-index: 1000;
+}
 `;
 
 const getHtml = function(data) {
@@ -201,10 +221,11 @@ const getHtml = function(data) {
 			<div class="chat-header">
 				<div>
 					<div class="profile-photo-status">
-						<img src="${data.profilePhoto}" class="profile-photo" alt="profile photo chat"/>
+						<img src="${data.profilePhoto}" class="profile-photo clickable" alt="profile photo chat"/>
+						<div id="hover-popup" class="hover-popup">/profile/${data.username}</div>
 						<div class="online-status ${onlineVisibility}"></div>
 					</div>
-					<span class="name">${data.username}</span>
+					<span class="name">${charLimiter(data.username, charLimit)}</span>
 					<span class="block-mark hide">blocked</span>
 				</div>
 				<div>
@@ -305,6 +326,7 @@ export default class ChatSection extends HTMLElement {
 		this.#setBtnBlockEvent();
 		this.#setBtnUnblockEvent();
 		this.#setBlockStatusEvent();
+		this.#addProfileRedirect();
 	}
 
 	// this.initialScrollHeight -> Pre-calculated initial scrollHeight
@@ -559,6 +581,16 @@ export default class ChatSection extends HTMLElement {
 			if (stateValue == this.data.userId)
 				this.#getUserBlockStatus();
 		});
+	}
+
+	#addProfileRedirect() {
+		const profilePhoto = this.html.querySelector(".profile-photo");
+		const popup = document.getElementById('hover-popup');
+		profilePhoto.addEventListener("click", (event) => {
+			redirect(`profile/${this.data.username}`)
+		});
+		profilePhoto.addEventListener('mouseenter', () => popup.style.display = 'block');
+		profilePhoto.addEventListener('mouseleave', () => popup.style.display = 'none');
 	}
 }
 

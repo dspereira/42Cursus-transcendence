@@ -1,10 +1,12 @@
 import { callAPI } from "../utils/callApiUtils.js";
 import { colors } from "../js/globalStyles.js";
+import { charLimiter } from "../utils/characterLimit.js";
+import charLimit from "../utils/characterLimit.js";
 
 const styles = `
 .card-container {
 	display: inline-block;
-	background-color: ${colors.button_active};
+	background-color: ${colors.btn_active};
 	border-radius: 8px;	
 	padding: 20px 30px 20px 30px;
 }
@@ -62,7 +64,7 @@ const getHtml = function(data) {
 				<img src="${data.profilePhoto}" class="profile-photo" alt="profile photo chat"/>
 			</div>
 			<div class="username-section">
-				<span class="username">${data.username}</span>
+				<span class="username">${charLimiter(data.username, charLimit)}</span>
 			</div>
 			
 			<div class="exp-date">

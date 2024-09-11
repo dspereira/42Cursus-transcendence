@@ -1,161 +1,259 @@
 import {redirect} from "../js/router.js";
 import stateManager from "../js/StateManager.js";
 import {colors} from "../js/globalStyles.js"
-
+import { callAPI } from "../utils/callApiUtils.js";
 
 const styles = `
 
-	.hide {
-		display: none;
-	}
+.hide {
+	display: none;
+}
 
-	.side-panel {
-		position: fixed;
-		top: 0;
-		display: flex;
-		flex-direction: column;
-		align-items: flex-start;
-		height: 100%;
-		padding-top: 8px;
-		padding-left: 5px;
-		padding-right: 5px;
-		background-color: ${colors.side_panel_background};
-	}
+.side-panel {
+	position: fixed;
+	top: 0;
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	height: 100%;
+	padding-top: 8px;
+	padding-left: 5px;
+	padding-right: 5px;
+	background-color: ${colors.side_panel_background};
+}
 
-	.side-panel > nav {
-		width: 100%
-	}
+.side-panel > nav {
+	width: 100%
+}
 
-	.bottom-buttons {
-		position: fixed;
-		bottom: 0;
-		border-top: 1px ${colors.second_text} solid;
-		padding: 10px 0px 10px 0px;
-	}
+.bottom-buttons {
+	position: fixed;
+	bottom: 0;
+	border-top: 1px ${colors.second_text} solid;
+	padding: 10px 0px 10px 0px;
+}
 
-	button {
-		display: block;
-		background : transparent;
-		border: 0;
-		padding: 0;
-		font-family: innherit;
-		text-align: left;
-		width: 100%;
-	}
+button {
+	display: block;
+	background : transparent;
+	border: 0;
+	padding: 0;
+	text-align: left;
+	width: 100%;
+}
 
-	.list-btn button {
-		margin-bottom: 20px;
-	}
+.list-btn button {
+	margin-bottom: 20px;
+}
 
-	.link-btn button {
-		margin-bottom: 10px;
-	}
+.link-btn button {
+	margin-bottom: 10px;
+}
 
-	.list-btn button:hover {
-		background-color: ${colors.button_default};
-		border-radius: 5px;
-	}
+.list-btn button:hover {
+	background-color: ${colors.btn_default};
+	border-radius: 5px;
+}
 
-	.list-btn {
-		width: 52px;
-	}
+.list-btn {
+	width: 52px;
+}
 
-	.list-btn .icon {
-		display: inline-block;
-		font-size: 22px;
-		padding: 8px 14px 8px 14px;
-		text-align: center;
-	}
+.list-btn .icon {
+	display: inline-block;
+	font-size: 22px;
+	padding: 8px 14px 8px 14px;
+	text-align: center;
+}
 
-	.list-btn .icon:hover {
-		background-color: ${colors.button_background};
-		clip-path:circle();
-	}
+.list-btn .icon:hover {
+	background-color: ${colors.button_background};
+	clip-path:circle();
+}
 
-	.side-panel button > span {
-		display: inline-flex;
-		align-items: center;
-		gap: 15px;
-	}
+.side-panel button > span {
+	display: inline-flex;
+	align-items: center;
+	gap: 15px;
+}
 
-	/*** OPEN ***/
-	.open .side-panel {
-		width: 210px;
-	}
+/*** OPEN ***/
+.open .side-panel {
+	width: 210px;
+}
 
-	.open .bottom-buttons {
-		width: 200px;
-	}
+.open .bottom-buttons {
+	width: 200px;
+}
 
-	.open .list-btn button{
-		margin-bottom: 12px;
-	}
+.open .list-btn button{
+	margin-bottom: 12px;
+}
 
-	.open .link-btn .icon {
-		font-size: 22px;
-		padding: 3px 14px 3px 14px;
-	}
+.open .link-btn .icon {
+	font-size: 22px;
+	padding: 3px 14px 3px 14px;
+}
 
-	.open .link-btn .icon-text {
-		font-size: 14px;
-	}
+.open .link-btn .icon-text {
+	font-size: 14px;
+}
 
-	.open .link-btn button:hover {
-		background-color: ${colors.button_default};
-		background: solid;
-		border-radius: 5px;
-		width: 200px;
-	}
+.open .link-btn button:hover {
+	background-color: ${colors.btn_default};
+	background: solid;
+	border-radius: 5px;
+	width: 200px;
+}
 
-	.icon {
-		color: ${colors.primary_text};
-	}
+.icon {
+	color: ${colors.primary_text};
+}
 
 	/*** CLOSE ***/
 
-	.close .side-panel {
-		width: auto;
-	}
+.close .side-panel {
+	width: auto;
+}
 
-	.close .list-btn button{
-		margin-bottom: 7px;
-	}
+.close .list-btn button{
+	margin-bottom: 7px;
+}
 
-	.close #list:hover {
-		background-color: ${colors.button_active};
-		background: solid;
-		clip-path:circle();
-	}
+.close #list:hover {
+	background-color: ${colors.btn_active};
+	background: solid;
+	clip-path:circle();
+}
 
 
-	.close .link-btn .icon {
-		font-size: 22px;
-		padding: 8px 14px 8px 14px;
-	}
+.close .link-btn .icon {
+	font-size: 22px;
+	padding: 8px 14px 8px 14px;
+}
 
-	.close .link-btn .icon-text {
-		display: none;
-	}
+.close .link-btn .icon-text {
+	display: none;
+}
 
-	.icon-text {
-		color: ${colors.primary_text};
-	}
+.icon-text {
+	color: ${colors.primary_text};
+}
 
-	.close .link-btn button:hover {
-		background-color: transparent;
-		background-color: ${colors.button_default};
-		border-radius: 5px;
-	}
+.close .link-btn button:hover {
+	background-color: transparent;
+	background-color: ${colors.btn_default};
+	border-radius: 5px;
+}
 
-	.close .link-btn .icon:hover {
-		background-color: ${colors.button_default};
-		border-radius: 5px;
-	}
+.close .link-btn .icon:hover {
+	background-color: ${colors.btn_default};
+	border-radius: 5px;
+}
+
+.popup-overlay {
+	display: none;
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	background: rgba(0, 0, 0, 0.5);
+	backdrop-filter: blur(5px);
+	justify-content: center; 
+	align-items: center;
+	z-index: 9999;
+}
+
+.popup-content {
+	background-color: ${colors.second_card};
+	color: ${colors.primary_text};
+	padding: 20px;
+	border-radius: 5px;
+	text-align: center;
+	box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+	width: 30%;
+}
+
+.logout-btn, .close-popup {
+	margin-top: 15px;
+	color: ${colors.primary_text};
+	border: none;
+	padding: 10px;
+	border-radius: 5px;
+	cursor: pointer;
+	text-align: center;
+}
+
+.logout-btn {
+	background-color: ${colors.btn_alert};
+}
+
+.logout-btn:hover {
+	background-color: ${colors.btn_alert_hvr};
+	color: ${colors.hover_text};
+}
+
+.close-popup {
+	background-color: ${colors.btn_default};
+}
+
+.close-popup:hover {
+	background-color: ${colors.btn_hover};
+	color: ${colors.hover_text};
+}
+
+.btn-container {
+	display: flex;
+	flex-direction: row;
+	gap: 20px;
+}
+
+.closePopup:hover {
+	color: ${colors.second_text};
+}
+
+.logo {
+	position: absolute;
+	left: 68px;
+	top: 13px;
+	cursor: pointer;
+	width: 120px;
+}
+
+.logo-img {
+	width: 30px;
+	height: 30px;
+}
+
+.logo-text {
+	font-size: 16px;
+	color: ${colors.second_text};
+}
+
+.list-logo {
+	display: flex;
+	flex-direction: row;
+	gap: 20px;
+}
+
+.hide {
+	display: none;
+}
+
 `;
 
 const getHtml = function(data) {
-	const html = `
-	
+	const html = ` 
+	<div class="logout-popup popup-overlay">
+			<div class="popup-content">
+			<h2>Logout from BlitzPong</h2>
+			<div class="btn-container">
+				<button class="close-popup">Close</button>
+				<button class="logout-btn">Logout</button>
+			</div>
+		</div>
+	</div>
 	<div class="side-panel-wrapper ${data.state}">
 		<aside class="side-panel">
 			<nav>
@@ -165,6 +263,10 @@ const getHtml = function(data) {
 							<i class="icon bi bi-list"></i>
 						</span>
 					</button>
+				</div>
+				<div class= "logo">
+					<img src="/img/logo.png" class="logo-img" alt="logo">
+					<span class="logo-text"><strong>BlitzPong</strong></span>
 				</div>
 				<div class="link-btn">
 					<button id="home">
@@ -305,7 +407,7 @@ export default class SidePanel extends HTMLElement {
 	#scripts() {
 		this.#openClosePanel();
 		this.#setupNavigationEvents();
-
+		this.#addPageRedirection("profile", "logo");
 	}
 
 	//btnOpenClose()
@@ -314,21 +416,37 @@ export default class SidePanel extends HTMLElement {
 		let btn = this.html.querySelector(`.list-btn > button`);
 		btn.addEventListener("click", () => {
 			let sidePanel = this.html.querySelector(".side-panel-wrapper");
+			const logo = this.html.querySelector(".logo");
 			sidePanel.classList.toggle("close");
 			sidePanel.classList.toggle("open");
 			if (sidePanel.classList.contains("close"))
+			{
 				stateManager.setState("sidePanel", "close");
+				// logo.classList.add("hide");
+			}
 			else
+			{
+				logo.classList.remove("hide");
 				stateManager.setState("sidePanel", "open");
-		});		
+			}
+		});
 	}
 
 	#addButtonClickEvent(btnId) {
 		let btn = this.html.querySelector(`#${btnId}`);
 		btn.addEventListener("click", () => {
+			if (btnId == "logout")
+			{
+				const popup = document.querySelector('.logout-popup');
+				popup.style.display = 'flex';
+				this.#logOutPopUp();
+				return ;
+			}
+				this.#logOutPopUp();
 			if (btnId === "home")
 				btnId = "/";
 			redirect(btnId);
+			console.log("redirecting to ", btnId);
 		});
 	}
 
@@ -364,6 +482,46 @@ export default class SidePanel extends HTMLElement {
 		sidePanel.classList.remove("open");
 		sidePanel.classList.add(value);
 		stateManager.setState("sidePanel", value);
+	}
+
+	#logOutPopUp() {
+		const popup = document.querySelector('.logout-popup');
+		const closePopupButton = document.querySelector('.close-popup');
+		closePopupButton.addEventListener('click', () => {
+			popup.style.display = 'none';
+		});
+		window.addEventListener('click', (event) => {
+			if (event.target === popup) {
+				popup.style.display = 'none';
+			}
+		});
+		this.#logoutEvent();
+	}
+
+	#apiResHandlerCalback(res, data) {
+		if (data.ok && res.message === "success") {
+			if (stateManager.getState("isLoggedIn", true))
+				stateManager.setState("isLoggedIn", false);
+		}
+		else {
+			redirect("/");
+		}
+	}
+
+	#logoutEvent() {
+		const logout = this.html.querySelector(".logout-btn");
+		logout.addEventListener("click", (event) => {
+			callAPI("POST", "http://127.0.0.1:8000/api/auth/logout", null, this.#apiResHandlerCalback);
+		});
+	}
+
+	#addPageRedirection(page, classIdentifier) {
+		const elm = this.html.querySelector(`.${classIdentifier}`);
+		if (!elm)
+			return ;
+		if (page === "/home" || page === "home")
+			page = "";
+		elm.addEventListener("click", () => redirect(`/${page}`));
 	}
 }
 

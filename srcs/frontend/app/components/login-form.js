@@ -77,22 +77,22 @@ h1 {
 	width: 100%;
 	margin-top: 30px;
 	color: ${colors.primary_text};
-	background-color: ${colors.button_default};
+	background-color: ${colors.btn_default};
 }
 
 .btn-submit:hover {
-	background-color: ${colors.button_default};
+	background-color: ${colors.btn_default};
 	color: ${colors.second_text};
 }
 
 .btn-signup {
 	width: 100%;
-	border: 2px solid ${colors.button_default};
+	border: 2px solid ${colors.btn_default};
 	color: ${colors.second_text};
 }
 
 .btn-signup:hover {
-	background-color: ${colors.button_default};
+	background-color: ${colors.btn_default};
 	color: ${colors.primary_text};
 }
 

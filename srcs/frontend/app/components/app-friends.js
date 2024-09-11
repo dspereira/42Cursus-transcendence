@@ -1,5 +1,6 @@
 import { callAPI } from "../utils/callApiUtils.js";
 import {colors} from "../js/globalStyles.js"
+import stateManager from "../js/StateManager.js";
 
 const styles = `
 .friends-section {
@@ -107,9 +108,52 @@ user-card {
 
 
 .selected-option {
-	background-color: ${colors.button_default};
+	background-color: ${colors.btn_default};
 	border-radius: 5px;
 	transition: 0.5s;
+}
+
+.alert-div {
+	display: flex;
+	width: 100%;
+	animation: disappear linear 10s forwards;
+	background-color: ${colors.alert};
+}
+
+.alert-bar {
+	width: 100%;
+	height: 5px;
+	border-style: hidden;
+	border-radius: 2px;
+	background-color: ${colors.alert_bar};
+	position: absolute;
+	bottom: 2px;
+	animation: expire linear 10s forwards;
+}
+
+@keyframes expire {
+	from {
+		width: 100%;
+	}
+	to {
+		width: 0%;
+	}
+}
+
+@keyframes disappear {
+	0% {
+		visibility: visible;
+		opacity: 1;
+	}
+	99% {
+		visibility: visible;
+		opacity: 1;
+	}
+	100% {
+		visibility: hidden;
+		opacity: 0;
+		display: none;
+	}
 }
 
 `;
@@ -208,6 +252,7 @@ export default class AppFriends extends HTMLElement {
 		this.#setSearchButtonEvent();
 		this.#setFriendsButtonEvent();
 		this.#setRequestsButtonEvent();
+		this.#errorMsgEvents();
 	}
 
 	#setSearchButtonEvent() {
@@ -407,6 +452,31 @@ export default class AppFriends extends HTMLElement {
 				else {
 					userList.innerHTML = "<h1>Username not Found!</h1>";
 				}
+			}
+		});
+	}
+
+	#errorMsgEvents() {
+		stateManager.addEvent("errorMsg", (msg) => {
+			if (msg) {
+				console.log(msg);
+				stateManager.setState("errorMsg", null);
+				const alertBefore  = this.html.querySelector(".alert");
+				if (alertBefore)
+					alertBefore.remove();
+				console.log("HIIII");
+				const userCard = this.html.querySelector(".friends-section");
+				var alertCard = document.createElement("div");
+				alertCard.className = "alert alert-danger hide from alert-div";
+				alertCard.role = "alert";
+				alertCard.innerHTML = `
+						${msg}
+						<div class=alert-bar></div>
+					`;
+				// button.textContent = "Invite";
+				// rightListFriendHtml.appendChild(button);
+				// this.#setInviteSubmitEvent();
+				this.html.insertBefore(alertCard ,userCard);
 			}
 		});
 	}

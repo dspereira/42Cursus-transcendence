@@ -1,6 +1,8 @@
 import { callAPI } from "../utils/callApiUtils.js";
 import stateManager from "../js/StateManager.js";
 import { colors } from "../js/globalStyles.js";
+import { charLimiter } from "../utils/characterLimit.js";
+import charLimit from "../utils/characterLimit.js";
 
 const styles = `
 	.search-icon {
@@ -87,12 +89,12 @@ const styles = `
 	}
 
 	.btn-primary:not(disabled) {
-		background-color: ${colors.button_default};
+		background-color: ${colors.btn_default};
 		color: ${colors.second_text};
 	}
 
 	.btn-primary:not(:disabled):hover {
-		background-color: ${colors.button_default};
+		background-color: ${colors.btn_default};
 		color: ${colors.primary_text};
 	}
 
@@ -256,6 +258,8 @@ export default class GameInviteSend extends HTMLElement {
 			friendCard = document.createElement("game-invite-card1");
 			friendCard.setAttribute("username", elm.username);
 			friendCard.setAttribute("profile-photo", elm.image);
+			friendCard.setAttribute("online", elm.online);
+			friendCard.setAttribute("user-id", elm.id);
 			friendCard.id = `id-${elm.id}`;
 			if(this.selectedElm.find(e => e == friendCard.id))
 				friendCard.setAttribute("selected", "true");
@@ -317,7 +321,7 @@ export default class GameInviteSend extends HTMLElement {
 		elm.classList.add("friend-right-list");
 		elm.classList.add(`${elmId}`);
 		elm.innerHTML = `
-			<div><span>${name}</span></div>
+			<div><span>${charLimiter(name, charLimit)}</span></div>
 			<div class="cross-icon ${elmId}" ><i class="bi bi-x-lg"></i></div>
 		`;
 		this.#addCrossIconEvent(elm.querySelector(".cross-icon"))

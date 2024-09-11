@@ -1,5 +1,6 @@
 import { callAPI } from "../utils/callApiUtils.js";
 import { colors } from "../js/globalStyles.js";
+import stateManager from "../js/StateManager.js";
 
 const styles = `
 
@@ -74,6 +75,8 @@ button {
 		visibility: hidden;
 		opacity: 0;
 		display: none;
+	}
+}
 `;
 
 const getBtn = function(type) {
@@ -231,6 +234,8 @@ export default class UserCard extends HTMLElement {
 		callAPI(method, "http://127.0.0.1:8000/api/friends/request/", body, (res, data) => {
 			if (res.ok)
 				callback(data);
+			else
+				stateManager.setState("errorMsg", "Friend Request Accepted");
 		});
 	}
 
@@ -239,24 +244,7 @@ export default class UserCard extends HTMLElement {
 			if (res.ok)
 				callback(data);
 			else
-			{
-				const alertBefore  = this.html.querySelector(".alert");
-				if (alertBefore)
-					alertBefore.remove();
-				console.log("HIIII");
-				const userCard = this.html.querySelector(".user-card");
-				var alertCard = document.createElement("div");
-				alertCard.className = "alert alert-danger hide from alert-div";
-				alertCard.role = "alert";
-				alertCard.innerHTML = `
-						Request Expired
-						<div class=alert-bar></div>
-					`;
-				// button.textContent = "Invite";
-				// rightListFriendHtml.appendChild(button);
-				// this.#setInviteSubmitEvent();
-				userCard.insertBefore(alertCard ,this.html.querySelector(".user"));
-			}
+				stateManager.setState("errorMsg", "Friend Request Expired");
 		});
 	}
 

@@ -1,36 +1,83 @@
 import { callAPI } from "../utils/callApiUtils.js";
 import { colors } from "../js/globalStyles.js";
+import { charLimiter } from "../utils/characterLimit.js";
+import charLimit from "../utils/characterLimit.js";
+import stateManager from "../js/StateManager.js";
 
 const styles = `
+
+game-invite-card1 {
+	max-height: 150px;
+}
+
 .invites-section {
+	max-height: calc(100vh - 600px);
 	display: flex;
 	width: 100%;
-	height: 50vh;
 	gap: 10px;
 }
 
 .friend-list {
+	display: flex;
+	flex-direction: column;
 	width: 70%;
+	min-width: 250px;
 	background-color: ${colors.second_card};
 	border-radius: 5px;
-	padding: 20px;
+	padding-bottom: 20px;
 }
 
-.invites-send {
+.invites-send-container {
+	min-width: 200px;
+	display: flex;
+	flex-direction: column;
 	position: relative;
 	align-items: center;
 	width: 30%;
 	background-color: ${colors.second_card};
 	border-radius: 5px;
+}
+
+.invites-send {
+	align-items: center;
+	width: 100%;
 	padding: 20px;
+	overflow-y: auto;
+	margin-bottom: 70px;
+	border-radius: 5px;
+}
+
+.friends {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 30px;
+	justify-content: center;
+	overflow-y: auto;
+	align-items: center;
+}
+
+.players-invited {
+	margin-top: 20px;
+	color: ${colors.second_text};
+}
+
+.separator {
+	display: flex;
+	width: 80%;
+	height: 5px;
+	border-radius: 10px;
+	justify-content: center;
+	align-items: center;
+	margin: 20px 0px 20px 0px;
+	background-color: ${colors.main_card};
 }
 
 .search-bar-section {
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
-	width: 100%;
-	margin-bottom: 20px;
+	gap: 20px;
+	margin: 20px;
 }
 
 .refresh-icon {
@@ -44,7 +91,7 @@ const styles = `
 }
 
 .search-bar {
-	width: 93%;
+	width: 83%;
 }
 
 .search-icon {
@@ -74,13 +121,6 @@ const styles = `
 	background-color: ${colors.input_background};
 }
 
-.friends {
-	display: flex;
-	flex-wrap: wrap;
-	gap: 30px;
-	justify-content: center;
-}
-
 .player-invite-send {
 	display: flex;
 	justify-content: space-between;
@@ -108,14 +148,17 @@ const styles = `
 	color: blue; /* outra cor igual mas mais carregada */
 }
 
-
-.invite-btn.btn-primary:not(disabled) {
-	background-color: ${colors.button_default};
+.btn-danger:hover {
 	color: ${colors.second_text};
 }
 
+.invite-btn.btn-primary:not(disabled) {
+	background-color: ${colors.btn_default};
+	color: ${colors.primary_text};
+}
+
 .invite-btn.btn-primary:not(:disabled):hover {
-	background-color: ${colors.button_default};
+	background-color: ${colors.btn_hover};
 	color: ${colors.primary_text};
 }
 
@@ -130,7 +173,7 @@ const styles = `
 	justify-content: center;
 	position: absolute;
 	bottom: 20px;
-	width: 200px;
+	width: 80%;
 	height: 40px;
 	align-items: center;
 	left: 50%;
@@ -160,7 +203,11 @@ const getHtml = function(data) {
 				</div>
 				<div class="friends"></div>
 			</div>
-			<div class="invites-send">
+			<div class="invites-send-container">
+				<div class=players-invited>players invited</div>
+				<div class=separator></div>
+				<div class="invites-send"></div>
+				<button type="button" class="btn-primary btn-invite invite-btn">Invite</button>
 			</div>
 		</div>
 	`;
@@ -228,8 +275,6 @@ export default class TourneyInviter extends HTMLElement {
 		this.#getListPendingInvites();
 		this.#setRefreshFriendsListEvent();
 		this.#checkInvitesPolling();
-		const inviteButton = document.querySelector(".btn-primary");
-		inviteButton.disabled = this.selectedElm == 0;
 	}
 
 	#setFriendsSearchEvent() {
@@ -248,6 +293,8 @@ export default class TourneyInviter extends HTMLElement {
 			friendCard = document.createElement("game-invite-card1");
 			friendCard.setAttribute("username", elm.username);
 			friendCard.setAttribute("profile-photo", elm.image);
+			friendCard.setAttribute("online", elm.online);
+			friendCard.setAttribute("user-id", elm.id);
 			friendCard.id = `id-${elm.id}`;
 			if(this.selectedElm.find(e => e == friendCard.id))
 				friendCard.setAttribute("selected", "true");
@@ -308,19 +355,19 @@ export default class TourneyInviter extends HTMLElement {
 				elm.classList.add("player-invite-send");
 				elm.classList.add(`id-${invite.req_id}`);
 				elm.innerHTML = `
-				<span>${invite.username}</span>
+				<span>${charLimiter(invite.username, charLimit)}</span>
 					<div class="cross-icon btn-	-invite btn-cancel-invite" id="id-${invite.req_id}">x</div>
 				`;
 				listHtml.appendChild(elm);
 				this.#setCancelInviteEvent(elm);
 			});
 		}
-		var button = document.createElement("button");
-		button.setAttribute("type", "button");
-		button.className = "btn-primary btn-invite invite-btn";
-		button.textContent = "Invite";
-		listHtml.appendChild(button);
-		this.#setBtnInviteEvent();
+		// var button = document.createElement("button");
+		// button.setAttribute("type", "button");
+		// button.className = "btn-primary btn-invite invite-btn";
+		// button.textContent = "Invite";
+		// listHtml.appendChild(button);
+		// this.#setBtnInviteEvent();
 		const inviteButton = document.querySelector(".invite-btn");
 		console.log("createInvitesSendList", this.selectedElm);
 		console.log("button!!: ", inviteButton.innerHTML);

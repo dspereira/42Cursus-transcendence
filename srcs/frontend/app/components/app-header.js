@@ -31,6 +31,7 @@ header {
 
 .logo-img {
 	width: 30px;
+	height: 30px;
 }
 
 .logo-text {
@@ -70,10 +71,6 @@ const getHtml = function(data) {
 	const html = `
 	<header>
 		<div class="left-side">
-			<div class= "logo">
-				<img src="/img/logo.png" class="logo-img" alt="logo">
-				<span class="logo-text"><strong>BlitzPong</strong></span>
-			</div>
 		</div>
 		<div class="right-side">
 			<!--<img src="" class="profile-photo"  alt="avatar"/>-->
@@ -135,7 +132,6 @@ export default class AppHeader extends HTMLElement {
 
 	#scripts() {
 		this.#getUserImage();
-		this.#addPageRedirection("home", "logo");
 	}
 
 	#addPageRedirection(page, classIdentifier) {

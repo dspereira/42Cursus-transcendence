@@ -4,6 +4,7 @@ import { callAPI } from "../utils/callApiUtils.js";
 import {colors} from "../js/globalStyles.js";
 
 const styles = `
+
 .border-separation {
 	width: 60%;
 	margin: 0 auto;
@@ -18,9 +19,20 @@ const styles = `
 }
 
 .btn-create-tourney {
-	padding: 10px 70px 10px 70px;
-	background-color: ${colors.button_default};
+	color: ${colors.btn_text};
+	background-color: ${colors.btn_default};
 }
+
+.btn-create-tourney:hover {
+	color: ${colors.hover_text};
+	background-color: ${colors.btn_hover};
+}
+
+.btn-create-tourney {
+	padding: 10px 70px 10px 70px;
+}
+
+
 
 .exit-tourney {
 	display: flex;
@@ -41,7 +53,7 @@ const getHtml = function(data) {
 	<div class="content content-small">
 		<div class="btn-create-tourney-section hide">
 			<div class="create-tourney">
-				<button type="button" class="btn btn-primary btn-create-tourney">Create Tornement</button>
+				<button type="button" class="btn btn-primary btn-create-tourney">Create Tournament</button>
 			</div>
 			<div class="border-separation"></div>
 		</div>

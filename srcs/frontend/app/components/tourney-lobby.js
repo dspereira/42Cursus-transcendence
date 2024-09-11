@@ -1,17 +1,21 @@
 import { callAPI } from "../utils/callApiUtils.js";
 import stateManager from "../js/StateManager.js";
 import { colors } from "../js/globalStyles.js";
-
+import { charLimiter } from "../utils/characterLimit.js";
+import charLimit from "../utils/characterLimit.js";
 
 const styles = `
 .players {
-	min-width: 750px;
+	width: 100%;
+	min-width: 460px;
+	height: auto;
 	display: flex;
+	flex-direction: row;
+	justify-content: center;
+	flex-wrap: wrap;
 	justify-content: space-between;
-	align-items: center;
 	border-radius: 10px;
 	border: 2px solid #495057;
-	/*background-color: ${colors.second_card};*/
 }
 
 .player {
@@ -41,11 +45,11 @@ const styles = `
 }
 
 .buttons {
+	width: 100%;
 	display: flex;
 	justify-content: center;
 	gap: 30px;
 	margin-top: 25px;
-	min-width: 750px;
 }
 
 .btn-success, .btn-cancel {
@@ -220,7 +224,7 @@ export default class TourneyLobby extends HTMLElement {
 		img.setAttribute("src", playerData.image);
 		img.classList.remove("default-photo");
 		img.classList.add("profile-photo");
-		elmHtml.querySelector(".username").innerHTML = playerData.username;
+		elmHtml.querySelector(".username").innerHTML = charLimiter(playerData.username, charLimit);
 		elmHtml.querySelector(".player-id").innerHTML = `${playerData.id}`;
 	}
 

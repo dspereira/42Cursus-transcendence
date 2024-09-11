@@ -301,7 +301,7 @@ const styles = `
 	}
 
 	.invite-card:hover .invite-btn, .back-btn:hover, .inv-decline-btn:hover, .box-on, .submit-button:not(:disabled):hover, .create-btn:hover, .invite-btn:hover, .invited-btn:hover {
-		background-color: ${colors.button_default};
+		background-color: ${colors.btn_default};
 	}
 
 	.invited-card, .inv-header-text, .username, .box-off .username, .invite-friends{

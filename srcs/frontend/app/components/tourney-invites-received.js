@@ -1,5 +1,7 @@
 import { colors } from "../js/globalStyles.js";
 import { callAPI } from "../utils/callApiUtils.js";
+import { charLimiter } from "../utils/characterLimit.js";
+import charLimit from "../utils/characterLimit.js";
 
 const styles = `	
 h1 {

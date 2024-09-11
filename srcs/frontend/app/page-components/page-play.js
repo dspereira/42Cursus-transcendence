@@ -16,15 +16,15 @@ const styles = `
 	}
 
 	.invite-game-btn {
-		background-color: ${colors.button_default};
-		color: ${colors.second_text};
+		background-color: ${colors.btn_default};
+		color: ${colors.primary_text};
 		padding: 10px 70px 10px 70px;
 		margin-bottom: 25px;
 	}
 
 	.invite-game-btn:hover {
-		background-color: ${colors.button_default};
-		color: ${colors.primary_text};
+		background-color: ${colors.btn_hover};
+		color: ${colors.second_text};
 	}
 
 `;
