@@ -50,7 +50,7 @@ legend {
 	font-size: 16px
 }
 
-#new-username {
+#new-username, #new-bio, #theme-options, #language-options {
 	background-image: none;
 }
 
@@ -64,9 +64,9 @@ const getHtml = function(data) {
 	<form id="settings-form">
 		<div class="main-container">
 			<div class="general-settings-container">
+				<div class="alert alert-danger alert-username hide" role="alert"></div>
 				<h2>Profile Settings</h2>
 				<hr>
-				<div class="alert alert-danger alert-username hide" role="alert"></div>
 				<label for="new-username">Change Username</label>
 				<input type="text" class="form-control form-control-md" id="new-username" placeholder="New Username" maxlength="15">
 				<label for="new-bio">Change Bio</label>
@@ -109,8 +109,8 @@ const getHtml = function(data) {
 			
 				<h2>Language Settings</h2>
 				<hr>
-				<label for="language-option">Choose language:</label>
-				<select name="language" id="language-option">
+				<label for="language-options">Choose language:</label>
+				<select class="form-select" id="language-options" aria-label="Language selection">
 					<option value="en">English &#x1F1EC;&#x1F1E7;</option>
 					<option value="pt">Português &#x1F1F5;&#x1F1F9;</option>
 					<option value="es">Espanhol &#x1F1EA;&#x1F1F8;</option>
@@ -166,7 +166,7 @@ export default class AppConfigs extends HTMLElement {
 		this.usernameInp = this.html.querySelector("#new-username");
 		this.bioInp = this.html.querySelector("#new-bio");
 		this.gameThemeOption = this.html.querySelector("#theme-options");
-		this.languageOption = this.html.querySelector("#language-option");
+		this.languageOption = this.html.querySelector("#language-options");
 		this.imagePreview = this.html.querySelector(".image-preview");
 		this.usernameAlert =  this.html.querySelector(".alert-username");
 		this.newSeedBtn = this.html.querySelector(".btn-new-seed");
@@ -202,9 +202,8 @@ export default class AppConfigs extends HTMLElement {
 
 			const username = this.usernameInp.value.trim();
 			if (!this.#isValidUsername(username)) {
-				this.usernameInp.classList.add("is-invalid");
-				this.usernameAlert.classList.remove("hide");
-				this.usernameAlert.innerHTML = "Invalid username";
+				this.#setFieldInvalid("username");
+				this.#setErrorMessage("Invalid username!");
 				return ;
 			}
 
@@ -216,7 +215,6 @@ export default class AppConfigs extends HTMLElement {
 				"image_seed": this.imageSeed.trim()
 			});
 
-
 			const formData = new FormData();
 			if (data)
 				formData.append('json', data);
@@ -224,11 +222,10 @@ export default class AppConfigs extends HTMLElement {
 				formData.append('image', this.imageFile);
 
 			callAPI("POST", "http://127.0.0.1:8000/api/settings/", formData, (res, resData) => {
-				
-				console.log(res);
-				console.log(resData);
-
-
+				if (!res.ok && resData) {
+					this.#setFieldInvalid(resData.field);
+					this.#setErrorMessage(resData.message);
+				}
 			});
 		});
 	}
@@ -269,6 +266,25 @@ export default class AppConfigs extends HTMLElement {
 			this.imagePreview.setAttribute("src", URL.createObjectURL(this.imageFile));
 			this.imageSeed = "";
 		});
+	}
+
+	#setFieldInvalid(field) {
+		if (!field)
+			return ;
+		const obj = {
+			"username": () => this.usernameInp.classList.add("is-invalid"),
+			"bio": () => this.bioInp.classList.add("is-invalid"),
+			"game_theme": () => this.gameThemeOption.classList.add("is-invalid"),
+			"language": () => this.languageOption.classList.add("is-invalid"),
+		}
+		obj[field]();
+	}
+
+	#setErrorMessage(message) {
+		if (!message)
+			return ;
+		this.usernameAlert.classList.remove("hide");
+		this.usernameAlert.innerHTML = message;
 	}
 }
 

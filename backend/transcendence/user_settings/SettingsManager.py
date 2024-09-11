@@ -30,49 +30,58 @@ class SettingsManager:
 		return settings
 
 	def update_username(self, new_username):
-		username = new_username.strip()
-		if username:
-			user = user_model.get(username=username)
-			if not user or (user.id == self.user.id):
-				if username != self.user.username:
-					self.user.username = username
-					self.user.save()
-				return True
+		if new_username is not None:
+			username = str(new_username).strip() if new_username else None
+			if username:
+				user = user_model.get(username=username)
+				if not user or (user.id == self.user.id):
+					if username != self.user.username:
+						self.user.username = username
+						self.user.save()
+					return True
 		return False
 
 	def update_bio(self, new_bio):
-		bio = new_bio.strip()
-		if bio != self.user_profile.bio:
-			self.user_profile.bio = bio
-			self.user_profile.save()
-		return True
+		if new_bio is not None:
+			bio = str(new_bio).strip()
+			if bio != self.user_profile.bio:
+				self.user_profile.bio = bio
+				self.user_profile.save()
+			return True
+		return False
 
 	def update_language(self, new_language):
-		language = new_language.strip()
-		if language:
-			if language != self.user_settings.language:
-				self.user_settings.language = language
-				self.user_settings.save()
-			return True
+		if new_language is not None:
+			language = str(new_language).strip() if new_language else None
+			if language:
+				if self.__is_valid_language(language):
+					if language != self.user_settings.language:
+						self.user_settings.language = language
+						self.user_settings.save()
+					return True
 		return False
 
 	def update_game_theme(self, new_game_theme):
-		game_theme = new_game_theme.strip()
-		if game_theme:
-			if game_theme != self.user_settings.game_theme:
-				self.user_settings.game_theme = game_theme
-				self.user_settings.save()
-			return True
+		if new_game_theme is not None:
+			game_theme = str(new_game_theme).strip() if new_game_theme else None
+			if game_theme:
+				if game_theme.isdigit() and int(game_theme) >= 0 and int(game_theme) <= 4:
+					if game_theme != self.user_settings.game_theme:
+						self.user_settings.game_theme = game_theme
+						self.user_settings.save()
+					return True
 		return False
 
 	def update_image_seed(self, new_image_seed):
-		image_seed = new_image_seed.strip()
-		if image_seed:
-			self.__remove_image_from_profile()
-			if image_seed != self.user_profile.default_image_seed:
-				self.user_profile.default_image_seed = image_seed
-				self.user_profile.save()
-		return True
+		if new_image_seed is not None:
+			image_seed = str(new_image_seed).strip()  if new_image_seed else None
+			if image_seed:
+				self.__remove_image_from_profile()
+				if image_seed != self.user_profile.default_image_seed:
+					self.user_profile.default_image_seed = image_seed
+					self.user_profile.save()
+			return True
+		return False
 
 	def update_image(self, request_body, request_file):
 		form = ImageForm(request_body, request_file)
@@ -111,3 +120,9 @@ class SettingsManager:
 		if filename and extension:
 			return extension[1:].upper()
 		return None
+
+	def __is_valid_language(self, language):
+		available_languages = ['en', 'pt', 'es']
+		if language in available_languages:
+			return True
+		return False
