@@ -13,6 +13,7 @@ from friendships.friendships import get_friends_request_list
 from friendships.friendships import check_if_friend_request
 from friendships.friendships import remove_users_with_friends_request
 from friendships.friendships import get_users_info
+from friendships.friendships import is_already_friend
 
 user_profile_info_model = ModelManager(UserProfileInfo)
 friend_requests_model = ModelManager(FriendRequests)
@@ -51,4 +52,20 @@ def chat_list(request):
 			return JsonResponse({"message": "Friends List Returned With Success", "friends": friends_list}, status=200)
 		else:
 			return JsonResponse({"message": "Empty Friends List", "friends": None}, status=200)
+	return JsonResponse({"message": "Error: Invalid User"}, status=401)
+
+@login_required
+@accepted_methods(["GET"])
+def info(request):
+	if not request.GET.get('id') or not str(request.GET.get('id')).isdigit():
+		return JsonResponse({"message": "Error: Bad Request"}, status=400)
+	user = user_model.get(id=request.access_data.sub)
+	if user:
+		friend = user_model.get(id=request.GET['id'])
+		if not friend:
+			return JsonResponse({"message": "Friend does not exist!"}, status=409)
+		if not is_already_friend(user, friend):
+			return JsonResponse({"message": "Users are not friends!"}, status=409)
+		friend_info = get_users_info(user_profile_info_model.get(user=friend))
+		return JsonResponse({"message": "Friend info Returned With Success", "friend_info": friend_info}, status=200)
 	return JsonResponse({"message": "Error: Invalid User"}, status=401)
