@@ -1,6 +1,7 @@
 import chatWebSocket from "../js/ChatWebSocket.js";
 import stateManager from "../js/StateManager.js";
 import { callAPI } from "../utils/callApiUtils.js";
+import friendProfileRedirectionEvent from "../utils/profileRedirectionUtils.js";
 
 const styles = `
 /* Chat section */
@@ -128,6 +129,10 @@ form {
 	display: inline-block;
 }
 
+.friend-info {
+	cursor: pointer;
+}
+
 .hide {
 	display: none;
 }
@@ -141,7 +146,7 @@ const getHtml = function(data) {
 	const html = `
 		<div class="chat-section">
 			<div class="chat-header">
-				<div>
+				<div class="friend-info">
 					<div class="profile-photo-status">
 						<img src="${data.profilePhoto}" class="profile-photo" alt="profile photo chat"/>
 						<div class="online-status ${onlineVisibility}"></div>
@@ -234,7 +239,6 @@ export default class ChatSection extends HTMLElement {
 		this.appendChild(this.html);
 	}
 
-
 	#scripts() {
 		this.#getUserBlockStatus();
 		stateManager.setState("chatMessagesCounter", 0);
@@ -247,6 +251,7 @@ export default class ChatSection extends HTMLElement {
 		this.#setBtnBlockEvent();
 		this.#setBtnUnblockEvent();
 		this.#setBlockStatusEvent();
+		friendProfileRedirectionEvent(this.html, ".friend-info", this.data.userId);
 	}
 
 	// this.initialScrollHeight -> Pre-calculated initial scrollHeight
