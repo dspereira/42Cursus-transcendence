@@ -42,7 +42,6 @@ const fetchApi = async function (method, url, data) {
 	catch (error) {
 		callError = error;
 	}
-
 	return {
 		res: res,
 		data: resData,
@@ -50,21 +49,23 @@ const fetchApi = async function (method, url, data) {
 	}
 }
 
-const getReqHeader = function(method, data)
-{
+const getReqHeader = function(method, data) {
+	const isFormData = data instanceof FormData;
+
 	const obj = {
 		credentials: 'include',
-	};
-
+	}
 	if (method)
 		obj.method = method;
 	else
 		obj.method = "GET";
 	if (data) {
-		obj.headers = {
-			"Content-Type": "application/json"
+		if (isFormData)
+			obj.body = data;
+		else {
+			obj.headers = {"Content-Type": "application/json"}
+			obj.body = JSON.stringify(data);
 		}
-		obj.body = JSON.stringify(data);
 	}
 	return obj;
 }

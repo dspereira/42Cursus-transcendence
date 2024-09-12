@@ -1,47 +1,30 @@
-import { redirect, render } from "../js/router.js";
 import { adjustContent } from "../utils/adjustContent.js";
 import stateManager from "../js/StateManager.js";
 import { callAPI } from "../utils/callApiUtils.js";
+import { render } from "../js/router.js";
 
 const styles = `
-	.profile-container {
-		display: flex;
-		justify-content: flex-start;
-		gap: 50px;
-	}
 
-	.profile {
-		width: 30%;
-	}
-
-	.history {
-		width: 70%;
-	}
 `;
 
 const getHtml = function(data) {
+	const info = JSON.stringify(data.info);
 	const html = `
-		<app-header></app-header>
-		<side-panel selected="profile"></side-panel>
-		<div class="content content-small">
-			<div class="profile-container">
-				<div class="profile">
-					<user-profile username="${data.username}"></user-profile>
-				</div>
-				<div class="history">
-					<game-history username="${data.username}"></game-history>
-				</div>
-			</div>
-		</div>
+	<app-header></app-header>
+	<side-panel selected="tournaments"></side-panel>
+	<div class="content content-small">
+		<tourney-info info='${info}'></tourney-info>
+	</div>
 	`;
 	return html;
 }
 
-const title = "Profile";
 
-export default class PageProfile extends HTMLElement {
-	static #componentName = "page-profile";
-	static observedAttributes = ["username"];
+const title = "Tournament Info";
+
+export default class PageTournamentInfo extends HTMLElement {
+	static #componentName = "page-tournament-info";
+	static observedAttributes = ["id"];
 
 	constructor() {
 		super()
@@ -49,14 +32,15 @@ export default class PageProfile extends HTMLElement {
 	}
 
 	connectedCallback() {
-		if (!this.data.username) {
-			this.data.username = stateManager.getState("username");
-			this.#start();
+		if (!this.data.id) {
+			render("<page-404></page-404>");
 		}
 		else {
-			callAPI("GET", `http://127.0.0.1:8000/api/profile/exists/?username=${this.data.username}`, null, (res, data) => {
-				if (res.ok && data && data.exists)
+			callAPI("GET", `http://127.0.0.1:8000/api/tournament/info/?id=${this.data.id}`, null, (res, data) => {
+				if (res.ok && data && data.info) {
+					this.data["info"] = data.info;
 					this.#start();
+				}
 				else
 					render("<page-404></page-404>");
 			});
@@ -65,7 +49,7 @@ export default class PageProfile extends HTMLElement {
 
 	attributeChangedCallback(name, oldValue, newValue) {
 		this.data[name] = newValue;
-	}
+	}	
 
 	static get componentName() {
 		return this.#componentName;
@@ -109,4 +93,4 @@ export default class PageProfile extends HTMLElement {
 	}
 }
 
-customElements.define(PageProfile.componentName, PageProfile);
+customElements.define(PageTournamentInfo.componentName, PageTournamentInfo);

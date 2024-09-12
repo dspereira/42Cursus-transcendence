@@ -22,6 +22,7 @@ from .Lobby import lobby_dict
 from tournament.utils import update_next_game
 from tournament.utils import is_final_game
 from tournament.utils import update_tournament_status
+from tournament.utils import update_users_tournament_stats
 from tournament.utils import TOURNAMENT_STATUS_FINISHED
 
 user_profile_info_model = ModelManager(UserProfileInfo)
@@ -118,6 +119,7 @@ class Game(AsyncWebsocketConsumer):
 			await sync_to_async(self.lobby.update_connected_status)(self.user.id, False)
 			await self.send_users_info_to_group()
 		await self.__stop_game_routine()
+		await sync_to_async(self.update_users)()
 		if self.room_group_name:
 			await self.channel_layer.group_discard(
 				self.room_group_name,
@@ -266,13 +268,12 @@ class Game(AsyncWebsocketConsumer):
 			self.game_info.user2_score = scores['player_2_score']
 			self.game_info.status = finish_status
 			self.game_info.winner = winner
+			self.game_info.played = await sync_to_async(datetime.now)()
 			await sync_to_async(self.game_info.save)()
 			games_dict.remove_game_obj(self.game_info.id)
 			surrender = True if finish_status == GAME_STATUS_SURRENDER else False
-
 			if await sync_to_async(self.lobby.is_tournament_game)():
 				await sync_to_async(self.__update_tournament_games)()
-
 			await self.channel_layer.group_send(
 				self.room_group_name,
 				{
@@ -345,6 +346,7 @@ class Game(AsyncWebsocketConsumer):
 		if tournament and game:
 			if is_final_game(game.id, tournament):
 				update_tournament_status(tournament, TOURNAMENT_STATUS_FINISHED)
+				update_users_tournament_stats(tournament)
 			else:
 				update_next_game(tournament, game.winner, game)
 
@@ -352,3 +354,14 @@ class Game(AsyncWebsocketConsumer):
 		if not lobby_id:
 			return None
 		return lobby_dict[lobby_id]
+
+	def update_users(self):
+		game_info = async_to_sync(self.__get_game_info)(self.game_info.id)
+		user_profile = user_profile_info_model.get(user=self.user)
+		user_profile.total_games = user_profile.total_games + 1
+		if game_info.winner.id == self.user.id:
+			user_profile.victories = user_profile.victories + 1
+		else:
+			user_profile.defeats = user_profile.defeats + 1
+		user_profile.win_rate = user_profile.victories / user_profile.total_games * 100
+		user_profile.save()

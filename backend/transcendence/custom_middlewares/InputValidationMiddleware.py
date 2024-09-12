@@ -11,7 +11,7 @@ class InputValidationMiddleware:
 		if request.GET:
 			request.GET = self.__get_query_params_correct(request.GET)
 
-		if request.body:
+		if not request.body and not request.FILES:
 			body = self.__get_body_correct(body=request.body.decode('utf-8'))
 			request._body = body.encode('utf-8')
 
