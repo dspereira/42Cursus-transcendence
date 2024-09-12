@@ -107,3 +107,16 @@ def exist_user_profile(request):
 	if user_model.get(username=username):
 		exist = True
 	return JsonResponse({"message": "User existence verified successfully!", "exists": exist}, status=200)
+
+@login_required
+@accepted_methods(["GET"])
+def username(request):
+	if not request.GET.get('id') or not str(request.GET.get('id')).isdigit():
+		return JsonResponse({"message": "Error: Bad Request"}, status=400)
+	user = user_model.get(id=request.access_data.sub)
+	if user:
+		user_to_check = user_model.get(id=request.GET['id'])
+		if not user_to_check:
+			return JsonResponse({"message": "User does not exist!"}, status=409)
+		return JsonResponse({"message": "Friend info Returned With Success", "user_info": user_to_check.username}, status=200)
+	return JsonResponse({"message": "Error: Invalid User"}, status=401)

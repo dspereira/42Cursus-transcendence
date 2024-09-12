@@ -53,19 +53,3 @@ def chat_list(request):
 		else:
 			return JsonResponse({"message": "Empty Friends List", "friends": None}, status=200)
 	return JsonResponse({"message": "Error: Invalid User"}, status=401)
-
-@login_required
-@accepted_methods(["GET"])
-def info(request):
-	if not request.GET.get('id') or not str(request.GET.get('id')).isdigit():
-		return JsonResponse({"message": "Error: Bad Request"}, status=400)
-	user = user_model.get(id=request.access_data.sub)
-	if user:
-		friend = user_model.get(id=request.GET['id'])
-		if not friend:
-			return JsonResponse({"message": "Friend does not exist!"}, status=409)
-		if not is_already_friend(user, friend):
-			return JsonResponse({"message": "Users are not friends!"}, status=409)
-		friend_info = get_users_info(user_profile_info_model.get(user=friend))
-		return JsonResponse({"message": "Friend info Returned With Success", "friend_info": friend_info}, status=200)
-	return JsonResponse({"message": "Error: Invalid User"}, status=401)
