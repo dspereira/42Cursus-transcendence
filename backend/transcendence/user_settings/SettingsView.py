@@ -59,7 +59,7 @@ class SettingsView(View):
 				if not form.is_valid():
 					return JsonResponse({"message": f"Invalid input image!", "field": "image"}, status=409)
 				image_file = request.FILES['image']
-				if not self.__is_valid_image_file(image_file.name, image_file.content_type):
+				if not self.__is_valid_image_file(image_file.content_type):
 					return JsonResponse({"message": f"Invalid image format!", "field": "image"}, status=409)
 				if not self.__is_valid_image_size(image_file):
 					return JsonResponse({"message": f"Invalid image size!", "field": "image"}, status=409)
@@ -69,17 +69,14 @@ class SettingsView(View):
 		else:
 			return JsonResponse({"message": "Invalid User!"}, status=400)
 
-	def __is_valid_image_file(self, file_name, file_type):
-		filename, extension = os.path.splitext(file_name)
+	def __is_valid_image_file(self, file_type):
 		valid_content_types = {
 			"image/png": "PNG",
 			"image/jpeg": "JPEG",
 			"image/webp": "WEBP",
 		}
 		if file_type in valid_content_types:
-			extension = extension[1:].upper()
-			if filename and extension and extension == valid_content_types[file_type]:
-				return True
+			return True
 		return False
 
 	def __is_valid_image_size(self, image_file):

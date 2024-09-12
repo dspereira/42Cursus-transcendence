@@ -85,7 +85,7 @@ class SettingsManager:
 	def update_image(self, image_file):
 		file = image_file
 		if file:
-			file_extension = self.__get_file_extension(file.name)
+			file_extension = self.__get_file_extension(file.content_type)
 			new_image_data = file.read()
 			if self.user_profile:
 				image = Image.open(BytesIO(new_image_data))
@@ -105,17 +105,14 @@ class SettingsManager:
 			self.user_profile.profile_image = None
 			self.user_profile.save()
 
-	def __get_file_extension(self, file_name, file_type):
-		filename, extension = os.path.splitext(file_name)
+	def __get_file_extension(self, file_type):
 		valid_content_types = {
 			"image/png": "PNG",
 			"image/jpeg": "JPEG",
 			"image/webp": "WEBP",
 		}
 		if file_type in valid_content_types:
-			extension = extension[1:].upper()
-			if filename and extension and extension == valid_content_types[file_type]:
-				return extension
+			return valid_content_types[file_type]
 		return None
 
 	def __is_valid_language(self, language):
