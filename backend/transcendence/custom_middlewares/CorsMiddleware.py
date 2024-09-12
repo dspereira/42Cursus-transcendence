@@ -10,6 +10,7 @@ origin_data = [
 headers_name = "Access-Control-Allow-Headers"
 headers_data = [
 	"Content-Type",
+	'X-CSRFToken',
 ]
 
 methods_name = "Access-Control-Allow-Methods"

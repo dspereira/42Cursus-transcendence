@@ -94,6 +94,8 @@ export default class LoginForm extends HTMLElement {
 		this.#initComponent();
 		this.#render();
 		this.#scripts();
+
+		this.data = {};
 	}
 
 	attributeChangedCallback(name, oldValue, newValue) {
@@ -128,6 +130,7 @@ export default class LoginForm extends HTMLElement {
 	}
 
 	#scripts() {
+		this.#csrfTokeGET();
 		this.#showHidePassword();
 		this.#submit();
 		this.#redirectToSignUpForm();
@@ -164,7 +167,7 @@ export default class LoginForm extends HTMLElement {
 			if (!dataForm.username || !dataForm.password)
 				this.#setInvalidCredentialsStyle();
 			else
-				callAPI("POST", "http://127.0.0.1:8000/api/auth/login", dataForm, this.#apiResHandlerCalback);
+				callAPI("POST", "http://127.0.0.1:8000/api/auth/login", dataForm, this.#apiResHandlerCalback, null, this.data.csrfToken);
 		});
 	}
 
@@ -186,6 +189,25 @@ export default class LoginForm extends HTMLElement {
 			alert.classList.add("show");
 			alert.classList.remove("hide");
 		}	
+	}
+
+	#csrfTokeGET() {
+		callAPI("GET", "http://127.0.0.1:8000/api/auth/csrf_token", null, (res, data) => {
+			if (res.ok)
+			{
+				if (document.cookie && document.cookie !== '') {
+					const name = 'csrftoken';
+					const cookies = document.cookie.split(';');
+					for (let i = 0; i < cookies.length; i++) {
+						const cookie = cookies[i].trim();
+						if (cookie.substring(0, name.length + 1) === (name + '=')) {
+							this.data.csrfToken = decodeURIComponent(cookie.substring(name.length + 1));
+							break;
+						}
+					}
+				}
+			}
+		})
 	}
 }
 

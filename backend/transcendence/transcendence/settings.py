@@ -37,59 +37,65 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
-    'django.contrib.admin',
-    'django.contrib.auth',
-    'django.contrib.contenttypes',
-    'django.contrib.sessions',
-    'django.contrib.messages',
-    'django.contrib.staticfiles',
+	'django.contrib.admin',
+	'django.contrib.auth',
+	'django.contrib.contenttypes',
+	'django.contrib.sessions',
+	'django.contrib.messages',
+	'django.contrib.staticfiles',
 	'two_factor_auth',
-    'notifications',
-    'user_auth',
-    'live_chat',
-    'channels',
-    'user_profile',
-    'friendships',
-    'tournament',
-    'user_settings',
-    'game',
-    'manage_commands', # test app
+	'notifications',
+	'user_auth',
+	'live_chat',
+	'channels',
+	'user_profile',
+	'friendships',
+	'tournament',
+	'user_settings',
+	'game',
+	'manage_commands', # test app
 ]
 
 MIDDLEWARE = [
-    'django.middleware.security.SecurityMiddleware',
-    'django.contrib.sessions.middleware.SessionMiddleware',
-    'django.middleware.common.CommonMiddleware',
-    'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'django.contrib.messages.middleware.MessageMiddleware',
-    'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'custom_middlewares.CorsMiddleware',
-    'custom_middlewares.JwtMiddleware',
-    'custom_middlewares.BlacklistTokenMiddleware',
-    'custom_middlewares.OnlineStatusMiddleware',
-    'custom_middlewares.InputValidationMiddleware',
+	'django.middleware.csrf.CsrfViewMiddleware',
+	'django.middleware.security.SecurityMiddleware',
+	'django.contrib.sessions.middleware.SessionMiddleware',
+	'django.middleware.common.CommonMiddleware',
+	'django.contrib.auth.middleware.AuthenticationMiddleware',
+	'django.contrib.messages.middleware.MessageMiddleware',
+	'django.middleware.clickjacking.XFrameOptionsMiddleware',
+	'custom_middlewares.CorsMiddleware',
+	'custom_middlewares.JwtMiddleware',
+	'custom_middlewares.BlacklistTokenMiddleware',
+	'custom_middlewares.OnlineStatusMiddleware',
+	'custom_middlewares.InputValidationMiddleware',
+]
+
+CSRF_TRUSTED_ORIGINS = [
+	"http://127.0.0.1:8080",
+	"http://localhost:8080",
 ]
 
 AUTHENTICATION_BACKENDS = [
-    'user_auth.AuthBackend.AuthBackend'
+	'user_auth.AuthBackend.AuthBackend'
 ]
 
 ROOT_URLCONF = 'transcendence.urls'
 
 TEMPLATES = [
-    {
-        'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
-        'APP_DIRS': True,
-        'OPTIONS': {
-            'context_processors': [
-                'django.template.context_processors.debug',
-                'django.template.context_processors.request',
-                'django.contrib.auth.context_processors.auth',
-                'django.contrib.messages.context_processors.messages',
-            ],
-        },
-    },
+	{
+		'BACKEND': 'django.template.backends.django.DjangoTemplates',
+		'DIRS': [],
+		'APP_DIRS': True,
+		'OPTIONS': {
+			'context_processors': [
+				'django.template.context_processors.debug',
+				'django.template.context_processors.request',
+				'django.contrib.auth.context_processors.auth',
+				'django.contrib.messages.context_processors.messages',
+			],
+		},
+	},
 ]
 
 ASGI_APPLICATION = 'transcendence.asgi.application'
@@ -99,9 +105,9 @@ WSGI_APPLICATION = 'transcendence.wsgi.application'
 # https://channels.readthedocs.io/en/stable/topics/channel_layers.html#in-memory-channel-layer
 
 CHANNEL_LAYERS = {
-    "default": {
-        "BACKEND": "channels.layers.InMemoryChannelLayer"
-    }
+	"default": {
+		"BACKEND": "channels.layers.InMemoryChannelLayer"
+	}
 }
 
 AUTH_USER_MODEL = 'user_auth.User'
@@ -110,32 +116,32 @@ AUTH_USER_MODEL = 'user_auth.User'
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.getenv('DB_NAME'),
-        'USER': os.getenv('DB_USER'),
-        'PASSWORD': os.getenv('DB_PASS'),
-        'HOST': 'localhost',
-        'PORT': '5432',
-    }
+	'default': {
+		'ENGINE': 'django.db.backends.postgresql',
+		'NAME': os.getenv('DB_NAME'),
+		'USER': os.getenv('DB_USER'),
+		'PASSWORD': os.getenv('DB_PASS'),
+		'HOST': 'localhost',
+		'PORT': '5432',
+	}
 }
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
 
 AUTH_PASSWORD_VALIDATORS = [
-    {
-        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
-    },
+	{
+		'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
+	},
+	{
+		'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
+	},
+	{
+		'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
+	},
+	{
+		'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
+	},
 ]
 
 # Internationalization

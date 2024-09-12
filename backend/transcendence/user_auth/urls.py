@@ -14,4 +14,5 @@ urlpatterns = [
     path("email", views.get_user_email, name="email"),
     path("login_status", views.check_login_status, name="check_login_status"),
     path("validate_email", views.validate_email, name="validate_email"),
+    path("csrf_token", views.csrf_token, name="csrf_token"),
 ]

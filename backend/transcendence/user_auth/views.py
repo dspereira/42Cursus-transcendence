@@ -20,8 +20,12 @@ from user_profile.models import UserProfileInfo
 
 from custom_utils.models_utils import ModelManager
 
+from django.middleware.csrf import get_token, rotate_token
+from django.views.decorators.csrf import csrf_exempt
+
 user_model = ModelManager(User)
 
+@csrf_exempt
 @accepted_methods(["POST"])
 def register(request):
 	if request.body:
@@ -68,6 +72,7 @@ def login(request):
 		return response
 	return JsonResponse({"message": "Empty request body"}, status=400)
 
+@csrf_exempt
 @accepted_methods(["POST"])
 def logout(request):
 	if request.access_data:
@@ -77,6 +82,7 @@ def logout(request):
 		return response
 	return JsonResponse({"message": "Unauthorized: Logout failed."}, status=401)
 
+@csrf_exempt
 @accepted_methods(["POST"])
 def refresh_token(request):
 	if request.refresh_data:
@@ -85,6 +91,14 @@ def refresh_token(request):
 		update_blacklist(request.access_data, request.refresh_data)
 		return response
 	return JsonResponse({"message": "Invalid refresh token. Please authenticate again."}, status=401)
+
+@accepted_methods(["GET"])
+def csrf_token(request):
+	rotate_token(request) # aqui ele vai dar refresh ao token para garantir que não estamos a reutilizar tokens
+	csrf_token = get_token(request)
+	response = JsonResponse({'csrfToken': csrf_token})
+	response.set_cookie('csrftoken', csrf_token) #adicionamos o CSRF Token as cookies pois o middleware procura por ele nas cookies
+	return response
 
 # Route test, remove in production
 @accepted_methods(["GET"])
