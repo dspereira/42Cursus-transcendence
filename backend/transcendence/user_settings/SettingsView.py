@@ -12,6 +12,9 @@ from .SettingsManager import SettingsManager
 
 user_model = ModelManager(User)
 
+NBR_MEGA_BYTES = 1
+MAX_IMAGE_SIZE_MB = NBR_MEGA_BYTES * 1048576
+
 class SettingsView(View):
 
 	@method_decorator(login_required)
@@ -58,6 +61,8 @@ class SettingsView(View):
 				image_file = request.FILES['image']
 				if not self.__is_valid_image_file(image_file.name, image_file.content_type):
 					return JsonResponse({"message": f"Invalid image format!", "field": "image"}, status=409)
+				if not self.__is_valid_image_size(image_file):
+					return JsonResponse({"message": f"Invalid image size!", "field": "image"}, status=409)
 				if not user_settings_manager.update_image(image_file):
 					return JsonResponse({"message": f"Invalid input image!", "field": "image"}, status=409)
 			return JsonResponse({"message": f"User settings updated with success.", "settings": user_settings_manager.get_current_settings()}, status=200)
@@ -75,4 +80,9 @@ class SettingsView(View):
 			extension = extension[1:].upper()
 			if filename and extension and extension == valid_content_types[file_type]:
 				return True
+		return False
+
+	def __is_valid_image_size(self, image_file):
+		if image_file.size <= MAX_IMAGE_SIZE_MB:
+			return True
 		return False
