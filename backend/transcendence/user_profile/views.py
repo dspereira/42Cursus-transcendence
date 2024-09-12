@@ -118,5 +118,5 @@ def username(request):
 		user_to_check = user_model.get(id=request.GET['id'])
 		if not user_to_check:
 			return JsonResponse({"message": "User does not exist!"}, status=409)
-		return JsonResponse({"message": "Friend info Returned With Success", "user_info": user_to_check.username}, status=200)
+		return JsonResponse({"message": "Friend info Returned With Success", "username": user_to_check.username}, status=200)
 	return JsonResponse({"message": "Error: Invalid User"}, status=401)
