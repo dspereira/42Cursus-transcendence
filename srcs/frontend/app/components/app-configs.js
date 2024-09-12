@@ -64,7 +64,8 @@ const getHtml = function(data) {
 	<form id="settings-form">
 		<div class="main-container">
 			<div class="general-settings-container">
-				<div class="alert alert-danger alert-username hide" role="alert"></div>
+				<div class="alert alert-danger hide" role="alert"></div>
+				<div class="alert alert-success hide" role="alert"></div>
 				<h2>Profile Settings</h2>
 				<hr>
 				<label for="new-username">Change Username</label>
@@ -125,7 +126,8 @@ const getHtml = function(data) {
 				</div>
 				<div class="img-buttons">
 					<label for="new-image" class="btn btn-primary btn-img">Upload Image</label>
-					<input id="new-image" class="hide" type="file" accept="image/png, image/jpeg">
+					<!--<input id="new-image" class="hide" type="file" accept="image/png, image/jpeg, image/webp">-->
+					<input id="new-image" class="hide" type="file">
 					<button class="btn btn-primary btn-img btn-new-seed">New Avatar</button>
 				</div>
 			</div>
@@ -136,6 +138,42 @@ const getHtml = function(data) {
 }
 
 const IMG_PATH = "https://api.dicebear.com/8.x/bottts/svg?seed=";
+const MEGABYTE = 1048576;
+const MAX_IMAGE_SIZE_BYTES = 1 * MEGABYTE;
+
+const fileTypes = {
+	"image/jpeg": true,
+	"image/png": true,
+	"image/webp": true
+}
+
+const isFalidFormat = function(type) {
+	if (fileTypes[type])
+		return true;
+	return false;
+}
+
+const suportedFileTypesToString = function() {
+	const length = Object.keys(fileTypes).length;
+
+	let result = "";
+	let idx = 0;
+	for (let key in fileTypes) {
+		if (idx < length - 1)
+			result += ` ${key},`;
+		else
+			result += ` ${key}`;
+		idx++;
+	}
+	return result;
+}
+
+const messages = {
+	"success": "User settings updated with success",
+	"usernameInvalid": "Invalid username",
+	"imageSize": `The image size must not exceed ${MAX_IMAGE_SIZE_BYTES / MEGABYTE}MB`,
+	"imageType": `Only the following formats are accepted:${suportedFileTypesToString()}`
+}
 
 export default class AppConfigs extends HTMLElement {
 	static observedAttributes = [];
@@ -168,9 +206,11 @@ export default class AppConfigs extends HTMLElement {
 		this.gameThemeOption = this.html.querySelector("#theme-options");
 		this.languageOption = this.html.querySelector("#language-options");
 		this.imagePreview = this.html.querySelector(".image-preview");
-		this.usernameAlert =  this.html.querySelector(".alert-username");
 		this.newSeedBtn = this.html.querySelector(".btn-new-seed");
 		this.newImageInp = this.html.querySelector("#new-image");
+		
+		this.errorAlert =  this.html.querySelector(".alert-danger");
+		this.successAlert = this.html.querySelector(".alert-success");
 	}
 
 	#styles() {
@@ -222,7 +262,13 @@ export default class AppConfigs extends HTMLElement {
 				formData.append('image', this.imageFile);
 
 			callAPI("POST", "http://127.0.0.1:8000/api/settings/", formData, (res, resData) => {
+				if (res.ok && resData) {
+					this.#loadData(resData.settings);
+					this.#cleanErrorStyles();
+					this.#setSuccessMessage(messages.success);
+				}
 				if (!res.ok && resData) {
+					this.#cleanSuccessMessage();
 					this.#setFieldInvalid(resData.field);
 					this.#setErrorMessage(resData.message);
 				}
@@ -263,6 +309,14 @@ export default class AppConfigs extends HTMLElement {
 			this.imageFile = this.newImageInp.files[0];
 			if (!this.imageFile)
 				return ;
+			if (this.imageFile.size > MAX_IMAGE_SIZE_BYTES) {
+				this.#setErrorMessage(messages.imageSize);
+				return ;
+			}
+			if (!isFalidFormat(this.imageFile.type)) {
+				this.#setErrorMessage(messages.imageType);
+				return ;
+			}
 			this.imagePreview.setAttribute("src", URL.createObjectURL(this.imageFile));
 			this.imageSeed = "";
 		});
@@ -276,6 +330,7 @@ export default class AppConfigs extends HTMLElement {
 			"bio": () => this.bioInp.classList.add("is-invalid"),
 			"game_theme": () => this.gameThemeOption.classList.add("is-invalid"),
 			"language": () => this.languageOption.classList.add("is-invalid"),
+			"image": () => {}
 		}
 		obj[field]();
 	}
@@ -283,8 +338,26 @@ export default class AppConfigs extends HTMLElement {
 	#setErrorMessage(message) {
 		if (!message)
 			return ;
-		this.usernameAlert.classList.remove("hide");
-		this.usernameAlert.innerHTML = message;
+		this.errorAlert.classList.remove("hide");
+		this.errorAlert.innerHTML = message;
+	}
+
+	#setSuccessMessage(message) {
+		if (!message)
+			return ;
+		this.successAlert.classList.remove("hide");
+		this.successAlert.innerHTML = message;
+	}
+
+	#cleanSuccessMessage() {
+		this.successAlert.classList.add("hide");
+	}
+
+	#cleanErrorStyles() {
+		const elm = this.html.querySelector(".is-invalid");
+		if (elm)
+			elm.classList.remove("is-invalid");
+		this.errorAlert.classList.add("hide");
 	}
 }
 
