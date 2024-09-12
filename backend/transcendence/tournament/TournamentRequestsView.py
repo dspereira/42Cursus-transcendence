@@ -8,6 +8,7 @@ from django.views import View
 import json
 
 from friendships.friendships import is_already_friend
+from friendships.friendships import is_friend_blocked
 
 tournament_requests_model = ModelManager(TournamentRequests)
 tournament_player_model = ModelManager(TournamentPlayers)
@@ -55,6 +56,8 @@ class TournamentInvitesView(View):
 				for friend_id in invites_list:
 					user2 = user_model.get(id=friend_id)
 					if is_already_friend(user1=user, user2=user2):
+						if is_friend_blocked(user1=user, user2=user2):
+							return JsonResponse({"message": f"Error: Friend is blocked!",}, status=409)
 						if has_already_valid_tournament_request(user1=user, user2=user2):
 							return JsonResponse({"message": f"Error: Friend has already a valid tournament invite.",}, status=409)
 						tournament_request = tournament_requests_model.create(from_user=user, to_user=user2, tournament=tournament)

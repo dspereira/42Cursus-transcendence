@@ -182,3 +182,9 @@ def get_friendship_block_status(user, friendship):
 		block_status = True
 	
 	return {"user_has_blocked": user_blocked, "friend_has_blocked": friend_blocked, "status": block_status}
+
+def is_friend_blocked(user1, user2):
+	friendship = get_friendship(user1, user2)
+	if friendship.user1_block or friendship.user2_block:
+		return True
+	return False
