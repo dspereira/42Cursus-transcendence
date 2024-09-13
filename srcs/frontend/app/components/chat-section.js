@@ -2,6 +2,7 @@ import chatWebSocket from "../js/ChatWebSocket.js";
 import stateManager from "../js/StateManager.js";
 import { callAPI } from "../utils/callApiUtils.js";
 import friendProfileRedirectionEvent from "../utils/profileRedirectionUtils.js";
+import { redirect } from "../js/router.js";
 
 const styles = `
 /* Chat section */
@@ -252,6 +253,7 @@ export default class ChatSection extends HTMLElement {
 		this.#setBtnUnblockEvent();
 		this.#setBlockStatusEvent();
 		friendProfileRedirectionEvent(this.html, ".friend-info", this.data.userId);
+		this.#inviteToGameEvent();
 	}
 
 	// this.initialScrollHeight -> Pre-calculated initial scrollHeight
@@ -505,6 +507,13 @@ export default class ChatSection extends HTMLElement {
 		stateManager.addEvent("blockStatus", (stateValue) => {
 			if (stateValue == this.data.userId)
 				this.#getUserBlockStatus();
+		});
+	}
+
+	#inviteToGameEvent() {
+		this.btnPlay.addEventListener("click", () => {
+			stateManager.setState("friendIdInvitedFromChat", this.data.userId);
+			redirect("/play");
 		});
 	}
 }
