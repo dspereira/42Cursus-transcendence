@@ -29,6 +29,8 @@ export default class PageLogout extends HTMLElement {
 		this.#initComponent();
 		this.#render();
 		this.#scripts();
+
+		this.data = {};
 	}
 
 	static get componentName() {
@@ -64,6 +66,7 @@ export default class PageLogout extends HTMLElement {
 	}
 
 	#scripts() {
+		this.#csrfTokeGET();
 		this.#logoutEvent();
 	}
 
@@ -80,8 +83,27 @@ export default class PageLogout extends HTMLElement {
 	#logoutEvent() {
 		const logout = this.html.querySelector("#logout-submit");
 		logout.addEventListener("click", (event) => {
-			callAPI("POST", "http://127.0.0.1:8000/api/auth/logout", null, this.#apiResHandlerCalback);
+			callAPI("POST", "http://127.0.0.1:8000/api/auth/logout", null, this.#apiResHandlerCalback, null, this.data.csrfToken);
 		});
+	}
+
+	#csrfTokeGET() {
+		callAPI("GET", "http://127.0.0.1:8000/api/auth/csrf_token", null, (res, data) => {
+			if (res.ok)
+			{
+				if (document.cookie && document.cookie !== '') {
+					const name = 'csrftoken';
+					const cookies = document.cookie.split(';');
+					for (let i = 0; i < cookies.length; i++) {
+						const cookie = cookies[i].trim();
+						if (cookie.substring(0, name.length + 1) === (name + '=')) {
+							this.data.csrfToken = decodeURIComponent(cookie.substring(name.length + 1));
+							break;
+						}
+					}
+				}
+			}
+		})
 	}
 }
 
