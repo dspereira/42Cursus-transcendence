@@ -51,7 +51,7 @@ const fetchApi = async function (method, url, data, csrf_token) {
 
 const getReqHeader = function(method, data, csrf_token) {
 	const isFormData = data instanceof FormData;
-
+	
 	const obj = {
 		credentials: 'include',
 	}
@@ -60,13 +60,17 @@ const getReqHeader = function(method, data, csrf_token) {
 	else
 		obj.method = "GET";
 	if (data) {
-		if (isFormData)
+		if (isFormData) {
 			obj.body = data;
+			obj.headers = {
+				'X-CSRFToken': csrf_token
+			};
+		}
 		else {
 			obj.headers = {
 				"Content-Type": "application/json",
 				'X-CSRFToken': csrf_token
-			}
+			};
 			obj.body = JSON.stringify(data);
 		}
 	}

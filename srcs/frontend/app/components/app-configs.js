@@ -185,6 +185,8 @@ export default class AppConfigs extends HTMLElement {
 		this.#initComponent();
 		this.#render();
 		this.#scripts();
+
+		this.data = {};
 	}
 
 	attributeChangedCallback(name, oldValue, newValue) {
@@ -230,6 +232,7 @@ export default class AppConfigs extends HTMLElement {
 	}
 
 	#scripts() {
+		this.#csrfTokeGET();
 		this.#submit();
 		this.#getUserSettings();
 		this.#newSeedBtn();
@@ -260,7 +263,7 @@ export default class AppConfigs extends HTMLElement {
 				formData.append('json', data);
 			if (this.imageFile)
 				formData.append('image', this.imageFile);
-
+			
 			callAPI("POST", "http://127.0.0.1:8000/api/settings/", formData, (res, resData) => {
 				if (res.ok && resData) {
 					this.#loadData(resData.settings);
@@ -272,7 +275,7 @@ export default class AppConfigs extends HTMLElement {
 					this.#setFieldInvalid(resData.field);
 					this.#setErrorMessage(resData.message);
 				}
-			});
+			}, null, this.data.csrfToken);
 		});
 	}
 
@@ -358,6 +361,25 @@ export default class AppConfigs extends HTMLElement {
 		if (elm)
 			elm.classList.remove("is-invalid");
 		this.errorAlert.classList.add("hide");
+	}
+
+	#csrfTokeGET() {
+		callAPI("GET", "http://127.0.0.1:8000/api/auth/csrf_token", null, (res, data) => {
+			if (res.ok)
+			{
+				if (document.cookie && document.cookie !== '') {
+					const name = 'csrftoken';
+					const cookies = document.cookie.split(';');
+					for (let i = 0; i < cookies.length; i++) {
+						const cookie = cookies[i].trim();
+						if (cookie.substring(0, name.length + 1) === (name + '=')) {
+							this.data.csrfToken = decodeURIComponent(cookie.substring(name.length + 1));
+							break;
+						}
+					}
+				}
+			}
+		})
 	}
 }
 
