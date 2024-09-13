@@ -183,6 +183,7 @@ export default class UserCard extends HTMLElement {
 	}
 
 	#scripts() {
+		this.#csrfTokeGET();
 		this.#setInviteAndDeclineEvent();
 		this.#setDeclineEvent();
 		this.#setAcceptEvent();
@@ -193,14 +194,14 @@ export default class UserCard extends HTMLElement {
 		callAPI(method, "http://127.0.0.1:8000/api/friends/request/", body, (res, data) => {
 			if (res.ok)
 				callback(data);
-		});
+		}, null, this.data.csrfToken);
 	}
 
 	#friends(method, body, callback) {
 		callAPI(method, "http://127.0.0.1:8000/api/friends/friendships/", body, (res, data) => {
 			if (res.ok)
 				callback(data);
-		});
+		}, null, this.data.csrfToken);
 	}
 
 	#switchBtns(btn) {
@@ -264,6 +265,25 @@ export default class UserCard extends HTMLElement {
 				this.remove();
 			});
 		});
+	}
+
+	#csrfTokeGET() {
+		callAPI("GET", "http://127.0.0.1:8000/api/auth/csrf_token", null, (res, data) => {
+			if (res.ok)
+			{
+				if (document.cookie && document.cookie !== '') {
+					const name = 'csrftoken';
+					const cookies = document.cookie.split(';');
+					for (let i = 0; i < cookies.length; i++) {
+						const cookie = cookies[i].trim();
+						if (cookie.substring(0, name.length + 1) === (name + '=')) {
+							this.data.csrfToken = decodeURIComponent(cookie.substring(name.length + 1));
+							break;
+						}
+					}
+				}
+			}
+		})
 	}
 }
 
