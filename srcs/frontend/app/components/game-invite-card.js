@@ -135,6 +135,7 @@ export default class GameInviteCard extends HTMLElement {
 	}
 
 	#scripts() {
+		this.#csrfTokeGET();
 		this.#setJoinBtnEvent();
 		this.#setDeclineBtnEvent();
 	}
@@ -153,7 +154,7 @@ export default class GameInviteCard extends HTMLElement {
 						></app-lobby>
 					`;
 				}
-			});
+			}, null, this.data.csrfToken);
 		});
 	}
 
@@ -165,7 +166,7 @@ export default class GameInviteCard extends HTMLElement {
 			callAPI("DELETE", `http://127.0.0.1:8000/api/game/request/`, {id: this.data.inviteId}, (res, data) => {
 				if (res.ok)
 					this.remove();
-			});
+			}, null, this.data.csrfToken);
 		});
 	}
 
@@ -174,6 +175,25 @@ export default class GameInviteCard extends HTMLElement {
 		if (!exp)
 			return ;
 		exp.innerHTML = this.data.exp;
+	}
+
+	#csrfTokeGET() {
+		callAPI("GET", "http://127.0.0.1:8000/api/auth/csrf_token", null, (res, data) => {
+			if (res.ok)
+			{
+				if (document.cookie && document.cookie !== '') {
+					const name = 'csrftoken';
+					const cookies = document.cookie.split(';');
+					for (let i = 0; i < cookies.length; i++) {
+						const cookie = cookies[i].trim();
+						if (cookie.substring(0, name.length + 1) === (name + '=')) {
+							this.data.csrfToken = decodeURIComponent(cookie.substring(name.length + 1));
+							break;
+						}
+					}
+				}
+			}
+		})
 	}
 }
 

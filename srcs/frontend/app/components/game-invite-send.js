@@ -140,6 +140,7 @@ export default class GameInviteSend extends HTMLElement {
 	}
 
 	#scripts() {
+		this.#csrfTokeGET();
 		this.#getFriendsCallApi();
 		this.#setFriendsSearchEvent();
 		this.#setInviteSubmitEvent();
@@ -266,8 +267,27 @@ export default class GameInviteSend extends HTMLElement {
 					></app-lobby>
 					`;
 				}
-			});
+			}, null, this.data.csrfToken);
 		});
+	}
+
+	#csrfTokeGET() {
+		callAPI("GET", "http://127.0.0.1:8000/api/auth/csrf_token", null, (res, data) => {
+			if (res.ok)
+			{
+				if (document.cookie && document.cookie !== '') {
+					const name = 'csrftoken';
+					const cookies = document.cookie.split(';');
+					for (let i = 0; i < cookies.length; i++) {
+						const cookie = cookies[i].trim();
+						if (cookie.substring(0, name.length + 1) === (name + '=')) {
+							this.data.csrfToken = decodeURIComponent(cookie.substring(name.length + 1));
+							break;
+						}
+					}
+				}
+			}
+		})
 	}
 }
 
