@@ -9,12 +9,13 @@ class StateManager {
 
 		this.states = {
 			sidePanel: "open",
-			pageReady: false,
+			pageReady: false, // remover o page ready
 			isLoggedIn: null,   // realy change when user logout and not when chage refresh token
 			friendChatId: null,
 			newChatMessage: null,
 			chatMessagesCounter: 0,
 			userId: null,
+			username: null,
 			chatSocket: null,
 			idBrowser: null,
 			chatUserData: null,
@@ -43,6 +44,7 @@ class StateManager {
 			newChatMessage: [],
 			chatMessagesCounter: [],
 			userId: [],
+			username: [],
 			chatSocket: [],
 			idBrowser: [],
 			chatUserData: [],

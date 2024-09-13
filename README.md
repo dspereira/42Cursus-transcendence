@@ -12,5 +12,4 @@
 - [x] Bootstrap
 - [x] Database
 - [ ] Multi language support
-- [x] User and game stats dashboard
 - [ ] Multi screen support

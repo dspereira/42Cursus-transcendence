@@ -19,4 +19,5 @@ urlpatterns = [
     path('next-game/', views.next_game, name='next_game'),
     path('has-game/', views.has_game, name='has_game'),
     path('is-finished/', views.finished_status, name='finished_status'),
+    path('info/', views.info, name='info'),
 ]

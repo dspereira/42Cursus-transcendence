@@ -21,7 +21,7 @@ GAME_STATUS_FINISHED = "finished"
 GAME_STATUS_ABORTED = "aborted"
 GAME_STATUS_PLAYING = "playing"
 GAME_STATUS_CREATED = "created"
-GAME_STATUS_SURRENDER = "sorrender"
+GAME_STATUS_SURRENDER = "surrender"
 
 def get_user_profile(user):
 	return user_profile_model.get(user=user)
@@ -82,9 +82,10 @@ def get_game_info(game, user):
 		"user1_score": game.user1_score,
 		"user2_score": game.user2_score,
 		"user1_image": get_image_url(get_user_profile(user=game.user1)),
-		"user2_image": get_image_url(get_user_profile(user=game.user1)),
+		"user2_image": get_image_url(get_user_profile(user=game.user2)),
 		"winner": is_user_winner(winner=game.winner, user=user),
-		"sorrender": True if game.status == "aborted" else False
+		"sorrender": True if game.status == "aborted" else False,
+		"date": game.played
 	}
 	return game_info
 
@@ -93,7 +94,7 @@ def get_games_list(user):
 	games = get_user_games(user=user)
 	if games:
 		for game in games:
-			if game.status == GAME_STATUS_FINISHED or game.status == GAME_STATUS_ABORTED:
+			if (game.status == GAME_STATUS_FINISHED or game.status == GAME_STATUS_SURRENDER) and not game.tournament:
 				game_info = get_game_info(game=game, user=user)
 				games_list.append(game_info)
 	return games_list
@@ -121,3 +122,31 @@ def has_user_pending_game_requests(user):
 		if get_valid_game_requests_list(game_requests):
 			return True
 	return False
+
+def get_request_exp_time(game_request):
+	current_time = datetime.now().timestamp()
+	req_exp_time = game_request.exp.timestamp()
+	diff_time_minutes = (req_exp_time - current_time) / 60
+	if diff_time_minutes <= 0.3:
+		return f"30 sec left"
+	return f"{math.floor(diff_time_minutes) + 1} min left"
+
+def update_users(user1_id, user2_id, winner):
+	user1 = user_profile_model.get(user=user1_id)
+	user2 = user_profile_model.get(user=user2_id)
+
+	user1.total_games = user1.total_games + 1
+	user2.total_games = user2.total_games + 1
+
+	if winner == user1_id:
+		user1_id.victories = user1_id.victories + 1
+		user2_id.defeats = user2_id.defeats + 1
+	else:
+		user2_id.victories = user2_id.victories + 1
+		user1_id.defeats = user1_id.defeats + 1
+
+	user1.win_rate = user1.victories / user1.total_games
+	user2.win_rate = user2.victories / user2.total_games
+
+	user1.save()
+	user2.save()

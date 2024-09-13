@@ -11,6 +11,7 @@ from friendships.friendships import is_already_friend
 
 from custom_utils.requests_utils import REQ_STATUS_DECLINED, REQ_STATUS_ACCEPTED
 from custom_utils.requests_utils import update_request_status
+from custom_utils.requests_utils import is_valid_request
 from custom_utils.requests_utils import set_exp_time
 from .utils import has_already_valid_game_request
 from .utils import get_game_requests_list
@@ -96,6 +97,8 @@ class GameRequestView(View):
 					lobby_id = str(games_req.from_user.id)
 					lobby = lobby_dict[lobby_id]
 					if not lobby.is_full():
+						if not is_valid_request(games_req):
+							return JsonResponse({"message": "Error: Invalid Request!"}, status=409) 
 						update_request_status(request=games_req, new_status=REQ_STATUS_ACCEPTED)
 						lobby.set_user_2_id(games_req.to_user.id)
 						return JsonResponse({"message": "Invite accepted with success!", "lobby_id": games_req.from_user.id}, status=200) 

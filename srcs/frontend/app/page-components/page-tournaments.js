@@ -123,13 +123,15 @@ export default class PageTournaments extends HTMLElement {
 		const btn = this.html.querySelector(".btn-create-tourney");
 		btn.addEventListener("click", () => {
 			callAPI("POST", `http://127.0.0.1:8000/api/tournament/`, null, (res, data) => {					
-				if (res.ok && data) {
-					stateManager.setState("tournamentId", data.tournament_id);
+				if (res.ok && data && data.tournament_info) {
+					const info = data.tournament_info;
+					stateManager.setState("tournamentId", info.id);
 					this.btnCreateTourneySection.classList.add("hide");
 					this.tourneySection.innerHTML = `
 					<tourney-lobby
-						tournament-id="${data.tournament_id}"
+						tournament-id="${info.id}"
 						owner-id="${stateManager.getState("userId")}"
+						tournament-name="${info.name}"
 					></tourney-lobby>`;
 					this.invitesReceived.innerHTML = "";
 				}
@@ -149,6 +151,7 @@ export default class PageTournaments extends HTMLElement {
 					<tourney-lobby
 						tournament-id="${torneyData.id}"
 						owner-id="${torneyData.owner}"
+						tournament-name="${torneyData.name}"
 					></tourney-lobby>`;
 					this.invitesReceived.innerHTML = "";
 				}

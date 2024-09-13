@@ -12,6 +12,7 @@ from .auth_utils import send_email_verification
 from .auth_utils import get_jwt_data
 from .auth_utils import add_email_token_to_blacklist
 from .auth_utils import create_user_profile_info
+from .auth_utils import create_user_settings
 
 from two_factor_auth.two_factor import setup_default_tfa_configs
 from two_factor_auth.two_factor import initiate_two_factor_authentication
@@ -19,10 +20,11 @@ from user_profile.models import UserProfileInfo
 
 from custom_utils.models_utils import ModelManager
 
+user_model = ModelManager(User)
+
 @accepted_methods(["POST"])
 def register(request):
 	if request.body:
-		user_model = ModelManager(User)
 		req_data = json.loads(request.body)
 		if req_data:
 			email = req_data.get('email')
@@ -44,6 +46,8 @@ def register(request):
 		send_email_verification(user)
 		if not create_user_profile_info(user=user):
 			return JsonResponse({"message": "Error creating user profile"}, status=500)
+		if not create_user_settings(user=user):
+			return JsonResponse({"message": "Error creating user settings"}, status=500)
 
 	return JsonResponse({"message": "success"})
 
@@ -60,19 +64,7 @@ def login(request):
 		user = authenticate(request, email_username=username, password=password)
 		if not user:
 			return JsonResponse({"message": "Invalid credentials. Please check your username or password."}, status=401)
-		response = user_login(JsonResponse({"message": "success", "id": user.id}), user)
-		'''
-		if not user.active:
-			send_email_verification(user=user)
-			return JsonResponse({"message": "check_mail_box"}, status=401)
-		if not user.last_login:
-			setup_default_tfa_configs(user)
-		tfa_option = initiate_two_factor_authentication(user)
-		if tfa_option:
-			response = user_login(JsonResponse({"message": "success", "tfa_option": tfa_option}), user)
-		else:
-			return JsonResponse({"message": "Error in Two Factor Auth"}, status=401)
-		'''
+		response = user_login(JsonResponse({"message": "success"}), user)
 		return response
 	return JsonResponse({"message": "Empty request body"}, status=400)
 
@@ -98,7 +90,6 @@ def refresh_token(request):
 @accepted_methods(["GET"])
 @login_required
 def info(request):
-	user_model = ModelManager(User)
 	if request.access_data:
 		user = user_model.get(id=request.access_data.sub)
 	else:
@@ -118,8 +109,6 @@ def info(request):
 @accepted_methods(["GET"])
 @login_required
 def apiGetUserInfo(request):
-
-	user_model = ModelManager(User)
 	user = user_model.get(id=request.access_data.sub)
 	res_data = {
 		"id": user.id,
@@ -161,7 +150,6 @@ def apiGetUsersList(request):
 @accepted_methods(["GET"])
 @login_required
 def get_user_id(request):
-	user_model = ModelManager(User)
 	if request.access_data:
 		user = user_model.get(id=request.access_data.sub)
 	else:
@@ -180,7 +168,6 @@ def get_user_id(request):
 @accepted_methods(["GET"])
 @login_required
 def get_username(request):
-	user_model = ModelManager(User)
 	if request.access_data:
 		user = user_model.get(id=request.access_data.sub)
 	else:
@@ -200,7 +187,6 @@ def get_username(request):
 @accepted_methods(["GET"])
 @login_required
 def get_user_email(request):
-	user_model = ModelManager(User)
 	if request.access_data:
 		user = user_model.get(id=request.access_data.sub)
 	else:
@@ -221,10 +207,14 @@ def check_login_status(request):
 	if request.access_data:
 		is_logged_in = True
 		user_id = request.access_data.sub
+		user = user_model.get(id=user_id)
+		if user:
+			username = user.username
 	else:
 		is_logged_in = False
 		user_id = None
-	return JsonResponse({"logged_in": is_logged_in, "id": user_id})
+		username = None
+	return JsonResponse({"logged_in": is_logged_in, "id": user_id, "username": username})
 
 @accepted_methods(["POST"])
 def validate_email(request):
@@ -243,7 +233,6 @@ def validate_email(request):
 
 		if email_token_data:
 			if email_token_data.type == "email_verification":
-				user_model = ModelManager(User)
 				user = user_model.get(id=email_token_data.sub)
 				if user and user.active == False:
 					user.active = True

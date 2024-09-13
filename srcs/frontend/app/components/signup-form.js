@@ -213,7 +213,7 @@ export default class SignupForm extends HTMLElement {
 	}
 
 	#isValidUsername(username) {
-		var regex = /^[a-zA-Z0-9_-]+$/;
+		let regex = /^[a-zA-Z0-9_-]+$/;
 		return regex.test(username);
 	}
 
@@ -245,8 +245,8 @@ export default class SignupForm extends HTMLElement {
 	}
 
 	#submit() {
-		const loginForm = this.html.querySelector("#signup-form");
-		loginForm.addEventListener("submit", (event) => {
+		const signupForm = this.html.querySelector("#signup-form");
+		signupForm.addEventListener("submit", (event) => {
 			event.preventDefault();
 			const dataForm = this.#getdInputData();
 			const invalidFilds = this.#getInvalidFields(dataForm);
@@ -327,10 +327,6 @@ export default class SignupForm extends HTMLElement {
 	}
 
 	#handleApiFormErrors(status, message) {
-		
-		console.log(status);
-		console.log(message);
-
 		if (status == 400)
 			this.#showAlertMessage("Invalid Form");
 		if (status == 409) {
