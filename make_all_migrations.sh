@@ -28,6 +28,7 @@ pwd
 
 python3 manage.py makemigrations
 python3 manage.py migrate
+python3 manage.py create_blitzpong_bot
 
 deactivate || exit
 cd ../.. || exit
