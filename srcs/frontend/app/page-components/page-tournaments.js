@@ -32,8 +32,6 @@ const styles = `
 	padding: 10px 70px 10px 70px;
 }
 
-
-
 .exit-tourney {
 	display: flex;
 	justify-content: center;

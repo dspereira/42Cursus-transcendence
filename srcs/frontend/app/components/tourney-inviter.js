@@ -11,10 +11,12 @@ game-invite-card1 {
 }
 
 .invites-section {
-	max-height: calc(100vh - 600px);
+	max-height: calc(100vh - 400px);
+	min-height: 240px;
 	display: flex;
 	width: 100%;
 	gap: 10px;
+	margin-bottom: 20px;
 }
 
 .friend-list {
@@ -48,12 +50,27 @@ game-invite-card1 {
 }
 
 .friends {
+	padding: 0px 20px 0px 20px;
 	display: flex;
 	flex-wrap: wrap;
 	gap: 30px;
 	justify-content: center;
 	overflow-y: auto;
 	align-items: center;
+}
+
+@media (max-width: 832px) {
+	.invites-section {
+		max-height: calc(100vh - 600px);
+	}
+}
+
+.friends::-webkit-scrollbar-track, .invites-send::-webkit-scrollbar-track {
+	background: ${colors.second_card};
+}
+
+.friends::-webkit-scrollbar-thumb, .invites-send::-webkit-scrollbar-thumb {
+	background: ${colors.third_card};
 }
 
 .players-invited {
@@ -139,13 +156,13 @@ game-invite-card1 {
 }
 
 .cross-icon {
-	color: red;
+	color: ${colors.btn_alert};
 	font-size: 24px;
 	cursor: pointer;
 }
 
 .cross-icon:hover {
-	color: blue; /* outra cor igual mas mais carregada */
+	color: ${colors.btn_alert_hvr};
 }
 
 .btn-danger:hover {

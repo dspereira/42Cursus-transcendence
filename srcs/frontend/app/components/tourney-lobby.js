@@ -5,13 +5,16 @@ import { charLimiter } from "../utils/characterLimit.js";
 import charLimit from "../utils/characterLimit.js";
 
 const styles = `
+
+.players, .buttons, .border-separation {
+	min-width: 460px;
+}
+
 .players {
 	width: 100%;
-	min-width: 460px;
 	height: auto;
 	display: flex;
 	flex-direction: row;
-	justify-content: center;
 	flex-wrap: wrap;
 	justify-content: space-between;
 	border-radius: 10px;
@@ -20,6 +23,9 @@ const styles = `
 
 .player {
 	display: flex;
+	width: 20%;
+	min-width: 200px;
+	max-width: 300px;
 	flex-direction: column;
 	justify-content: center;
 	align-items: center;
@@ -28,14 +34,21 @@ const styles = `
 	padding: 10px 30px 10px 30px;
 }
 
+ .img-container {
+	display: flex;
+	justify-content: center;
+ }
+
 .profile-photo {
 	width: 120px;
+	width: 50%;
 	height: auto;
 	clip-path:circle();
 }
 
 .default-photo {
 	width: 120px;
+	width: 50%;
 	height: auto;
 	color: red;
 	background-color: ${colors.second_card};
@@ -85,32 +98,34 @@ const getHtml = function(data) {
 	const guestBtns = `<button type="button" class="btn btn-danger btn-leave">Leave</button>`;
 
 	const html = `
-	<div class="players">
-		<div class="player">
-			<div><img src="../img/default_profile.png" class="default-photo" alt="avatar"></div>
-			<div class="username">waiting...</div>
-			<div class="player-id hiden">0</div>
+	<div class=lobby-container>
+		<div class="players">
+			<div class="player">
+				<div class="img-container"><img src="../img/default_profile.png" class="default-photo" alt="avatar"></div>
+				<div class="username">waiting...</div>
+				<div class="player-id hiden">0</div>
+			</div>
+			<div class="player">
+				<div class="img-container"><img src="../img/default_profile.png" class="default-photo" alt="avatar"></div>
+				<div class="username">waiting...</div>
+				<div class="player-id hiden">0</div>
+			</div>
+			<div class="player">
+				<div class="img-container"><img src="../img/default_profile.png" class="default-photo" alt="avatar"></div>
+				<div class="username">waiting...</div>
+				<div class="player-id hiden">0</div>
+			</div>
+			<div class="player">
+				<div class="img-container"><img src="../img/default_profile.png" class="default-photo" alt="avatar"></div>
+				<div class="username">waiting...</div>
+				<div class="player-id hiden">0</div>
+			</div>
 		</div>
-		<div class="player">
-			<div><img src="../img/default_profile.png" class="default-photo" alt="avatar"></div>
-			<div class="username">waiting...</div>
-			<div class="player-id hiden">0</div>
+		<div class="buttons">
+			${data.isOwner ? ownerBtns : guestBtns}
 		</div>
-		<div class="player">
-			<div><img src="../img/default_profile.png" class="default-photo" alt="avatar"></div>
-			<div class="username">waiting...</div>
-			<div class="player-id hiden">0</div>
-		</div>
-		<div class="player">
-			<div><img src="../img/default_profile.png" class="default-photo" alt="avatar"></div>
-			<div class="username">waiting...</div>
-			<div class="player-id hiden">0</div>
-		</div>
+		${data.isOwner ? tournamentInviterHtml : ""}
 	</div>
-	<div class="buttons">
-		${data.isOwner ? ownerBtns : guestBtns}
-	</div>
-	${data.isOwner ? tournamentInviterHtml : ""}
 	`;
 	return html;
 }
