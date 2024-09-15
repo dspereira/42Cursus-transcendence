@@ -6,7 +6,7 @@ import charLimit from "../utils/characterLimit.js";
 
 const styles = `
 
-.players, .buttons, .border-separation {
+.players, .buttons, .border-separation, .tournament-name-update{
 	min-width: 460px;
 }
 
@@ -85,6 +85,52 @@ const styles = `
 	font-size: 120px;
 
 	color: green;
+}
+
+.input-container {
+	width: 80%;
+}
+
+.form-control {
+	border-radius: 5px;
+	border-style: hidden;
+	color:  ${colors.second_text};
+	background-color: ${colors.input_background};
+}
+
+.form-control::placeholder {
+	color: ${colors.second_text};
+}
+
+.form-control:focus {
+	color:  ${colors.second_text};
+	background-color: ${colors.input_background};
+}
+
+.tournament-name-update {
+	display: flex;
+	justify-content: space-between;
+	width: 100%;
+	flex-direction: row;
+	margin-bottom: 20px;
+}
+
+.btn {
+	width: 125px;
+	margin-left: 10px;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	border-style: hidden;
+	border-radius: 5px;
+	background-color: ${colors.btn_default};
+	color: ${colors.primary_text};
+
+}
+
+.btn:hover {
+	background-color: ${colors.btn_hover};
+	color: ${colors.hover_text};
 }
 `;
 
