@@ -3,6 +3,7 @@ import gameWebSocket from "../js/GameWebSocket.js";
 import stateManager from "../js/StateManager.js";
 import { redirect } from "../js/router.js";
 import { colors } from "../js/globalStyles.js";
+import { pfpStyle } from "../utils/stylingFunctions.js";
 
 const styles = `
 	.lobby {
@@ -32,15 +33,11 @@ const styles = `
 		display: inline-block;
 	}
 
-	.profile-photo {
-		width: 145px;
-		height: auto;
-		clip-path:circle();
-	}
+	${pfpStyle(".profile-photo","145px","auto")}
+
+	${pfpStyle(".default-photo","145px","auto")}
 
 	.default-photo {
-		width: 145px;
-		height: auto;
 		margin-bottom: 20px;
 	}
 

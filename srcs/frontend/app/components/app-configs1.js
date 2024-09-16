@@ -1,6 +1,12 @@
 import {callAPI} from "../utils/callApiUtils.js";
+import { colors } from "../js/globalStyles.js";
 
 const styles = `
+
+	#settings-form {
+		color: ${colors.second_text};
+	}
+
 	.configs-container {
 		display: flex;
 		justify-content: space-between;

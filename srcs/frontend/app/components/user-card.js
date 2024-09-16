@@ -9,6 +9,7 @@ const styles = `
 	flex-direction: column;
 	justify-content: space-between;
 	max-width: 200px;
+	min-width: 150px;
 	align-items: center;
 	border-radius: 8px;
 	padding: 20px 10px 20px 10px;
@@ -23,7 +24,7 @@ const styles = `
 }
 
 .user-photo {
-	width: 50px;
+	width: 70px;
 }
 
 .user-name {

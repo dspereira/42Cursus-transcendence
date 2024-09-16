@@ -1,6 +1,32 @@
 import {callAPI} from "../utils/callApiUtils.js";
+import { colors } from "../js/globalStyles.js";
 
 const styles = `
+
+#settings-form {
+	color: ${colors.second_text};
+}
+
+.form-control, .form-select {
+	border-radius: 5px;
+	border-style: hidden;
+	color: ${colors.second_text};
+	background-color: ${colors.input_background};
+}
+
+.form-control::placeholder {
+	color: ${colors.second_text};
+}
+
+.form-control:focus {
+	background-color: ${colors.input_background};
+	color: ${colors.second_text};
+}
+
+.form-control + input:focus {
+	color:  ${colors.second_text};
+}
+
 .main-container {
 	display: flex;
 	gap: 10px;
@@ -14,7 +40,7 @@ const styles = `
 
 .image-settings-container {
 	dispay: flex;
-	flex-direction: column; 	
+	flex-direction: column;
 	justify-content: center;
 	width: 30%;
 
@@ -40,10 +66,34 @@ const styles = `
 	gap: 2%;
 }
 
+.btn-submit {
+	width: 50%;
+	margin-top: 30px;
+	color: ${colors.primary_text};
+	background-color: ${colors.btn_default};
+}
+
+.btn-submit:hover {
+	background-color: ${colors.btn_hover};
+	color: ${colors.second_text};
+}
+
 .btn-img {
 	width: 50%;
 	max-width: 150px;
 	font-size: clamp(0.5rem, 1vw, 1rem);
+	color: ${colors.primary_text};
+	background-color: ${colors.btn_default};
+}
+
+.btn-img:hover {
+	background-color: ${colors.btn_hover};
+	color: ${colors.second_text};
+}
+
+.form-check-input[type=checkbox] {
+	background-color: ${colors.main_card};
+	border-color: ${colors.second_text};
 }
 
 legend {

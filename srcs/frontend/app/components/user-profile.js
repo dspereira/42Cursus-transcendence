@@ -1,6 +1,8 @@
 import {callAPI} from "../utils/callApiUtils.js";
 import stateManager from "../js/StateManager.js";
 import { colors } from "../js/globalStyles.js";
+import charLimit from "../utils/characterLimit.js";
+import { charLimiter } from "../utils/characterLimit.js";
 
 const styles = `
 
@@ -200,7 +202,7 @@ export default class UserProfile extends HTMLElement {
 	#updateUsername(username) {
 		const htmlElement = this.html.querySelector('.username');
 		if (htmlElement)
-			htmlElement.textContent = username;
+			htmlElement.textContent = charLimiter(username, charLimit);
 	}
 
 	#updateBio(bio) {
@@ -218,7 +220,7 @@ export default class UserProfile extends HTMLElement {
 		if (!stats.gamesWinRate && !stats.totalGames)
 			this.winRateBarGame.style.background = `linear-gradient(to right, blue 0%, red 100%)`;
 		else
-			this.winRateBarGame.style.background = `linear-gradient(to right, blue ${stats.gamesWinRate}%, red ${stats.gamesWinRate}%)`;
+			this.winRateBarGame.style.background = `linear-gradient(to right, ${colors.game_win} ${stats.gamesWinRate}%, ${colors.game_loss} ${stats.gamesWinRate}%)`;
 		
 		this.gamesWins.innerHTML = `W: ${stats.gamesWon}`;
 		this.gamesLoses.innerHTML = `L: ${stats.gamesLost}`;
@@ -227,9 +229,9 @@ export default class UserProfile extends HTMLElement {
 		this.tournamentWinRate.innerHTML = `Tornaments win rate: ${stats.tournamentsWinRate}`;
 		
 		if (!stats.tournamentsWinRate && !stats.totalTournaments)
-			this.winRateBarTournaments.style.background = `linear-gradient(to right, blue 0%, red 100%)`;
+			this.winRateBarTournaments.style.background = `linear-gradient(to right,  ${colors.game_win} 0%, ${colors.game_loss} 100%)`;
 		else
-			this.winRateBarTournaments.style.background = `linear-gradient(to right, blue ${stats.tournamentsWinRate}%, red ${stats.tournamentsWinRate}%)`;
+			this.winRateBarTournaments.style.background = `linear-gradient(to right,  ${colors.game_win} ${stats.tournamentsWinRate}%, ${colors.game_loss} ${stats.tournamentsWinRate}%)`;
 
 		this.tournamentWins.innerHTML = `W: ${stats.tournamentsWon}`;
 		this.tournamentLoses.innerHTML = `L: ${stats.tournamentsLost}`;

@@ -60,7 +60,6 @@ const styles = `
 
 user-card {
 	display: block;
-	margin-bottom: 20px;
 }
 
 .user-card {
