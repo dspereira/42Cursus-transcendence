@@ -74,5 +74,11 @@ const getReqHeader = function(method, data, csrf_token) {
 			obj.body = JSON.stringify(data);
 		}
 	}
+	else {
+		obj.headers = {
+			'X-CSRFToken': csrf_token
+		};
+	}
+
 	return obj;
 }

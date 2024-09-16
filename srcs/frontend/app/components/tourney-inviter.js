@@ -10,7 +10,7 @@ const styles = `
 
 .friend-list {
 	width: 70%;
-	background-color: #D3D3D3;
+	background-color: #D3D3D3;	
 	border-radius: 5px;
 	padding: 20px;
 }
@@ -104,7 +104,7 @@ const getHtml = function(data) {
 }
 
 export default class TourneyInviter extends HTMLElement {
-	static observedAttributes = ["tournament-id"];
+	static observedAttributes = ["tournament-id", "csrf-token"];
 
 	constructor() {
 		super()
@@ -127,6 +127,8 @@ export default class TourneyInviter extends HTMLElement {
 	attributeChangedCallback(name, oldValue, newValue) {
 		if (name == "tournament-id")
 			name = "tournamentId";
+		else if (name == "csrf-token")
+			this.data.csrfToken = newValue;
 		this.data[name] = newValue;
 	}
 
@@ -297,7 +299,7 @@ export default class TourneyInviter extends HTMLElement {
 					});
 					this.selectedElm.length = 0; // clear array
 				}
-			});
+			}, null, this.data.csrfToken);
 		});
 	}
 
@@ -312,7 +314,7 @@ export default class TourneyInviter extends HTMLElement {
 			callAPI("DELETE", `http://127.0.0.1:8000/api/tournament/invite/?id=${inviteId}`, null, (res, data) => {
 				if (res.ok)
 					this.#removeInvitesSendFromList(inviteId);
-			});
+			}, null , this.data.csrfToken);
 		});
 	}
 

@@ -61,6 +61,8 @@ export default class PageTournaments extends HTMLElement {
 		this.#initComponent();
 		this.#render();
 		this.#scripts();
+
+		this.data = {};
 	}
 
 	static get componentName() {
@@ -100,6 +102,7 @@ export default class PageTournaments extends HTMLElement {
 	}
 
 	#scripts() {
+		this.#csrfTokeGET();
 		adjustContent(this.html.querySelector(".content"));
 		this.#createTournamentEvent();
 		this.#checkActiveTournamentCall();
@@ -110,7 +113,7 @@ export default class PageTournaments extends HTMLElement {
 	#createTournamentEvent() {
 		const btn = this.html.querySelector(".btn-create-tourney");
 		btn.addEventListener("click", () => {
-			callAPI("POST", `http://127.0.0.1:8000/api/tournament/`, null, (res, data) => {					
+			callAPI("POST", `http://127.0.0.1:8000/api/tournament/`, null, (res, data) => {
 				if (res.ok && data && data.tournament_info) {
 					const info = data.tournament_info;
 					stateManager.setState("tournamentId", info.id);
@@ -120,10 +123,11 @@ export default class PageTournaments extends HTMLElement {
 						tournament-id="${info.id}"
 						owner-id="${stateManager.getState("userId")}"
 						tournament-name="${info.name}"
+						csrf-token="${this.data.csrfToken}"
 					></tourney-lobby>`;
 					this.invitesReceived.innerHTML = "";
 				}
-			});
+			}, null, this.data.csrfToken);
 		});
 	}
 
@@ -140,6 +144,7 @@ export default class PageTournaments extends HTMLElement {
 						tournament-id="${torneyData.id}"
 						owner-id="${torneyData.owner}"
 						tournament-name="${torneyData.name}"
+						csrf-token="${this.data.csrfToken}"
 					></tourney-lobby>`;
 					this.invitesReceived.innerHTML = "";
 				}
@@ -201,6 +206,25 @@ export default class PageTournaments extends HTMLElement {
 			stateManager.setState("tournamentId", null);
 			stateManager.setState("isTournamentChanged", true);
 		});
+	}
+
+	#csrfTokeGET() {
+		callAPI("GET", "http://127.0.0.1:8000/api/auth/csrf_token", null, (res, data) => {
+			if (res.ok)
+			{
+				if (document.cookie && document.cookie !== '') {
+					const name = 'csrftoken';
+					const cookies = document.cookie.split(';');
+					for (let i = 0; i < cookies.length; i++) {
+						const cookie = cookies[i].trim();
+						if (cookie.substring(0, name.length + 1) === (name + '=')) {
+							this.data.csrfToken = decodeURIComponent(cookie.substring(name.length + 1));
+							break;
+						}
+					}
+				}
+			}
+		})
 	}
 }
 

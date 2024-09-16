@@ -72,7 +72,6 @@ def login(request):
 		return response
 	return JsonResponse({"message": "Empty request body"}, status=400)
 
-@csrf_exempt
 @accepted_methods(["POST"])
 def logout(request):
 	if request.access_data:

@@ -78,7 +78,7 @@ const styles = `
 
 const getHtml = function(data) {
 	const tournamentInviterHtml = `<div class="border-separation"></div>
-	<tourney-inviter tournament-id="${data.tournamentId}"></tourney-inviter>`;
+	<tourney-inviter tournament-id="${data.tournamentId}" csrf-token="${data.csrfToken}"></tourney-inviter>`;
 
 	const ownerBtns = `<button type="button" class="btn btn-success btn-start">Start</button>
 			<button type="button" class="btn btn-danger btn-cancel">Cancel</button>`;
@@ -127,7 +127,7 @@ const getHtml = function(data) {
 }
 
 export default class TourneyLobby extends HTMLElement {
-	static observedAttributes = ["tournament-id", "owner-id", "tournament-name"];
+	static observedAttributes = ["tournament-id", "owner-id", "tournament-name", "csrf-token"];
 
 	constructor() {
 		super()
@@ -156,6 +156,8 @@ export default class TourneyLobby extends HTMLElement {
 			name = "ownerId";
 			this.data.isOwner = stateManager.getState("userId") == newValue;
 		}
+		else if (name == "csrf-token")
+			this.data.csrfToken = newValue;
 		this.data[name] = newValue;
 	}
 
@@ -312,7 +314,7 @@ export default class TourneyLobby extends HTMLElement {
 			callAPI("DELETE", `http://127.0.0.1:8000/api/tournament/?id=${this.data.tournamentId}`, null, (res, data) => {
 				if (res.ok)
 					stateManager.setState("isTournamentChanged", true);
-			});			
+			}, null, this.data.csrfToken);			
 		});
 	}
 
@@ -326,7 +328,7 @@ export default class TourneyLobby extends HTMLElement {
 			callAPI("DELETE", `http://127.0.0.1:8000/api/tournament/players/?id=${this.data.tournamentId}`, null, (res, data) => {
 				if (res.ok)
 					stateManager.setState("isTournamentChanged", true);
-			});	
+			}, null, this.data.csrfToken);	
 		});
 	}
 
@@ -340,7 +342,7 @@ export default class TourneyLobby extends HTMLElement {
 			callAPI("POST", `http://127.0.0.1:8000/api/tournament/start/`, {id: this.data.tournamentId}, (res, data) => {
 				if (res.ok)
 					stateManager.setState("isTournamentChanged", true);	
-			});
+			}, null, this.data.csrfToken);
 		});
 	}
 
@@ -358,7 +360,7 @@ export default class TourneyLobby extends HTMLElement {
 				
 				if (res.status == 409)
 					nameInput.value = data.tournament_name;	
-			});
+			}, null, this.data.csrfToken);
 		});
 	}
 }
