@@ -23,6 +23,7 @@ from tournament.utils import update_next_game
 from tournament.utils import is_final_game
 from tournament.utils import update_tournament_status
 from tournament.utils import update_users_tournament_stats
+from tournament.utils import send_games_notifications
 from tournament.utils import TOURNAMENT_STATUS_FINISHED
 
 user_profile_info_model = ModelManager(UserProfileInfo)
@@ -274,6 +275,7 @@ class Game(AsyncWebsocketConsumer):
 			surrender = True if finish_status == GAME_STATUS_SURRENDER else False
 			if await sync_to_async(self.lobby.is_tournament_game)():
 				await sync_to_async(self.__update_tournament_games)()
+				await sync_to_async(send_games_notifications)(self.game_info.tournament)
 			await self.channel_layer.group_send(
 				self.room_group_name,
 				{
