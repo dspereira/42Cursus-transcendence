@@ -15,6 +15,8 @@ tournament_player_model = ModelManager(TournamentPlayers)
 tournament_model = ModelManager(Tournament)
 user_model = ModelManager(User)
 
+from custom_utils.auth_utils import is_username_bot_username
+
 from custom_utils.requests_utils import REQ_STATUS_DECLINED, REQ_STATUS_ACCEPTED, REQ_STATUS_ABORTED
 from custom_utils.requests_utils import update_request_status
 from custom_utils.requests_utils import set_exp_time
@@ -55,17 +57,20 @@ class TournamentInvitesView(View):
 					return JsonResponse({"message": f"Error: Tournament is already full."}, status=409)
 				for friend_id in invites_list:
 					user2 = user_model.get(id=friend_id)
-					if is_already_friend(user1=user, user2=user2):
-						if is_friend_blocked(user1=user, user2=user2):
-							return JsonResponse({"message": f"Error: Friend is blocked!",}, status=409)
-						if has_already_valid_tournament_request(user1=user, user2=user2):
-							return JsonResponse({"message": f"Error: Friend has already a valid tournament invite.",}, status=409)
-						tournament_request = tournament_requests_model.create(from_user=user, to_user=user2, tournament=tournament)
-						set_exp_time(request=tournament_request)
-						if not tournament_request:
-							return JsonResponse({"message": f"Error: Failed to create tournament request in DataBase",}, status=409)
+					if user2 and not is_username_bot_username(user2.username):
+						if is_already_friend(user1=user, user2=user2):
+							if is_friend_blocked(user1=user, user2=user2):
+								return JsonResponse({"message": f"Error: Friend is blocked!",}, status=409)
+							if has_already_valid_tournament_request(user1=user, user2=user2):
+								return JsonResponse({"message": f"Error: Friend has already a valid tournament invite.",}, status=409)
+							tournament_request = tournament_requests_model.create(from_user=user, to_user=user2, tournament=tournament)
+							set_exp_time(request=tournament_request)
+							if not tournament_request:
+								return JsonResponse({"message": f"Error: Failed to create tournament request in DataBase",}, status=409)
+						else:
+							return JsonResponse({"message": "Error: Users are not friends!"}, status=409)
 					else:
-						return JsonResponse({"message": "Error: Users are not friends!"}, status=409)
+						return JsonResponse({"message": "Error: Invalid User!"}, status=409)
 				return JsonResponse({"message": f"Game Requested Created With Success!"}, status=201)
 			else:
 				return JsonResponse({"message": "Error: Invalid User, Requested Friend!"}, status=400)

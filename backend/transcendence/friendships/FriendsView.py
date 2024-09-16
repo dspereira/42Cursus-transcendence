@@ -13,6 +13,8 @@ from friendships.friendships import get_friends_users_list
 from friendships.friendships import get_friend_list
 from friendships.friendships import delete_friend_chatroom
 
+from custom_utils.auth_utils import is_username_bot_username
+
 friend_requests_model = ModelManager(FriendRequests)
 friend_list_model = ModelManager(FriendList)
 chatroom_model = ModelManager(ChatRoom)
@@ -69,7 +71,7 @@ class FriendsView(View):
 			req_data = json.loads(request.body)
 			user = user_model.get(id=request.access_data.sub)
 			friend = user_model.get(id=req_data["friend_id"])
-			if user and friend:
+			if user and friend and not is_username_bot_username(friend.username):
 				friendship = is_already_friend(user1=user, user2=friend)
 				if friendship:
 					friendship.delete()

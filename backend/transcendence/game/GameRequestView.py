@@ -10,6 +10,8 @@ import json
 from friendships.friendships import is_already_friend
 from friendships.friendships import is_friend_blocked
 
+from custom_utils.auth_utils import is_username_bot_username
+
 from custom_utils.requests_utils import REQ_STATUS_DECLINED, REQ_STATUS_ACCEPTED
 from custom_utils.requests_utils import update_request_status
 from custom_utils.requests_utils import is_valid_request
@@ -56,6 +58,8 @@ class GameRequestView(View):
 					return JsonResponse({"message": f"Error: Failed to create game lobby!",}, status=409)
 				for friend_id in invites_list:
 					user2 = user_model.get(id=friend_id)
+					if not user2 or is_username_bot_username(user2.username):
+						return JsonResponse({"message": "Error: Invalid User!"}, status=409)
 					if is_already_friend(user1=user, user2=user2):
 						if is_friend_blocked(user1=user, user2=user2):
 							return JsonResponse({"message": f"Error: Friend is blocked!",}, status=409)

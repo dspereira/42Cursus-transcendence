@@ -16,6 +16,8 @@ from friendships.friendships import get_friendship
 from friendships.friendships import get_friend_list
 from friendships.friendships import get_friends_users_list
 
+from custom_utils.auth_utils import is_bot_user
+
 msg_model = ModelManager(Message)
 room_model = ModelManager(ChatRoom)
 user_model = ModelManager(User)
@@ -66,11 +68,12 @@ class ChatConsumer(AsyncWebsocketConsumer):
 		elif data_type == "get_messages" and not self.is_getting_messages:
 			await self.__send_chat_group_messages(amount_messages=data_json['message_count'], id_browser=data_json['idBrowser'])
 		elif data_type == "message":
-			if not await self.__get_block_status(friend_id=data_json['friend_id']):
-				valid_message = input_checker.get_valid_chat_input(data_json['message'].strip())
-				if valid_message:
-					new_message = await self.__save_message(valid_message)
-					await self.__send_message(new_message)
+			if not await sync_to_async(is_bot_user)(data_json['friend_id']):
+				if not await self.__get_block_status(friend_id=data_json['friend_id']):
+					valid_message = input_checker.get_valid_chat_input(data_json['message'].strip())
+					if valid_message:
+						new_message = await self.__save_message(valid_message)
+						await self.__send_message(new_message)
 		elif data_type == "update_block_status":
 			await self.__update_friend_block_status(friend_id=data_json['friend_id'])
 		elif data_type == "last_message_received":
