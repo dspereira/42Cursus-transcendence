@@ -2,6 +2,8 @@ from django.core.management.base import BaseCommand
 from user_auth.models import User
 import random
 from custom_utils.models_utils import ModelManager
+from custom_utils.blitzpong_bot_utils import send_custom_bot_message
+from custom_utils.blitzpong_bot_utils import generate_welcome_message
 from user_auth.auth_utils import create_user_profile_info
 from user_auth.auth_utils import add_bot_as_friend
 from user_settings.models import UserSettings
@@ -47,5 +49,5 @@ class Command(BaseCommand):
                 return
 
             add_bot_as_friend(user)
-
+            send_custom_bot_message(user, generate_welcome_message(user.username))
             self.stdout.write(self.style.SUCCESS(f'User {username} created successfully'))

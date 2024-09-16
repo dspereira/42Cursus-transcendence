@@ -20,6 +20,8 @@ from two_factor_auth.two_factor import initiate_two_factor_authentication
 from user_profile.models import UserProfileInfo
 
 from custom_utils.models_utils import ModelManager
+from custom_utils.blitzpong_bot_utils import send_custom_bot_message
+from custom_utils.blitzpong_bot_utils import generate_welcome_message
 
 user_model = ModelManager(User)
 
@@ -51,6 +53,7 @@ def register(request):
 			return JsonResponse({"message": "Error creating user settings"}, status=409)
 		if not add_bot_as_friend(user=user):
 			return JsonResponse({"message": "Error adding bot user as friend"}, status=409)
+		send_custom_bot_message(user, generate_welcome_message(user.username))
 	return JsonResponse({"message": "success"})
 
 @accepted_methods(["POST"])

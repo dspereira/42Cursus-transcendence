@@ -3,7 +3,8 @@ from custom_utils.models_utils import ModelManager
 from user_profile.aux import get_image_url
 from datetime import datetime
 from django.db.models import Q
-from asgiref.sync import async_to_sync, sync_to_async
+from asgiref.sync import async_to_sync
+from live_chat.models import ChatRoom, Message
 import random
 import math
 import re
@@ -13,7 +14,6 @@ from .models import TournamentRequests
 from .models import TournamentPlayers
 from game.models import Games
 from user_auth.models import User
-from live_chat.models import ChatRoom, Message
 
 from custom_utils.requests_utils import REQ_STATUS_PENDING, REQ_STATUS_ABORTED, REQ_STATUS_DECLINED, REQ_STATUS_ACCEPTED
 from custom_utils.requests_utils import update_request_status
@@ -22,8 +22,7 @@ from .consts import *
 from game.utils import GAME_STATUS_CREATED, GAME_STATUS_FINISHED
 from friendships.friendships import get_single_user_info, get_friendship
 
-from live_chat.consumers import ChatConsumer
-from channels.layers import get_channel_layer
+from custom_utils.blitzpong_bot_utils import send_message
 
 tournament_requests_model = ModelManager(TournamentRequests)
 tournament_players_model = ModelManager(TournamentPlayers)
@@ -368,33 +367,5 @@ def send_game_notif(bot_user, game):
 	message_obj_2 = msg_model.create(user=bot_user, room=room2, content=message2)
 	if not message_obj_1 or not message_obj_2:
 		return None
-	async_to_sync(__send_message)(bot_user, friendship_user1, group_name1, message_obj_1)
-	async_to_sync(__send_message)(bot_user, friendship_user2, group_name2, message_obj_2)
-
-async def __send_message(user, friendship, group_name, message):
-	channel_layer = get_channel_layer()
-	if channel_layer:
-		message_content = message.content
-		timestamp = int(datetime.fromisoformat(str(message.timestamp)).timestamp())
-		await __update_last_chat_interaction(friendship=friendship, last_chat_timestamp=message.timestamp)
-		if group_name:
-			await channel_layer.group_send(
-				group_name,
-				{
-					'type': 'send_message_to_friend',
-					'message': message_content,
-					'id': user.id,
-					'timestamp': timestamp,
-					'user_image': await sync_to_async(__get_profile_picture)(user=user),
-					"room": group_name
-				}
-			)
-
-async def __update_last_chat_interaction(friendship, last_chat_timestamp):
-	friendship.last_chat_interaction = last_chat_timestamp
-	await sync_to_async(friendship.save)()
-
-def __get_profile_picture(user):
-	user_profile = user_profile_model.get(user=user)
-	image = get_image_url(user_profile)
-	return image
+	async_to_sync(send_message)(bot_user, friendship_user1, group_name1, message_obj_1)
+	async_to_sync(send_message)(bot_user, friendship_user2, group_name2, message_obj_2)
