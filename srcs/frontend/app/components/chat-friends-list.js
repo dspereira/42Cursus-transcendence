@@ -8,7 +8,16 @@ import charLimit from "../utils/characterLimit.js";
 const styles = `
 .friend-list {
 	margin-right: 0px;
-	max-height: 87vh;
+	max-height: 80vh;
+}
+
+.friend-list::-webkit-scrollbar-track {
+	width: 15px;
+	background: ${colors.second_card};
+}
+
+.friend-list::-webkit-scrollbar-thumb {
+	background: ${colors.main_card};
 }
 
 .search-list {
@@ -52,12 +61,20 @@ const styles = `
 	overflow-y: auto;
 }
 
+.search-container {
+	display: flex;
+	justify-content: center;
+}
+
 .search {
-	background-color: ${colors.main_card};
-	width: 100%;
+	background-color: ${colors.second_card};
+	width: 90%;
+	align-items: center;
 	margin-right: 0px;
+	margin-top: 10px;
 	margin-bottom: 25px;
 }
+
 
 .form-control {
 	border-radius: 5px;
@@ -129,9 +146,11 @@ const styles = `
 
 const getHtml = function(data) {
 	const html = `
-		<div class="form-group search">
-			<i class="search-icon bi bi-search"></i>
-			<input type="text" class="form-control form-control-sm" id="search" placeholder="Search..." maxlength="50">
+		<div class="search-container">
+			<div class="form-group search">
+				<i class="search-icon bi bi-search"></i>
+				<input type="text" class="form-control form-control-sm" id="search" placeholder="Search..." maxlength="50">
+			</div>
 		</div>
 		<div class="search-list scroll hide"></div>
 		<div class="friend-list scroll"></div>

@@ -3,6 +3,7 @@ import stateManager from "../js/StateManager.js";
 import { colors } from "../js/globalStyles.js";
 import { charLimiter } from "../utils/characterLimit.js";
 import charLimit from "../utils/characterLimit.js";
+import { pfpStyle } from "../utils/stylingFunctions.js";
 
 const styles = `
 
@@ -46,15 +47,16 @@ const styles = `
 	clip-path:circle();
 }
 
+${pfpStyle(".profile-photo","50%","auto")}
+
+${pfpStyle(".default-photo","50%","auto")}
+
+
 .default-photo {
-	width: 120px;
-	width: 50%;
-	height: auto;
 	color: red;
 	background-color: ${colors.second_card};
 	border: 5px solid ${colors.page_background};
 	border-radius: 50%;
-	clip-path:circle();
 }
 
 .buttons {

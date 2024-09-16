@@ -1,14 +1,17 @@
 import {callAPI} from "../utils/callApiUtils.js";
 import stateManager from "../js/StateManager.js";
+import { colors } from "../js/globalStyles.js";
 
 const styles = `
 
 	.profile-grid-container {
 		display: flex;
+		min-width: 200px;
 		flex-direction: column;
 		align-items: center;
 		border-radius: 10px;
-		background: #9F9F9F;
+		background: ${colors.second_card};
+		color: ${colors.second_text};
 	}
 
 	.profile-info {
@@ -43,8 +46,12 @@ const styles = `
 		display: flex;
 		flex-direction: column;
 		align-items: center;
-		font-size: 21px;
-		margin-top: 25px;
+		width:100%;
+		font-size: 18px;
+		border-radius: 5px;
+		border-style: hidden;
+		margin: 25px 5px 0px 5px;
+		background-color: ${colors.third_card};
 	}
 
 	.win-rate-bar {
@@ -60,9 +67,8 @@ const styles = `
 
 	.bio-box {
 		text-overflow: ellipsis;
-		border: 2px solid #000;
-		border-radius: 15px;
-		background-color: #E7E7E7;
+		border: 3px solid ${colors.main_card};
+		border-radius: 5px;
 		font-size: 21px;
 		width: 85%;
 		margin-bottom: 10px;

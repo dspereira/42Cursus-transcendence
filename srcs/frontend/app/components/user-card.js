@@ -6,19 +6,20 @@ const styles = `
 
 .user-card {
 	display: flex;
-	flex-direction: row;
+	flex-direction: column;
 	justify-content: space-between;
+	max-width: 200px;
 	align-items: center;
 	border-radius: 8px;
-	padding: 5px 25px;
+	padding: 20px 10px 20px 10px;
 	background-color: ${colors.second_card};
 }
 
 .user {
 	display: flex;
-	flex-direction: row;
+	flex-direction: column;
 	align-items: center;
-	gap: 20px;
+	margin-bottom: 20px;
 }
 
 .user-photo {

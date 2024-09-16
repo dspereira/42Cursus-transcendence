@@ -2,20 +2,25 @@ import { redirect, render } from "../js/router.js";
 import { adjustContent } from "../utils/adjustContent.js";
 import stateManager from "../js/StateManager.js";
 import { callAPI } from "../utils/callApiUtils.js";
+import { colors } from "../js/globalStyles.js";
 
 const styles = `
 	.profile-container {
+		min-width: 460px;
+		color: ${colors.second_text};
 		display: flex;
-		justify-content: flex-start;
+		justify-content: center;
 		gap: 50px;
 	}
 
 	.profile {
-		width: 30%;
+		min-width: 30%;
+		max-width: 100%;
 	}
 
 	.history {
 		width: 70%;
+		min-width: 350px;
 	}
 `;
 

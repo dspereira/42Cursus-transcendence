@@ -5,7 +5,12 @@ import { charLimiter } from "../utils/characterLimit.js";
 import charLimit from "../utils/characterLimit.js";
 
 const styles = `
-	.search-icon {
+
+.send-invite-section {
+	min-width: 460px;
+}
+
+.search-icon {
 	position: absolute;
 	margin-top: 6px;
 	margin-left: 15px;
@@ -41,6 +46,7 @@ const styles = `
 		flex-wrap: wrap;
 		gap: 30px;
 		justify-content: center;
+		overflow-y: auto;
 	}
 
 	.send-invite-section {
@@ -49,6 +55,8 @@ const styles = `
 	}
 	
 	.friend-section {
+		display: flex;
+		flex-direction: column;
 		width: 80%;
 		padding: 20px;
 		border-radius: 5px;
@@ -140,6 +148,7 @@ const styles = `
 		position: relative;
 		align-items: center;
 		width: 20%;
+		min-width: 200px;
 		height: 90vh;
 		border-radius: 5px;
 		background-color: ${colors.second_card};

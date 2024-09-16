@@ -6,6 +6,11 @@ import { colors } from "../js/globalStyles.js";
 const styles = `
 .chat {
 	display: flex;
+	min-width: 460px;
+}
+
+chat-friends-list {
+	background-color: ${colors.second_card};
 }
 
 .chat-area {
@@ -34,7 +39,6 @@ const styles = `
 	min-width: 180px;
 	margin-right: 20px;
 	color: ${colors.second_text};
-	background-color: ${colors.main_card};
 	border-radius: 10px;
 	border-style: hidden;
 }

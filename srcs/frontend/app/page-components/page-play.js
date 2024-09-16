@@ -27,6 +27,10 @@ const styles = `
 		color: ${colors.second_text};
 	}
 
+	.page-1 {
+		min-width: 460px;
+	}
+
 `;
 
 const getHtml = function(data) {

@@ -1,3 +1,4 @@
+import { colors } from "../js/globalStyles.js";
 import {callAPI} from "../utils/callApiUtils.js";
 
 const styles = `
@@ -9,16 +10,17 @@ const styles = `
 		width: 100%;
 		padding: 5px 15px 5px 15px;
 		margin-bottom: 20px;
+		color: ${colors.main_card};
 	}
 
 	.game-win {
-		border: 3px solid blue;
-		background-color: #00CCCC;
+		border: 3px solid;
+		background-color: ${colors.game_win};
 	}
 
 	.game-loss {
-		border: 3px solid red;
-		background-color: #FF6666;
+		border: 3px solid;
+		background-color:${colors.game_loss};
 	}
 
 	.player-container {

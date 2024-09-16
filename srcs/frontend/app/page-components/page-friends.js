@@ -2,7 +2,8 @@ import { redirect } from "../js/router.js";
 import stateManager from "../js/StateManager.js";
 import { adjustContent } from "../utils/adjustContent.js";
 
-const styles = ``;
+const styles = `
+`;
 
 const getHtml = function(data) {
 	const html = `

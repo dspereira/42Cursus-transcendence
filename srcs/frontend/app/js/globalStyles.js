@@ -34,7 +34,9 @@ export const colors = {
 	alert: "#FFBAAB",
 	alert_bar: "#EA9683",
 	btn_alert: "#DC3545",
-	btn_alert_hvr: "#B22633"
+	btn_alert_hvr: "#B22633",
+	game_win: "#00CCCC",
+	game_loss: "#FF6666"
 };
 
 //gpt chat test

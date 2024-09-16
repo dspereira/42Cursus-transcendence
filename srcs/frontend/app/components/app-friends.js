@@ -4,11 +4,12 @@ import stateManager from "../js/StateManager.js";
 
 const styles = `
 .friends-section {
+	min-width: 460px;
 	display: flex;
 	flex-direction: row;
 	justify-content: flex-start;
 	gap: 30px;
-	padding: 0px 10px 0px 10px;
+	max-height: 90vh;
 }
 
 .lateral-menu {
@@ -23,7 +24,9 @@ const styles = `
 
 .list-panel {
 	color: ${colors.second_text};
-	width:100%;
+	width: 100%;
+	display: flex;
+	flex-direction: column;
 }
 
 .lateral-menu button {
@@ -154,6 +157,15 @@ user-card {
 		opacity: 0;
 		display: none;
 	}
+}
+
+.user-list {
+	display: flex;
+	flex-direction: row;
+	justify-content: flex-start;
+	flex-wrap: wrap;
+	gap: 20px;
+	overflow-y: auto;
 }
 
 `;
