@@ -63,6 +63,8 @@ def login(request):
 		req_data = json.loads(request.body)
 		username = req_data.get("username")
 		password = req_data.get("password")
+		if is_username_bot_username(username):
+			return JsonResponse({"message": "Invalid credentials. Please check your username or password."}, status=401)
 		if not username:
 			return JsonResponse({"message": "Username field cannot be empty"}, status=400)
 		if not password:
