@@ -118,3 +118,9 @@ def _set_cookies(response, token_gen):
 		samesite="Lax",
 		path="/api/auth"
 	)
+
+def is_username_bot_username(username):
+	bot_username = "blitzpong"
+	if  bot_username in username.lower():
+		return True
+	return False

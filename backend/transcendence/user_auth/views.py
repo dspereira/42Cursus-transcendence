@@ -14,6 +14,7 @@ from .auth_utils import add_email_token_to_blacklist
 from .auth_utils import create_user_profile_info
 from .auth_utils import create_user_settings
 from .auth_utils import add_bot_as_friend
+from .auth_utils import is_username_bot_username
 
 from two_factor_auth.two_factor import setup_default_tfa_configs
 from two_factor_auth.two_factor import initiate_two_factor_authentication
@@ -39,7 +40,7 @@ def register(request):
 			return JsonResponse({"message": "Username field cannot be empty"}, status=400)
 		if not password:
 			return JsonResponse({"message": "Password field cannot be empty"}, status=400)
-		if user_model.filter(username=username):
+		if user_model.filter(username=username) or is_username_bot_username(username):
 			return JsonResponse({"message": "Username already exists"}, status=409)
 		if user_model.filter(email=email):
 			return JsonResponse({"message": "Email already exists"}, status=409)
