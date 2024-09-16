@@ -13,6 +13,7 @@ from .auth_utils import get_jwt_data
 from .auth_utils import add_email_token_to_blacklist
 from .auth_utils import create_user_profile_info
 from .auth_utils import create_user_settings
+from .auth_utils import add_bot_as_friend
 
 from two_factor_auth.two_factor import setup_default_tfa_configs
 from two_factor_auth.two_factor import initiate_two_factor_authentication
@@ -42,13 +43,14 @@ def register(request):
 			return JsonResponse({"message": "Email already exists"}, status=409)
 		user = user_model.create(username=username, email=email, password=password)
 		if not user:
-			return JsonResponse({"message": "Error creating user"}, status=500)
+			return JsonResponse({"message": "Error creating user"}, status=409)
 		send_email_verification(user)
 		if not create_user_profile_info(user=user):
-			return JsonResponse({"message": "Error creating user profile"}, status=500)
+			return JsonResponse({"message": "Error creating user profile"}, status=409)
 		if not create_user_settings(user=user):
-			return JsonResponse({"message": "Error creating user settings"}, status=500)
-
+			return JsonResponse({"message": "Error creating user settings"}, status=409)
+		if not add_bot_as_friend(user=user):
+			return JsonResponse({"message": "Error adding bot user as friend"}, status=409)
 	return JsonResponse({"message": "success"})
 
 @accepted_methods(["POST"])

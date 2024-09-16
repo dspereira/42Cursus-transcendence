@@ -3,6 +3,7 @@ from custom_utils.models_utils import ModelManager
 from user_profile.aux import get_image_url
 from datetime import datetime
 from django.db.models import Q
+from asgiref.sync import async_to_sync, sync_to_async
 import random
 import math
 import re
@@ -12,19 +13,25 @@ from .models import TournamentRequests
 from .models import TournamentPlayers
 from game.models import Games
 from user_auth.models import User
+from live_chat.models import ChatRoom, Message
 
 from custom_utils.requests_utils import REQ_STATUS_PENDING, REQ_STATUS_ABORTED, REQ_STATUS_DECLINED, REQ_STATUS_ACCEPTED
 from custom_utils.requests_utils import update_request_status
 from custom_utils.requests_utils import is_valid_request
 from .consts import *
 from game.utils import GAME_STATUS_CREATED, GAME_STATUS_FINISHED
-from friendships.friendships import get_single_user_info
+from friendships.friendships import get_single_user_info, get_friendship
+
+from live_chat.consumers import ChatConsumer
+from channels.layers import get_channel_layer
 
 tournament_requests_model = ModelManager(TournamentRequests)
 tournament_players_model = ModelManager(TournamentPlayers)
 user_profile_model = ModelManager(UserProfileInfo)
 games_model = ModelManager(Games)
 user_model = ModelManager(User)
+room_model = ModelManager(ChatRoom)
+msg_model = ModelManager(Message)
 
 def get_user_profile(user):
 	if user:
@@ -333,3 +340,60 @@ def update_users_tournament_stats(tournament):
 				player_profile.tournaments_lost = player_profile.tournaments_lost + 1
 			player_profile.tournaments_win_rate = player_profile.tournaments_won / player_profile.tournaments_played * 100
 			player_profile.save()
+
+def send_games_notifications(tournament):
+	bot_user = user_model.get(username="BlitzPong")
+	tournament_games = games_model.filter(tournament=tournament)
+	for game in tournament_games:
+		if game.status == GAME_STATUS_CREATED and game.user1 and game.user2:
+			send_game_notif(bot_user, game)
+
+def send_game_notif(bot_user, game):
+	user1 = game.user1
+	user2 = game.user2
+	friendship_user1 = get_friendship(bot_user, user1)
+	friendship_user2 = get_friendship(bot_user, user2)
+	if not friendship_user1 or not friendship_user2:
+		return None
+	group_name1 = str(bot_user.id) + "_" + str(user1.id)
+	group_name2 = str(bot_user.id) + "_" + str(user2.id)
+	room1 = room_model.get(name=group_name1)
+	room2 = room_model.get(name=group_name2)
+	if not room1 or not room2:
+		return None
+	message1 = f"You have a new tournament game against {game.user2.username}"
+	message2 = f"You have a new tournament game against {game.user1.username}"
+	message_obj_1 = msg_model.create(user=bot_user, room=room1, content=message1)
+	message_obj_2 = msg_model.create(user=bot_user, room=room2, content=message2)
+	if not message_obj_1 or not message_obj_2:
+		return None
+	async_to_sync(__send_message)(bot_user, friendship_user1, group_name1, message_obj_1)
+	async_to_sync(__send_message)(bot_user, friendship_user2, group_name2, message_obj_2)
+
+async def __send_message(user, friendship, group_name, message):
+	channel_layer = get_channel_layer()
+	if channel_layer:
+		message_content = message.content
+		timestamp = int(datetime.fromisoformat(str(message.timestamp)).timestamp())
+		await __update_last_chat_interaction(friendship=friendship, last_chat_timestamp=message.timestamp)
+		if group_name:
+			await channel_layer.group_send(
+				group_name,
+				{
+					'type': 'send_message_to_friend',
+					'message': message_content,
+					'id': user.id,
+					'timestamp': timestamp,
+					'user_image': await sync_to_async(__get_profile_picture)(user=user),
+					"room": group_name
+				}
+			)
+
+async def __update_last_chat_interaction(friendship, last_chat_timestamp):
+	friendship.last_chat_interaction = last_chat_timestamp
+	await sync_to_async(friendship.save)()
+
+def __get_profile_picture(user):
+	user_profile = user_profile_model.get(user=user)
+	image = get_image_url(user_profile)
+	return image

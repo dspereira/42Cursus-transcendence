@@ -3,8 +3,11 @@ from user_auth.models import User
 import random
 from custom_utils.models_utils import ModelManager
 from user_auth.auth_utils import create_user_profile_info
+from user_auth.auth_utils import add_bot_as_friend
+from user_settings.models import UserSettings
 
 user_model = ModelManager(User)
+user_settings_model = ModelManager(UserSettings)
 
 class Command(BaseCommand):
     help = 'Generate random users'
@@ -30,7 +33,19 @@ class Command(BaseCommand):
             email = f'{username}@bot_user.com'
             password = '123'
             user = user_model.create(username=username, email=email, password=password)
-            create_user_profile_info(user=user)
+            if not user:
+                self.stdout.write(self.style.ERROR(f'Failed to create User'))
+                return
+            
+            if not create_user_profile_info(user=user):
+                self.stdout.write(self.style.ERROR(f'Failed to create User Profile'))
+                return
 
-            #User.objects.create_user(username=username, email=email, password=password)
+            user_settings = user_settings_model.create(user=user)
+            if not user_settings:
+                self.stdout.write(self.style.ERROR(f'Failed to create User Profile'))
+                return
+
+            add_bot_as_friend(user)
+
             self.stdout.write(self.style.SUCCESS(f'User {username} created successfully'))

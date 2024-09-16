@@ -213,7 +213,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
 	async def __update_last_chat_interaction(self, last_chat_timestamp):
 		self.friendship.last_chat_interaction = last_chat_timestamp
-		await sync_to_async(self.friendship.save)()	
+		await sync_to_async(self.friendship.save)()
 
 	async def __get_block_status(self, friend_id):
 		self.friendship = await self.__get_friendship(friends_id=friend_id)
@@ -288,3 +288,10 @@ class ChatConsumer(AsyncWebsocketConsumer):
 			await self.send(text_data=json.dumps(content))
 		except Exception as e:
 			await sync_to_async(print)(e)
+
+	async def send_next_game_tournament_message(self, user_id, message):
+		self.user = await sync_to_async(user_model.get)(username="BlitzPong")
+		self.user_profile = await sync_to_async(user_profile_model.get)(user=self.user)
+		await self.__connect_to_friend_chatroom(user_id)
+		new_message = await self.__save_message(message)
+		await self.__send_message(new_message)
