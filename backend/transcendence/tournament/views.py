@@ -84,7 +84,7 @@ def friend_list(request):
 	if not tournament or tournament.owner != user:
 		return JsonResponse({"message": "Error: User is not the host of an tournament!"}, status=400)
 	new_friend_list = []
-	friends_list = get_friends_users_list(get_friend_list(user), user.id)
+	friends_list = get_friends_users_list(get_friend_list(user), user.id, include_bot=False)
 	tournament_requests = get_tournament_user_requests_list(tournament)
 	current_tournament_players = get_tournament_players(tournament)
 	for friend in friends_list:

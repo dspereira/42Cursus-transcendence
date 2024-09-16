@@ -28,7 +28,7 @@ class FriendsView(View):
 		friends_values = None
 		user = user_model.get(id=request.access_data.sub)
 		if user:
-			friends_list = get_friends_users_list(friends=get_friend_list(user=user), user_id=user.id)
+			friends_list = get_friends_users_list(friends=get_friend_list(user=user), user_id=user.id, include_bot=False)
 			if friends_list:
 				if not search_username or search_username == "" or search_username == '""':
 					friends_values = sorted(friends_list, key=lambda x: x["username"])

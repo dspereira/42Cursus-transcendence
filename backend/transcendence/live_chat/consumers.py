@@ -258,7 +258,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
 	async def __connect_to_friends(self):
 		friend_list = await sync_to_async(get_friend_list)(user=self.user)
-		friends_users_list = await sync_to_async(get_friends_users_list)(friends=friend_list, user_id=self.user.id)
+		friends_users_list = await sync_to_async(get_friends_users_list)(friends=friend_list, user_id=self.user.id, include_bot=False)
 		for friend in friends_users_list:
 			room = await self.__get_room(friends_id=friend['id'])
 			room_name = room.name
