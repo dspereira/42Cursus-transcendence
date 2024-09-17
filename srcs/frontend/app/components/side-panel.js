@@ -257,8 +257,10 @@ export default class SidePanel extends HTMLElement {
 	}
 
 	attributeChangedCallback(name, oldValue, newValue) {
-		if (name === "selected")
-			this.#changeSelectedPage(oldValue, newValue);
+		if (name === "selected") {
+			this.newPage = newValue;
+			this.oldPage = oldValue;
+		}
 		else if (name === "state")
 			this.#changeState(newValue);
 		if (name == "language") {
@@ -309,6 +311,7 @@ export default class SidePanel extends HTMLElement {
 	}
 
 	#scripts() {
+		this.#changeSelectedPage(this.oldPage, this.newPage);
 		this.#openClosePanel();
 		this.#setupNavigationEvents();
 
