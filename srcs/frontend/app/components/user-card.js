@@ -1,6 +1,4 @@
 import { callAPI } from "../utils/callApiUtils.js";
-import { enUserCardDict } from "../lang-dicts/enLangDict.js";
-import { ptUserCardDict } from "../lang-dicts/ptLangDict.js";
 
 
 const styles = `

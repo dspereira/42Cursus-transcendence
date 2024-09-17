@@ -1,7 +1,5 @@
 import {redirect} from "../js/router.js";
 import {callAPI} from "../utils/callApiUtils.js";
-import { enLoginFormDict } from "../lang-dicts/enLangDict.js";
-import { ptLoginFormDict } from "../lang-dicts/ptLangDict.js";
 
 const styles = `
 form {

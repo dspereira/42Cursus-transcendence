@@ -3,6 +3,7 @@ import stateManager from "../js/StateManager.js";
 import { callAPI } from "../utils/callApiUtils.js";
 import { enPageTournamentsDict } from "../lang-dicts/enLangDict.js";
 import { ptPageTournamentsDict } from "../lang-dicts/ptLangDict.js";
+import { esPageTournamentsDict } from "../lang-dicts/esLangDict.js";
 
 const styles = `
 .border-separation {
@@ -70,7 +71,7 @@ export default class PageTournaments extends HTMLElement {
 	}
 
 	async #loadInitialData() {
-		await callAPI("GET", "http://127.0.0.1:8000/api/profile/getlanguage", null, (res, data) => {
+		await callAPI("GET", "http://127.0.0.1:8000/api/settings/getlanguage", null, (res, data) => {
 			if (res.ok) {
 				if (data && data.language){
 					this.data.language = data.language;
@@ -95,7 +96,10 @@ export default class PageTournaments extends HTMLElement {
 				return enPageTournamentsDict;
 			case "pt":
 				return ptPageTournamentsDict;
+			case "es":
+				return esPageTournamentsDict;
 			default:
+				return enPageTournamentsDict;
 		}
 	}
 
@@ -143,13 +147,15 @@ export default class PageTournaments extends HTMLElement {
 		const btn = this.html.querySelector(".btn-create-tourney");
 		btn.addEventListener("click", () => {
 			callAPI("POST", `http://127.0.0.1:8000/api/tournament/`, null, (res, data) => {					
-				if (res.ok && data) {
-					stateManager.setState("tournamentId", data.tournament_id);
+				if (res.ok && data && data.tournament_info) {
+					const info = data.tournament_info;
+					stateManager.setState("tournamentId", info.id);
 					this.btnCreateTourneySection.classList.add("hide");
 					this.tourneySection.innerHTML = `
 					<tourney-lobby
-						tournament-id="${data.tournament_id}"
+						tournament-id="${info.id}"
 						owner-id="${stateManager.getState("userId")}"
+						tournament-name="${info.name}"
 						language="${this.data.language}"
 					></tourney-lobby>`;
 					this.invitesReceived.innerHTML = "";
@@ -170,6 +176,7 @@ export default class PageTournaments extends HTMLElement {
 					<tourney-lobby
 						tournament-id="${torneyData.id}"
 						owner-id="${torneyData.owner}"
+						tournament-name="${torneyData.name}"
 						language="${this.data.language}"
 					></tourney-lobby>`;
 					this.invitesReceived.innerHTML = "";

@@ -1,32 +1,48 @@
-import { redirect } from "../js/router.js";
+import { redirect, render } from "../js/router.js";
 import { adjustContent } from "../utils/adjustContent.js";
 import stateManager from "../js/StateManager.js";
 import { callAPI } from "../utils/callApiUtils.js";
 
-const styles = ``;
+const styles = `
+	.profile-container {
+		display: flex;
+		justify-content: flex-start;
+		gap: 50px;
+	}
+
+	.profile {
+		width: 30%;
+	}
+
+	.history {
+		width: 70%;
+	}
+`;
 
 const getHtml = function(data) {
+	console.log(data);
 	const html = `
 		<app-header></app-header>
 		<side-panel selected="profile" language=${data.language}></side-panel>
 		<div class="content content-small">
-			<h1>Page Profile</h1>
-			<p>
-			Rump drumstick tri-tip alcatra. Flank ground round pastrami beef short ribs pork belly jowl. Spare ribs beef ribs andouille, frankfurter short loin shankle venison salami turducken. Beef ribs alcatra capicola shoulder pork loin sirloin biltong turkey pancetta flank pork andouille bacon. Doner hamburger shoulder tenderloin flank prosciutto corned beef. Chislic tongue doner porchetta pastrami sirloin filet mignon leberkas brisket ribeye pork chop shank cupim corned beef sausage.
-			</p>
-			<p>
-			Rump drumstick tri-tip alcatra. Flank ground round pastrami beef short ribs pork belly jowl. Spare ribs beef ribs andouille, frankfurter short loin shankle venison salami turducken. Beef ribs alcatra capicola shoulder pork loin sirloin biltong turkey pancetta flank pork andouille bacon. Doner hamburger shoulder tenderloin flank prosciutto corned beef. Chislic tongue doner porchetta pastrami sirloin filet mignon leberkas brisket ribeye pork chop shank cupim corned beef sausage.
-			</p>
+			<div class="profile-container">
+				<div class="profile">
+					<user-profile username="${data.username}"></user-profile>
+				</div>
+				<div class="history">
+					<game-history username="${data.username}"></game-history>
+				</div>
+			</div>
 		</div>
 	`;
 	return html;
 }
 
-
 const title = "Profile";
 
 export default class PageProfile extends HTMLElement {
 	static #componentName = "page-profile";
+	static observedAttributes = ["username"];
 
 	constructor() {
 		super()
@@ -40,22 +56,43 @@ export default class PageProfile extends HTMLElement {
 	}
 
 	async #loadInitialData() {
-		await callAPI("GET", "http://127.0.0.1:8000/api/profile/getlanguage", null, (res, data) => {
+		await callAPI("GET", "http://127.0.0.1:8000/api/settings/getlanguage", null, (res, data) => {
 			if (res.ok) {
 				if (data && data.language){
 					this.data.language = data.language;
 				}
 		}
 		});
+	}
 
-		this.#initComponent();
-		this.#render();
-		this.#scripts();
+	connectedCallback() {
+		if (!this.data.username) {
+			this.data.username = stateManager.getState("username");
+			this.#start();
+		}
+		else {
+			callAPI("GET", `http://127.0.0.1:8000/api/profile/exists/?username=${this.data.username}`, null, (res, data) => {
+				if (res.ok && data && data.exists)
+					this.#start();
+				else
+					render("<page-404></page-404>");
+			});
+		}
+	}
+
+	attributeChangedCallback(name, oldValue, newValue) {
+		this.data[name] = newValue;
 	}
 
 
 	static get componentName() {
 		return this.#componentName;
+	}
+
+	#start() {
+		this.#initComponent();
+		this.#render();
+		this.#scripts();
 	}
 
 	#initComponent() {
@@ -83,7 +120,6 @@ export default class PageProfile extends HTMLElement {
 		if (styles)
 			this.appendChild(this.styles);
 		this.appendChild(this.html);
-		stateManager.setState("pageReady", true);
 	}
 
 	#scripts() {

@@ -2,6 +2,7 @@ import {redirect} from "../js/router.js";
 import stateManager from "../js/StateManager.js";
 import { enSidePanelDict } from "../lang-dicts/enLangDict.js";
 import { ptSidePanelDict } from "../lang-dicts/ptLangDict.js";
+import { esSidePanelDict } from "../lang-dicts/esLangDict.js";
 
 const styles = `
 
@@ -167,12 +168,6 @@ const getHtml = function(data) {
 							<span class="icon-text">${data.langDict.chat}</span>
 						</span>
 					</button>
-					<button id="game">
-						<span>
-							<i class="icon bi bi-controller"></i>
-							<span class="icon-text">Game</span>
-						</span>
-					</button>
 					<button id="tournaments">
 						<span>
 							<i class="icon bi bi-trophy"></i>
@@ -223,8 +218,7 @@ const navigation = [
 	"logout",
 	"configurations",
 	"friends",
-	"play",
-	"game"
+	"play"
 ]
 
 const selectedIcon  = {
@@ -234,8 +228,7 @@ const selectedIcon  = {
 	tournaments: "bi-trophy-fill",
 	configurations: "bi-gear-fill",
 	friends: "bi-people-fill",
-	play: "bi-dpad-fill",
-	game: "bi-controller"
+	play: "bi-dpad-fill"
 }
 
 const deselectedIcon = {
@@ -245,8 +238,7 @@ const deselectedIcon = {
 	tournaments: "bi-trophy",
 	configurations: "bi-gear",
 	friends: "bi-people",
-	play: "bi-dpad",
-	game: "bi-controller"
+	play: "bi-dpad"
 }
 
 export default class SidePanel extends HTMLElement {
@@ -281,7 +273,10 @@ export default class SidePanel extends HTMLElement {
 				return enSidePanelDict;
 			case "pt":
 				return ptSidePanelDict;
+			case "es":
+				return esSidePanelDict;
 			default:
+				return enSidePanelDict;
 		}
 	}
 
@@ -361,6 +356,7 @@ export default class SidePanel extends HTMLElement {
 	}
 
 	#changeIcon(page, oldIconClass, newIconClass) {
+		console.log("Here - ", page);
 		const icon = this.html.querySelector(`#${page} .icon`);
 		icon.classList.remove(oldIconClass);
 		icon.classList.add(newIconClass);

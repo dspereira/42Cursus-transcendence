@@ -1,6 +1,7 @@
 import { callAPI } from "../utils/callApiUtils.js";
 import { enAppFriendsDict } from "../lang-dicts/enLangDict.js";
 import { ptAppFriendsDict } from "../lang-dicts/ptLangDict.js";
+import { esAppFriendsDict } from "../lang-dicts/esLangDict.js";
 
 const styles = `
 .friends-section {
@@ -155,7 +156,10 @@ export default class AppFriends extends HTMLElement {
 				return enAppFriendsDict
 			case "pt":
 				return ptAppFriendsDict
+			case "es":
+				return esAppFriendsDict
 			default:
+				return enAppFriendsDict
 		}
 	}
 

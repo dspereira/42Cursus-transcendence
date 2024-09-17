@@ -48,14 +48,6 @@ header {
 	cursor: pointer;
 }
 
-.bell {
-	font-size: 22px;
-}
-
-.notif-bell {
-	cursor: pointer;
-}
-
 .number {
 	position: fixed;
 	right: 112px;
@@ -68,7 +60,6 @@ header {
     font-size: 9px;
 	padding: 0px 2px 0px 2px;
 }
-
 `;
 
 const getHtml = function(data) {
@@ -80,26 +71,16 @@ const getHtml = function(data) {
 				<span class="logo-text"><strong>BlitzPong</strong></span>
 			</div>
 		</div>
-
 		<div class="right-side">
-			<div class="notif-bell">
-				<span class="number">99</span>
-				<i class="bell bi bi-bell"></i>
-			</div>
-			<img src="${data.userImage}" class="profile-photo"  alt="avatar"/>
+			<!--<img src="" class="profile-photo"  alt="avatar"/>-->
 		</div>
 	</header>
 	`;
 	return html;
 }
 
-const bellIcon = {
-    selected: "bi-bell-fill",
-    unselected: "bi-bell",
-};
-
 export default class AppHeader extends HTMLElement {
-	static observedAttributes = ["bell"];
+	static observedAttributes = [];
 
 	constructor() {
 		super();
@@ -107,17 +88,18 @@ export default class AppHeader extends HTMLElement {
 	}
 
 	connectedCallback() {
-		const userImage = stateManager.getState("userImage");
-		if (userImage)
-			this.data["userImage"] = userImage;
 		this.#initComponent();
 		this.#render();
+		
+		const userImage = stateManager.getState("userImage");
+		if (userImage)
+			this.#createImgTag(userImage);
+
 		this.#scripts();
 	}
 
 	attributeChangedCallback(name, oldValue, newValue) {
-		/*if (name === "bell")
-			this.#changeBellIcon(newValue);*/
+
 	}
 
 	#initComponent() {
@@ -149,35 +131,33 @@ export default class AppHeader extends HTMLElement {
 
 	#scripts() {
 		this.#getUserImage();
-		this.#addPageRedirection("notifications", "notif-bell");
-		this.#addPageRedirection("profile", "profile-photo");
 		this.#addPageRedirection("home", "logo");
-	}
-
-	#changeBellIcon(newValue) {
-		const bell = this.html.querySelector(".bell");
-		bell.classList.remove(bellIcon["selected"]);
-		bell.classList.remove(bellIcon["unselected"]);
-		bell.classList.add(bellIcon[newValue]);
 	}
 
 	#addPageRedirection(page, classIdentifier) {
 		const elm = this.html.querySelector(`.${classIdentifier}`);
+		if (!elm)
+			return ;
 		if (page === "/home" || page === "home")
 			page = "";
 		elm.addEventListener("click", () => redirect(`/${page}`));		
 	}
 
+	#createImgTag(imageSrc) {
+		const elmHtml = this.html.querySelector(".right-side");
+		if (!elmHtml)
+			return ;
+		elmHtml.innerHTML = `<img src="${imageSrc}" class="profile-photo"  alt="avatar"/>`;
+		this.#addPageRedirection("profile", "profile-photo");
+	}
+
 	#getUserImage() {
 		callAPI("GET", "http://127.0.0.1:8000/api/profile/image", null, (res, data) => {
 			if (res.ok) {
-				const imageSaved = stateManager.getState("userImage");
-				const image = this.html.querySelector(".profile-photo");
-
-				if (image && data.image) {
-					if (imageSaved != data.image) {
+				if (data && data.image) {
+					if (stateManager.getState("userImage") != data.image) {
+						this.#createImgTag(data.image);
 						stateManager.setState("userImage", data.image);
-						image.setAttribute("src", `${data.image}`);
 					}
 				}
 			}

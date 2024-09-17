@@ -11,7 +11,10 @@ class UserProfileInfo(models.Model):
 	victories = models.IntegerField(default=0)
 	defeats = models.IntegerField(default=0)
 	win_rate = models.IntegerField(default=0)
+	tournaments_played = models.IntegerField(default=0)
+	tournaments_lost = models.IntegerField(default=0)
 	tournaments_won = models.IntegerField(default=0)
+	tournaments_win_rate = models.IntegerField(default=0)
 	online = models.IntegerField(default=0)
 
 	def __str__(self) -> str:

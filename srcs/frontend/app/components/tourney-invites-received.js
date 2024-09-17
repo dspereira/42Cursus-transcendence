@@ -1,6 +1,7 @@
 import { callAPI } from "../utils/callApiUtils.js";
 import { enTourneyInvitesReceivedDict } from "../lang-dicts/enLangDict.js";
 import { ptTourneyInvitesReceivedDict } from "../lang-dicts/ptLangDict.js";
+import { esTourneyInvitesReceivedDict } from "../lang-dicts/esLangDict.js";
 
 const styles = `	
 h1 {
@@ -56,7 +57,10 @@ export default class TourneyInvitesReceived extends HTMLElement {
 				return enTourneyInvitesReceivedDict;
 			case "pt":
 				return ptTourneyInvitesReceivedDict;
+			case "es":
+				return esTourneyInvitesReceivedDict;
 			default:
+				return enTourneyInvitesReceivedDict;
 		}
 	}
 

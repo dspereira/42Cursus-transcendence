@@ -3,6 +3,7 @@ import stateManager from "../js/StateManager.js";
 import { callAPI } from "../utils/callApiUtils.js";
 import { enChatSectionDict } from "../lang-dicts/enLangDict.js";
 import { ptChatSectionDict } from "../lang-dicts/ptLangDict.js";
+import { esChatSectionDict } from "../lang-dicts/esLangDict.js";
 
 const styles = `
 /* Chat section */
@@ -207,7 +208,10 @@ export default class ChatSection extends HTMLElement {
 				return enChatSectionDict;
 			case "pt":
 				return ptChatSectionDict;
+			case "es":
+				return esChatSectionDict;
 			default:
+				return enChatSectionDict;
 		}
 	}
 

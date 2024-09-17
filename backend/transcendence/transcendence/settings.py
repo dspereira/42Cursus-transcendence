@@ -51,6 +51,7 @@ INSTALLED_APPS = [
     'user_profile',
     'friendships',
     'tournament',
+    'user_settings',
     'game',
     'manage_commands', # test app
 ]

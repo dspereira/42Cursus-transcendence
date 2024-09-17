@@ -6,6 +6,7 @@ from user_auth.models import BlacklistToken
 from datetime import datetime
 
 from user_profile.models import UserProfileInfo
+from user_settings.models import UserSettings
 
 def login(response, user):
 	user.last_login = timezone.now()
@@ -67,6 +68,12 @@ def create_user_profile_info(user):
 		default_image_seed=user.username
 	)
 	return user_profile
+
+def create_user_settings(user):
+	user_settings_model = ModelManager(UserSettings)
+
+	user_settings = user_settings_model.create(user=user)
+	return user_settings
 
 def _generate_tokens(user_id):
 	token_gen = TokenGenerator(user_id)

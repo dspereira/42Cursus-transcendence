@@ -1,6 +1,7 @@
 import { callAPI } from "../utils/callApiUtils.js";
 import { enGameInviteRequestDict } from "../lang-dicts/enLangDict.js";
 import { ptGameInviteRequestDict } from "../lang-dicts/ptLangDict.js";
+import { esGameInviteRequestDict } from "../lang-dicts/esLangDict.js";
 
 const styles = `
 	h3 {
@@ -59,7 +60,10 @@ export default class GameInviteRequest extends HTMLElement {
 				return enGameInviteRequestDict;
 			case "pt":
 				return ptGameInviteRequestDict;
+			case "es":
+				return esGameInviteRequestDict;
 			default:
+				return enGameInviteRequestDict;
 		}
 	}
 

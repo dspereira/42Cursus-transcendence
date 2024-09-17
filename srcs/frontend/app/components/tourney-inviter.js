@@ -1,6 +1,7 @@
 import { callAPI } from "../utils/callApiUtils.js";
 import { enTourneyInviterDict } from "../lang-dicts/enLangDict.js";
 import { ptTourneyInviterDict } from "../lang-dicts/ptLangDict.js";
+import { esTourneyInviterDict } from "../lang-dicts/esLangDict.js";
 
 const styles = `
 .invites-section {
@@ -140,7 +141,10 @@ export default class TourneyInviter extends HTMLElement {
 				return enTourneyInviterDict;
 			case "pt":
 				return ptTourneyInviterDict;
+			case "es":
+				return esTourneyInviterDict;
 			default:
+				return enTourneyInviterDict;
 		}
 	}
 

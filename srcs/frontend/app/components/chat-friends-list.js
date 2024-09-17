@@ -2,6 +2,7 @@ import { callAPI } from "../utils/callApiUtils.js";
 import stateManager from "../js/StateManager.js";
 import { enChatFriendListDict } from "../lang-dicts/enLangDict.js";
 import { ptChatFriendListDict } from "../lang-dicts/ptLangDict.js";
+import { esChatFriendListDict } from "../lang-dicts/esLangDict.js";
 
 const styles = `
 .friend-list {
@@ -138,7 +139,10 @@ export default class ChatFriendsList extends HTMLElement {
 				return enChatFriendListDict;
 			case "pt":
 				return ptChatFriendListDict;
+			case "es":
+				return esChatFriendListDict;
 			default:
+				return enChatFriendListDict;
 		}
 	}
 

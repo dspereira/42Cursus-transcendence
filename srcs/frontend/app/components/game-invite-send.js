@@ -2,6 +2,7 @@ import { callAPI } from "../utils/callApiUtils.js";
 import stateManager from "../js/StateManager.js";
 import { enGameInviteSendDict } from "../lang-dicts/enLangDict.js";
 import { ptGameInviteSendDict } from "../lang-dicts/ptLangDict.js";
+import { esGameInviteSendDict } from "../lang-dicts/esLangDict.js";
 
 const styles = `
 	.search-icon {
@@ -121,7 +122,10 @@ export default class GameInviteSend extends HTMLElement {
 				return enGameInviteSendDict;
 			case "pt":
 				return ptGameInviteSendDict;
+			case "es":
+				return esGameInviteSendDict;
 			default:
+				return enGameInviteSendDict;
 		}
 	}
 

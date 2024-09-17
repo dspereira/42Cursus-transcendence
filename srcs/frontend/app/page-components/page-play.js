@@ -3,6 +3,7 @@ import stateManager from "../js/StateManager.js";
 import { callAPI } from "../utils/callApiUtils.js";
 import { enPagePlayDict } from "../lang-dicts/enLangDict.js";
 import { ptPagePlayDict } from "../lang-dicts/ptLangDict.js";
+import { esPagePlayDict } from "../lang-dicts/esLangDict.js";
 
 const styles = `
 	.invite-game {
@@ -58,7 +59,7 @@ export default class PagePlay extends HTMLElement {
 	}
 
 	async #loadInitialData() {
-		await callAPI("GET", "http://127.0.0.1:8000/api/profile/getlanguage", null, (res, data) => {
+		await callAPI("GET", "http://127.0.0.1:8000/api/settings/getlanguage", null, (res, data) => {
 			if (res.ok) {
 				if (data && data.language){
 					this.data.language = data.language;
@@ -78,7 +79,10 @@ export default class PagePlay extends HTMLElement {
 				return enPagePlayDict
 			case "pt":
 				return ptPagePlayDict
+			case "es":
+				return esPagePlayDict
 			default:
+				return enPagePlayDict
 		}
 	}
 

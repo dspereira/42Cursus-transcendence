@@ -2,6 +2,7 @@ import { callAPI } from "../utils/callApiUtils.js";
 import stateManager from "../js/StateManager.js";
 import { enTourneyInviteCardDict } from "../lang-dicts/enLangDict.js";
 import { ptTourneyInviteCardDict } from "../lang-dicts/ptLangDict.js";
+import { esTourneyInviteCardDict } from "../lang-dicts/esLangDict.js";
 
 const styles = `
 .card-container {
@@ -118,7 +119,10 @@ export default class TourneyInviteCard extends HTMLElement {
 				return enTourneyInviteCardDict;
 			case "pt":
 				return ptTourneyInviteCardDict;
+			case "es":
+				return esTourneyInviteCardDict;
 			default:
+				return enTourneyInviteCardDict;
 		}
 	}
 

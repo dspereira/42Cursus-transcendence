@@ -1,6 +1,7 @@
 import { callAPI } from "../utils/callApiUtils.js";
 import { enGameInviteCardDict } from "../lang-dicts/enLangDict.js";
 import { ptGameInviteCardDict } from "../lang-dicts/ptLangDict.js";
+import { esGameInviteCardDict } from "../lang-dicts/esLangDict.js";
 
 const styles = `
 .card-container {
@@ -117,7 +118,10 @@ export default class GameInviteCard extends HTMLElement {
 				return enGameInviteCardDict;
 			case "pt":
 				return ptGameInviteCardDict;
+			case "es":
+				return esGameInviteCardDict;
 			default:
+				return enGameInviteCardDict;
 		}
 	}
 

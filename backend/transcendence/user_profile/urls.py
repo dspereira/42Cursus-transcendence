@@ -2,11 +2,9 @@ from django.urls import path
 from . import views
 
 urlpatterns = [
-    path('', views.get_all_info, name='info'),
-    path('setbio', views.set_bio, name='editbio'),
-    path('setpicture', views.set_profile_picture, name='updatepicture'),
-    path('getimage', views.get_image, name='getimage'),
-    path('setnewdefaultseed', views.set_new_default_seed, name='setnewdefaultseed'),
-    path('image', views.get_image, name='profile_image'),
-    path('getlanguage', views.get_language, name='getlanguage') #this view is only for testing, later will have the full view in another app
+    path('', views.get_profile_data, name='info'),
+    path('exists/', views.exist_user_profile, name='exists'),
+    path('image', views.get_image, name='image'),
+    path('setimage', views.set_profile_picture, name='setimage'),
+    path('setnewconfigs', views.set_new_configs, name="setnewconfigs")
 ]

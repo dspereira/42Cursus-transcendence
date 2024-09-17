@@ -23,6 +23,8 @@ from .utils import has_already_valid_tournament_request
 from .utils import has_active_tournament
 from .utils import get_tournament_requests_list
 from .utils import add_player_to_tournament
+from .utils import is_tournament_full
+from .utils import cancel_active_tournament_invites
 
 class TournamentInvitesView(View):
 
@@ -48,6 +50,8 @@ class TournamentInvitesView(View):
 				tournament = tournament_model.get(id=tournament_id)
 				if not tournament:
 					return JsonResponse({"message": f"Error: Failed to get Tournament."}, status=409)
+				if is_tournament_full(tournament):
+					return JsonResponse({"message": f"Error: Tournament is already full."}, status=409)
 				for friend_id in invites_list:
 					user2 = user_model.get(id=friend_id)
 					if is_already_friend(user1=user, user2=user2):
@@ -97,12 +101,17 @@ class TournamentInvitesView(View):
 			if user:
 				if not tournament_req or tournament_req.to_user.id != user.id:
 					return JsonResponse({"message": "Error: Invalid request ID!"}, status=409)
+				if is_tournament_full(tournament_req.tournament):
+					cancel_active_tournament_invites(tournament_req.tournament)
+					return JsonResponse({"message": "Error: Tournament is already full!"}, status=409)
 				if not has_active_tournament(user):
 					if not is_valid_request(tournament_req):
 						return JsonResponse({"message": "Error: Invalid request ID!"}, status=409)
 					update_request_status(request=tournament_req, new_status=REQ_STATUS_ACCEPTED)					
 					if not add_player_to_tournament(tournament_req.tournament, user):
 						return JsonResponse({"message": "Error: Failed to create tournament player!"}, status=409)
+					if is_tournament_full(tournament_req.tournament):
+						cancel_active_tournament_invites(tournament_req.tournament)
 					return JsonResponse({"message": "Invite accepted with success!"}, status=200)
 				else:
 					return JsonResponse({"message": "Error: Currently playing a tournament!"}, status=409)

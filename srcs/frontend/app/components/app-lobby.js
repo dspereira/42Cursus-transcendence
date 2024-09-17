@@ -4,6 +4,7 @@ import stateManager from "../js/StateManager.js";
 import { redirect } from "../js/router.js";
 import { enAppLobbyDict } from "../lang-dicts/enLangDict.js";
 import { ptAppLobbyDict } from "../lang-dicts/ptLangDict.js";
+import { esAppLobbyDict } from "../lang-dicts/esLangDict.js";
 
 const styles = `
 	.lobby {
@@ -99,7 +100,10 @@ export default class AppLobby extends HTMLElement {
 				return enAppLobbyDict;
 			case "pt":
 				return ptAppLobbyDict;
+			case "es":
+				return esAppLobbyDict;
 			default:
+				return enAppLobbyDict;
 		}
 	}
 

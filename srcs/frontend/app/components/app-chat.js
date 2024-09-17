@@ -3,6 +3,7 @@ import stateManager from "../js/StateManager.js";
 import { redirect } from "../js/router.js";
 import { enAppChatDict } from "../lang-dicts/enLangDict.js";
 import { ptAppChatDict } from "../lang-dicts/ptLangDict.js";
+import { esAppChatDict } from "../lang-dicts/esLangDict.js";
 
 const styles = `
 .chat {
@@ -78,7 +79,10 @@ export default class AppChat extends HTMLElement {
 				return enAppChatDict;
 			case "pt":
 				return ptAppChatDict;
+			case "es":
+				return esAppChatDict;
 			default:
+				return enAppChatDict;
 		}
 	}
 
