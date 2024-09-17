@@ -21,12 +21,13 @@ from custom_utils.requests_utils import is_valid_request
 from .consts import *
 from game.utils import GAME_STATUS_CREATED, GAME_STATUS_FINISHED
 from friendships.friendships import get_single_user_info, get_friendship
-
 from custom_utils.blitzpong_bot_utils import send_message
+from user_settings.models import UserSettings
 
 tournament_requests_model = ModelManager(TournamentRequests)
 tournament_players_model = ModelManager(TournamentPlayers)
 user_profile_model = ModelManager(UserProfileInfo)
+user_settings_model = ModelManager(UserSettings)
 games_model = ModelManager(Games)
 user_model = ModelManager(User)
 room_model = ModelManager(ChatRoom)
@@ -361,11 +362,30 @@ def send_game_notif(bot_user, game):
 	room2 = room_model.get(name=group_name2)
 	if not room1 or not room2:
 		return None
-	message1 = f"You have a new tournament game against {game.user2.username}"
-	message2 = f"You have a new tournament game against {game.user1.username}"
+	message1 = generate_next_game_message(user1, user2.username)
+	message2 = generate_next_game_message(user2, user1.username)
 	message_obj_1 = msg_model.create(user=bot_user, room=room1, content=message1)
 	message_obj_2 = msg_model.create(user=bot_user, room=room2, content=message2)
 	if not message_obj_1 or not message_obj_2:
 		return None
 	async_to_sync(send_message)(bot_user, friendship_user1, group_name1, message_obj_1)
 	async_to_sync(send_message)(bot_user, friendship_user2, group_name2, message_obj_2)
+
+def generate_next_game_message(user, against_username):
+	default_message = "You have a new tournament game."
+	if not user:
+		return default_message
+	user_settings = user_settings_model.get(user=user)
+	message = None
+	if user_settings:
+		user_language = user_settings.language
+		if user_language:
+			if user_language == "pt":
+				message = f"Tens um novo jogo de torneio contra {against_username}."
+			elif user_language == "es":
+				message = f"¡Tienes un nuevo juego de torneo contra {against_username}!"
+			else:
+				message = f"You have a new tournament game against {against_username}."
+	if not message:
+		return default_message
+	return message
