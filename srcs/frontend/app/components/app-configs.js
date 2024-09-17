@@ -1,4 +1,7 @@
 import {callAPI} from "../utils/callApiUtils.js";
+import { enAppConfigs } from "../lang-dicts/enLangDict.js";
+import { ptAppConfigs } from "../lang-dicts/ptLangDict.js";
+import { esAppConfigs } from "../lang-dicts/esLangDict.js";
 
 const styles = `
 .main-container {
@@ -66,40 +69,34 @@ const getHtml = function(data) {
 			<div class="general-settings-container">
 				<div class="alert alert-danger hide" role="alert"></div>
 				<div class="alert alert-success hide" role="alert"></div>
-				<h2>Profile Settings</h2>
+				<h2>${data.langDict.profile_settings_header}</h2>
 				<hr>
-				<label for="new-username">Change Username</label>
-				<input type="text" class="form-control form-control-md" id="new-username" placeholder="New Username" maxlength="15">
-				<label for="new-bio">Change Bio</label>
-				<textarea type="text" class="form-control form-control-md" id="new-bio" placeholder="New Bio" rows="3" maxlength="255"></textarea>
+				<label for="new-username">${data.langDict.new_username_label}</label>
+				<input type="text" class="form-control form-control-md" id="new-username" placeholder="${data.langDict.new_username_placeholder}" maxlength="15">
+				<label for="new-bio">${data.langDict.new_bio_label}</label>
+				<textarea type="text" class="form-control form-control-md" id="new-bio" placeholder="${data.langDict.new_bio_placeholder}" rows="3" maxlength="255"></textarea>
 
-				<h2>Scurity Settings</h2>
+				<h2>${data.langDict.security_settings_header}</h2>
 				<hr>
 				<fieldset>
 					<legend>Choose where to receive your two-factor authentication:</legend>
 					<div class="form-check">
 						<input class="form-check-input" type="checkbox" value="qrcode" id="qrcode">
-						<label class="form-check-label" for="qrcode">
-							QR Code
-						</label>
+						<label class="form-check-label" for="qrcode">QR Code</label>
 					</div>
 					<div class="form-check">
 						<input class="form-check-input" type="checkbox" value="email" id="email">
-						<label class="form-check-label" for="email">
-							Email
-						</label>
+						<label class="form-check-label" for="email">Email</label>
 					</div>
 					<div class="form-check">
 						<input class="form-check-input" type="checkbox" value="phone" id="phone">
-						<label class="form-check-label" for="phone">
-							Phone
-						</label>
+						<label class="form-check-label" for="phone">${data.langDict.security_phone_label}</label>
 					</div>
 				</fieldset>
 
-				<h2>Game Settings</h2>
+				<h2>${data.langDict.game_settings_header}</h2>
 				<hr>
-				<label for="theme-options">Choose the game theme:</label>
+				<label for="theme-options">${data.langDict.game_theme_label}</label>
 				<select class="form-select" id="theme-options" aria-label="Game theme selection">
 					<option value="0" selected>Classic Retro</option>
 					<option value="1">Modern Neon</option>
@@ -108,16 +105,16 @@ const getHtml = function(data) {
 					<option value="4">Forest Retreat</option>
 				</select>
 			
-				<h2>Language Settings</h2>
+				<h2>${data.langDict.language_settings_header}</h2>
 				<hr>
-				<label for="language-options">Choose language:</label>
+				<label for="language-options">${data.langDict.language_label}</label>
 				<select class="form-select" id="language-options" aria-label="Language selection">
 					<option value="en">English &#x1F1EC;&#x1F1E7;</option>
 					<option value="pt">Português &#x1F1F5;&#x1F1F9;</option>
-					<option value="es">Espanhol &#x1F1EA;&#x1F1F8;</option>
+					<option value="es">Español &#x1F1EA;&#x1F1F8;</option>
 				</select>
 
-				<div><button type="submit" class="btn btn-primary btn-submit">Apply Changes</button></div>
+				<div><button type="submit" class="btn btn-primary btn-submit">${data.langDict.apply_changes_button}</button></div>
 			</div>
 
 			<div class="image-settings-container">
@@ -125,10 +122,10 @@ const getHtml = function(data) {
 					<img src="../img/default_profile.png" class="image-preview" alt="Preview of the Image to be Changed">
 				</div>
 				<div class="img-buttons">
-					<label for="new-image" class="btn btn-primary btn-img">Upload Image</label>
+					<label for="new-image" class="btn btn-primary btn-img">${data.langDict.upload_image_button}</label>
 					<!--<input id="new-image" class="hide" type="file" accept="image/png, image/jpeg, image/webp">-->
 					<input id="new-image" class="hide" type="file">
-					<button class="btn btn-primary btn-img btn-new-seed">New Avatar</button>
+					<button class="btn btn-primary btn-img btn-new-seed">${data.langDict.new_avatar_button}</button>
 				</div>
 			</div>
 		</div>
@@ -166,34 +163,53 @@ const suportedFileTypesToString = function() {
 		idx++;
 	}
 	return result;
-}
-
-const messages = {
-	"success": "User settings updated with success",
-	"usernameInvalid": "Invalid username",
-	"imageSize": `The image size must not exceed ${MAX_IMAGE_SIZE_BYTES / MEGABYTE}MB`,
-	"imageType": `Only the following formats are accepted:${suportedFileTypesToString()}`
-}
+} 
 
 export default class AppConfigs extends HTMLElement {
-	static observedAttributes = [];
-
+	static observedAttributes = ["language"];
+	
 	constructor() {
 		super()
+		this.data = {};
 		this.imageSeed = "";
 		this.imageFile = "";
+	}
+
+	connectedCallback() {
+		this.messages = {
+			"success": this.data.langDict.success,
+			"usernameInvalid": this.data.langDict.username_invalid,
+			"imageSize": `${this.data.langDict.image_size} ${MAX_IMAGE_SIZE_BYTES / MEGABYTE}MB`,
+			"imageType": `${this.data.langDict.image_type}${suportedFileTypesToString()}`
+		}
 		this.#initComponent();
 		this.#render();
 		this.#scripts();
 	}
 
 	attributeChangedCallback(name, oldValue, newValue) {
+		if (name == "language") {
+			this.data.langDict = this.#getLanguage(newValue);
+			this.data.language = newValue;
+		}
+	}
 
+	#getLanguage(language) {
+		switch (language) {
+			case "en":
+				return enAppConfigs;
+			case "pt":
+				return ptAppConfigs;
+			case "es":
+				return esAppConfigs;
+			default:
+				return enAppConfigs;
+		}
 	}
 
 	#initComponent() {
 		this.html = document.createElement("div");
-		this.html.innerHTML = this.#html();
+		this.html.innerHTML = this.#html(this.data);
 		if (styles) {
 			this.elmtId = `elmtId_${Math.floor(Math.random() * 100000000000)}`;
 			this.styles = document.createElement("style");
@@ -243,7 +259,7 @@ export default class AppConfigs extends HTMLElement {
 			const username = this.usernameInp.value.trim();
 			if (!this.#isValidUsername(username)) {
 				this.#setFieldInvalid("username");
-				this.#setErrorMessage("Invalid username!");
+				this.#setErrorMessage(this.messages.usernameInvalid);
 				return ;
 			}
 
@@ -265,7 +281,7 @@ export default class AppConfigs extends HTMLElement {
 				if (res.ok && resData) {
 					this.#loadData(resData.settings);
 					this.#cleanErrorStyles();
-					this.#setSuccessMessage(messages.success);
+					this.#setSuccessMessage(this.messages.success);
 				}
 				if (!res.ok && resData) {
 					this.#cleanSuccessMessage();
@@ -310,11 +326,11 @@ export default class AppConfigs extends HTMLElement {
 			if (!this.imageFile)
 				return ;
 			if (this.imageFile.size > MAX_IMAGE_SIZE_BYTES) {
-				this.#setErrorMessage(messages.imageSize);
+				this.#setErrorMessage(this.messages.imageSize);
 				return ;
 			}
 			if (!isFalidFormat(this.imageFile.type)) {
-				this.#setErrorMessage(messages.imageType);
+				this.#setErrorMessage(this.messages.imageType);
 				return ;
 			}
 			this.imagePreview.setAttribute("src", URL.createObjectURL(this.imageFile));

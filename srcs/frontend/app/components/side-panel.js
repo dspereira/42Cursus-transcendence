@@ -356,7 +356,6 @@ export default class SidePanel extends HTMLElement {
 	}
 
 	#changeIcon(page, oldIconClass, newIconClass) {
-		console.log("Here - ", page);
 		const icon = this.html.querySelector(`#${page} .icon`);
 		icon.classList.remove(oldIconClass);
 		icon.classList.add(newIconClass);

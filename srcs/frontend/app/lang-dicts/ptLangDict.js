@@ -4,6 +4,30 @@ export const ptAppChatDict = {
     no_friend_selected: "Nenhum amigo seleccionado. Seleccio um amigo para começar."
 }
 
+export const ptAppConfigs = {
+    /* messages */
+    success: "User settings updated with success",
+    username_invalid: "Invalid username!",
+    image_size: "The image size must not exceed",
+    image_type: "Only the following formats are accepted:",
+
+    profile_settings_header: "Profile Settings",
+    new_username_label: "Change Username",
+    new_username_placeholder: "New Username",
+    new_bio_label: "Change Bio",
+    new_bio_placeholder: "New Bio",
+    security_settings_header: "Security Settings",
+    security_phone_label: "Phone",
+    game_settings_header: "Game Settings",
+    game_theme_label: "Choose the game theme:",
+    language_settings_header: "Language Settings",
+    language_label: "Choose language:",
+    apply_changes_button: "Apply Changes",
+    upload_image_button: "Upload Image",
+    new_avatar_button: "New Avatar",
+    
+}
+
 export const ptAppFriendsDict = {
     search_button: "Procurar",
     all_friends_button: "Todos Amigos",
