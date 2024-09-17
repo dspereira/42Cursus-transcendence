@@ -21,6 +21,7 @@ from .utils import add_player_to_tournament
 from .utils import invalidate_active_tournament_invites
 from .utils import is_valid_tournament_name
 from .utils import get_tournament_info
+from .utils import send_games_notifications
 
 from .consts import TOURNAMENT_STATUS_ABORTED
 from .consts import TOURNAMENT_STATUS_ACTIVE

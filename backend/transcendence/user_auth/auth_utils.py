@@ -2,11 +2,17 @@ from django.utils import timezone
 from custom_utils.jwt_utils import TokenGenerator, JwtData
 from custom_utils.email_utils import EmailSender
 from custom_utils.models_utils import ModelManager
-from user_auth.models import BlacklistToken
+from user_auth.models import User, BlacklistToken
+from friendships.models import FriendList
+from live_chat.models import ChatRoom
 from datetime import datetime
 
 from user_profile.models import UserProfileInfo
 from user_settings.models import UserSettings
+
+friend_list_model = ModelManager(FriendList)
+user_model = ModelManager(User)
+chatroom_model = ModelManager(ChatRoom)
 
 def login(response, user):
 	user.last_login = timezone.now()
@@ -74,6 +80,17 @@ def create_user_settings(user):
 
 	user_settings = user_settings_model.create(user=user)
 	return user_settings
+
+def add_bot_as_friend(user):
+	bot_user = user_model.get(username="BlitzPong")
+	if not bot_user:
+		return None
+	friendship = friend_list_model.create(user1=bot_user , user2=user)
+	chat_name = str(bot_user.id) + "_" + str(user.id)
+	chatroom = chatroom_model.create(name=chat_name)
+	if friendship and chatroom:
+		return friendship
+	return None
 
 def _generate_tokens(user_id):
 	token_gen = TokenGenerator(user_id)

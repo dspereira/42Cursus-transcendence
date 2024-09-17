@@ -24,6 +24,7 @@ from .utils import is_tournament_finished
 from .utils import get_game_info
 from .utils import get_all_tournament_info
 from .utils import get_tournament_info
+from .utils import send_games_notifications
 from .consts import TOURNAMENT_STATUS_ACTIVE
 
 tournament_requests_model = ModelManager(TournamentRequests)
@@ -83,7 +84,7 @@ def friend_list(request):
 	if not tournament or tournament.owner != user:
 		return JsonResponse({"message": "Error: User is not the host of an tournament!"}, status=400)
 	new_friend_list = []
-	friends_list = get_friends_users_list(get_friend_list(user), user.id)
+	friends_list = get_friends_users_list(get_friend_list(user), user.id, include_bot=False)
 	tournament_requests = get_tournament_user_requests_list(tournament)
 	current_tournament_players = get_tournament_players(tournament)
 	for friend in friends_list:
@@ -151,6 +152,7 @@ def start_tournament(request):
 	if not create_tournament_games(tournament):
 		return JsonResponse({"message": "Error: Failed to create tournament games!"}, status=409)
 	update_tournament_status(tournament, TOURNAMENT_STATUS_ACTIVE)
+	send_games_notifications(tournament)
 	return JsonResponse({"message": f"Tournament started with success!"}, status=200)
 
 @login_required
