@@ -105,7 +105,7 @@ def get_tournament_list(user):
 				tournament_info = {
 					"id": current_tournament.id,
 					'name': current_tournament.name,
-					"is_winner": is_user_tournament_winner(user.id, get_tournament_winner(current_tournament)['id']),
+					"is_winner": is_user_tournament_winner(user.id, get_tournament_winner(current_tournament).id),
 					"creation_date": current_tournament.created
 				}
 				tournaments_list.append(tournament_info)
