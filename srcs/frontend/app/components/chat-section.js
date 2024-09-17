@@ -241,7 +241,10 @@ export default class ChatSection extends HTMLElement {
 	}
 
 	#scripts() {
-		this.#getUserBlockStatus();
+		if (this.data.username == "BlitzPong")
+			this.#setChatToBlitzPongSystem();
+		else
+			this.#getUserBlockStatus();
 		stateManager.setState("chatMessagesCounter", 0);
 		this.#resizeMessageInput();
 		this.#setSubmitEvents();
@@ -255,6 +258,7 @@ export default class ChatSection extends HTMLElement {
 		friendProfileRedirectionEvent(this.html, ".friend-info", this.data.userId);
 		this.#inviteToGameEvent();
 	}
+
 
 	// this.initialScrollHeight -> Pre-calculated initial scrollHeight
 	// this.scrollHeightPerLine -> Pre-calculated scrollHeight for each line after the initial line
@@ -515,6 +519,12 @@ export default class ChatSection extends HTMLElement {
 			stateManager.setState("friendIdInvitedFromChat", this.data.userId);
 			redirect("/play");
 		});
+	}
+
+	#setChatToBlitzPongSystem() {
+		this.btnPlay.disabled = true;
+		this.btnBlock.disabled = true;
+		this.#disableMessageInput();
 	}
 }
 
