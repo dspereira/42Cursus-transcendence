@@ -49,7 +49,7 @@ class FriendRequestView(View):
 			req_data = json.loads(request.body)
 			user = user_model.get(id=request.access_data.sub)
 			requested_user = user_model.get(id=req_data["requested_user"])
-			if user and requested_user and not is_username_bot_username(requested_user):
+			if user and requested_user and not is_username_bot_username(requested_user.username):
 				if is_already_friend(user1=user, user2=requested_user):
 					return JsonResponse({"message": "Error: Friendship Already Exists!"}, status=409)
 				if is_request_already_maded(user1=user, user2=requested_user):
