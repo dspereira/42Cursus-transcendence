@@ -246,7 +246,6 @@ export default class ChatSection extends HTMLElement {
 		else
 			this.#getUserBlockStatus();
 		this.#csrfTokeGET();
-		this.#getUserBlockStatus();
 		stateManager.setState("chatMessagesCounter", 0);
 		this.#resizeMessageInput();
 		this.#setSubmitEvents();
