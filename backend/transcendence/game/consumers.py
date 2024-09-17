@@ -358,12 +358,13 @@ class Game(AsyncWebsocketConsumer):
 		return lobby_dict[lobby_id]
 
 	def update_users(self):
-		game_info = async_to_sync(self.__get_game_info)(self.game_info.id)
+		game_info = async_to_sync(self.__get_game_info)(self.lobby.get_associated_game_id())
 		user_profile = user_profile_info_model.get(user=self.user)
 		user_profile.total_games = user_profile.total_games + 1
-		if game_info.winner.id == self.user.id:
-			user_profile.victories = user_profile.victories + 1
-		else:
-			user_profile.defeats = user_profile.defeats + 1
+		if game_info.winner:
+			if game_info.winner.id == self.user.id:
+				user_profile.victories = user_profile.victories + 1
+			else:
+				user_profile.defeats = user_profile.defeats + 1
 		user_profile.win_rate = user_profile.victories / user_profile.total_games * 100
 		user_profile.save()

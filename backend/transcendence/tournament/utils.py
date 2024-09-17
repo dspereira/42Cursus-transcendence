@@ -344,10 +344,11 @@ def update_users_tournament_stats(tournament):
 def send_games_notifications(tournament):
 	bot_user = user_model.get(username="BlitzPong")
 	tournament_games = games_model.filter(tournament=tournament, notifications_sent=False, user1__isnull=False, user2__isnull=False, status=GAME_STATUS_CREATED)
-	for game in tournament_games:
-		send_game_notif(bot_user, game)
-		game.notifications_sent = True
-		game.save()
+	if tournament_games:
+		for game in tournament_games:
+			send_game_notif(bot_user, game)
+			game.notifications_sent = True
+			game.save()
 
 def send_game_notif(bot_user, game):
 	user1 = game.user1
