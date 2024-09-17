@@ -60,25 +60,17 @@ const getReqHeader = function(method, data, csrf_token) {
 	else
 		obj.method = "GET";
 	if (data) {
-		if (isFormData) {
+		if (isFormData)
 			obj.body = data;
-			obj.headers = {
-				'X-CSRFToken': csrf_token
-			};
-		}
 		else {
 			obj.headers = {
-				"Content-Type": "application/json",
-				'X-CSRFToken': csrf_token
+				"Content-Type": "application/json"
 			};
 			obj.body = JSON.stringify(data);
 		}
 	}
-	else {
-		obj.headers = {
-			'X-CSRFToken': csrf_token
-		};
-	}
+	if (obj.method != "GET")
+		obj.headers['X-CSRFToken'] = csrf_token;
 
 	return obj;
 }
