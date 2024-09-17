@@ -258,7 +258,7 @@ class Game(AsyncWebsocketConsumer):
 		await self.send_users_info_to_group()
 
 	async def __finish_game(self, finish_status):
-		self.game_info = await self.__get_game_info(self.game_info.id)
+		self.game_info = await self.__get_game_info(self.lobby.get_associated_game_id())
 		if self.game_info.status != GAME_STATUS_FINISHED and self.game_info.status != GAME_STATUS_SURRENDER:
 			self.game.set_status(finish_status)
 			await self.__send_updated_data()
