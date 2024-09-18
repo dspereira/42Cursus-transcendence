@@ -1,7 +1,6 @@
 import { adjustContent } from "../utils/adjustContent.js";
 import stateManager from "../js/StateManager.js";
 import { callAPI } from "../utils/callApiUtils.js";
-import { callAPI } from "../utils/callApiUtils.js";
 import { enPagePlayDict } from "../lang-dicts/enLangDict.js";
 import { ptPagePlayDict } from "../lang-dicts/ptLangDict.js";
 import { esPagePlayDict } from "../lang-dicts/esLangDict.js";
