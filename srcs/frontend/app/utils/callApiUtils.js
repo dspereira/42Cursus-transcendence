@@ -69,7 +69,7 @@ const getReqHeader = function(method, data, csrf_token) {
 			obj.body = JSON.stringify(data);
 		}
 	}
-	if (obj.method != "GET") {
+	if (obj.method != "GET" && csrf_token) {
 		if (obj.headers)
 			obj.headers["X-CSRFToken"] = csrf_token;
 		else
