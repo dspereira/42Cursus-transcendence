@@ -110,10 +110,13 @@ def exist_user_profile(request):
 
 @login_required
 @accepted_methods(["GET"])
-def get_image(request):
-	user_profile = user_profile_info_model.get(id=request.access_data.sub)
-	if user_profile:
-		user_image = get_image_url(user=user_profile)
-		return JsonResponse({"message": "User profile image getted with success.", "image": user_image}, status=200)
-	else:
-		return JsonResponse({"message": "Error: User does not Exist"}, status=409)
+def username(request):
+	if not request.GET.get('id') or not str(request.GET.get('id')).isdigit():
+		return JsonResponse({"message": "Error: Bad Request"}, status=400)
+	user = user_model.get(id=request.access_data.sub)
+	if user:
+		user_to_check = user_model.get(id=request.GET['id'])
+		if not user_to_check:
+			return JsonResponse({"message": "User does not exist!"}, status=409)
+		return JsonResponse({"message": "Friend info Returned With Success", "username": user_to_check.username}, status=200)
+	return JsonResponse({"message": "Error: Invalid User"}, status=401)

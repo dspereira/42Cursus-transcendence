@@ -1,6 +1,7 @@
 import { adjustContent } from "../utils/adjustContent.js";
 import stateManager from "../js/StateManager.js";
 import { callAPI } from "../utils/callApiUtils.js";
+import { callAPI } from "../utils/callApiUtils.js";
 import { enPagePlayDict } from "../lang-dicts/enLangDict.js";
 import { ptPagePlayDict } from "../lang-dicts/ptLangDict.js";
 import { esPagePlayDict } from "../lang-dicts/esLangDict.js";
@@ -120,7 +121,8 @@ export default class PagePlay extends HTMLElement {
 
 	#scripts() {
 		adjustContent(this.html.querySelector(".content"));
-		this.#setInviteToGameEvent()
+		this.#setInviteToGameEvent();
+		this.#inviteToPlayAndRedirectToLobby();
 	}
 
 	#setInviteToGameEvent() {
@@ -130,10 +132,30 @@ export default class PagePlay extends HTMLElement {
 		if (!btn && !page1 && !content)
 			return ;
 		btn.addEventListener("click", () => {
-
-			// api/game/game
 			content.removeChild(page1);
-			content.innerHTML = `<game-invite-send language=${this.data.language}></game-invite-send>`;
+			content.innerHTML = "<game-invite-send></game-invite-send>";
+		});
+	}
+
+	#inviteToPlayAndRedirectToLobby() {
+		const friendId = stateManager.getState("friendIdInvitedFromChat");
+		if (!friendId)
+			return ;
+
+		stateManager.setState("friendIdInvitedFromChat", null);
+		const data = {
+			invites_list: [`${friendId}`]
+		};
+
+		callAPI("POST", "http://127.0.0.1:8000/api/game/request/", data, (res, data) => {
+			if (res.ok) {
+				const contentElm = document.querySelector(".content");
+				contentElm.innerHTML = `
+				<app-lobby 
+					lobby-id="${stateManager.getState("userId")}"
+				></app-lobby>
+				`;
+			}
 		});
 	}
 }

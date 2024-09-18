@@ -1,6 +1,8 @@
 import chatWebSocket from "../js/ChatWebSocket.js";
 import stateManager from "../js/StateManager.js";
 import { callAPI } from "../utils/callApiUtils.js";
+import friendProfileRedirectionEvent from "../utils/profileRedirectionUtils.js";
+import { redirect } from "../js/router.js";
 import { enChatSectionDict } from "../lang-dicts/enLangDict.js";
 import { ptChatSectionDict } from "../lang-dicts/ptLangDict.js";
 import { esChatSectionDict } from "../lang-dicts/esLangDict.js";
@@ -132,6 +134,10 @@ form {
 	display: inline-block;
 }
 
+.friend-info {
+	cursor: pointer;
+}
+
 .hide {
 	display: none;
 }
@@ -144,7 +150,7 @@ const getHtml = function(data) {
 	const html = `
 		<div class="chat-section">
 			<div class="chat-header">
-				<div>
+				<div class="friend-info">
 					<div class="profile-photo-status">
 						<img src="${data.profilePhoto}" class="profile-photo" alt="profile photo chat"/>
 						<div class="online-status ${onlineVisibility}"></div>
@@ -239,9 +245,11 @@ export default class ChatSection extends HTMLElement {
 		this.appendChild(this.html);
 	}
 
-
 	#scripts() {
-		this.#getUserBlockStatus();
+		if (this.data.username == "BlitzPong")
+			this.#setChatToBlitzPongSystem();
+		else
+			this.#getUserBlockStatus();
 		stateManager.setState("chatMessagesCounter", 0);
 		this.#resizeMessageInput();
 		this.#setSubmitEvents();
@@ -252,7 +260,10 @@ export default class ChatSection extends HTMLElement {
 		this.#setBtnBlockEvent();
 		this.#setBtnUnblockEvent();
 		this.#setBlockStatusEvent();
+		friendProfileRedirectionEvent(this.html, ".friend-info", this.data.userId);
+		this.#inviteToGameEvent();
 	}
+
 
 	// this.initialScrollHeight -> Pre-calculated initial scrollHeight
 	// this.scrollHeightPerLine -> Pre-calculated scrollHeight for each line after the initial line
@@ -506,6 +517,19 @@ export default class ChatSection extends HTMLElement {
 			if (stateValue == this.data.userId)
 				this.#getUserBlockStatus();
 		});
+	}
+
+	#inviteToGameEvent() {
+		this.btnPlay.addEventListener("click", () => {
+			stateManager.setState("friendIdInvitedFromChat", this.data.userId);
+			redirect("/play");
+		});
+	}
+
+	#setChatToBlitzPongSystem() {
+		this.btnPlay.disabled = true;
+		this.btnBlock.disabled = true;
+		this.#disableMessageInput();
 	}
 }
 
