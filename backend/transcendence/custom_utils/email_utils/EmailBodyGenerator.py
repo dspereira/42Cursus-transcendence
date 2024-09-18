@@ -9,9 +9,6 @@ class EmailBodyGenerator:
 		return result_html
 
 	def get_email_verication(self, token):
-		print("==========================================")
-		print(str(token))
-		print("==========================================")
-		email_verify_url = "http://127.0.0.1:8080/email_verification/?email_token=" + str(token)
+		email_verify_url = "http://127.0.0.1:8080/email_verification/" + str(token)
 		result_html = email_verification_html.format(email_verify_url=email_verify_url)
 		return result_html
