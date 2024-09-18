@@ -366,8 +366,10 @@ export default class SidePanel extends HTMLElement {
 	constructor() {
 		super()
 		this.#initComponent();
+		console.log("html = ", this.html);
 		this.#render();
 		this.#scripts();
+		this.lastState = "open";
 	}
 
 	attributeChangedCallback(name, oldValue, newValue) {
@@ -423,12 +425,14 @@ export default class SidePanel extends HTMLElement {
 			if (sidePanel.classList.contains("close"))
 			{
 				stateManager.setState("sidePanel", "close");
+				this.lastState = "close";
 				// logo.classList.add("hide");
 			}
 			else
 			{
 				logo.classList.remove("hide");
 				stateManager.setState("sidePanel", "open");
+				this.lastState = "open";
 			}
 		});
 	}
@@ -524,23 +528,46 @@ export default class SidePanel extends HTMLElement {
 		elm.addEventListener("click", () => redirect(`/${page}`));
 	}
 
-	#responsiveSidePanel() {
-		const mediaQuery = window.matchMedia('(max-width: 1000px)')
-		mediaQuery.addEventListener('change', this.#mediaQueryPanel);
-		this.#mediaQueryPanel(mediaQuery);
+	#openSidePanel() {
+		console.log();
+		let sidePanel = this.html.querySelector(".side-panel-wrapper");
+		console.log("sidePanel = ", sidePanel);
+		console.log("lastState = ", this.lastState);
+		if (this.lastState == "close")
+			return ;
+		if (sidePanel.classList.contains("close"))
+		{
+			if (this.lastState == "close")
+				this.lastState = "close";
+			sidePanel.classList.remove("close");
+		}
+		sidePanel.classList.add("open");
+		stateManager.setState("sidePanel", "open");
 	}
 
-	#mediaQueryPanel(query) {
-		if (query.matches && stateManager.getState("sidePanel") == "open")
-			stateManager.setState("sidePanel", "close");
-		else
-			stateManager.setState("sidePanel", "open");
-		console.log(this.html);
+	#closeSidePanel() {
 		let sidePanel = this.html.querySelector(".side-panel-wrapper");
-		if (!sidePanel.classList.contains("close"))
+		console.log("sidePanel = ", sidePanel);
+		if (sidePanel.classList.contains("open"))
 		{
-			sidePanel.classList.toggle("close");
+			sidePanel.classList.remove("open");
 		}
+		sidePanel.classList.add("close");
+		stateManager.setState("sidePanel", "close");
+	}
+
+	#responsiveSidePanel() {
+		const mediaQuery = window.matchMedia('(max-width: 1000px)')
+		mediaQuery.addEventListener('change', () => {
+			if (mediaQuery.matches)
+				this.#closeSidePanel();
+			else
+				this.#openSidePanel();
+		});
+		if (mediaQuery.matches)
+			this.#closeSidePanel();
+		else
+			this.#openSidePanel();
 	}
 }
 
