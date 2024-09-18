@@ -11,6 +11,10 @@ const styles = `
 	max-height: 80vh;
 }
 
+.friend-list::-webkit-scrollbar {
+	width: 15px;
+}
+
 .friend-list::-webkit-scrollbar-track {
 	width: 15px;
 	background: ${colors.second_card};
@@ -18,6 +22,10 @@ const styles = `
 
 .friend-list::-webkit-scrollbar-thumb {
 	background: ${colors.main_card};
+	border-radius: 10px;
+	border-style: hidden;
+	border: 3px solid transparent;
+	background-clip: content-box;
 }
 
 .search-list {
@@ -30,7 +38,7 @@ const styles = `
 	cursor: pointer;
 	align-items: center;
 	gap: 10px;
-	margin-bottom: 20px;
+	margin: 0px 5px 20px 5px;
 	padding: 5px 10px 5px 10px;
 }
 

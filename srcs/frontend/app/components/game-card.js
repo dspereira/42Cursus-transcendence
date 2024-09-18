@@ -29,6 +29,13 @@ const styles = `
 		gap: 10px;
 	}
 
+	/*@media (max-width: 1000px) {
+		.player-container {
+			flex-direction: column;
+			justify-content: flex-start;
+		}
+	}*/
+
 	.profile-picture {
 		width: 50px;
 		height: 50px;

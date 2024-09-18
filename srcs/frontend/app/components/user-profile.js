@@ -76,7 +76,27 @@ const styles = `
 		margin-bottom: 10px;
 		text-align: center;
 	}
-	
+
+	.bio-and-stats {
+		display: flex;
+		min-width: 200px;
+		flex-direction: column;
+		align-items: center;
+		border-radius: 10px;
+	}
+
+	@media (max-width: 1000px) {
+		.profile-grid-container {
+			width: 100%;
+			flex-direction: row;
+			justify-content: center;
+			gap: 20px;
+		}
+
+		.bio-and-stats {
+			width: 60%;
+		}
+	}
 `;
 
 const getHtml = function(data) {
@@ -90,28 +110,30 @@ const getHtml = function(data) {
 					<div class="username"></div>
 				</div>
 			</div>
-			<div class="game-stats">
-				<!-- Total games tournaments included -->
-				<div class="total-games"></div>
-				<div class="games-win-rate"></div>
-				<div class="win-rate-bar game"></div>
-				<div class="wins-losses game">
-					<div class="wins game"></div>
-					<div class="losses game"></div>
+			<div class="bio-and-stats">
+				<div class="game-stats">
+					<!-- Total games tournaments included -->
+					<div class="total-games"></div>
+					<div class="games-win-rate"></div>
+					<div class="win-rate-bar game"></div>
+					<div class="wins-losses game">
+						<div class="wins game"></div>
+						<div class="losses game"></div>
+					</div>
+
+					<div class="total-tournaments"></div>
+					<div class="tournaments-win-rate"></div>
+					<div class="win-rate-bar tournament"></div>
+					<div class="wins-losses tournament">
+						<div class="wins tournament"></div>
+						<div class="losses tournament"></div>
+					</div>
 				</div>
 
-				<div class="total-tournaments"></div>
-				<div class="tournaments-win-rate"></div>
-				<div class="win-rate-bar tournament"></div>
-				<div class="wins-losses tournament">
-					<div class="wins tournament"></div>
-					<div class="losses tournament"></div>
+				<br></br>
+				<div class="bio-box">
+					<span class="bio"></span>
 				</div>
-			</div>
-
-			<br></br>
-			<div class="bio-box">
-				<span class="bio"></span>
 			</div>
 		</div>
 	`;

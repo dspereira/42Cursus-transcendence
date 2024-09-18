@@ -1,5 +1,6 @@
 import {callAPI} from "../utils/callApiUtils.js";
 import parseDate from "../utils/timeDateUtils.js";
+import { colors } from "../js/globalStyles.js";
 
 const styles = `
 	.page-container {
@@ -63,6 +64,20 @@ const styles = `
 		height: 20px;
 		border-radius: 50% ;
 		background-color: #FF6666;
+	}
+
+	.btn-primary {
+		background-color: ${colors.btn_default};
+		color: ${colors.btn_text};
+	}
+
+	.btn-primary:hover {
+		background-color: ${colors.btn_hover};
+		color: ${colors.hover_text};
+	}
+
+	.btn-selected {
+		background-color: ${colors.btn_hover};
 	}
 `;
 

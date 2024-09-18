@@ -408,6 +408,7 @@ export default class SidePanel extends HTMLElement {
 		this.#openClosePanel();
 		this.#setupNavigationEvents();
 		this.#addPageRedirection("profile", "logo");
+		this.#responsiveSidePanel();
 	}
 
 	//btnOpenClose()
@@ -476,7 +477,6 @@ export default class SidePanel extends HTMLElement {
 	#changeState(value) {
 		if (value !== "close" && value !== "open")
 			return ;
-
 		const sidePanel = this.html.querySelector(".side-panel-wrapper");
 		sidePanel.classList.remove("close");
 		sidePanel.classList.remove("open");
@@ -509,7 +509,7 @@ export default class SidePanel extends HTMLElement {
 	}
 
 	#logoutEvent() {
-		const logout = this.html.querySelector(".logout-btn");
+		const logout = this.html.querySelector(".logout-btn");	
 		logout.addEventListener("click", (event) => {
 			callAPI("POST", "http://127.0.0.1:8000/api/auth/logout", null, this.#apiResHandlerCalback);
 		});
@@ -522,6 +522,25 @@ export default class SidePanel extends HTMLElement {
 		if (page === "/home" || page === "home")
 			page = "";
 		elm.addEventListener("click", () => redirect(`/${page}`));
+	}
+
+	#responsiveSidePanel() {
+		const mediaQuery = window.matchMedia('(max-width: 1000px)')
+		mediaQuery.addEventListener('change', this.#mediaQueryPanel);
+		this.#mediaQueryPanel(mediaQuery);
+	}
+
+	#mediaQueryPanel(query) {
+		if (query.matches && stateManager.getState("sidePanel") == "open")
+			stateManager.setState("sidePanel", "close");
+		else
+			stateManager.setState("sidePanel", "open");
+		console.log(this.html);
+		let sidePanel = this.html.querySelector(".side-panel-wrapper");
+		if (!sidePanel.classList.contains("close"))
+		{
+			sidePanel.classList.toggle("close");
+		}
 	}
 }
 

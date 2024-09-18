@@ -52,10 +52,10 @@ const styles = `
 
 .block-mark {
 	font-size: 12px;
-    color: white;
-    background-color: red;
-    padding: 2px 4px;
-    border-radius: 5px;
+	color: white;
+	background-color: red;
+	padding: 2px 4px;
+	border-radius: 5px;
 	margin-left: 10px;
 }
 

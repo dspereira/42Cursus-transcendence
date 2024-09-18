@@ -7,10 +7,18 @@ import { colors } from "../js/globalStyles.js";
 const styles = `
 	.profile-container {
 		min-width: 460px;
+		flex-direction: row;
 		color: ${colors.second_text};
 		display: flex;
 		justify-content: center;
 		gap: 50px;
+	}
+
+	@media (max-width: 1000px) {
+		.profile-container {
+			flex-direction: column;
+			align-items: center;
+		}
 	}
 
 	.profile {
@@ -21,6 +29,15 @@ const styles = `
 	.history {
 		width: 70%;
 		min-width: 350px;
+	}
+
+	@media (max-width: 1000px){
+		.history {
+			width: 100%;
+		}
+		.profile {
+			width: 100%;
+		}
 	}
 `;
 

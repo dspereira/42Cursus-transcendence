@@ -10,6 +10,8 @@ const styles = `
 }
 
 chat-friends-list {
+	border-radius: 10px;
+	border-style: hidden;
 	background-color: ${colors.second_card};
 }
 
@@ -34,13 +36,11 @@ chat-friends-list {
 
 .friends-list {
 	display: flex;
-	padding: 10px;
+	padding: 0px 10px;
 	max-width: 25%;
 	min-width: 180px;
 	margin-right: 20px;
 	color: ${colors.second_text};
-	border-radius: 10px;
-	border-style: hidden;
 }
 
 .form-control {

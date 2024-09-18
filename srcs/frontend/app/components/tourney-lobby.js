@@ -134,6 +134,18 @@ ${pfpStyle(".default-photo","50%","auto")}
 	background-color: ${colors.btn_hover};
 	color: ${colors.hover_text};
 }
+
+@media (max-width: 1200px) {
+	.player {
+		min-width: 35%;
+		max-width: 50%;
+
+	}
+
+	.img-container {
+		width: 140px;
+	}
+}
 `;
 
 const getHtml = function(data) {
