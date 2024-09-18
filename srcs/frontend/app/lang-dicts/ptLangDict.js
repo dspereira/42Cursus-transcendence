@@ -24,8 +24,7 @@ export const ptAppConfigs = {
     language_label: "Choose language:",
     apply_changes_button: "Apply Changes",
     upload_image_button: "Upload Image",
-    new_avatar_button: "New Avatar",
-    
+    new_avatar_button: "New Avatar", 
 }
 
 export const ptAppFriendsDict = {
@@ -43,15 +42,16 @@ export const ptAppLobbyDict = {
     ready_button: "preparado"
 }
 
-export const ptAppPlayDict = {
-}
-
 export const ptChatFriendListDict = {
     search_bar_placeholder_search: "Procurar utilizador..."
 }
 
 export const ptChatSectionDict = {
     message_placeholder: "Menssagem..."
+}
+
+export const ptGameHistory = {
+    
 }
 
 export const ptGameInviteCardDict = {
@@ -65,9 +65,6 @@ export const ptGameInviteRequestDict = {
 export const ptGameInviteSendDict = {
     search_bar_placeholder_search: "Procurar utilizador...",
     invite_button: "Convidar"
-}
-
-export const ptLoginFormDict = {
 }
 
 export const ptPagePlayDict = {
@@ -88,9 +85,6 @@ export const ptSidePanelDict = {
     play: "Jogar",
     logout: "Logout",
     configurations: "Configurações"
-}
-
-export const ptSignupFormDict = {
 }
 
 export const ptTourneyGraphDict = {
@@ -118,5 +112,9 @@ export const ptTourneyLobbyDict = {
     player_username_placeholder: "esperando..."
 }
 
-export const ptUserCardDict = {
+export const ptUserProfile = {
+    total_games: "Total Games:",
+    games_win_rate: "Games win rate:",
+    total_tornaments: "Total tornaments:",
+    tornaments_win_rate: "Tornaments win rate:",
 }

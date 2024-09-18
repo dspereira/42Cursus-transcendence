@@ -54,7 +54,7 @@ const getHtml = function(data) {
 				<div>${data.date}</div>
 			</div>
 			<div class="right">
-				<button type="button" class="btn btn-primary btn-tornament-info">See More Info</button>
+				<button type="button" class="btn btn-primary btn-tornament-info">${this.data.langDict.see_more_info_button}</button>
 			</div>
 		</div>
 	`;
@@ -62,7 +62,7 @@ const getHtml = function(data) {
 }
 
 export default class TournamentCard extends HTMLElement {
-	static observedAttributes = ["id", "name", "is-winner", "date"];
+	static observedAttributes = ["id", "name", "is-winner", "date", "lang-dict"];
 
 	constructor() {
 		super()
@@ -78,6 +78,8 @@ export default class TournamentCard extends HTMLElement {
 	attributeChangedCallback(name, oldValue, newValue) {
 		if (name == "is-winner")
 			name = "isWinner";
+		if (name == "lang-dict")
+			name = "langDict";
 		this.data[name] = newValue;
 	}
 

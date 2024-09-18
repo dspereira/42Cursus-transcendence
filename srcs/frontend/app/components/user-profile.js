@@ -1,5 +1,9 @@
 import {callAPI} from "../utils/callApiUtils.js";
 import stateManager from "../js/StateManager.js";
+import { enUserProfile } from "../lang-dicts/enLangDict.js";
+import { ptUserProfile } from "../lang-dicts/ptLangDict.js";
+import { esUserProfile } from "../lang-dicts/esLangDict.js";
+import getLanguageDict from "../utils/languageUtils.js";
 
 const styles = `
 
@@ -112,7 +116,7 @@ const getHtml = function(data) {
 }
 
 export default class UserProfile extends HTMLElement {
-	static observedAttributes = ["username"];
+	static observedAttributes = ["username", "language"];
 
 	constructor() {
 		super();
@@ -126,6 +130,8 @@ export default class UserProfile extends HTMLElement {
 	}
 
 	attributeChangedCallback(name, oldValue, newValue) {
+		if (name == "language")
+			this.data.langDict = getLanguageDict(newValue, enUserProfile, ptUserProfile, esUserProfile);
 		this.data[name] = newValue;
 	}
 
@@ -206,8 +212,8 @@ export default class UserProfile extends HTMLElement {
 	#updateStats(stats) {
 		console.log(stats);
 
-		this.totalGames.innerHTML = `Total games: ${stats.totalGames}`;
-		this.gameWinRate.innerHTML = `Games win rate: ${stats.gamesWinRate}`;
+		this.totalGames.innerHTML = `${this.data.langDict.total_games} ${stats.totalGames}`;
+		this.gameWinRate.innerHTML = `${this.data.langDict.games_win_rate} ${stats.gamesWinRate}`;
 
 		if (!stats.gamesWinRate && !stats.totalGames)
 			this.winRateBarGame.style.background = `linear-gradient(to right, blue 0%, red 100%)`;
@@ -217,8 +223,8 @@ export default class UserProfile extends HTMLElement {
 		this.gamesWins.innerHTML = `W: ${stats.gamesWon}`;
 		this.gamesLoses.innerHTML = `L: ${stats.gamesLost}`;
 
-		this.totalTournaments.innerHTML = `Total tornaments: ${stats.totalTournaments}`;
-		this.tournamentWinRate.innerHTML = `Tornaments win rate: ${stats.tournamentsWinRate}`;
+		this.totalTournaments.innerHTML = `${this.data.langDict.total_tornaments} ${stats.totalTournaments}`;
+		this.tournamentWinRate.innerHTML = `${this.data.langDict.tornaments_win_rate} ${stats.tournamentsWinRate}`;
 		
 		if (!stats.tournamentsWinRate && !stats.totalTournaments)
 			this.winRateBarTournaments.style.background = `linear-gradient(to right, blue 0%, red 100%)`;

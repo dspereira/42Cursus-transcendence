@@ -20,17 +20,16 @@ const styles = `
 `;
 
 const getHtml = function(data) {
-	console.log(data);
 	const html = `
 		<app-header></app-header>
 		<side-panel selected="profile" language=${data.language}></side-panel>
 		<div class="content content-small">
 			<div class="profile-container">
 				<div class="profile">
-					<user-profile username="${data.username}"></user-profile>
+					<user-profile username="${data.username}" language=${data.language}></user-profile>
 				</div>
 				<div class="history">
-					<game-history username="${data.username}"></game-history>
+					<game-history username="${data.username}" language=${data.language}></game-history>
 				</div>
 			</div>
 		</div>
@@ -61,11 +60,9 @@ export default class PageProfile extends HTMLElement {
 				if (data && data.language){
 					this.data.language = data.language;
 				}
-		}
+			}
 		});
-	}
 
-	connectedCallback() {
 		if (!this.data.username) {
 			this.data.username = stateManager.getState("username");
 			this.#start();
@@ -78,6 +75,9 @@ export default class PageProfile extends HTMLElement {
 					render("<page-404></page-404>");
 			});
 		}
+	}
+
+	connectedCallback() {
 	}
 
 	attributeChangedCallback(name, oldValue, newValue) {

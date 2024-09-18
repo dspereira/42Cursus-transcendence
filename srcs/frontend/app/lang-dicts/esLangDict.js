@@ -25,7 +25,6 @@ export const esAppConfigs = {
     apply_changes_button: "Apply Changes",
     upload_image_button: "Upload Image",
     new_avatar_button: "New Avatar",
-    
 }
 
 export const esAppFriendsDict = {
@@ -43,15 +42,16 @@ export const esAppLobbyDict = {
     ready_button: "ready"
 }
 
-export const esAppPlayDict = {
-}
-
 export const esChatFriendListDict = {
     search_bar_placeholder_search: "Search user..."
 }
 
 export const esChatSectionDict = {
     message_placeholder: "Message..."
+}
+
+export const esGameHistory = {
+    
 }
 
 export const esGameInviteCardDict = {
@@ -65,9 +65,6 @@ export const esGameInviteRequestDict = {
 export const esGameInviteSendDict = {
     search_bar_placeholder_search: "Search friends...",
     invite_button: "Invite"
-}
-
-export const esLoginFormDict = {
 }
 
 export const esPagePlayDict = {
@@ -88,9 +85,6 @@ export const esSidePanelDict = {
     play: "Play",
     logout: "Logout",
     configurations: "Configurations"
-}
-
-export const esSignupFormDict = {
 }
 
 export const esTourneyGraphDict = {
@@ -118,5 +112,9 @@ export const esTourneyLobbyDict = {
     player_username_placeholder: "waiting..."
 }
 
-export const esUserCardDict = {
+export const esUserProfile = {
+    total_games: "Total Games:",
+    games_win_rate: "Games win rate:",
+    total_tornaments: "Total tornaments:",
+    tornaments_win_rate: "Tornaments win rate:",
 }

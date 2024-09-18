@@ -42,15 +42,23 @@ export const enAppLobbyDict = {
     ready_button: "ready"
 }
 
-export const enAppPlayDict = {
-}
-
 export const enChatFriendListDict = {
     search_bar_placeholder_search: "Search user..."
 }
 
 export const enChatSectionDict = {
     message_placeholder: "Message..."
+}
+
+export const enGameHistory = {
+    solo_games_button: "Solo Games",
+    tournament_games: "Tournament Games",
+    victory_color: "Victory",
+    defeat_color: "Defeat",
+    no_games_played: "No games played yet.",
+    no_tournaments_played: "No tournaments played yet.",
+    /* tournament-card */
+    see_more_info_button: "See More Info",
 }
 
 export const enGameInviteCardDict = {
@@ -64,9 +72,6 @@ export const enGameInviteRequestDict = {
 export const enGameInviteSendDict = {
     search_bar_placeholder_search: "Search friends...",
     invite_button: "Invite"
-}
-
-export const enLoginFormDict = {
 }
 
 export const enPagePlayDict = {
@@ -87,9 +92,6 @@ export const enSidePanelDict = {
     play: "Play",
     logout: "Logout",
     configurations: "Configurations"
-}
-
-export const enSignupFormDict = {
 }
 
 export const enTourneyGraphDict = {
@@ -117,5 +119,9 @@ export const enTourneyLobbyDict = {
     player_username_placeholder: "waiting..."
 }
 
-export const enUserCardDict = {
+export const enUserProfile = {
+    total_games: "Total Games:",
+    games_win_rate: "Games win rate:",
+    total_tornaments: "Total tornaments:",
+    tornaments_win_rate: "Tornaments win rate:",
 }

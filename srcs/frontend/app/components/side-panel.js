@@ -3,6 +3,7 @@ import stateManager from "../js/StateManager.js";
 import { enSidePanelDict } from "../lang-dicts/enLangDict.js";
 import { ptSidePanelDict } from "../lang-dicts/ptLangDict.js";
 import { esSidePanelDict } from "../lang-dicts/esLangDict.js";
+import getLanguageDict from "../utils/languageUtils.js";
 
 const styles = `
 
@@ -264,21 +265,8 @@ export default class SidePanel extends HTMLElement {
 		else if (name === "state")
 			this.#changeState(newValue);
 		if (name == "language") {
-			this.data.langDict = this.#getLanguage(newValue);
+			this.data.langDict = getLanguageDict(newValue, enSidePanelDict, ptSidePanelDict, esSidePanelDict);
 			this.data.language = newValue;
-		}
-	}
-
-	#getLanguage(language) {
-		switch (language) {
-			case "en":
-				return enSidePanelDict;
-			case "pt":
-				return ptSidePanelDict;
-			case "es":
-				return esSidePanelDict;
-			default:
-				return enSidePanelDict;
 		}
 	}
 
