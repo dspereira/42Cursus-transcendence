@@ -5,6 +5,7 @@ import { redirect } from "../js/router.js";
 import { enAppLobbyDict } from "../lang-dicts/enLangDict.js";
 import { ptAppLobbyDict } from "../lang-dicts/ptLangDict.js";
 import { esAppLobbyDict } from "../lang-dicts/esLangDict.js";
+import getLanguageDict from "../utils/languageUtils.js";
 
 const styles = `
 	.lobby {
@@ -89,22 +90,9 @@ export default class AppLobby extends HTMLElement {
 			name = "lobbyId";
 		else if (name == "is-tournament")
 			name = "isTournament";
+		else if (name == "language")
+			this.data.langDict = getLanguageDict(newValue, enAppLobbyDict, ptAppLobbyDict, esAppLobbyDict);
 		this.data[name] = newValue;
-		if (name == "language")
-			this.data.langDict = this.#getLanguage(newValue);
-	}
-
-	#getLanguage(language) {
-		switch (language) {
-			case "en":
-				return enAppLobbyDict;
-			case "pt":
-				return ptAppLobbyDict;
-			case "es":
-				return esAppLobbyDict;
-			default:
-				return enAppLobbyDict;
-		}
 	}
 
 	#initComponent() {

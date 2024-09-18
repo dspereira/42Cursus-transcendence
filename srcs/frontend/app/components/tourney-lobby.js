@@ -3,6 +3,7 @@ import stateManager from "../js/StateManager.js";
 import { enTourneyLobbyDict } from "../lang-dicts/enLangDict.js";
 import { ptTourneyLobbyDict } from "../lang-dicts/ptLangDict.js";
 import { esTourneyLobbyDict } from "../lang-dicts/esLangDict.js";
+import getLanguageDict from "../utils/languageUtils.js";
 
 const styles = `
 .players {
@@ -159,22 +160,10 @@ export default class TourneyLobby extends HTMLElement {
 			name = "ownerId";
 			this.data.isOwner = stateManager.getState("userId") == newValue;
 		}
-		if (name == "language") {
-			this.data.langDict = this.#getLanguage(newValue);
+		else if (name == "language") {
+			this.data.langDict = getLanguageDict(newValue, enTourneyLobbyDict, ptTourneyLobbyDict, esTourneyLobbyDict);
 		}
 		this.data[name] = newValue;
-	}
-
-	#getLanguage(language) {
-		switch (language) {
-			case "en":
-				return enTourneyLobbyDict;
-			case "pt":
-				return ptTourneyLobbyDict;
-			case "es":
-				return esTourneyLobbyDict;
-			default:
-		}
 	}
 
 	#initComponent() {

@@ -2,6 +2,7 @@ import { callAPI } from "../utils/callApiUtils.js";
 import { enGameInviteRequestDict } from "../lang-dicts/enLangDict.js";
 import { ptGameInviteRequestDict } from "../lang-dicts/ptLangDict.js";
 import { esGameInviteRequestDict } from "../lang-dicts/esLangDict.js";
+import getLanguageDict from "../utils/languageUtils.js";
 
 const styles = `
 	h3 {
@@ -49,7 +50,7 @@ export default class GameInviteRequest extends HTMLElement {
 
 	attributeChangedCallback(name, oldValue, newValue) {
 		if (name == "language") {
-			this.data.langDict = this.#getLanguage(newValue);
+			this.data.langDict = getLanguageDict(newValue, enGameInviteRequestDict, ptGameInviteRequestDict, esGameInviteRequestDict);
 			this.data.language = newValue;
 		}
 	}

@@ -3,6 +3,7 @@ import { callAPI } from "../utils/callApiUtils.js";
 import { enTourneyGraphDict } from "../lang-dicts/enLangDict.js";
 import { ptTourneyGraphDict } from "../lang-dicts/ptLangDict.js";
 import { esTourneyGraphDict } from "../lang-dicts/esLangDict.js";
+import getLanguageDict from "../utils/languageUtils.js";
 
 const styles = `
 	.tournament-container {
@@ -256,7 +257,7 @@ export default class TourneyGraph extends HTMLElement {
 		if (name == "tournament-name")
 			name = "tournamentName";
 		if (name == "language")
-			this.data.langDict = this.#getLanguage(newValue);
+			this.data.langDict = getLanguageDict(newValue, enTourneyGraphDict, ptTourneyGraphDict, esTourneyGraphDict);
 		this.data[name] = newValue;
 	}
 

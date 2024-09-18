@@ -2,6 +2,7 @@ import { callAPI } from "../utils/callApiUtils.js";
 import { enGameInviteCardDict } from "../lang-dicts/enLangDict.js";
 import { ptGameInviteCardDict } from "../lang-dicts/ptLangDict.js";
 import { esGameInviteCardDict } from "../lang-dicts/esLangDict.js";
+import getLanguageDict from "../utils/languageUtils.js";
 
 const styles = `
 .card-container {
@@ -104,25 +105,12 @@ export default class GameInviteCard extends HTMLElement {
 			name = "inviteId";
 		else if (name == "user-id")
 			name = "userId";
+		else if (name == "language")
+			this.data.langDict = getLanguageDict(newValue, enGameInviteCardDict, ptGameInviteCardDict, esGameInviteCardDict);
 		this.data[name] = newValue;
 
 		if (name == "exp" && this.html)
 			this.#changeExpDate();
-		if (name == "language")
-			this.data.langDict = this.#getLanguage(newValue);
-	}
-
-	#getLanguage(language) {
-		switch (language) {
-			case "en":
-				return enGameInviteCardDict;
-			case "pt":
-				return ptGameInviteCardDict;
-			case "es":
-				return esGameInviteCardDict;
-			default:
-				return enGameInviteCardDict;
-		}
 	}
 
 	#initComponent() {

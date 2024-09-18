@@ -4,6 +4,7 @@ import { callAPI } from "../utils/callApiUtils.js";
 import { enChatSectionDict } from "../lang-dicts/enLangDict.js";
 import { ptChatSectionDict } from "../lang-dicts/ptLangDict.js";
 import { esChatSectionDict } from "../lang-dicts/esLangDict.js";
+import getLanguageDict from "../utils/languageUtils.js";
 
 const styles = `
 /* Chat section */
@@ -196,23 +197,9 @@ export default class ChatSection extends HTMLElement {
 			name = "profilePhoto";
 		if (name == "user-id")
 			name = "userId";
-		if (name == "language") {
-			this.data.langDict = this.#getLanguage(newValue);
-		}
+		if (name == "language")
+			this.data.langDict = getLanguageDict(newValue, enChatSectionDict, ptChatSectionDict, esChatSectionDict);
 		this.data[name] = newValue;
-	}
-
-	#getLanguage(language) {
-		switch (language) {
-			case "en":
-				return enChatSectionDict;
-			case "pt":
-				return ptChatSectionDict;
-			case "es":
-				return esChatSectionDict;
-			default:
-				return enChatSectionDict;
-		}
 	}
 
 	#initComponent() {

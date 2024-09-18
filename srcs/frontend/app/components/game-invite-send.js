@@ -3,6 +3,7 @@ import stateManager from "../js/StateManager.js";
 import { enGameInviteSendDict } from "../lang-dicts/enLangDict.js";
 import { ptGameInviteSendDict } from "../lang-dicts/ptLangDict.js";
 import { esGameInviteSendDict } from "../lang-dicts/esLangDict.js";
+import getLanguageDict from "../utils/languageUtils.js";
 
 const styles = `
 	.search-icon {
@@ -111,22 +112,9 @@ export default class GameInviteSend extends HTMLElement {
 	attributeChangedCallback(name, oldValue, newValue) {
 		if (name == "profile-photo")
 			name = "profilePhoto";
-		this.data[name] = newValue;
 		if (name == "language")
-			this.data.langDict = this.#getLanguage(newValue);
-	}
-
-	#getLanguage(language) {
-		switch (language) {
-			case "en":
-				return enGameInviteSendDict;
-			case "pt":
-				return ptGameInviteSendDict;
-			case "es":
-				return esGameInviteSendDict;
-			default:
-				return enGameInviteSendDict;
-		}
+			this.data.langDict = getLanguageDict(newValue, enGameInviteSendDict, ptGameInviteSendDict, esGameInviteSendDict);
+		this.data[name] = newValue;
 	}
 
 	#initComponent() {

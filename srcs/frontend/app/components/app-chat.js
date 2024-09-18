@@ -4,6 +4,7 @@ import { redirect } from "../js/router.js";
 import { enAppChatDict } from "../lang-dicts/enLangDict.js";
 import { ptAppChatDict } from "../lang-dicts/ptLangDict.js";
 import { esAppChatDict } from "../lang-dicts/esLangDict.js";
+import getLanguageDict from "../utils/languageUtils.js";
 
 const styles = `
 .chat {
@@ -68,21 +69,8 @@ export default class AppChat extends HTMLElement {
 
 	attributeChangedCallback(name, oldValue, newValue) {
 		if (name == "language") {
-			this.data.langDict = this.#getLanguage(newValue);
+			this.data.langDict = getLanguageDict(newValue, enAppChatDict, ptAppChatDict, esAppChatDict);
 			this.data.language = newValue;
-		}
-	}
-
-	#getLanguage(language) {
-		switch (language) {
-			case "en":
-				return enAppChatDict;
-			case "pt":
-				return ptAppChatDict;
-			case "es":
-				return esAppChatDict;
-			default:
-				return enAppChatDict;
 		}
 	}
 

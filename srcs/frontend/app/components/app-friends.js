@@ -2,6 +2,7 @@ import { callAPI } from "../utils/callApiUtils.js";
 import { enAppFriendsDict } from "../lang-dicts/enLangDict.js";
 import { ptAppFriendsDict } from "../lang-dicts/ptLangDict.js";
 import { esAppFriendsDict } from "../lang-dicts/esLangDict.js";
+import getLanguageDict from "../utils/languageUtils.js";
 
 const styles = `
 .friends-section {
@@ -146,7 +147,8 @@ export default class AppFriends extends HTMLElement {
 
 	attributeChangedCallback(name, oldValue, newValue) {
 		if (name == "language") {
-			this.data.langDict = this.#getLanguage(newValue);
+			this.data.langDict = getLanguageDict(newValue, enAppFriendsDict, ptAppFriendsDict, esAppFriendsDict);
+			this.data.language = newValue;
 		}
 	}
 

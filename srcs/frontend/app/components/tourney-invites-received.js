@@ -2,6 +2,7 @@ import { callAPI } from "../utils/callApiUtils.js";
 import { enTourneyInvitesReceivedDict } from "../lang-dicts/enLangDict.js";
 import { ptTourneyInvitesReceivedDict } from "../lang-dicts/ptLangDict.js";
 import { esTourneyInvitesReceivedDict } from "../lang-dicts/esLangDict.js";
+import getLanguageDict from "../utils/languageUtils.js";
 
 const styles = `	
 h1 {
@@ -47,20 +48,9 @@ export default class TourneyInvitesReceived extends HTMLElement {
 	}
 
 	attributeChangedCallback(name, oldValue, newValue) {
-		if (name == "language")
-			this.data.langDict = this.#getLanguage(newValue);
-	}
-
-	#getLanguage(language) {
-		switch (language) {
-			case "en":
-				return enTourneyInvitesReceivedDict;
-			case "pt":
-				return ptTourneyInvitesReceivedDict;
-			case "es":
-				return esTourneyInvitesReceivedDict;
-			default:
-				return enTourneyInvitesReceivedDict;
+		if (name == "language") {
+			this.data.langDict = getLanguageDict(newValue, enTourneyInvitesReceivedDict, ptTourneyInvitesReceivedDict, esTourneyInvitesReceivedDict);
+			this.data.language = newValue;
 		}
 	}
 

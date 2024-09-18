@@ -2,6 +2,7 @@ import {callAPI} from "../utils/callApiUtils.js";
 import { enAppConfigs } from "../lang-dicts/enLangDict.js";
 import { ptAppConfigs } from "../lang-dicts/ptLangDict.js";
 import { esAppConfigs } from "../lang-dicts/esLangDict.js";
+import getLanguageDict from "../utils/languageUtils.js";
 
 const styles = `
 .main-container {
@@ -189,21 +190,8 @@ export default class AppConfigs extends HTMLElement {
 
 	attributeChangedCallback(name, oldValue, newValue) {
 		if (name == "language") {
-			this.data.langDict = this.#getLanguage(newValue);
+			this.data.langDict = getLanguageDict(newValue, enAppConfigs, ptAppConfigs, esAppConfigs);
 			this.data.language = newValue;
-		}
-	}
-
-	#getLanguage(language) {
-		switch (language) {
-			case "en":
-				return enAppConfigs;
-			case "pt":
-				return ptAppConfigs;
-			case "es":
-				return esAppConfigs;
-			default:
-				return enAppConfigs;
 		}
 	}
 

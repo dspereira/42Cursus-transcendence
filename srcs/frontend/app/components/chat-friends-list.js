@@ -3,6 +3,7 @@ import stateManager from "../js/StateManager.js";
 import { enChatFriendListDict } from "../lang-dicts/enLangDict.js";
 import { ptChatFriendListDict } from "../lang-dicts/ptLangDict.js";
 import { esChatFriendListDict } from "../lang-dicts/esLangDict.js";
+import getLanguageDict from "../utils/languageUtils.js";
 
 const styles = `
 .friend-list {
@@ -129,7 +130,8 @@ export default class ChatFriendsList extends HTMLElement {
 
 	attributeChangedCallback(name, oldValue, newValue) {
 		if (name == "language") {
-			this.data.langDict = this.#getLanguage(newValue);
+			this.data.langDict = getLanguageDict(newValue, enChatFriendListDict, ptChatFriendListDict, esChatFriendListDict);
+			this.data.language = newValue;
 		}
 	}
 	z

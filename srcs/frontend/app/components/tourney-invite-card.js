@@ -3,6 +3,7 @@ import stateManager from "../js/StateManager.js";
 import { enTourneyInviteCardDict } from "../lang-dicts/enLangDict.js";
 import { ptTourneyInviteCardDict } from "../lang-dicts/ptLangDict.js";
 import { esTourneyInviteCardDict } from "../lang-dicts/esLangDict.js";
+import getLanguageDict from "../utils/languageUtils.js";
 
 const styles = `
 .card-container {
@@ -105,25 +106,12 @@ export default class TourneyInviteCard extends HTMLElement {
 			name = "inviteId";
 		else if (name == "user-id")
 			name = "userId";
+		else if (name == "language")
+			this.data.langDict = getLanguageDict(newValue, enTourneyInviteCardDict, ptTourneyInviteCardDict, esTourneyInviteCardDict);
 		this.data[name] = newValue;
 
 		if (name == "exp" && this.html)
 			this.#changeExpDate();
-		if (name == "language")
-			this.data.langDict = this.#getLanguage(newValue);
-	}
-
-	#getLanguage(language) {
-		switch (language) {
-			case "en":
-				return enTourneyInviteCardDict;
-			case "pt":
-				return ptTourneyInviteCardDict;
-			case "es":
-				return esTourneyInviteCardDict;
-			default:
-				return enTourneyInviteCardDict;
-		}
 	}
 
 	#initComponent() {

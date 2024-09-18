@@ -2,6 +2,7 @@ import { callAPI } from "../utils/callApiUtils.js";
 import { enTourneyInviterDict } from "../lang-dicts/enLangDict.js";
 import { ptTourneyInviterDict } from "../lang-dicts/ptLangDict.js";
 import { esTourneyInviterDict } from "../lang-dicts/esLangDict.js";
+import getLanguageDict from "../utils/languageUtils.js";
 
 const styles = `
 .invites-section {
@@ -131,7 +132,7 @@ export default class TourneyInviter extends HTMLElement {
 		if (name == "tournament-id")
 			name = "tournamentId";
 		if (name == "language")
-			this.data.langDict = this.#getLanguage(newValue);
+			this.data.langDict = getLanguageDict(newValue, enTourneyInviterDict, ptTourneyInviterDict, esTourneyInviterDict);
 		this.data[name] = newValue;
 	}
 
