@@ -299,7 +299,6 @@ export default class TourneyLobby extends HTMLElement {
 			this.#joinedPlayersCall();
 			if (!this.data.isOwner) {
 				this.#getTournamentStatusCall();
-
 			}
 		}, 5000);
 	}
