@@ -24,15 +24,31 @@ user_model = ModelManager(User)
 @accepted_methods(["GET"])
 def search_user_by_name(request):
 	user = user_model.get(id=request.access_data.sub)
+	if not user:
+		return JsonResponse({"message": "Error: Invalid User!"}, status=400)
 	search_username = request.GET.get('key')
 	users_values = None
 	result_users = None
+
 	if not search_username or search_username == "" or search_username == '""':
 		users = user_profile_info_model.all()
 		message = f"Search Username is empty!"
 	else:
 		users = user_profile_info_model.filter(default_image_seed__istartswith=search_username)
 		message = f"Search Username: [{search_username}]"
+
+	print()
+	print("------------------------------------------------")
+	print(f"SEARCH -> {search_username}")
+	print("------------------------------------------------")
+	print("USERS")	
+	print("------------------------------------------------")
+	if users:
+		for usr in users:
+			print("User: ", usr.user.username)
+			print("------------------------------------------------")
+	print()
+
 	if users:
 		users_values = get_users_info(users=users)
 		result_users = remove_user_and_friends_from_users_list(user_id=user.id, users_list=users_values)
@@ -40,6 +56,12 @@ def search_user_by_name(request):
 		friends_requests_list = get_friends_request_list(user=user, own=True)
 		check_if_friend_request(users_list=result_users, requests_list=friends_requests_list)
 		result_users = sorted(result_users, key=lambda x: x["username"])
+
+		print()
+		print("result_users")
+		print(result_users)
+		print()
+
 	return JsonResponse({"message": message, "users": result_users}, status=200)
 
 @login_required
