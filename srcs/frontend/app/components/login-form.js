@@ -109,6 +109,8 @@ export default class LoginForm extends HTMLElement {
 			this.styles.textContent = this.#styles();
 			this.html.classList.add(`${this.elmtId}`);
 		}
+		this.signupBtn = this.html.querySelector(".btn-signup");
+		this.submitBtn = this.html.querySelector(".btn-submit");
 	}
 
 	#styles() {
@@ -147,8 +149,7 @@ export default class LoginForm extends HTMLElement {
 	}
 
 	#redirectToSignUpForm() {
-		const btn = this.html.querySelector(".btn-signup");
-		btn.addEventListener("click", (event) => {
+		this.signupBtn.addEventListener("click", (event) => {
 			redirect("/signup");
 		});
 	}
@@ -157,12 +158,15 @@ export default class LoginForm extends HTMLElement {
 		const loginForm = this.html.querySelector("#login-form");
 		loginForm.addEventListener("submit", (event) => {
 			event.preventDefault();
+			this.submitBtn.disabled = true;
 			const dataForm = {
 				username: this.html.querySelector('#email').value.trim(),
 				password: this.html.querySelector('#password').value.trim()
 			}
-			if (!dataForm.username || !dataForm.password)
+			if (!dataForm.username || !dataForm.password) {
 				this.#setInvalidCredentialsStyle();
+				this.submitBtn.disabled = false;
+			}
 			else
 				callAPI("POST", "http://127.0.0.1:8000/api/auth/login", dataForm, this.#apiResHandlerCalback);
 		});
@@ -171,8 +175,10 @@ export default class LoginForm extends HTMLElement {
 	#apiResHandlerCalback = (res, data) => {
 		if (res.ok && data.message === "success")
 			redirect("/");
-		else
+		else {
 			this.#setInvalidCredentialsStyle();
+			this.submitBtn.disabled = false;
+		}
 	}
 
 	#setInvalidCredentialsStyle() {

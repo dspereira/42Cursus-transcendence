@@ -6,17 +6,9 @@ from user_auth.models import User, BlacklistToken
 from friendships.models import FriendList
 from live_chat.models import ChatRoom
 from datetime import datetime
-import re
 
 from user_profile.models import UserProfileInfo
 from user_settings.models import UserSettings
-
-INVALID_USER_ADMIN_WORDS = ['admin', 'support', 'root', 'moderator', 'administrator', 'owner', 'help', 'contact', 'service', 'management']
-INVALID_USER_SPAM_WORDS = ['user', 'username', 'guest', 'test', 'default', 'anonymous', 'newuser', 'member', 'account', 'login', 'signin', 'signup']
-INVALID_USER_OFFENSIVE_WORDS = ['racist', 'sexist', 'homophobic', 'bigot', 'hate', 'killer']
-INVALID_USER_ILLEGAL_WORDS = ['drugs', 'violence', 'scam', 'fraud', 'pirate']
-INVALID_USER_PRIVACY_WORDS = ['private', 'confidential', 'secure']
-INVALID_USER_WORDS = INVALID_USER_ADMIN_WORDS + INVALID_USER_SPAM_WORDS + INVALID_USER_OFFENSIVE_WORDS + INVALID_USER_ILLEGAL_WORDS + INVALID_USER_PRIVACY_WORDS
 
 friend_list_model = ModelManager(FriendList)
 user_model = ModelManager(User)
@@ -99,16 +91,6 @@ def add_bot_as_friend(user):
 	if friendship and chatroom:
 		return friendship
 	return None
-
-def is_valid_username(username: str):
-	if username:
-		if len(username) > 0 and len(username) <= 15:
-			if re.match(r'^[a-zA-Z0-9_-]+$', username):
-				for name in INVALID_USER_WORDS:
-					if name in username.lower():
-						return False
-				return True
-	return False
 
 def _generate_tokens(user_id):
 	token_gen = TokenGenerator(user_id)
