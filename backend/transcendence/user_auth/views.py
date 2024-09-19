@@ -229,28 +229,24 @@ def check_login_status(request):
 
 @accepted_methods(["POST"])
 def validate_email(request):
-	
-	message = "Empty Body!"
-	validation_status = "fail"
-	email_token = None
-
-	if request.body:
-		req_data = json.loads(request.body);
-		email_token = req_data["email_token"]
-
-	if email_token:
-		message = f"Body with content !"
-		email_token_data = get_jwt_data(email_token)
-
-		if email_token_data:
-			if email_token_data.type == "email_verification":
-				user = user_model.get(id=email_token_data.sub)
-				if user and user.active == False:
-					user.active = True
-					user.save()
-					validation_status = "validated"
-				elif user and user.active == True:
-					validation_status = "active"
-			add_email_token_to_blacklist(email_token_data)
-
-	return JsonResponse({"message": message, "validation_status": validation_status})
+	if request and request.body:
+		req_data = json.loads(request.body.decode('utf-8'))
+		if req_data:
+			email_token = req_data.get("email_token")
+			if email_token:
+				email_token_data = get_jwt_data(email_token)
+				validation_status = "invalid"
+				if email_token_data:
+					if email_token_data.type == "email_verification":
+						user = user_model.get(id=email_token_data.sub)
+						if user and user.active == False:
+							user.active = True
+							user.save()
+							validation_status = "validated"
+						elif user and user.active == True:
+							validation_status = "active"
+					add_email_token_to_blacklist(email_token_data)
+					return JsonResponse({"message": "Email validation done!", "validation_status": validation_status}, status=200)
+				else:
+					return JsonResponse({"message": "Error: Invalid Email Token"}, status=401)
+	return JsonResponse({"message": "Error: Empty Body"}, status=400)

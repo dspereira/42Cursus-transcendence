@@ -111,38 +111,6 @@ export const render = function(page) {
 	newElm.innerHTML = page;
 }
 
-/*
-const getPageComponent = function(route) {
-	let pageHtml = null;
-	let dynamicRouteData = null;
-
-	if (route)
-		pageHtml = routes[route];
-	else
-		pageHtml = routes[getCurrentRoute()];
-
-	if (!pageHtml)
-		dynamicRouteData = getDynamicRoute(route);
-	if (dynamicRouteData) {
-
-		//console.log(`Rota ${dynamicRouteData.route}`);
-		//console.log(`key ${dynamicRouteData.key}`);
-
-		if (dynamicRoutes[dynamicRouteData.route])
-			pageHtml = dynamicRoutes[dynamicRouteData.route](dynamicRouteData.key);
-	}
-	if (!pageHtml) {
-
-		//console.log("coloca como 404");
-
-		pageHtml = getHtmlElm(Page404);
-	}
-
-	//console.log(`pageHtml: ${pageHtml}`);
-	return pageHtml;
-}
-*/
-
 const getDynamicRoute = function(route) {
 	const lastSlashIdx = route.lastIndexOf("/");
 	let key = null;
@@ -166,22 +134,6 @@ const updateIsLoggedInState = function(state) {
 		stateManager.setState("isLoggedIn", state);
 	}
 }
-
-
-//------------------------------------------------------------------------------
-// corrigir o primeiro if para não entrar quando está logado
-/*const getRouteByPermissions = function(route, isLoggedIn) {
-	if (isLoggedIn) {
-		if (publicRoutes.includes(route))
-			return "/";
-	}
-	else {
-		if (!publicRoutes.includes(route) && routes[route])
-			return initialRoute;
-	}
-	return route;
-}*/
-//------------------------------------------------------------------------------
 
 const getRouteInfo = function(route, isLoggedIn) {	
 	let isNotFound = false;
@@ -235,34 +187,6 @@ const normalizeRoute = function(route) {
 	return route;
 }
 
-/*
-let init = true;
-export const router = function(route) {
-	stateManager.cleanEvents();
-	checkUserLoginState((state) => {
-		if (!route)
-			route = getCurrentRoute();
-		route = normalizeRoute(route);
-
-		// obter a informação da rota
-		console.log(getRouteInfo(route));
-
-		const authorizedRoute = getRouteByPermissions(route, state);
-
-		//console.log(`Authoriziton: ${authorizedRoute}`);
-
-		if (init)
-			replaceCurrentRoute(normalizeRouteForHistory(authorizedRoute));
-		else
-			pushNewRoute(normalizeRouteForHistory(authorizedRoute));
-		render(getPageComponent(authorizedRoute));
-		updateIsLoggedInState(state);
-		init = false;
-	});
-}
-*/
-
-
 let init = true;
 let isRouting;
 export const router = function(route, isHistoryNavigation) {
@@ -309,18 +233,6 @@ export const router = function(route, isHistoryNavigation) {
 		isRouting = false;
 	});
 }
-
-/*
-const routingHistory = function() {
-	stateManager.cleanEvents();
-	checkUserLoginState((isLoggedIn) => {
-		const authorizedRoute = getRouteByPermissions(getCurrentRoute(), isLoggedIn);
-		replaceCurrentRoute(normalizeRouteForHistory(authorizedRoute));
-		render(getPageComponent(authorizedRoute));
-		updateIsLoggedInState(isLoggedIn);
-	});
-}
-*/
 
 const routingHistory = function() {
 	stateManager.cleanEvents();
