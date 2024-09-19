@@ -64,6 +64,11 @@ ${pfpStyle(".default-photo","50%","auto")}
 	margin-top: 25px;
 }
 
+.btn-start:disabled {
+	background-color: ${colors.second_card};
+	cursor: not-allowed;
+}
+
 .btn-success, .btn-cancel {
 	width: 120px;
 }
@@ -143,8 +148,8 @@ ${pfpStyle(".default-photo","50%","auto")}
 	display: flex;
 	width: 100%;
 	animation: disappear linear 10s forwards;
-	background-color: ${colors.alert};
-	color: ${colors.second_card};
+	background-color: #FF6B6B;
+	color: ${colors.primary_text};
 	padding-left: 5%;
 	font-weight: bold;
 }
@@ -247,6 +252,7 @@ export default class TourneyLobby extends HTMLElement {
 		this.data = {};
 		this.intervalID = null;
 		this.isOwner = false;
+		this.joinedPlayersNbr = null;
 	}
 
 	connectedCallback() {
@@ -390,6 +396,7 @@ export default class TourneyLobby extends HTMLElement {
 			if (res.ok) {
 				if (data.players) {
 					this.#updatePlayers(data.players);
+					this.joinedPlayersNbr = data.players.length;
 				}
 			}
 		});
@@ -399,9 +406,7 @@ export default class TourneyLobby extends HTMLElement {
 		callAPI("GET", `http://127.0.0.1:8000/api/tournament/active-tournament/`, null, (res, data) => {
 			if (res.ok) {
 				if (data) {
-					if (!data.tournament)
-						stateManager.setState("isTournamentChanged", true);
-					else if (data.tournament.status == "active")
+					if (!data.tournament || data.tournament.status == "active")
 						stateManager.setState("isTournamentChanged", true);
 				}
 			}
@@ -411,9 +416,12 @@ export default class TourneyLobby extends HTMLElement {
 	#joinedPlayersPolling() {
 		this.intervalID = setInterval(() => {
 			this.#joinedPlayersCall();
-			if (!this.data.isOwner) {
+			if (!this.data.isOwner)
 				this.#getTournamentStatusCall();
-
+			else {
+				const btn = this.html.querySelector(".btn-start");
+				if (btn)
+					btn.disabled = !(this.joinedPlayersNbr == 4);
 			}
 		}, 5000);
 	}

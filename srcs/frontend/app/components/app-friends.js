@@ -161,7 +161,7 @@ user-card {
 .user-list {
 	display: flex;
 	flex-direction: row;
-	justify-content: flex-start;
+	justify-content: center;
 	flex-wrap: wrap;
 	gap: 20px;
 	overflow-y: auto;

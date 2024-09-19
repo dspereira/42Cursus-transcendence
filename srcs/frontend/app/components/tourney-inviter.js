@@ -43,7 +43,7 @@ game-invite-card1 {
 .invites-send {
 	align-items: center;
 	width: 100%;
-	padding: 20px;
+	padding: 0px 20px 20px 20px;
 	overflow-y: auto;
 	margin-bottom: 70px;
 	border-radius: 5px;
