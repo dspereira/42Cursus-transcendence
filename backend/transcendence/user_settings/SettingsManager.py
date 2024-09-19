@@ -2,7 +2,7 @@ from custom_utils.models_utils import ModelManager
 from user_profile.models import UserProfileInfo
 from user_auth.models import User
 from .models import UserSettings
-
+from custom_utils.auth_utils import is_valid_username
 from user_profile.aux import get_image_url
 from PIL import Image
 from io import BytesIO
@@ -32,6 +32,8 @@ class SettingsManager:
 		if new_username is not None:
 			username = str(new_username).strip() if new_username else None
 			if username:
+				if not is_valid_username(username):
+					return False
 				user = user_model.get(username=username)
 				if not user or (user.id == self.user.id):
 					if username != self.user.username:
