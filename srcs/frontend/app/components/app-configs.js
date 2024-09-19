@@ -1,4 +1,5 @@
-import {callAPI} from "../utils/callApiUtils.js";
+import { callAPI } from "../utils/callApiUtils.js";
+import isValidUsername from "../utils/usernameValidationUtils.js";
 
 const styles = `
 .main-container {
@@ -211,12 +212,13 @@ export default class AppConfigs extends HTMLElement {
 		
 		this.errorAlert =  this.html.querySelector(".alert-danger");
 		this.successAlert = this.html.querySelector(".alert-success");
+		this.submitBtn = this.html.querySelector(".btn-submit");
 	}
 
 	#styles() {
-			if (styles)
-				return `@scope (.${this.elmtId}) {${styles}}`;
-			return null;
+		if (styles)
+			return `@scope (.${this.elmtId}) {${styles}}`;
+		return null;
 	}
 
 	#html(data){
@@ -239,11 +241,12 @@ export default class AppConfigs extends HTMLElement {
 	#submit() {
 		this.settingsForm.addEventListener("submit", (event) => {
 			event.preventDefault();
-
+			this.submitBtn.disabled = true;
 			const username = this.usernameInp.value.trim();
-			if (!this.#isValidUsername(username)) {
+			if (!isValidUsername(username)) {
 				this.#setFieldInvalid("username");
 				this.#setErrorMessage("Invalid username!");
+				this.submitBtn.disabled = false;
 				return ;
 			}
 
@@ -272,6 +275,7 @@ export default class AppConfigs extends HTMLElement {
 					this.#setFieldInvalid(resData.field);
 					this.#setErrorMessage(resData.message);
 				}
+				this.submitBtn.disabled = false;
 			});
 		});
 	}
@@ -291,13 +295,9 @@ export default class AppConfigs extends HTMLElement {
 		this.imagePreview.setAttribute("src", data.image);
 	}
 
-	#isValidUsername(username) {
-		let regex = /^[a-zA-Z0-9_-]+$/;
-		return regex.test(username);
-	}
-
 	#newSeedBtn() {
-		this.newSeedBtn.addEventListener("click", () => {
+		this.newSeedBtn.addEventListener("click", (event) => {
+			event.preventDefault();
 			this.imageSeed = `${this.usernameInp.value}-${Math.floor(Math.random() * 1000000)}`;
 			this.imagePreview.setAttribute("src", `${IMG_PATH}${this.imageSeed}`);
 			this.imageFile = "";

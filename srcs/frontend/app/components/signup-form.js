@@ -1,5 +1,6 @@
-import {redirect} from "../js/router.js";
-import {callAPI} from "../utils/callApiUtils.js";
+import { redirect } from "../js/router.js";
+import { callAPI } from "../utils/callApiUtils.js";
+import isValidUsername from "../utils/usernameValidationUtils.js";
 
 const styles = `
 form {
@@ -70,7 +71,7 @@ const getHtml = function(data) {
 			</div>
 			<div class="form-group">
 				<i class="icon left-icon bi-person"></i>
-				<input type="text" class="input-padding form-control form-control-lg" id="username" placeholder="Username" maxlength="30">
+				<input type="text" class="input-padding form-control form-control-lg" id="username" placeholder="Username" maxlength="15">
 			</div>
 			<div class="form-group">
 				<i class="icon left-icon bi bi-key"></i>
@@ -116,6 +117,7 @@ export default class SignupForm extends HTMLElement {
 			this.styles.textContent = this.#styles();
 			this.html.classList.add(`${this.elmtId}`);
 		}
+		this.submitBtn = this.html.querySelector(".btn-submit");
 	}
 
 	#styles() {
@@ -178,11 +180,6 @@ export default class SignupForm extends HTMLElement {
 		return true;
 	}
 
-	#isValidUsername(username) {
-		let regex = /^[a-zA-Z0-9_-]+$/;
-		return regex.test(username);
-	}
-
 	#getInvalidFields(data) {
 		const invalidFilds = {};
 	
@@ -191,7 +188,7 @@ export default class SignupForm extends HTMLElement {
 				invalidFilds[key] = "empty";
 			else if (key === "email" && !this.#isValidEmail(value))
 				invalidFilds.email = "invalid";
-			else if (key === "username" && !this.#isValidUsername(value))
+			else if (key === "username" && !isValidUsername(value))
 				invalidFilds.username = "invalid";
 		}
 		if (!invalidFilds.password && !invalidFilds.confirmPassword) {
@@ -214,11 +211,14 @@ export default class SignupForm extends HTMLElement {
 		const signupForm = this.html.querySelector("#signup-form");
 		signupForm.addEventListener("submit", (event) => {
 			event.preventDefault();
+			this.submitBtn.disabled = true;
 			const dataForm = this.#getdInputData();
 			const invalidFilds = this.#getInvalidFields(dataForm);
 			this.#removeAllInvalidStyles();
-			if (Object.keys(invalidFilds).length)
+			if (Object.keys(invalidFilds).length) {
 				this.#setAllFormErrors(invalidFilds);
+				this.submitBtn.disabled = false;
+			}
 			else
 				callAPI("POST", "http://127.0.0.1:8000/api/auth/register", dataForm, this.#apiResHandlerCalback);
 		});
@@ -227,8 +227,10 @@ export default class SignupForm extends HTMLElement {
 	#apiResHandlerCalback = (res, data) => {
 		if (res.ok && data.message === "success")
 			redirect("/");
-		else
+		else {
 			this.#handleApiFormErrors(res.status, data.message);
+			this.submitBtn.disabled = false;
+		}
 	}
 
 	#setInvalidInputStyle(inputId) {
