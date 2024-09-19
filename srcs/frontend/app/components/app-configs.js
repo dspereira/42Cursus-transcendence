@@ -296,7 +296,8 @@ export default class AppConfigs extends HTMLElement {
 	}
 
 	#newSeedBtn() {
-		this.newSeedBtn.addEventListener("click", () => {
+		this.newSeedBtn.addEventListener("click", (event) => {
+			event.preventDefault();
 			this.imageSeed = `${this.usernameInp.value}-${Math.floor(Math.random() * 1000000)}`;
 			this.imagePreview.setAttribute("src", `${IMG_PATH}${this.imageSeed}`);
 			this.imageFile = "";
