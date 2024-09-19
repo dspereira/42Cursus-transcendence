@@ -70,7 +70,7 @@ const getHtml = function(data) {
 			</div>
 			<div class="form-group">
 				<i class="icon left-icon bi-person"></i>
-				<input type="text" class="input-padding form-control form-control-lg" id="username" placeholder="Username" maxlength="30">
+				<input type="text" class="input-padding form-control form-control-lg" id="username" placeholder="Username" maxlength="15">
 			</div>
 			<div class="form-group">
 				<i class="icon left-icon bi bi-key"></i>
@@ -179,8 +179,15 @@ export default class SignupForm extends HTMLElement {
 	}
 
 	#isValidUsername(username) {
-		let regex = /^[a-zA-Z0-9_-]+$/;
-		return regex.test(username);
+		if (username) {
+			const regex = /^[a-zA-Z0-9_-]+$/;
+			const usernameLen = username.length;
+			if (usernameLen > 0 && usernameLen <= 15) {
+				if (regex.test(username))
+					return true;
+			}
+		}
+		return false;
 	}
 
 	#getInvalidFields(data) {
