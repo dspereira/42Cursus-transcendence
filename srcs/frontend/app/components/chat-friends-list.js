@@ -28,6 +28,10 @@ const styles = `
 	background-clip: content-box;
 }
 
+.scroll::-webkit-scrollbar-thumb:hover {
+	background: ${colors.main_card};
+}
+
 .search-list {
 	margin-right: 25px;
 	max-height: 87vh;

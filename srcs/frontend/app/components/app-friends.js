@@ -476,7 +476,7 @@ export default class AppFriends extends HTMLElement {
 				if (alertBefore)
 					alertBefore.remove();
 				console.log("HIIII");
-				const userCard = this.html.querySelector(".friends-section");
+				const insertElement = this.html.querySelector(".friends-section");
 				var alertCard = document.createElement("div");
 				alertCard.className = "alert alert-danger hide from alert-div";
 				alertCard.role = "alert";
@@ -487,7 +487,7 @@ export default class AppFriends extends HTMLElement {
 				// button.textContent = "Invite";
 				// rightListFriendHtml.appendChild(button);
 				// this.#setInviteSubmitEvent();
-				this.html.insertBefore(alertCard ,userCard);
+				this.html.insertBefore(alertCard, insertElement);
 			}
 		});
 	}

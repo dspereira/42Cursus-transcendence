@@ -11,7 +11,7 @@ game-invite-card1 {
 }
 
 .invites-section {
-	max-height: calc(100vh - 400px);
+	max-height: calc(100vh - 420px);
 	min-height: 240px;
 	display: flex;
 	width: 100%;
@@ -59,9 +59,9 @@ game-invite-card1 {
 	align-items: center;
 }
 
-@media (max-width: 832px) {
+@media (max-width: 800px) {
 	.invites-section {
-		max-height: calc(100vh - 600px);
+		max-height: calc(100vh - 550px);
 	}
 }
 
@@ -70,7 +70,11 @@ game-invite-card1 {
 }
 
 .friends::-webkit-scrollbar-thumb, .invites-send::-webkit-scrollbar-thumb {
-	background: ${colors.third_card};
+	background: ${colors.main_card};
+	border-radius: 10px;
+	border-style: hidden;
+	border: 3px solid transparent;
+	background-clip: content-box;
 }
 
 .players-invited {

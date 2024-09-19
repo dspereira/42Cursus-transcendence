@@ -49,7 +49,7 @@ const styles = `
 	border-radius: 50%;
 	background-color: green;
 	z-index: 2;
-	top: 5px;
+	top: 50px;
 	left: 45px;
 	border: 2px solid #A9A9A9;
 }

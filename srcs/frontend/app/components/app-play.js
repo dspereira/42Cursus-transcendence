@@ -13,6 +13,7 @@ const styles = `
 .players-info {
 	display: flex;
 	justify-content: space-between;
+	color: ${colors.primary_text};
 }
 
 .game-board {

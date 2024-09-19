@@ -5,6 +5,7 @@ const styles = `
 
 #settings-form {
 	color: ${colors.second_text};
+	min-width: 460px;
 }
 
 .form-control, .form-select {

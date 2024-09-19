@@ -12,20 +12,19 @@ const styles = `
 }
 
 .players {
+	justify-content: space-between;
+	flex-wrap: wrap;
 	width: 100%;
 	height: auto;
 	display: flex;
 	flex-direction: row;
-	flex-wrap: wrap;
-	justify-content: space-between;
 	border-radius: 10px;
 	border: 2px solid #495057;
 }
 
 .player {
 	display: flex;
-	width: 20%;
-	min-width: 200px;
+	flex: 1 1 15%;
 	max-width: 300px;
 	flex-direction: column;
 	justify-content: center;
@@ -53,9 +52,7 @@ ${pfpStyle(".default-photo","50%","auto")}
 
 
 .default-photo {
-	color: red;
 	background-color: ${colors.second_card};
-	border: 5px solid ${colors.page_background};
 	border-radius: 50%;
 }
 
@@ -83,14 +80,8 @@ ${pfpStyle(".default-photo","50%","auto")}
 	display: none;
 }
 
-.test-img {
-	font-size: 120px;
-
-	color: green;
-}
-
 .input-container {
-	width: 80%;
+	width: 100%;
 }
 
 .form-control {
@@ -113,13 +104,13 @@ ${pfpStyle(".default-photo","50%","auto")}
 	display: flex;
 	justify-content: space-between;
 	width: 100%;
+	gap: 20px;
 	flex-direction: row;
 	margin-bottom: 20px;
 }
 
 .btn {
 	width: 125px;
-	margin-left: 10px;
 	display: flex;
 	justify-content: center;
 	align-items: center;
@@ -127,23 +118,71 @@ ${pfpStyle(".default-photo","50%","auto")}
 	border-radius: 5px;
 	background-color: ${colors.btn_default};
 	color: ${colors.primary_text};
-
 }
 
-.btn:hover {
+.btn:hover, .btn:active, #button:active {
 	background-color: ${colors.btn_hover};
 	color: ${colors.hover_text};
 }
 
-@media (max-width: 1200px) {
+@media (max-width: 800px) {
 	.player {
-		min-width: 35%;
-		max-width: 50%;
-
+		flex: 1 1 48%;
 	}
 
 	.img-container {
 		width: 140px;
+	}
+}
+
+.lobby-container {
+	height: 85vh;
+}
+
+.alert-div {
+	display: flex;
+	width: 100%;
+	animation: disappear linear 10s forwards;
+	background-color: ${colors.alert};
+	color: ${colors.second_card};
+	padding-left: 5%;
+	font-weight: bold;
+}
+
+.alert-bar {
+	width: 90%;
+	height: 5px;
+	border-style: hidden;
+	border-radius: 2px;
+	background-color: ${colors.second_card};
+	position: absolute;
+	bottom: 2px;
+	left: 5%;
+	animation: expire linear 10s forwards;
+}
+
+@keyframes expire {
+	from {
+		width: 90%;
+	}
+	to {
+		width: 0%;
+	}
+}
+
+@keyframes disappear {
+	0% {
+		visibility: visible;
+		opacity: 1;
+	}
+	99% {
+		visibility: visible;
+		opacity: 1;
+	}
+	100% {
+		visibility: hidden;
+		opacity: 0;
+		display: none;
 	}
 }
 `;
@@ -152,17 +191,17 @@ const getHtml = function(data) {
 	const tournamentInviterHtml = `<div class="border-separation"></div>
 	<tourney-inviter tournament-id="${data.tournamentId}"></tourney-inviter>`;
 
-	const ownerBtns = `<button type="button" class="btn btn-success btn-start">Start</button>
-			<button type="button" class="btn btn-danger btn-cancel">Cancel</button>`;
+	const ownerBtns = `<button id="button" type="button" class="btn btn-success btn-start">Start</button>
+			<button id="button" type="button" class="btn btn-danger btn-cancel">Cancel</button>`;
 	
-	const guestBtns = `<button type="button" class="btn btn-danger btn-leave">Leave</button>`;
+	const guestBtns = `<button id="button" type="button" class="btn btn-danger btn-leave">Leave</button>`;
 
 	const updateNameForm = `<div class="form-group tournament-name-update">
 		<div class="input-container">
 			<input type="text" class="form-control form-control-md name-input" value="${data.tournamentName}" placeholder="Tournament Name" maxlength="50">
 		</div>
 		<div class="button-container">
-			<button type="button" class="btn btn-primary btn-update">Update Name</button>
+			<button id="button" type="button" class="btn btn-primary btn-update">Update Name</button>
 		</div>
 	</div>`;
 
@@ -267,6 +306,7 @@ export default class TourneyLobby extends HTMLElement {
 		this.#setLeaveTournamentEvent();
 		this.#setStartTournamentEvent();
 		this.#updateTournamentNameBtn();
+		this.#errorMsgEvents();
 	}
 
 	#isFriendExistsInList(list, playerId) {
@@ -386,7 +426,9 @@ export default class TourneyLobby extends HTMLElement {
 			callAPI("DELETE", `http://127.0.0.1:8000/api/tournament/?id=${this.data.tournamentId}`, null, (res, data) => {
 				if (res.ok)
 					stateManager.setState("isTournamentChanged", true);
-			});			
+				else
+					stateManager.setState("errorMsg", "Couldn't cancel tournament");
+			});
 		});
 	}
 
@@ -400,7 +442,9 @@ export default class TourneyLobby extends HTMLElement {
 			callAPI("DELETE", `http://127.0.0.1:8000/api/tournament/players/?id=${this.data.tournamentId}`, null, (res, data) => {
 				if (res.ok)
 					stateManager.setState("isTournamentChanged", true);
-			});	
+				else
+					stateManager.setState("errorMsg", "Couldn't leave tournament");
+			});
 		});
 	}
 
@@ -413,7 +457,9 @@ export default class TourneyLobby extends HTMLElement {
 		btn.addEventListener("click", () => {
 			callAPI("POST", `http://127.0.0.1:8000/api/tournament/start/`, {id: this.data.tournamentId}, (res, data) => {
 				if (res.ok)
-					stateManager.setState("isTournamentChanged", true);	
+					stateManager.setState("isTournamentChanged", true);
+				else
+					stateManager.setState("errorMsg", "Tournament couldn't be started");
 			});
 		});
 	}
@@ -431,8 +477,32 @@ export default class TourneyLobby extends HTMLElement {
 				console.log(data);
 				
 				if (res.status == 409)
-					nameInput.value = data.tournament_name;	
+				{
+					nameInput.value = data.tournament_name;
+					stateManager.setState("errorMsg", "Couldn't change tournament name");
+				}
 			});
+		});
+	}
+
+	#errorMsgEvents() {
+		stateManager.addEvent("errorMsg", (msg) => {
+			if (msg) {
+				console.log(msg);
+				stateManager.setState("errorMsg", null);
+				const alertBefore  = this.html.querySelector(".alert");
+				if (alertBefore)
+					alertBefore.remove();
+				const insertElement = this.html.querySelector(".tournament-name-update");
+				var alertCard = document.createElement("div");
+				alertCard.className = "alert alert-danger hide from alert-div";
+				alertCard.role = "alert";
+				alertCard.innerHTML = `
+						${msg}
+						<div class=alert-bar></div>
+					`;
+				this.html.insertBefore(alertCard, insertElement);
+			}
 		});
 	}
 }
