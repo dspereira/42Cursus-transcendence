@@ -1,4 +1,5 @@
 import { colors, chatColors } from "../js/globalStyles.js";
+import { pfpStyle } from "../utils/stylingFunctions.js";
 
 const styles = `
 
@@ -21,6 +22,8 @@ const styles = `
 .profile-photo {
 	width: 40px;
 }
+
+${pfpStyle(".profile-photo", "40px", "auto")}
 
 .msg {
 	max-width: 80%;

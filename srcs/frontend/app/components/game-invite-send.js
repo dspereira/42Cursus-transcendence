@@ -66,7 +66,26 @@ const styles = `
 
 	.selected-list-section {
 		width: 100%;
-		padding: 20px;
+		padding: 0px 20px 0px 20px;
+		margin-bottom: 70px;
+		overflow-y: auto;
+	}
+
+	.selected-list-section::-webkit-scrollbar {
+		width: 15px;
+	}
+	
+	.selected-list-section::-webkit-scrollbar-track {
+		width: 15px;
+		background: ${colors.second_card};
+	}
+	
+	.selected-list-section::-webkit-scrollbar-thumb {
+		background: ${colors.main_card};
+		border-radius: 10px;
+		border-style: hidden;
+		border: 3px solid transparent;
+		background-clip: content-box;
 	}
 		
 	.friend-right-list {
@@ -144,6 +163,7 @@ const styles = `
 
 	.selected-list-container {
 		display: flex;
+		width: 30%;
 		flex-direction: column;
 		position: relative;
 		align-items: center;
@@ -152,6 +172,18 @@ const styles = `
 		height: 90vh;
 		border-radius: 5px;
 		background-color: ${colors.second_card};
+	}
+
+	.friend-list::-webkit-scrollbar-track {
+		background: ${colors.second_card};
+	}
+	
+	.friend-list::-webkit-scrollbar-thumb {
+		background: ${colors.main_card};
+		border-radius: 10px;
+		border-style: hidden;
+		border: 3px solid transparent;
+		background-clip: content-box;
 	}
 }
 `;
