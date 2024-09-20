@@ -14,6 +14,7 @@ from .auth_utils import add_email_token_to_blacklist
 from .auth_utils import create_user_profile_info
 from .auth_utils import create_user_settings
 from .auth_utils import add_bot_as_friend
+from .auth_utils import is_email_verified
 from custom_utils.auth_utils import is_valid_username
 from custom_utils.auth_utils import is_username_bot_username
 
@@ -75,6 +76,8 @@ def login(request):
 		user = authenticate(request, email_username=username, password=password)
 		if not user:
 			return JsonResponse({"message": "Invalid credentials. Please check your username or password."}, status=401)
+		if not is_email_verified(user):
+			return JsonResponse({"message": "Email not verified. Please verify your email."}, status=401)
 		response = user_login(JsonResponse({"message": "success"}), user)
 		return response
 	return JsonResponse({"message": "Empty request body"}, status=400)

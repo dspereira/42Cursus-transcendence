@@ -66,6 +66,11 @@ def get_jwt_data(token: str):
 		return JwtData(token=token)
 	return None
 
+def is_email_verified(user):
+	if user and user.active:
+		return True
+	return False
+
 def create_user_profile_info(user):
 	user_profile_info_model = ModelManager(UserProfileInfo)
 

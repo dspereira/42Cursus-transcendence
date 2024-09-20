@@ -164,7 +164,7 @@ export default class LoginForm extends HTMLElement {
 				password: this.html.querySelector('#password').value.trim()
 			}
 			if (!dataForm.username || !dataForm.password) {
-				this.#setInvalidCredentialsStyle();
+				this.#setLogInErrorStyles();
 				this.submitBtn.disabled = false;
 			}
 			else
@@ -176,22 +176,26 @@ export default class LoginForm extends HTMLElement {
 		if (res.ok && data.message === "success")
 			redirect("/");
 		else {
-			this.#setInvalidCredentialsStyle();
+			if (data && data.message)
+				this.#setLogInErrorStyles(data.message);
 			this.submitBtn.disabled = false;
 		}
 	}
 
-	#setInvalidCredentialsStyle() {
+	#setLogInErrorStyles(message) {
 		const inputs = this.html.querySelectorAll('input');
+		if (!inputs)
+			return ;
 		inputs.forEach(input => {
 			input.classList.add("is-invalid");
 		})
 		const alert = this.html.querySelector(".alert");
-		if (alert.classList.contains("hide"))
-		{
+		if (alert.classList.contains("hide")) {
 			alert.classList.add("show");
 			alert.classList.remove("hide");
-		}	
+		}
+		if (message)
+			alert.innerHTML = message;
 	}
 }
 
