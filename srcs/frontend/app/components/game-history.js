@@ -79,6 +79,19 @@ const styles = `
 	.btn-selected {
 		background-color: ${colors.btn_hover};
 	}
+
+	.games-list {
+		display: flex;
+		flex-direction: column;
+		overflow-y: auto;
+	}
+
+	@media (max-width: 1000px) {
+		.games-list {
+			max-height: 35vh;
+		}
+	}
+
 `;
 
 const getHtml = function(data) {
