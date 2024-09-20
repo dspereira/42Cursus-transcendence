@@ -13,6 +13,7 @@ import PageFriends from "../page-components/page-friends.js";
 import PagePlay from "../page-components/page-play.js";
 import PageTournamentInfo from "../page-components/page-tournament-info.js";
 import PageEmailVerification from "../page-components/page-email-verification.js";
+import PageEmailSent from "../page-components/page-email-sent.js";
 
 // Components
 import AppHeader from "../components/app-header.js";
@@ -46,9 +47,7 @@ import TourneyInfo from "../components/tourney-info.js";
 // Others
 import stateManager from "./StateManager.js";
 import checkUserLoginState from "../utils/checkUserLoginState.js";
-
-
-const getHtmlElm = pageObj => `<${pageObj.componentName}></${pageObj.componentName}>`;
+import getHtmlElm from "../utils/getHtmlElmUtils.js";
 
 const routes = {
 	"/initial"				: getHtmlElm(PageInitial),
@@ -70,7 +69,7 @@ const dynamicRoutes = {
 	"/email-verification": key => `<${PageEmailVerification.componentName} token="${key}"></${PageEmailVerification.componentName}>`,
 }
 
-const publicRoutes = ["/initial", "/login", "/signup", "/email-verification"];
+const publicRoutes = ["/initial", "/login", "/signup", "/email-verification", "/email-sent"];
 
 const initialRoute = "/initial";
 

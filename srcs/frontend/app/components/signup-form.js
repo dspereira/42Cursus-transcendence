@@ -1,6 +1,12 @@
 import { redirect } from "../js/router.js";
 import { callAPI } from "../utils/callApiUtils.js";
 import isValidUsername from "../utils/usernameValidationUtils.js";
+import { render } from "../js/router.js";
+//import PageEmailSent from "../page-components/page-email-sent.js";
+
+import getHtmlElm from "../utils/getHtmlElmUtils.js";
+import PageEmailSent from "../page-components/page-email-sent.js";
+
 
 const styles = `
 form {
@@ -226,7 +232,7 @@ export default class SignupForm extends HTMLElement {
 
 	#apiResHandlerCalback = (res, data) => {
 		if (res.ok && data.message === "success")
-			redirect("/");
+			render(getHtmlElm(PageEmailSent));
 		else {
 			this.#handleApiFormErrors(res.status, data.message);
 			this.submitBtn.disabled = false;
