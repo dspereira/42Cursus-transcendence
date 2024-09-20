@@ -4,7 +4,7 @@ import isValidUsername from "../utils/usernameValidationUtils.js";
 import { render } from "../js/router.js";
 //import PageEmailSent from "../page-components/page-email-sent.js";
 
-import getHtmlElm from "../utils/getHtmlElmUtils.js";
+import { getHtmlElm } from "../utils/getHtmlElmUtils.js";
 import PageEmailSent from "../page-components/page-email-sent.js";
 
 

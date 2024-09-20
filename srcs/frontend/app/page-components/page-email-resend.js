@@ -2,7 +2,7 @@ import stateManager from "../js/StateManager.js";
 import { redirect } from "../js/router.js";
 import { callAPI } from "../utils/callApiUtils.js";
 import { render } from "../js/router.js";
-import getHtmlElm from "../utils/getHtmlElmUtils.js";
+import { getHtmlElm } from "../utils/getHtmlElmUtils.js";
 import PageEmailSent from "./page-email-sent.js";
 
 const styles = `
@@ -43,9 +43,11 @@ const title = "Email Resend";
 
 export default class PageEmailResend extends HTMLElement {
 	static #componentName = "page-email-resend";
+	static observedAttributes = ["key"];
 
 	constructor() {
 		super()
+		this.data = {};
 		this.#initComponent();
 		this.#render();
 		this.#scripts();
@@ -54,6 +56,10 @@ export default class PageEmailResend extends HTMLElement {
 	static get componentName() {
 		return this.#componentName;
 	}
+
+	attributeChangedCallback(name, oldValue, newValue) {
+		this.data[name] = newValue;
+	}	
 
 	#initComponent() {
 		this.html = document.createElement("div");
@@ -102,9 +108,7 @@ export default class PageEmailResend extends HTMLElement {
 		if (!btn)
 			return ;
 		btn.addEventListener("click", () => {
-			callAPI("POST", `http://127.0.0.1:8000/api/auth/resend-email-validation/`, {info: "fagopov912@marchub.com"}, (res, data) => {
-				console.log(res);
-				console.log(data);
+			callAPI("POST", `http://127.0.0.1:8000/api/auth/resend-email-validation/`, {info: this.data.key}, (res, data) => {
 				if (res.ok)
 					render(getHtmlElm(PageEmailSent));	
 			});
