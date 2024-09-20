@@ -57,6 +57,10 @@ h1 {
 	width: 100%;
 }
 
+.btn-resend-email {
+	width: 100%;
+}
+
 `;
 
 const getHtml = function(data) {
@@ -80,6 +84,9 @@ const getHtml = function(data) {
 			</div>
 			<div>
 				<button type="button" class="btn btn-outline-primary btn-signup">Without an account? Create one here</button>
+			</div>
+			<div>
+				<button type="button" class="btn btn-outline-primary btn-resend-email">Email not Verified. Verify Here!</button>
 			</div>
 		</form>
 	`;
@@ -111,6 +118,7 @@ export default class LoginForm extends HTMLElement {
 		}
 		this.signupBtn = this.html.querySelector(".btn-signup");
 		this.submitBtn = this.html.querySelector(".btn-submit");
+		this.resendEmailBtn = this.html.querySelector(".btn-resend-email");
 	}
 
 	#styles() {
