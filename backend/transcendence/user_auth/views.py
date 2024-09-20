@@ -252,3 +252,19 @@ def validate_email(request):
 					add_email_token_to_blacklist(email_token_data)
 				return JsonResponse({"message": "Email validation done!", "validation_status": validation_status}, status=200)
 	return JsonResponse({"message": "Error: Empty Body"}, status=400)
+
+@accepted_methods(["POST"])
+def resend_email_validation(request):
+	if request and request.body:
+		req_data = json.loads(request.body.decode('utf-8'))
+		if req_data:
+			email = req_data.get("email")
+			if email:
+				user = user_model.get(email=email)
+				if not user:
+					return JsonResponse({"message": "Error: Doesn't exist user with that email!"}, status=409)
+				if user.active:
+					return JsonResponse({"message": "Error: Email already verified!"}, status=409)
+				send_email_verification(user)
+				return JsonResponse({"message": "Email verification sended!"}, status=200)
+	return JsonResponse({"message": "Error: Empty Body"}, status=400)
