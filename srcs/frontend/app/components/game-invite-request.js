@@ -55,19 +55,6 @@ export default class GameInviteRequest extends HTMLElement {
 		}
 	}
 
-	#getLanguage(language) {
-		switch (language) {
-			case "en":
-				return enGameInviteRequestDict;
-			case "pt":
-				return ptGameInviteRequestDict;
-			case "es":
-				return esGameInviteRequestDict;
-			default:
-				return enGameInviteRequestDict;
-		}
-	}
-
 	#initComponent() {
 		this.html = document.createElement("div");
 		this.html.innerHTML = this.#html(this.data);

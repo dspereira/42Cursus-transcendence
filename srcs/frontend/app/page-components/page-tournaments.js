@@ -4,6 +4,7 @@ import { callAPI } from "../utils/callApiUtils.js";
 import { enPageTournamentsDict } from "../lang-dicts/enLangDict.js";
 import { ptPageTournamentsDict } from "../lang-dicts/ptLangDict.js";
 import { esPageTournamentsDict } from "../lang-dicts/esLangDict.js";
+import getLanguageDict from "../utils/languageUtils.js";
 
 const styles = `
 .border-separation {
@@ -75,7 +76,7 @@ export default class PageTournaments extends HTMLElement {
 			if (res.ok) {
 				if (data && data.language){
 					this.data.language = data.language;
-					this.data.langDict = this.#getLanguage(data.language);
+					this.data.langDict = getLanguageDict(data.language, enPageTournamentsDict, ptPageTournamentsDict, esPageTournamentsDict);
 				}
 		}
 		});
@@ -88,19 +89,6 @@ export default class PageTournaments extends HTMLElement {
 
 	static get componentName() {
 		return this.#componentName;
-	}
-
-	#getLanguage(language) {
-		switch (language) {
-			case "en":
-				return enPageTournamentsDict;
-			case "pt":
-				return ptPageTournamentsDict;
-			case "es":
-				return esPageTournamentsDict;
-			default:
-				return enPageTournamentsDict;
-		}
 	}
 
 	#initComponent() {

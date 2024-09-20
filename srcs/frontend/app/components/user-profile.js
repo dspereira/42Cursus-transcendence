@@ -223,8 +223,8 @@ export default class UserProfile extends HTMLElement {
 		this.gamesWins.innerHTML = `W: ${stats.gamesWon}`;
 		this.gamesLoses.innerHTML = `L: ${stats.gamesLost}`;
 
-		this.totalTournaments.innerHTML = `${this.data.langDict.total_tornaments} ${stats.totalTournaments}`;
-		this.tournamentWinRate.innerHTML = `${this.data.langDict.tornaments_win_rate} ${stats.tournamentsWinRate}`;
+		this.totalTournaments.innerHTML = `${this.data.langDict.total_tournaments} ${stats.totalTournaments}`;
+		this.tournamentWinRate.innerHTML = `${this.data.langDict.tournaments_win_rate} ${stats.tournamentsWinRate}`;
 		
 		if (!stats.tournamentsWinRate && !stats.totalTournaments)
 			this.winRateBarTournaments.style.background = `linear-gradient(to right, blue 0%, red 100%)`;

@@ -136,19 +136,6 @@ export default class TourneyInviter extends HTMLElement {
 		this.data[name] = newValue;
 	}
 
-	#getLanguage(language) {
-		switch (language) {
-			case "en":
-				return enTourneyInviterDict;
-			case "pt":
-				return ptTourneyInviterDict;
-			case "es":
-				return esTourneyInviterDict;
-			default:
-				return enTourneyInviterDict;
-		}
-	}
-
 	#initComponent() {
 		this.html = document.createElement("div");
 		this.html.innerHTML = this.#html(this.data);

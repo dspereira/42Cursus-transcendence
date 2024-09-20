@@ -147,7 +147,7 @@ const getHtml = function(data) {
 		<div class="tournament-container">
 			<div class="winner hide">
 				<div><img src="" class="profile-photo" alt="profile photo chat"/></div>
-				<div>${data.langDict.tournamment_winner}</div>
+				<div>${data.langDict.tournament_winner}</div>
 			</div>
 			<div class="graph">
 				<div class="game-size-1 padding-35 game-flex game-flex-column game-0">
@@ -259,19 +259,6 @@ export default class TourneyGraph extends HTMLElement {
 		if (name == "language")
 			this.data.langDict = getLanguageDict(newValue, enTourneyGraphDict, ptTourneyGraphDict, esTourneyGraphDict);
 		this.data[name] = newValue;
-	}
-
-	#getLanguage(language) {
-		switch (language) {
-			case "en":
-				return enTourneyGraphDict;
-			case "pt":
-				return ptTourneyGraphDict;
-			case "es":
-				return esTourneyGraphDict;
-			default:
-				return enTourneyGraphDict;
-		}
 	}
 
 	#initComponent() {

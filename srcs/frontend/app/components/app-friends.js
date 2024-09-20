@@ -152,19 +152,6 @@ export default class AppFriends extends HTMLElement {
 		}
 	}
 
-	#getLanguage(language) {
-		switch (language) {
-			case "en":
-				return enAppFriendsDict
-			case "pt":
-				return ptAppFriendsDict
-			case "es":
-				return esAppFriendsDict
-			default:
-				return enAppFriendsDict
-		}
-	}
-
 	#initComponent() {
 		this.html = document.createElement("div");
 		this.html.innerHTML = this.#html(this.data);

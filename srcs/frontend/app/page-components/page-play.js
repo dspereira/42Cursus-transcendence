@@ -4,6 +4,7 @@ import { callAPI } from "../utils/callApiUtils.js";
 import { enPagePlayDict } from "../lang-dicts/enLangDict.js";
 import { ptPagePlayDict } from "../lang-dicts/ptLangDict.js";
 import { esPagePlayDict } from "../lang-dicts/esLangDict.js";
+import getLanguageDict from "../utils/languageUtils.js";
 
 const styles = `
 	.invite-game {
@@ -25,6 +26,7 @@ const styles = `
 `;
 
 const getHtml = function(data) {
+	console.log(data);
 	const html = `
 	<app-header></app-header>
 	<side-panel selected="play" language=${data.language}></side-panel>
@@ -63,7 +65,7 @@ export default class PagePlay extends HTMLElement {
 			if (res.ok) {
 				if (data && data.language){
 					this.data.language = data.language;
-					this.data.langDict = this.#getLanguage(data.language);
+					this.data.langDict = getLanguageDict(data.language, enPagePlayDict, ptPagePlayDict, esPagePlayDict);
 				}
 		}
 		});
@@ -71,19 +73,6 @@ export default class PagePlay extends HTMLElement {
 		this.#initComponent();
 		this.#render();
 		this.#scripts();
-	}
-
-	#getLanguage(language) {
-		switch (language) {
-			case "en":
-				return enPagePlayDict
-			case "pt":
-				return ptPagePlayDict
-			case "es":
-				return esPagePlayDict
-			default:
-				return enPagePlayDict
-		}
 	}
 
 	static get componentName() {
@@ -132,7 +121,7 @@ export default class PagePlay extends HTMLElement {
 			return ;
 		btn.addEventListener("click", () => {
 			content.removeChild(page1);
-			content.innerHTML = "<game-invite-send></game-invite-send>";
+			content.innerHTML = `<game-invite-send language=${this.data.language}></game-invite-send>`;
 		});
 	}
 
@@ -152,6 +141,7 @@ export default class PagePlay extends HTMLElement {
 				contentElm.innerHTML = `
 				<app-lobby 
 					lobby-id="${stateManager.getState("userId")}"
+					language="${this.data.language}"
 				></app-lobby>
 				`;
 			}

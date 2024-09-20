@@ -134,19 +134,6 @@ export default class ChatFriendsList extends HTMLElement {
 			this.data.language = newValue;
 		}
 	}
-	z
-	#getLanguage(language) {
-		switch (language) {
-			case "en":
-				return enChatFriendListDict;
-			case "pt":
-				return ptChatFriendListDict;
-			case "es":
-				return esChatFriendListDict;
-			default:
-				return enChatFriendListDict;
-		}
-	}
 
 	#initComponent() {
 		this.html = document.createElement("div");

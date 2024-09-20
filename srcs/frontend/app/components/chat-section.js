@@ -366,9 +366,9 @@ export default class ChatSection extends HTMLElement {
 		let dateStr = null;
 
 		if (msgDate >= today)
-			dateStr = `Today`;
+			dateStr = `${this.data.langDict.today_timestamp}`;
 		else if (msgDate >= yesterday)
-			dateStr = `Yesterday`;
+			dateStr = `${this.data.langDict.today_yesterday_timestamp}`;
 		else
 		{
 			const year = msgDate.getFullYear();

@@ -39,7 +39,7 @@ const styles = `
 `;
 
 const getHtml = function(data) {
-	console.log(data);
+	console.log(data, data.langDict, data.langDict.ready_button);
 	const html = `
 		<div class="lobby">
 			<div class="host">
@@ -90,8 +90,9 @@ export default class AppLobby extends HTMLElement {
 			name = "lobbyId";
 		else if (name == "is-tournament")
 			name = "isTournament";
-		else if (name == "language")
+		else if (name == "language") {
 			this.data.langDict = getLanguageDict(newValue, enAppLobbyDict, ptAppLobbyDict, esAppLobbyDict);
+		}
 		this.data[name] = newValue;
 	}
 
@@ -169,11 +170,11 @@ export default class AppLobby extends HTMLElement {
 		playerImage.innerHTML = `
 			<img src="${playerInfo.image}" class="profile-photo" alt="avatar">
 			<div>${playerInfo.username}</div>
-			<div>${playerInfo.is_ready ? "ready" : "not ready"}</div>
+			<div>${playerInfo.is_ready ? `${this.data.langDict.ready_status}` : `${this.data.langDict.not_ready_status}`}</div>
 		`;
 
 		if (playerInfo.id == stateManager.getState("userId"))
-			this.readyBtn.innerHTML = `${playerInfo.is_ready ? "not ready" : "ready"}`;
+			this.readyBtn.innerHTML = `${playerInfo.is_ready ? `${this.data.langDict.not_ready_status}` : `${this.data.langDict.ready_status}`}`;
 	}
 
 	#removePlayer(playerType) {
