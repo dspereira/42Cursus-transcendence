@@ -246,7 +246,5 @@ def validate_email(request):
 						elif user and user.active == True:
 							validation_status = "active"
 					add_email_token_to_blacklist(email_token_data)
-					return JsonResponse({"message": "Email validation done!", "validation_status": validation_status}, status=200)
-				else:
-					return JsonResponse({"message": "Error: Invalid Email Token"}, status=401)
+				return JsonResponse({"message": "Email validation done!", "validation_status": validation_status}, status=200)
 	return JsonResponse({"message": "Error: Empty Body"}, status=400)
