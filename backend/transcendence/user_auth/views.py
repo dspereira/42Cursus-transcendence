@@ -264,7 +264,7 @@ def resend_email_validation(request):
 				if not user:
 					user = user_model.get(username=user_info)
 					if not user:
-						return JsonResponse({"message": "Error: Doesn't exist user with that email!"}, status=409)
+						return JsonResponse({"message": "Error: Doesn't exist user!"}, status=409)
 				if user.active:
 					return JsonResponse({"message": "Error: Email already verified!"}, status=409)
 				send_email_verification(user)

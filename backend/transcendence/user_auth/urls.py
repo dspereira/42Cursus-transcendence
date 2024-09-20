@@ -14,5 +14,5 @@ urlpatterns = [
     path("email", views.get_user_email, name="email"),# apenas debug (verificar)
     path("login_status", views.check_login_status, name="check_login_status"), # mudar rota para login-status
     path("validate-email", views.validate_email, name="validate_email"),
-    path("resend-email-validation", views.resend_email_validation, name="resend_email_validation"),
+    path("resend-email-validation/", views.resend_email_validation, name="resend_email_validation"),
 ]

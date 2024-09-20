@@ -2,11 +2,6 @@ import stateManager from "../js/StateManager.js";
 import { callAPI } from "../utils/callApiUtils.js";
 import { render } from "../js/router.js";
 
-const INVALID_TOKEN = "invalid_token";
-const VALIDATED_TOKEN = "validated_token";
-//const INVALID_TOKEN = "invalid_token";
-//const VALIDATED_TOKEN = "validated_token";
-
 const styles = `
 .mail-info-container {
 	max-width: 400px;
@@ -92,9 +87,8 @@ export default class PageEmailVerification extends HTMLElement {
 	}
 
 	connectedCallback() {
-		if (!this.data.token) {
+		if (!this.data.token)
 			render("<page-404></page-404>");
-		}
 		else {
 			replaceCurrentRoute("/email-verification");
 			callAPI("POST", `http://127.0.0.1:8000/api/auth/validate-email`, {email_token: this.data.token}, (res, data) => {
