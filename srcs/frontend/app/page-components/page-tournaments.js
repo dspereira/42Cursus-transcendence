@@ -43,7 +43,7 @@ const getHtml = function(data) {
 	<div class="content content-small">
 		<div class="btn-create-tourney-section hide">
 			<div class="create-tourney">
-				<button type="button" class="btn btn-primary btn-create-tourney">${data.langDict.create_tornement_button}</button>
+				<button type="button" class="btn btn-primary btn-create-tourney">${data.langDict.create_tournament_button}</button>
 			</div>
 			<div class="border-separation"></div>
 		</div>

@@ -112,7 +112,7 @@ export const enPagePlayDict = {
 
 export const enPageTournamentsDict = {
 	/* HTML */
-	create_tornement_button: "Create Tournament",
+	create_tournament_button: "Create Tournament",
 	exit_tournament_button: "Exit Tournament"
 }
 

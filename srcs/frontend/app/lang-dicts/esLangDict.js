@@ -1,120 +1,169 @@
 export const esAppChatDict = {
-    no_friends_msg: "No friends added,",
-    find_friends_msg: "click here to make friends!",
-    no_friend_selected: "No friend selected. Select a friend to start talking."
+	/* HTML */
+	no_friends_msg: "No se han añadido amigos.",
+	find_friends_msg: "¡Haz clic aquí para hacer amigos!",
+	no_friend_selected: "No se ha seleccionado ningún amigo. Selecciona un amigo para comenzar a hablar."
 }
 
 export const esAppConfigs = {
-    /* messages */
-    success: "User settings updated with success",
-    username_invalid: "Invalid username!",
-    image_size: "The image size must not exceed",
-    image_type: "Only the following formats are accepted:",
+	/* HTML */
+	profile_settings_header: "Configuración del Perfil",
+	new_username_label: "Cambiar Nombre de Usuario",
+	new_username_placeholder: "Nuevo Nombre de Usuario",
+	new_bio_label: "Cambiar Biografía",
+	new_bio_placeholder: "Nueva Biografía",
+	security_settings_header: "Configuración de Seguridad",
+	security_phone_label: "Teléfono",
+	game_settings_header: "Configuración del Juego",
+	game_theme_label: "Elige el tema del juego:",
+	language_settings_header: "Configuración de Idioma",
+	language_label: "Elige idioma:",
+	apply_changes_button: "Aplicar Cambios",
+	upload_image_button: "Subir Imagen",
+	new_avatar_button: "Nuevo Avatar",
 
-    profile_settings_header: "Profile Settings",
-    new_username_label: "Change Username",
-    new_username_placeholder: "New Username",
-    new_bio_label: "Change Bio",
-    new_bio_placeholder: "New Bio",
-    security_settings_header: "Security Settings",
-    security_phone_label: "Phone",
-    game_settings_header: "Game Settings",
-    game_theme_label: "Choose the game theme:",
-    language_settings_header: "Language Settings",
-    language_label: "Choose language:",
-    apply_changes_button: "Apply Changes",
-    upload_image_button: "Upload Image",
-    new_avatar_button: "New Avatar",
+	/* connectedCallback */
+	success: "Configuraciones de usuario actualizadas con éxito",
+	username_invalid: "¡Nombre de usuario inválido!",
+	image_size: "El tamaño de la imagen no debe exceder",
+	image_type: "Solo se aceptan los siguientes formatos:",
 }
 
 export const esAppFriendsDict = {
-    search_button: "Search",
-    all_friends_button: "All friends",
-    requests_button: "Requests",
-    search_bar_placeholder_search: "Search friends...",
-    no_users_to_search: "There are no users to search for!",
-    create_friends_no_friends: "Your Friend list is empty.",
-    create_requests_no_requests: "You have no friend requests.",
-    username_not_found: "Username not Found!"
+	/* HTML */
+	search_button: "Buscar",
+	all_friends_button: "Todos los amigos",
+	requests_button: "Solicitudes",
+	search_bar_placeholder_search: "Buscar amigos...",
+
+	/* #createSearchPage() */
+	no_users_to_search: "¡No hay usuarios para buscar!",
+
+	/* #createFriendsPage() */
+	create_friends_no_friends: "Tu lista de amigos está vacía.",
+
+	/* #createRequestsPage() */
+	create_requests_no_requests: "No tienes solicitudes de amistad.",
+	
+	/* #search(type, value) */
+	username_not_found: "¡Nombre de usuario no encontrado!"
 }
 
 export const esAppLobbyDict = {
-    ready_button: "ready"
+	/* HTML */
+	ready_button: "Listo",
+
+	/* #updatePlayer(playerInfo, playerType) */
+	ready_status: "Listo",
+	not_ready_status: "No Listo", 
 }
 
 export const esChatFriendListDict = {
-    search_bar_placeholder_search: "Search user..."
+	/* HTML */
+	search_bar_placeholder_search: "Buscar usuarios..."
 }
 
 export const esChatSectionDict = {
-    message_placeholder: "Message..."
+	/* HTML */
+	message_placeholder: "Mensaje...",
+
+	/* #getTimeDate(timestamp) */
+	today_timestamp: "Hoy",
+	yesterday_timestamp: "Ayer",
 }
 
 export const esGameHistory = {
-    
+	/* HTML */
+	solo_games_button: "Juegos en Solitario",
+	tournament_games: "Juegos de Torneo",
+	victory_color: "Victoria",
+	defeat_color: "Derrota",
+
+	/* #insertGames(gameList) */
+	no_games_played: "No se han jugado juegos aún.",
+
+	/* #insertTournaments(tournamentList) */
+	no_tournaments_played: "No se han jugado torneos aún.",
+
+	/* tournament-card */
+	see_more_info_button: "Más Información",
 }
 
 export const esGameInviteCardDict = {
-    join_button: "Join"
+	/* HTML */
+	join_button: "Unirse"
 }
 
 export const esGameInviteRequestDict = {
-    game_invites: "Game Invites"
+	/* HTML */
+	game_invites: "Invitaciones a Juegos"
 }
 
 export const esGameInviteSendDict = {
-    search_bar_placeholder_search: "Search friends...",
-    invite_button: "Invite"
+	/* HTML */
+	search_bar_placeholder_search: "Buscar amigos...",
+	invite_button: "Invitar"
 }
 
 export const esPagePlayDict = {
-    invite_button: "Invite to Game"
+	/* HTML */
+	invite_button: "Invitar a Juego"
 }
 
 export const esPageTournamentsDict = {
-    create_tornement_button: "Create Tornement",
-    exit_tournament_button: "Exit Tournament"
+	/* HTML */
+	create_tournament_button: "Crear Torneo",
+	exit_tournament_button: "Salir del Torneo"
 }
 
 export const esSidePanelDict = {
-    home: "Home",
-    profile: "Profile",
-    chat: "Chat",
-    tournaments: "Tournaments",
-    friends: "Friends",
-    play: "Play",
-    logout: "Logout",
-    configurations: "Configurations"
+	/* HTML */
+	home: "Inicio",
+	profile: "Perfil",
+	chat: "Chat",
+	tournaments: "Torneos",
+	friends: "Amigos",
+	play: "Jugar",
+	logout: "Cerrar Sesión",
+	configurations: "Configuraciones"
 }
 
 export const esTourneyGraphDict = {
-    start_game_button: "Start Game",
-    tournamment_winner: "WINNER"
+	/* HTML */
+	tournament_winner: "GANADOR",
+	start_game_button: "Iniciar Juego",
 }
 
 export const esTourneyInviteCardDict = {
-    join_button: "Join"
+	/* HTML */
+	join_button: "Unirse"
 }
 
 export const esTourneyInviterDict = {
-    search_bar_placeholder_search: "Search friends...",
-    invite_button: "Invite"
+	/* HTML */
+	search_bar_placeholder_search: "Buscar amigos...",
+	invite_button: "Invitar",
 }
 
 export const esTourneyInvitesReceivedDict = {
-    tournaments_invites: "Tournaments Invites"
+	/* HTML */
+	tournaments_invites: "Invitaciones a Torneos"
 }
 
 export const esTourneyLobbyDict = {
-    start_button: "Start",
-    cancel_button: "Cancel",
-    leave_button: "Leave",
-    player_username_placeholder: "waiting..."
+	/* getHTML */
+	start_button: "Iniciar",
+	cancel_button: "Cancelar",
+	leave_button: "Salir",
+
+	/* #setDefaultPhoto(elmHtml) */
+	player_username_placeholder: "esperando..."
 }
 
 export const esUserProfile = {
-    total_games: "Total Games:",
-    games_win_rate: "Games win rate:",
-    total_tornaments: "Total tornaments:",
-    tornaments_win_rate: "Tornaments win rate:",
+	/* #updateStats(stats) */
+	total_games: "Total de Juegos:",
+	games_win_rate: "Tasa de Ganancia de Juegos:",
+	total_tournaments: "Total de Torneos:",
+	tournaments_win_rate: "Tasa de Ganancia de Torneos:",
 }
