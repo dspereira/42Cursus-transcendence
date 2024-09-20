@@ -2,31 +2,81 @@ import stateManager from "../js/StateManager.js";
 import { callAPI } from "../utils/callApiUtils.js";
 import { render } from "../js/router.js";
 
-const styles = ``;
-
-const getHtml = function(data) {
-
-	console.log(data);
-
-	
-
-	const html = `
-
-
-		<h1>Validação de email</h1>
-	
-	`;
-	return html;
-}
-
-const title = "BlitzPong - Email Verification";
-
 const INVALID_TOKEN = "invalid_token";
 const VALIDATED_TOKEN = "validated_token";
 //const INVALID_TOKEN = "invalid_token";
 //const VALIDATED_TOKEN = "validated_token";
 
+const styles = `
+.mail-info-container {
+	max-width: 400px;
+	padding: 30px;
+	border-radius: 8px;
+	text-align: center;
+	margin: 50px auto 0px auto;
+	/*background-color: #ca9400;*/
+}
 
+img {
+	width: 80px;
+	margin-bottom: 20px;
+}
+
+h1 {
+	font-size: 32px;
+	font-weight: bold;
+	margin-bottom: 20px;
+}
+
+p {
+	color: #333;
+	margin-bottom: 20px;
+}
+
+.error-color {
+	background-color: #f04747;
+}
+
+.validated-color {
+	background-color: #43b581;
+}
+`;
+
+const cardInfo = {
+	validated: {
+		color: "validated-color",
+		image: "../img/email_success.png",
+		header: "Email Verification Success",
+		message: "Your email has been successfully verified.",
+	},
+	invalid: {
+		color: "error-color",
+		image: "../img/email_fail.png",
+		header: "Email Verification Failure",
+		message: "Sorry, we couldn't verify your email.",
+	},
+	active: {
+		color: "validated-color",
+		image: "../img/email_success.png",
+		header: "Email Already Verified",
+		message: "Your email has already been verified successfully.",
+	},
+}
+
+const getHtml = function(data) {
+	const info = cardInfo[data.state];
+	const html = `
+		<div class="mail-info-container ${info.color}">
+			<img src="${info.image}" alt="Email Sent Icon" title="Image From Flaticon">
+			<h1>${info.header}</h1>
+			<p>${info.message}</p>
+			<button type="button" class="btn btn-primary btn-home">Go Home</button>
+		</div>
+	`;
+	return html;
+}
+
+const title = "BlitzPong - Email Verification";
 
 export default class PageEmailVerification extends HTMLElement {
 	static #componentName = "page-email-verification";
@@ -48,19 +98,8 @@ export default class PageEmailVerification extends HTMLElement {
 		else {
 			replaceCurrentRoute("/email-verification");
 			callAPI("POST", `http://127.0.0.1:8000/api/auth/validate-email`, {email_token: this.data.token}, (res, data) => {
-				
-				console.log(res);
-				console.log(data);
-				
-				if (res.ok) {
-					// token já validado ou validado com successo
-					if (data && data.validation_status=="validated")
-						this.data["state"] = VALIDATED_TOKEN;
-				}
-				else {
-					// token inválido ou outros erros
-					this.data["state"] = INVALID_TOKEN;
-				}
+				if (res.ok && data)
+					this.data["state"] = data.validation_status;
 				this.#start();
 			});
 		}
