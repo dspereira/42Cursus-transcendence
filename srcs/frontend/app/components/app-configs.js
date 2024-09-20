@@ -35,15 +35,16 @@ const styles = `
 }
 
 .general-settings-container {
-	width: 70%;
+	width: 60%;
 	/*background-color: red;*/
 }
 
 .image-settings-container {
-	dispay: flex;
+	display: flex;
 	flex-direction: column;
-	justify-content: center;
-	width: 30%;
+	justify-content: flex-start;
+	width: 40%;
+	min-width: 300px;
 
 	/*background-color: blue;*/
 }
@@ -70,6 +71,7 @@ const styles = `
 .btn-submit {
 	width: 50%;
 	margin-top: 30px;
+	margin-bottom: 30px;
 	color: ${colors.primary_text};
 	background-color: ${colors.btn_default};
 }
@@ -82,7 +84,7 @@ const styles = `
 .btn-img {
 	width: 50%;
 	max-width: 150px;
-	font-size: clamp(0.5rem, 1vw, 1rem);
+	/*font-size: clamp(0.5rem, 1vw, 1rem);*/
 	color: ${colors.primary_text};
 	background-color: ${colors.btn_default};
 }
@@ -108,80 +110,110 @@ legend {
 .hide {
 	display: none;
 }
+
+.page-container {
+	display: flex;
+	flex-direction: column;
+}
+
+.btn-container {
+	display: flex;
+	width: 60%;
+	justify-content: center;
+}
+
+@media (max-width: 900px) {
+	.main-container {
+		flex-direction: column;
+	}
+	.general-settings-container, .image-settings-container {
+		width: 100%;
+	}
+	.image-settings-container {
+		justify-content: center;
+	}
+	.btn-container {
+		width: 100%;
+	}
+	.btn-submit {
+		width: 70%;
+	}
+}
 `;
 
 const getHtml = function(data) {
 	const html = `
 	<form id="settings-form">
-		<div class="main-container">
-			<div class="general-settings-container">
-				<div class="alert alert-danger hide" role="alert"></div>
-				<div class="alert alert-success hide" role="alert"></div>
-				<h2>Profile Settings</h2>
-				<hr>
-				<label for="new-username">Change Username</label>
-				<input type="text" class="form-control form-control-md" id="new-username" placeholder="New Username" maxlength="15">
-				<label for="new-bio">Change Bio</label>
-				<textarea type="text" class="form-control form-control-md" id="new-bio" placeholder="New Bio" rows="3" maxlength="255"></textarea>
+		<div class="page-container">
+			<div class="main-container">
+				<div class="general-settings-container">
+					<div class="alert alert-danger hide" role="alert"></div>
+					<div class="alert alert-success hide" role="alert"></div>
+					<h2>Profile Settings</h2>
+					<hr>
+					<label for="new-username">Change Username</label>
+					<input type="text" class="form-control form-control-md" id="new-username" placeholder="New Username" maxlength="15">
+					<label for="new-bio">Change Bio</label>
+					<textarea type="text" class="form-control form-control-md" id="new-bio" placeholder="New Bio" rows="3" maxlength="255"></textarea>
 
-				<h2>Scurity Settings</h2>
-				<hr>
-				<fieldset>
-					<legend>Choose where to receive your two-factor authentication:</legend>
-					<div class="form-check">
-						<input class="form-check-input" type="checkbox" value="qrcode" id="qrcode">
-						<label class="form-check-label" for="qrcode">
-							QR Code
-						</label>
-					</div>
-					<div class="form-check">
-						<input class="form-check-input" type="checkbox" value="email" id="email">
-						<label class="form-check-label" for="email">
-							Email
-						</label>
-					</div>
-					<div class="form-check">
-						<input class="form-check-input" type="checkbox" value="phone" id="phone">
-						<label class="form-check-label" for="phone">
-							Phone
-						</label>
-					</div>
-				</fieldset>
+					<h2>Scurity Settings</h2>
+					<hr>
+					<fieldset>
+						<legend>Choose where to receive your two-factor authentication:</legend>
+						<div class="form-check">
+							<input class="form-check-input" type="checkbox" value="qrcode" id="qrcode">
+							<label class="form-check-label" for="qrcode">
+								QR Code
+							</label>
+						</div>
+						<div class="form-check">
+							<input class="form-check-input" type="checkbox" value="email" id="email">
+							<label class="form-check-label" for="email">
+								Email
+							</label>
+						</div>
+						<div class="form-check">
+							<input class="form-check-input" type="checkbox" value="phone" id="phone">
+							<label class="form-check-label" for="phone">
+								Phone
+							</label>
+						</div>
+					</fieldset>
 
-				<h2>Game Settings</h2>
-				<hr>
-				<label for="theme-options">Choose the game theme:</label>
-				<select class="form-select" id="theme-options" aria-label="Game theme selection">
-					<option value="0" selected>Classic Retro</option>
-					<option value="1">Modern Neon</option>
-					<option value="2">Ocean Vibes</option>
-					<option value="3">Sunset Glow</option>
-					<option value="4">Forest Retreat</option>
-				</select>
-			
-				<h2>Language Settings</h2>
-				<hr>
-				<label for="language-options">Choose language:</label>
-				<select class="form-select" id="language-options" aria-label="Language selection">
-					<option value="en">English &#x1F1EC;&#x1F1E7;</option>
-					<option value="pt">Português &#x1F1F5;&#x1F1F9;</option>
-					<option value="es">Espanhol &#x1F1EA;&#x1F1F8;</option>
-				</select>
+					<h2>Game Settings</h2>
+					<hr>
+					<label for="theme-options">Choose the game theme:</label>
+					<select class="form-select" id="theme-options" aria-label="Game theme selection">
+						<option value="0" selected>Classic Retro</option>
+						<option value="1">Modern Neon</option>
+						<option value="2">Ocean Vibes</option>
+						<option value="3">Sunset Glow</option>
+						<option value="4">Forest Retreat</option>
+					</select>
 
-				<div><button type="submit" class="btn btn-primary btn-submit">Apply Changes</button></div>
-			</div>
-
-			<div class="image-settings-container">
-				<div class="img-container">
-					<img src="../img/default_profile.png" class="image-preview" alt="Preview of the Image to be Changed">
+					<h2>Language Settings</h2>
+					<hr>
+					<label for="language-options">Choose language:</label>
+					<select class="form-select" id="language-options" aria-label="Language selection">
+						<option value="en">English &#x1F1EC;&#x1F1E7;</option>
+						<option value="pt">Português &#x1F1F5;&#x1F1F9;</option>
+						<option value="es">Espanhol &#x1F1EA;&#x1F1F8;</option>
+					</select>
 				</div>
-				<div class="img-buttons">
-					<label for="new-image" class="btn btn-primary btn-img">Upload Image</label>
-					<!--<input id="new-image" class="hide" type="file" accept="image/png, image/jpeg, image/webp">-->
-					<input id="new-image" class="hide" type="file">
-					<button class="btn btn-primary btn-img btn-new-seed">New Avatar</button>
+
+				<div class="image-settings-container">
+					<div class="img-container">
+						<img src="../img/default_profile.png" class="image-preview" alt="Preview of the Image to be Changed">
+					</div>
+					<div class="img-buttons">
+						<label for="new-image" class="btn btn-primary btn-img">Upload Image</label>
+						<!--<input id="new-image" class="hide" type="file" accept="image/png, image/jpeg, image/webp">-->
+						<input id="new-image" class="hide" type="file">
+						<button class="btn btn-primary btn-img btn-new-seed">New Avatar</button>
+					</div>
 				</div>
 			</div>
+			<div class="btn-container"><button type="submit" class="btn btn-primary btn-submit">Apply Changes</button></div>
 		</div>
 	</form>
 	`;
