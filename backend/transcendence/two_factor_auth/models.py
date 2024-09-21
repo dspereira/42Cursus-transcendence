@@ -12,7 +12,7 @@ class OtpUserOptions(models.Model):
 	secret_key = models.CharField()
 	qr_code = models.BooleanField(default=False)
 	email = models.CharField(unique=True, null=True)
-	phone_number = models.CharField(max_length=255, unique=True, null=True, default=None)
+	phone_number = models.CharField(max_length=20, unique=True, null=True, default=None)
 
 	class Meta:
 		db_table = 'two_factor_user_config'

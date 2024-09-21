@@ -1,6 +1,8 @@
-from django.http import JsonResponse
-import json
 from custom_decorators import accepted_methods, login_required
+from custom_utils.models_utils import ModelManager
+from django.http import JsonResponse
+from .models import OtpUserOptions
+import json
 import os
 
 from .two_factor import getUser
@@ -18,6 +20,28 @@ from .two_factor import exist_phone_number
 from .two_factor import is_configuration_in_db
 from .two_factor import create_user_options
 from .two_factor import get_user_otp_options
+
+otp_user_settings_model = ModelManager(OtpUserOptions)
+
+@accepted_methods(["GET"])
+def configured_2fa(request):
+	if request:
+		if request.access_data:
+			user = getUser(request.access_data.sub)
+			if not user:
+				return JsonResponse({"message": "Error: Invalid Users!"}, status=409)
+			otp_user_settings = otp_user_settings_model.get(user=user)
+			if not otp_user_settings:
+				return JsonResponse({"message": "Error: User has no OTP setup!"}, status=409)
+			configured_methods = {"qr_code": False, "email": False, "phone": False}
+			if exist_qr_code(user):
+				configured_methods['qr_code'] = True
+			if exist_email(user):
+				configured_methods['email'] = True
+			if exist_phone_number(user):
+				configured_methods['phone'] = True
+			return JsonResponse({"message": "OTP option sended with success!", "configured_methods": configured_methods}, status=200)
+	return JsonResponse({"message": "Error: Invalid Request!"}, status=400)
 
 @accepted_methods(["GET"])
 def generate_qr_code(request):
@@ -215,6 +239,24 @@ def update_configurations(request):
 			status = "OK"
 
 	return JsonResponse({"message": message, "status": status})
+
+
+
+
+
+
+
+
+
+
+
+
+
+"""
+---------------------------------------------------------------------
+---------------- VERIFICAR SE ESTAS ROTAS SÃO USADAS ----------------
+---------------------------------------------------------------------
+"""
 
 @accepted_methods(["GET"])
 def is_qr_code_configured(request):
