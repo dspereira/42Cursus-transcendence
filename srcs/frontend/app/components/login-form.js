@@ -2,7 +2,8 @@ import {redirect} from "../js/router.js";
 import {callAPI} from "../utils/callApiUtils.js";
 import { render } from "../js/router.js";
 import PageEmailResend from "../page-components/page-email-resend.js";
-import { getDynamicHtmlElm } from "../utils/getHtmlElmUtils.js";
+import { getDynamicHtmlElm, getHtmlElm } from "../utils/getHtmlElmUtils.js";
+import Page2FA from "../page-components/page-2fa.js";
 
 const EMAIL_NOT_VERIFIED_MSG = 'Email not verified. Please verify your email.';
 
@@ -185,7 +186,8 @@ export default class LoginForm extends HTMLElement {
 	#apiResHandlerCalback = (res, data) => {
 		const value = this.html.querySelector('#email').value.trim();
 		if (res.ok && data.message === "success")
-			redirect("/");
+			render(getHtmlElm(Page2FA));
+			//redirect("/");
 		else if (res.status == 401 && data.message == EMAIL_NOT_VERIFIED_MSG)
 			render(getDynamicHtmlElm(PageEmailResend, value ,"key"));
 		else {

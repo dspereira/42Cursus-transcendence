@@ -15,6 +15,7 @@ import PageTournamentInfo from "../page-components/page-tournament-info.js";
 import PageEmailVerification from "../page-components/page-email-verification.js";
 import PageEmailSent from "../page-components/page-email-sent.js";
 import PageEmailResend from "../page-components/page-email-resend.js";
+import Page2FA from "../page-components/page-2fa.js";
 
 // Components
 import AppHeader from "../components/app-header.js";
@@ -44,6 +45,7 @@ import TourneyInvitesReceived from "../components/tourney-invites-received.js";
 import TourneyInviteCard from "../components/tourney-invite-card.js";
 import TournamentCard from "../components/tournament-card.js";
 import TourneyInfo from "../components/tourney-info.js";
+import TfaEmail from "../components/tfa-email.js";
 
 // Others
 import stateManager from "./StateManager.js";

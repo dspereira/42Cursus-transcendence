@@ -1,29 +1,27 @@
 import {redirect} from "../js/router.js";
 import stateManager from "../js/StateManager.js";
+import { callAPI } from "../utils/callApiUtils.js";
 
 const styles = ``;
 
 const getHtml = function(data) {
 	const html = `
-	<!--<app-header></app-header>-->
-	<div class="row">
-	  <div class="col-md-4 offset-md-4">
-		<login-form></login-form>
-	  </div>
-	</div>
+		<h1>2FA</h1>
+		<div class="option-2fa"><div>
 	`;
 	return html;
 }
 
-const title = "Login Page";
+const title = "2FA page";
 
-export default class PageLogin extends HTMLElement {
-	static #componentName = "page-login";
+export default class Page2FA extends HTMLElement {
+	static #componentName = "page-2fa";
 
 	constructor() {
 		super()
 		this.#initComponent();
 		this.#render();
+		this.#scripts();
 	}
 
 	static get componentName() {
@@ -39,6 +37,7 @@ export default class PageLogin extends HTMLElement {
 			this.styles.textContent = this.#styles();
 			this.html.classList.add(`${this.elmtId}`);
 		}
+		this.option2fa = this.html.querySelector(".option-2fa");
 	}
 
 	#styles() {
@@ -57,6 +56,23 @@ export default class PageLogin extends HTMLElement {
 		this.appendChild(this.html);
 		stateManager.setState("pageReady", true);
 	}
+
+	#scripts() {
+		this.#get2faOption();
+	}
+
+	#get2faOption() {
+		callAPI("GET", `http://127.0.0.1:8000/api/two-factor-auth/configured-2fa/`, null, (res, data) => {			
+			if (res.ok && data && data.configured_methods) {
+				if (data.configured_methods.qr_code)
+					this.option2fa.innerHTML = "Qr code";
+				else if (data.configured_methods.email)
+					this.option2fa.innerHTML = "<tfa-email></tfa-email>";
+				else if (data.configured_methods.phone)
+					this.option2fa.innerHTML = "phone";
+			}
+		});
+	}
 }
 
-customElements.define(PageLogin.componentName, PageLogin);
+customElements.define(Page2FA.componentName, Page2FA);
