@@ -16,6 +16,7 @@ const styles = `
 	flex-direction: column;
 	align-items: flex-start;
 	height: 100%;
+	min-height: 500px;
 	padding-top: 8px;
 	padding-left: 5px;
 	padding-right: 5px;
@@ -117,7 +118,7 @@ button {
 }
 
 .close .list-btn button{
-	margin-bottom: 7px;
+	margin-bottom: 12px;
 }
 
 .close #list:hover {
@@ -129,7 +130,7 @@ button {
 
 .close .link-btn .icon {
 	font-size: 22px;
-	padding: 8px 14px 8px 14px;
+	padding: 3px 14px 3px 14px;
 }
 
 .close .link-btn .icon-text {
@@ -237,9 +238,27 @@ button {
 	gap: 20px;
 }
 
+.link-btn {
+	min-height: 500px;
+	display: flex;
+	flex-direction: column;
+}
+
 .hide {
 	display: none;
 }
+
+@media (max-height: 500px) {
+	.bottom-buttons {
+		top: 380px;
+	}
+}
+
+.min-bottom-btns-close {
+	top: 380px;
+}
+
+
 
 `;
 
@@ -557,7 +576,7 @@ export default class SidePanel extends HTMLElement {
 	}
 
 	#responsiveSidePanel() {
-		const mediaQuery = window.matchMedia('(max-width: 1000px)')
+		const mediaQuery = window.matchMedia('(max-width: 1000px)');
 		mediaQuery.addEventListener('change', () => {
 			if (mediaQuery.matches)
 				this.#closeSidePanel();
