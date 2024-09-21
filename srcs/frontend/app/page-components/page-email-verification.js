@@ -1,6 +1,7 @@
 import stateManager from "../js/StateManager.js";
 import { callAPI } from "../utils/callApiUtils.js";
 import { render } from "../js/router.js";
+import { redirect } from "../js/router.js";
 
 const styles = `
 .mail-info-container {
@@ -138,7 +139,16 @@ export default class PageEmailVerification extends HTMLElement {
 	}
 
 	#scripts() {
+		this.#rediretionToHomeBtn();
+	}
 
+	#rediretionToHomeBtn() {
+		const btn = this.html.querySelector(".btn-home");
+		if (!btn)
+			return ;
+		btn.addEventListener("click", () => {
+			redirect("/");
+		});
 	}
 }
 
