@@ -14,16 +14,9 @@ const styles = `
 		gap: 50px;
 	}
 
-	@media (max-width: 1000px) {
-		.profile-container {
-			flex-direction: column;
-			align-items: center;
-		}
-	}
-
 	.profile {
-		min-width: 30%;
-		max-width: 100%;
+		width: 30%;
+		min-width: 280px;
 	}
 
 	.history {
@@ -31,7 +24,11 @@ const styles = `
 		min-width: 350px;
 	}
 
-	@media (max-width: 1000px){
+	@media (max-width: 1100px) {
+		.profile-container {
+			flex-direction: column;
+			align-items: center;
+		}
 		.history {
 			width: 100%;
 		}

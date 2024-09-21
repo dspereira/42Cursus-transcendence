@@ -122,6 +122,18 @@ legend {
 	justify-content: center;
 }
 
+.main-conf-text {
+	font-size: 24px;
+}
+
+.div-margin {
+	margin-bottom: 40px;
+}
+
+.small-margin {
+	margin-bottom: 20px;
+}
+
 @media (max-width: 900px) {
 	.main-container {
 		flex-direction: column;
@@ -139,6 +151,7 @@ legend {
 		width: 70%;
 	}
 }
+
 `;
 
 const getHtml = function(data) {
@@ -149,14 +162,14 @@ const getHtml = function(data) {
 				<div class="general-settings-container">
 					<div class="alert alert-danger hide" role="alert"></div>
 					<div class="alert alert-success hide" role="alert"></div>
-					<h2>Profile Settings</h2>
+					<div class="main-conf-text">Profile Settings</div>
 					<hr>
 					<label for="new-username">Change Username</label>
-					<input type="text" class="form-control form-control-md" id="new-username" placeholder="New Username" maxlength="15">
+					<input type="text" class="form-control form-control-md small-margin" id="new-username" placeholder="New Username" maxlength="15">
 					<label for="new-bio">Change Bio</label>
-					<textarea type="text" class="form-control form-control-md" id="new-bio" placeholder="New Bio" rows="3" maxlength="255"></textarea>
+					<textarea type="text" class="form-control form-control-md div-margin" id="new-bio" placeholder="New Bio" rows="3" maxlength="255"></textarea>
 
-					<h2>Scurity Settings</h2>
+					<div class="main-conf-text">Security Settings</div>
 					<hr>
 					<fieldset>
 						<legend>Choose where to receive your two-factor authentication:</legend>
@@ -172,7 +185,7 @@ const getHtml = function(data) {
 								Email
 							</label>
 						</div>
-						<div class="form-check">
+						<div class="form-check div-margin">
 							<input class="form-check-input" type="checkbox" value="phone" id="phone">
 							<label class="form-check-label" for="phone">
 								Phone
@@ -180,10 +193,10 @@ const getHtml = function(data) {
 						</div>
 					</fieldset>
 
-					<h2>Game Settings</h2>
+					<div class="main-conf-text">Game Settings</div>
 					<hr>
 					<label for="theme-options">Choose the game theme:</label>
-					<select class="form-select" id="theme-options" aria-label="Game theme selection">
+					<select class="form-select div-margin" id="theme-options" aria-label="Game theme selection">
 						<option value="0" selected>Classic Retro</option>
 						<option value="1">Modern Neon</option>
 						<option value="2">Ocean Vibes</option>
@@ -191,7 +204,7 @@ const getHtml = function(data) {
 						<option value="4">Forest Retreat</option>
 					</select>
 
-					<h2>Language Settings</h2>
+					<div class="main-conf-text">Language Settings</div>
 					<hr>
 					<label for="language-options">Choose language:</label>
 					<select class="form-select" id="language-options" aria-label="Language selection">

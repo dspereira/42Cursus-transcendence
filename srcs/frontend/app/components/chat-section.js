@@ -209,6 +209,13 @@ form {
 	pointer-events: none;
 	z-index: 1000;
 }
+
+@media (max-width: 610px) {
+	form > .text-area::placeholder {
+		font-size: 13px;
+	}
+}
+
 `;
 
 const getHtml = function(data) {
@@ -244,7 +251,7 @@ const getHtml = function(data) {
 				<div class="msg-panel scroll"></div>
 				<div class="msg-input">
 					<form id="msg-submit">
-						<textarea class="form-control text-area input-color" id="text-area" rows="1" maxlength="2000" placeholder="Type your message here.."></textarea>
+						<textarea class="form-control text-area input-color" id="text-area" rows="1" maxlength="2000" placeholder="Type your message here..."></textarea>
 						<i class="icon bi bi-send" id="send-icon"></i>
 					</form>
 				</div>

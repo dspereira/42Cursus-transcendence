@@ -8,13 +8,7 @@ const styles = `
 	display: flex;
 	min-width: 460px;
 	gap: 20px;
-}
-
-chat-friends-list {
-	width: 200px;
-	border-radius: 10px;
-	border-style: hidden;
-	background-color: ${colors.second_card};
+	height: 90vh;
 }
 
 .chat-area {
@@ -40,6 +34,8 @@ chat-friends-list {
 	display: flex;
 	max-width: 25%;
 	min-width: 180px;
+	margin-right: 20px;
+	max-height: 90vh;
 	color: ${colors.second_text};
 }
 

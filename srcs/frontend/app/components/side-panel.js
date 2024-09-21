@@ -21,6 +21,7 @@ const styles = `
 	padding-left: 5px;
 	padding-right: 5px;
 	background-color: ${colors.side_panel_background};
+	z-index: 100;
 }
 
 .side-panel > nav {
@@ -239,9 +240,10 @@ button {
 }
 
 .link-btn {
-	min-height: 500px;
 	display: flex;
 	flex-direction: column;
+	height: 100%;
+	overflow-y: auto;
 }
 
 .hide {
@@ -249,16 +251,23 @@ button {
 }
 
 @media (max-height: 500px) {
+	.side-panel {
+		height: 100px;
+		overflow-y: auto;
+	}
+
+	.btn-container {
+		display: flex;
+		flex-direction: column;
+		height: 800px;
+	}
+
 	.bottom-buttons {
-		top: 380px;
+		/*top: 380px;*/
+		position: static;
+		bottom: 0px;
 	}
 }
-
-.min-bottom-btns-close {
-	top: 380px;
-}
-
-
 
 `;
 
@@ -287,56 +296,58 @@ const getHtml = function(data) {
 					<img src="/img/logo.png" class="logo-img" alt="logo">
 					<span class="logo-text"><strong>BlitzPong</strong></span>
 				</div>
-				<div class="link-btn">
-					<button id="home">
-						<span>
-							<i class="icon bi bi-house-door"></i>
-							<span class="icon-text">Home</span>
-						</span>
-					</button>
-					<button id="profile">
-						<span>
-							<i class="icon bi bi-person"></i>
-							<span class="icon-text">Profile</span>
-						</span>
-					</button>
-					<button id="chat">
-						<span>
-							<i class="icon bi bi-chat"></i>
-							<span class="icon-text">Chat</span>
-						</span>
-					</button>
-					<button id="tournaments">
-						<span>
-							<i class="icon bi bi-trophy"></i>
-							<span class="icon-text">Tournaments</span>
-						</span>
-					</button>
-					<button id="friends">
-						<span>
-							<i class="icon bi bi-people"></i>
-							<span class="icon-text">Friends</span>
-						</span>
-					</button>
-					<button id="play">
-						<span>
-							<i class="icon bi bi-dpad"></i>
-							<span class="icon-text">Play</span>
-						</span>
-					</button>
-					<div class="bottom-buttons">
-						<button id="logout">
+				<div class="btn-container">
+					<div class="link-btn">
+						<button id="home">
 							<span>
-								<i class="icon bi bi-power"></i>
-								<span class="icon-text">Logout</span>
+								<i class="icon bi bi-house-door"></i>
+								<span class="icon-text">Home</span>
 							</span>
 						</button>
-						<button id="configurations">
+						<button id="profile">
 							<span>
-								<i class="icon bi bi-gear"></i>
-								<span class="icon-text">Configurations</span>
+								<i class="icon bi bi-person"></i>
+								<span class="icon-text">Profile</span>
 							</span>
 						</button>
+						<button id="chat">
+							<span>
+								<i class="icon bi bi-chat"></i>
+								<span class="icon-text">Chat</span>
+							</span>
+						</button>
+						<button id="tournaments">
+							<span>
+								<i class="icon bi bi-trophy"></i>
+								<span class="icon-text">Tournaments</span>
+							</span>
+						</button>
+						<button id="friends">
+							<span>
+								<i class="icon bi bi-people"></i>
+								<span class="icon-text">Friends</span>
+							</span>
+						</button>
+						<button id="play">
+							<span>
+								<i class="icon bi bi-dpad"></i>
+								<span class="icon-text">Play</span>
+							</span>
+						</button>
+						<div class="bottom-buttons">
+							<button id="logout">
+								<span>
+									<i class="icon bi bi-power"></i>
+									<span class="icon-text">Logout</span>
+								</span>
+							</button>
+							<button id="configurations">
+								<span>
+									<i class="icon bi bi-gear"></i>
+									<span class="icon-text">Configurations</span>
+								</span>
+							</button>
+						</div>
 					</div>
 				</div>
 			<nav>

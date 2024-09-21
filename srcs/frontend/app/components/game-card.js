@@ -10,17 +10,15 @@ const styles = `
 		width: 100%;
 		padding: 5px 15px 5px 15px;
 		margin-bottom: 20px;
-		color: ${colors.main_card};
+		color: ${colors.primary_text};
 	}
 
 	.game-win {
-		border: 3px solid;
-		background-color: ${colors.game_win};
+		border: 5px solid ${colors.game_win};
 	}
 
 	.game-loss {
-		border: 3px solid;
-		background-color:${colors.game_loss};
+		border: 3px solid ${colors.game_loss};
 	}
 
 	.player-container {

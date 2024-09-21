@@ -8,7 +8,7 @@ const styles = `
 	display: flex;
 	flex-direction: row;
 	justify-content: flex-start;
-	gap: 30px;
+	gap: 20px;
 	max-height: 90vh;
 }
 
@@ -16,6 +16,8 @@ const styles = `
 	display: flex;
 	flex-direction: column;
 	justify-content: flex-start;
+	min-width: 140px;
+	width: 10%;
 	border-radius: 5px;
 	border-style: hidden;
 	background-color: ${colors.second_card};

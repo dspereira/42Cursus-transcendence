@@ -154,18 +154,30 @@ const styles = `
 	display: none;
 }
 
+.list-container {
+	display: flex;
+	flex-direction: column;
+		min-width: 200px;
+	border-radius: 10px;
+	border-style: hidden;
+	background-color: ${colors.second_card};
+	padding-bottom: 10px;
+}
+
 `;
 
 const getHtml = function(data) {
 	const html = `
-		<div class="search-container">
-			<div class="form-group search">
-				<i class="search-icon bi bi-search"></i>
-				<input type="text" class="form-control form-control-sm" id="search" placeholder="Search..." maxlength="50">
+		<div class="list-container">
+			<div class="search-container">
+				<div class="form-group search">
+					<i class="search-icon bi bi-search"></i>
+					<input type="text" class="form-control form-control-sm" id="search" placeholder="Search..." maxlength="50">
+				</div>
 			</div>
+			<div class="search-list scroll hide"></div>
+			<div class="friend-list scroll"></div>
 		</div>
-		<div class="search-list scroll hide"></div>
-		<div class="friend-list scroll"></div>
 	`;
 	return html;
 }

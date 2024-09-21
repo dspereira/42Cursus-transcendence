@@ -1,8 +1,17 @@
 import stateManager from "../js/StateManager.js";
 import { callAPI } from "../utils/callApiUtils.js";
 import { colors } from "../js/globalStyles.js";
+import { charLimiter } from "../utils/characterLimit.js";
+import charLimit from "../utils/characterLimit.js";
 
 const styles = `
+
+	.tourney-div {
+		display: flex;
+		min-width: 460px;
+		flex-direction: column;
+	}
+
 	.tournament-container {
 		display: flex;
 		align-items: center;
@@ -29,7 +38,8 @@ const styles = `
 
 	.graph {
 		display: flex;
-		width: 80%;
+		width: 100%;
+		min-width: 460px;
 		justify-content: flex-start;
 		// background-color: ${colors.second_card};
 		border-radius: 8px;
@@ -160,6 +170,33 @@ const styles = `
 	.hide {
 		display: none;
 	}
+
+	.player-1, .player-2 {
+		min-width: 150px;
+	}
+
+	@media (max-width:800px) {
+		.player-1, .player-2 {
+			height: auto;
+			min-width: 100px;
+		}
+
+		.info-right, .info-left {
+			height: auto;
+		}
+
+		.info-right, .info-right > .img-name-info {
+			flex-direction: column-reverse;
+		}
+
+		.info-left, .info-left > .img-name-info{
+			flex-direction: column;
+		}
+
+		.game-flex {
+			gap: 10px;
+		}
+	}
 `;
 
 const getHtml = function(data) {
@@ -174,7 +211,7 @@ const getHtml = function(data) {
 				<div class="graph">
 					<div class="game-size-1 padding-35 game-flex game-flex-column game-0">
 						<div class="player-1">
-							<div class="player-info hide">
+							<div class="player-info hide info-left">
 								<div class="img-name-info">
 									<img src="https://api.dicebear.com/8.x/bottts/svg?seed=dsilveri" class="profile-photo" alt="profile photo chat"/>
 									<span class="username">username</span>
@@ -185,7 +222,7 @@ const getHtml = function(data) {
 							</div>
 						</div>
 						<div class="player-2">
-							<div class="player-info hide">
+							<div class="player-info hide info-left">
 								<div class="img-name-info">
 									<img src="https://api.dicebear.com/8.x/bottts/svg?seed=dsilveri" class="profile-photo" alt="profile photo chat"/>
 									<span class="username">username</span>
@@ -198,7 +235,7 @@ const getHtml = function(data) {
 					</div>
 					<div class="game-size-2 game-flex game-flex-row game-2">
 						<div class="player-1 justify-start">
-							<div class="player-info hide">
+							<div class="player-info hide info-left">
 								<div class="img-name-info">
 									<img src="https://api.dicebear.com/8.x/bottts/svg?seed=dsilveri" class="profile-photo" alt="profile photo chat"/>
 									<span class="username">username</span>
@@ -209,7 +246,7 @@ const getHtml = function(data) {
 							</div>
 						</div>
 						<div class="player-2">
-							<div class="player-info hide">
+							<div class="player-info hide info-right">
 								<div class="score-info">
 									<span class="score hide">7</span>
 								</div>
@@ -222,7 +259,7 @@ const getHtml = function(data) {
 					</div>
 					<div class="game-size-1 padding-35 game-flex game-flex-column game-1">
 						<div class="player-1">
-							<div class="player-info hide">
+							<div class="player-info hide info-right">
 								<div class="score-info">
 									<span class="score hide">7</span>
 								</div>
@@ -233,7 +270,7 @@ const getHtml = function(data) {
 							</div>
 						</div>
 						<div class="player-2">
-							<div class="player-info hide">
+							<div class="player-info hide info-right">
 								<div class="score-info">
 									<span class="score hide">7</span>
 								</div>
@@ -351,7 +388,7 @@ export default class TourneyGraph extends HTMLElement {
 			return ;
 		playerHide.classList.remove("hide");
 		img.setAttribute("src", playerInfo.image);
-		username.innerHTML = playerInfo.username;
+		username.innerHTML = charLimiter(playerInfo.username, charLimit);
 		score.innerHTML = `${playerScore}`;
 
 		if (playerWinner) {

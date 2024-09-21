@@ -69,33 +69,58 @@ const styles = `
 
 	.bio-box {
 		text-overflow: ellipsis;
-		border: 3px solid ${colors.main_card};
 		border-radius: 5px;
 		font-size: 21px;
-		width: 85%;
+		width: 100%;
 		margin-bottom: 10px;
 		text-align: center;
 	}
 
 	.bio-and-stats {
 		display: flex;
+		width: 90%;
 		min-width: 200px;
 		flex-direction: column;
 		align-items: center;
 		border-radius: 10px;
 	}
 
-	@media (max-width: 1000px) {
+	@media (max-width: 1100px) {
 		.profile-grid-container {
 			width: 100%;
-			flex-direction: row;
+			flex-direction: column;
 			justify-content: center;
 			gap: 20px;
 		}
 
-		.bio-and-stats {
-			width: 60%;
+		.game-stats-container, .tournament-stats-container {
+			width: 40%;
 		}
+
+		.game-stats {
+			flex-direction: row;
+			gap: 10px;
+			padding: 20px;
+		}
+	}
+
+	@media (max-width: 620px) {
+			.game-stats-container, .tournament-stats-container {
+			width: 100%;
+		}
+
+		.game-stats {
+			flex-direction: column;
+		}
+	
+	}
+
+	.game-stats-container, .tournament-stats-container {
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+		align-items: center;
+		width: 100%;
 	}
 `;
 
@@ -113,20 +138,24 @@ const getHtml = function(data) {
 			<div class="bio-and-stats">
 				<div class="game-stats">
 					<!-- Total games tournaments included -->
-					<div class="total-games"></div>
-					<div class="games-win-rate"></div>
-					<div class="win-rate-bar game"></div>
-					<div class="wins-losses game">
-						<div class="wins game"></div>
-						<div class="losses game"></div>
+					<div class="game-stats-container">
+						<div class="total-games"></div>
+						<div class="games-win-rate"></div>
+						<div class="win-rate-bar game"></div>
+						<div class="wins-losses game">
+							<div class="wins game"></div>
+							<div class="losses game"></div>
+						</div>
 					</div>
 
-					<div class="total-tournaments"></div>
-					<div class="tournaments-win-rate"></div>
-					<div class="win-rate-bar tournament"></div>
-					<div class="wins-losses tournament">
-						<div class="wins tournament"></div>
-						<div class="losses tournament"></div>
+					<div class="tournament-stats-container">
+						<div class="total-tournaments"></div>
+						<div class="tournaments-win-rate"></div>
+						<div class="win-rate-bar tournament"></div>
+						<div class="wins-losses tournament">
+							<div class="wins tournament"></div>
+							<div class="losses tournament"></div>
+						</div>
 					</div>
 				</div>
 
@@ -237,7 +266,7 @@ export default class UserProfile extends HTMLElement {
 		console.log(stats);
 
 		this.totalGames.innerHTML = `Total games: ${stats.totalGames}`;
-		this.gameWinRate.innerHTML = `Games win rate: ${stats.gamesWinRate}`;
+		this.gameWinRate.innerHTML = `Game win rate: ${stats.totalGames > 0 ? stats.gamesWinRate : "---"}%`;
 
 		if (!stats.gamesWinRate && !stats.totalGames)
 			this.winRateBarGame.style.background = `linear-gradient(to right, blue 0%, red 100%)`;
@@ -248,7 +277,7 @@ export default class UserProfile extends HTMLElement {
 		this.gamesLoses.innerHTML = `L: ${stats.gamesLost}`;
 
 		this.totalTournaments.innerHTML = `Total tornaments: ${stats.totalTournaments}`;
-		this.tournamentWinRate.innerHTML = `Tornaments win rate: ${stats.tournamentsWinRate}`;
+		this.tournamentWinRate.innerHTML = `Tornament win rate: ${stats.totalTournaments > 0 ? stats.tournamentsWinRate: "---"}`;
 		
 		if (!stats.tournamentsWinRate && !stats.totalTournaments)
 			this.winRateBarTournaments.style.background = `linear-gradient(to right,  ${colors.game_win} 0%, ${colors.game_loss} 100%)`;

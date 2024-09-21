@@ -9,12 +9,13 @@ header {
 	position: fixed;
 	top: 0;
 	display: flex;
-    justify-content: space-between;
-    align-items: center;
+	justify-content: space-between;
+	align-items: center;
 	width: 100%;
 	height: 56px;
 	padding: 10px 20px 10px 20px;
-	background-color: ${colors.third_background};
+	background-color: ${colors.page_background};
+	z-index: 99;
 }
 
 .left-side {
