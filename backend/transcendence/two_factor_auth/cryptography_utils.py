@@ -11,6 +11,11 @@ load_dotenv()
 CRYPTOGRAPHER_PRIVATE_KEY = os.getenv('CRYPTOGRAPHER_PRIVATE_KEY')
 CRYPTOGRAPHER_PUBLIC_KEY = os.getenv('CRYPTOGRAPHER_PUBLIC_KEY')
 
+if not CRYPTOGRAPHER_PUBLIC_KEY or not CRYPTOGRAPHER_PRIVATE_KEY:
+	print()
+	print("Failed to Load -> CRYPTOGRAPHER KEYS")
+	print()
+
 class Cryptographer:
 	def __init__(self):
 		private_key_bytes = self._load_private_key(CRYPTOGRAPHER_PRIVATE_KEY)

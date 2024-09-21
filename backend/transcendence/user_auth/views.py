@@ -59,6 +59,7 @@ def register(request):
 		if not add_bot_as_friend(user=user):
 			return JsonResponse({"message": "Error adding bot user as friend"}, status=409)
 		send_custom_bot_message(user, generate_welcome_message(user.username))
+		setup_default_tfa_configs()
 	return JsonResponse({"message": "success"})
 
 @accepted_methods(["POST"])

@@ -16,10 +16,25 @@ def generate_public_key(private_key):
 	public_key = private_key.public_key()
 	return public_key
 
+def exist_already_cryptographer_keys(env_file_path):
+	if os.path.exists(env_file_path):
+		with open(env_file_path, 'r') as env_file:
+			env_content = env_file.read()
+		if "CRYPTOGRAPHER_PRIVATE_KEY" in env_content and "CRYPTOGRAPHER_PUBLIC_KEY" in env_content:
+			return True
+		return False
+
 class Command(BaseCommand):
 	help = 'Generate and print private and public keys'
 
 	def handle(self, *args, **options):
+
+		env_file_path = '.env'
+
+		if exist_already_cryptographer_keys(env_file_path):
+			self.stdout.write(self.style.ERROR("CRYPTOGRAPHER KEYS already at .env file."))
+			return
+
 		private_key = generate_private_key()
 		public_key = generate_public_key(private_key)
 
@@ -34,16 +49,11 @@ class Command(BaseCommand):
 			format=serialization.PublicFormat.SubjectPublicKeyInfo
 		)
 
-		with open('two_factor_auth/.env', 'a') as env_file:
+		with open(env_file_path, 'a') as env_file:
 			env_file.write(f"CRYPTOGRAPHER_PRIVATE_KEY=\"{private_key_pem.decode('utf-8')}\"\n")
 			env_file.write(f"CRYPTOGRAPHER_PUBLIC_KEY=\"{public_key_pem.decode('utf-8')}\"\n")
 
-		print("--------------------------------------------")
-		print(f"Private Key: {private_key_pem}")
-		print(f" Public Key: {public_key_pem}")
-		print("--------------------------------------------")
-
-		# self.stdout.write("--------------------------------------------")
-		# self.stdout.write(f"Private Key: {private_key.save_pkcs1().hex()}")
-		# self.stdout.write(f"Public Key: {public_key.save_pkcs1().hex()}")
-		# self.stdout.write("--------------------------------------------")
+		if exist_already_cryptographer_keys(env_file_path):
+			self.stdout.write(self.style.SUCCESS("CRYPTOGRAPHER KEYS created in .env file."))
+		else:
+			self.stdout.write(self.style.ERROR("Failed to create CRYPTOGRAPHER KEYS in .env file."))
