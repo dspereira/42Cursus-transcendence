@@ -1,8 +1,11 @@
 from django.db import models
 from user_auth.models import User
 
-class BlacklistOtp(models.Model):
-	code = models.IntegerField(unique=True, db_index=True)
+class OtpCodes(models.Model):
+	code = models.CharField(db_index=True, max_length=6)
+	created_by = models.ForeignKey(User, on_delete=models.CASCADE, db_index=True)
+	status = models.CharField(max_length=20)
+	created = models.DateTimeField(auto_now_add=True)
 
 	def __str__(self) -> str:
 		return f"Code: {self.code}"

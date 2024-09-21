@@ -1,5 +1,5 @@
 from custom_utils.models_utils import ModelManager
-from .models import BlacklistOtp, OtpUserOptions
+from .models import OtpCodes, OtpUserOptions
 from user_auth.models import User
 from dotenv import load_dotenv
 from .cryptography_utils import Cryptographer
@@ -15,11 +15,15 @@ from custom_utils.email_utils import EmailSender
 
 load_dotenv()
 
-blacklist_otp_model = ModelManager(BlacklistOtp)
+otp_codes_model = ModelManager(OtpCodes)
 otp_user_opt_model = ModelManager(OtpUserOptions)
 user_model = ModelManager(User)
 
 AVAILABLE_OTP_METHODS = ['email', 'phone', 'qr_code']
+
+OTP_STATUS_USED = "used"
+OTP_STATUS_AVAILABLE = "available"
+OTP_STATUS_INVALID = "invalid"
 
 OTP_EXP_TIME_MIN = 5
 OTP_EXP_TIME_SEC = OTP_EXP_TIME_MIN * 60
@@ -37,37 +41,54 @@ def initiate_two_factor_authentication(user):
 		send_smsto_user(user=user)
 		return "phone"
 
+def invaidate_all_valid_user_otp(user):
+	if user:
+		valid_otps = otp_codes_model.filter(user=user, status=OTP_STATUS_AVAILABLE)
+		if valid_otps:
+			for otp in valid_otps:
+				otp._status = OTP_STATUS_INVALID
+				otp.save()
+
 def generate_otp_code(user):
 	otp_value = None
-	secret_key = get_user_secret_key(user)
-	if secret_key:
-		totp = pyotp.TOTP(secret_key, interval=OTP_EXP_TIME_SEC)
-		otp_value = totp.now()
+	if user:
+		invaidate_all_valid_user_otp(user)
+		secret_key = get_user_secret_key(user)
+		if secret_key:
+			totp = pyotp.TOTP(secret_key, interval=OTP_EXP_TIME_SEC)
+			otp_value = totp.now()
+			if not otp_codes_model.create(created_by=user, code=otp_value, status=OTP_STATUS_AVAILABLE):
+				return None
 	return otp_value
 
 def generate_qr_code_img_base64(user):
-	secret_key = get_user_secret_key(user)
-	if secret_key:
-		provisioning_uri = pyotp.utils.build_uri(
-			secret=secret_key,
-			issuer="42T",
-			name=user.username,
-		)
-		qr_img = qrcode.make(provisioning_uri)
-		img_buffer = io.BytesIO()
-		qr_img.save(img_buffer)
-		img_buffer.seek(0)
-		img_base64 = base64.b64encode(img_buffer.read()).decode("utf-8")
-		return img_base64
+	if user:
+		secret_key = get_user_secret_key(user)
+		if secret_key:
+			provisioning_uri = pyotp.utils.build_uri(
+				secret=secret_key,
+				issuer="42T",
+				name=user.username,
+			)
+			qr_img = qrcode.make(provisioning_uri)
+			img_buffer = io.BytesIO()
+			qr_img.save(img_buffer)
+			img_buffer.seek(0)
+			img_base64 = base64.b64encode(img_buffer.read()).decode("utf-8")
+			return img_base64
 	return None
 
 def is_valid_otp(otp: str, user):
-	secret_key = get_user_secret_key(user)
-	if secret_key:
-		totp = pyotp.TOTP(secret_key, interval=OTP_EXP_TIME_SEC)
-		if otp:
-			if totp.verify(otp):
-				return True
+	if user:
+		code = otp_codes_model.get(created_by=user, code=otp, status=OTP_STATUS_AVAILABLE)
+		if code:
+			secret_key = get_user_secret_key(user)
+			if secret_key:
+				totp = pyotp.TOTP(secret_key, interval=OTP_EXP_TIME_SEC)
+				if otp:
+					if totp.verify(otp):
+						code.status = OTP_STATUS_USED
+						return True
 	return False
 
 def is_valid_otp_qr_code(otp: str, user):
@@ -76,6 +97,8 @@ def is_valid_otp_qr_code(otp: str, user):
 		totp = pyotp.TOTP(secret_key)
 		if otp:
 			if totp.verify(otp):
+				if not otp_codes_model.create(created_by=user, status=OTP_STATUS_USED, code=otp):
+					return False
 				return True
 	return False
 
@@ -172,6 +195,8 @@ def send_smsto_user(user):
 	auth_token = os.environ['TWILIO_AUTH_TOKEN']
 	phone_number = os.environ['TWILIO_PHONE_NUMBER']
 	otp_code = generate_otp_code(user)
+	if not otp_code:
+		return None
 	message_body = f"Authnetication Code: " + otp_code
 	otp_user_opt = otp_user_opt_model.get(user=user)
 	user_phone_number = re.sub(r'\s+', '', otp_user_opt.phone_number)
@@ -181,13 +206,12 @@ def send_smsto_user(user):
 		from_=phone_number,
 		to=user_phone_number
 	)
-
 	return otp_code
 
 def send_email_to_user(user):
 	otp_user_opt = otp_user_opt_model.get(user=user)
 	otp_code = generate_otp_code(user)
-	if EmailSender().send_verification_code(code=otp_code, receiver_email=otp_user_opt.email):
+	if otp_code and EmailSender().send_verification_code(code=otp_code, receiver_email=otp_user_opt.email):
 		return True
 	return False
 
