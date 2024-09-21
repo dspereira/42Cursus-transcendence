@@ -15,6 +15,8 @@ from .two_factor import update_user_2fa_options
 from .two_factor import exist_qr_code
 from .two_factor import exist_email
 from .two_factor import exist_phone_number
+from .two_factor import is_valid_input_code
+from .two_factor import is_valid_otp_method
 
 # Apenas para Testes
 from .two_factor import is_configuration_in_db
@@ -89,53 +91,29 @@ def generate_user_email_code(request):
 
 @accepted_methods(["POST"])
 def validateOTP(request):
-
-	message = "Invalid Code"
-	is_valid = False
-	if request.access_data:
-		user = getUser(request.access_data.sub)
-	if request.body:
+	if request:
+		if not request.body:
+			return JsonResponse({"message": "Error: Empty Body Request!"}, status=400)
 		body_unicode = request.body.decode('utf-8')
 		req_data = json.loads(body_unicode)
-		otp_input_code = str(req_data['code']).strip()
-		if otp_input_code:
-				if is_valid_otp(otp_input_code, user):
-					message = "Validated with Success"
-					is_valid = True
-				else:
-					message = "Invalid Code"
-		else:
-			message = "Empty Input"
-	else:
-		message = "Empty request Body"
-
-	return JsonResponse({"message": message, "valid": is_valid})
-
-@accepted_methods(["POST"])
-def validateOTP_QR_Code(request):
-
-	message = "Invalid Code"
-	is_valid = False
-
-	if request.access_data:
-		user = getUser(request.access_data.sub)
-
-	if request.body:
-		body_unicode = request.body.decode('utf-8')
-		req_data = json.loads(body_unicode)
-		otp_input_code = str(req_data['code']).strip()
-		if otp_input_code:
-				if is_valid_otp_qr_code(otp_input_code, user):
-					message = "Validated with Success"
-					is_valid = True
-				else:
-					message = "Invalid Code"
-		else:
-			message = "Empty Input"
-	else:
-		message = "Empty request Body"
-
-	return JsonResponse({"message": message, "valid": is_valid})
+		if not is_valid_input_code(req_data.get('code')):
+			return JsonResponse({"message": "Error: Invalid OTP Code!"}, status=409)
+		code = str(req_data['code'])
+		if not is_valid_otp_method(req_data.get('method')):
+			return JsonResponse({"message": "Error: Invalid OTP Method!"}, status=409)
+		tfa_method = str(req_data['method'])
+		if request.access_data:
+			user = getUser(request.access_data.sub)
+			if not user:
+				return JsonResponse({"message": "Error: Invalid Users!"}, status=409)
+			if tfa_method == "email" or tfa_method == "phone":
+				if is_valid_otp(code, user):
+					return JsonResponse({"message": "OTP validated with success!"}, status=200)
+			else:
+				if is_valid_otp_qr_code(code, user):
+					return JsonResponse({"message": "OTP validated with success!"}, status=200)
+			return JsonResponse({"message": "Invalid OTP!"}, status=409)
+	return JsonResponse({"message": "Error: Invalid Request!"}, status=400)
 
 @accepted_methods(["GET"])
 def is_already_configured(request):

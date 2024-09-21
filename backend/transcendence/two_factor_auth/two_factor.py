@@ -19,6 +19,8 @@ blacklist_otp_model = ModelManager(BlacklistOtp)
 otp_user_opt_model = ModelManager(OtpUserOptions)
 user_model = ModelManager(User)
 
+AVAILABLE_OTP_METHODS = ['email', 'phone', 'qr_code']
+
 OTP_EXP_TIME_MIN = 5
 OTP_EXP_TIME_SEC = OTP_EXP_TIME_MIN * 60
 
@@ -187,4 +189,17 @@ def send_email_to_user(user):
 	otp_code = generate_otp_code(user)
 	if EmailSender().send_verification_code(code=otp_code, receiver_email=otp_user_opt.email):
 		return True
+	return False
+
+def is_valid_input_code(input_code):
+	if input_code:
+		code = str(input_code)
+		if len(code) == 6 and code.isdigit():
+			return True
+	return False
+
+def is_valid_otp_method(otp_method):
+	if otp_method:
+		if otp_method in AVAILABLE_OTP_METHODS:
+			return True
 	return False
