@@ -43,48 +43,49 @@ def configured_2fa(request):
 			return JsonResponse({"message": "OTP option sended with success!", "configured_methods": configured_methods}, status=200)
 	return JsonResponse({"message": "Error: Invalid Request!"}, status=400)
 
-@accepted_methods(["GET"])
+@login_required
+@accepted_methods(["POST"])
 def generate_qr_code(request):
+	if request:
+		if request.access_data:
+			user = getUser(request.access_data.sub)
+			if not user:
+				return JsonResponse({"message": "Error: Invalid Users!"}, status=409)
+			if not exist_qr_code(user):
+				return JsonResponse({"message": "Error: QR Code is not configured in 2FA!"}, status=409)
+			qr_code = generate_qr_code_img_base64(user)
+			if not qr_code:
+				return JsonResponse({"message": "Error: Failed to generate 2FA QR Code!"}, status=409)
+			return JsonResponse({"message": "QR Code sended with success!", "qr_code": qr_code}, status=200)
+	return JsonResponse({"message": "Error: Invalid Request!"}, status=400)
 
-	message = "Error generating QR Code"
-	qr_code = None
-
-	if request.access_data:
-		user = getUser(request.access_data.sub)
-
-	qr_code = generate_qr_code_img_base64(user)
-	if qr_code:
-		message = "QR Code generated with Success"
-
-	return JsonResponse({"message": message, "qr_code": qr_code})
-
-@accepted_methods(["GET"])
+@accepted_methods(["POST"])
 def generate_user_phone_code(request):
+	if request:
+		if request.access_data:
+			user = getUser(request.access_data.sub)
+			if not user:
+				return JsonResponse({"message": "Error: Invalid Users!"}, status=409)
+			if not exist_phone_number(user):
+				return JsonResponse({"message": "Error: Phone Number is not configured in 2FA!"}, status=409)
+			if not send_smsto_user(user):
+				return JsonResponse({"message": "Error: Failed to send 2FA SMS!"}, status=409)
+			return JsonResponse({"message": "SMS sended with success!"}, status=200)
+	return JsonResponse({"message": "Error: Invalid Request!"}, status=400)
 
-	message = None
-
-	if request.access_data:
-		user = getUser(request.access_data.sub)
-
-	message = send_smsto_user(user)
-	if not message:
-		message = "Error sending SMS"
-
-	return JsonResponse({"message": message})
-
-@accepted_methods(["GET"])
+@accepted_methods(["POST"])
 def generate_user_email_code(request):
-
-	message = "Email sended with Success!"
-
-	if request.access_data:
-		user = getUser(request.access_data.sub)
-
-	status = send_email_to_user(user)
-	if not status:
-		message = "Error sending Email"
-
-	return JsonResponse({"message": message})
+	if request:
+		if request.access_data:
+			user = getUser(request.access_data.sub)
+			if not user:
+				return JsonResponse({"message": "Error: Invalid Users!"}, status=409)
+			if not exist_email(user):
+				return JsonResponse({"message": "Error: Email is not configured in 2FA!"}, status=409)
+			if not send_email_to_user(user):
+				return JsonResponse({"message": "Error: Failed to send 2FA email!"}, status=409)
+			return JsonResponse({"message": "Email sended with success!"}, status=200)
+	return JsonResponse({"message": "Error: Invalid Request!"}, status=400)
 
 @accepted_methods(["POST"])
 def validateOTP(request):

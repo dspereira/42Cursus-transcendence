@@ -2,9 +2,9 @@ from django.urls import path
 from . import views
 
 urlpatterns = [
-	path('generate_qr_code', views.generate_qr_code, name='generate_qr_code'),
-	path('generate_user_phone_code', views.generate_user_phone_code, name='generate_user_phone_code'),
-	path('generate_user_email_code', views.generate_user_email_code, name='generate_user_email_code'),
+	path('request-qr-code', views.generate_qr_code, name='generate_qr_code'),
+	path('request-phone', views.generate_user_phone_code, name='generate_user_phone_code'),
+	path('request-email', views.generate_user_email_code, name='generate_user_email_code'),
 	path('validate_otp', views.validateOTP, name='validateOTP'),
 	path('validate_otp_qr_code', views.validateOTP_QR_Code, name='validateOTP_QR_Code'),
 	path('is_already_configured', views.is_already_configured, name='is_already_configured'),
