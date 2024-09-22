@@ -7,11 +7,10 @@ p {
 }
 
 .otp-code {
-	width: 200px;
-	/*	
-	width: 50px;
-	height: 50px;
-	*/
+	width: 45px;
+	height: 45px;
+	text-align: center;
+	font-size: 20px;
 }
 
 .code-container {
@@ -27,17 +26,20 @@ const getHtml = function(data) {
 
 		<form id="tfa-code">
 			<div class="form-group">
-				<!--
+				
 				<div class="code-container">
 				<input type="text" class="input-padding form-control form-control-md otp-code" id="email"  maxlength="1">
 				<input type="text" class="input-padding form-control form-control-md otp-code" id="email"  maxlength="1">
 				<input type="text" class="input-padding form-control form-control-md otp-code" id="email"  maxlength="1">
 				<input type="text" class="input-padding form-control form-control-md otp-code" id="email"  maxlength="1">
 				<input type="text" class="input-padding form-control form-control-md otp-code" id="email"  maxlength="1">
+				<input type="text" class="input-padding form-control form-control-md otp-code" id="email"  maxlength="1">
 				</div>
-				-->
+				
+				<!--
 				<input type="text" class="input-padding form-control form-control-md otp-code" id="code"  maxlength="6">
-			</div>
+				-->
+				</div>
 			<br></br>
 			<div>
 				<button type="submit" class="btn btn-primary btn-submit">validate</button>
@@ -101,6 +103,7 @@ export default class TfaEmail extends HTMLElement {
 	#scripts() {
 		this.#sendCodeToEmail();
 		this.#resendEmailBtn();
+		this.#pasteCode();
 		this.#submit();
 	}
 
@@ -120,6 +123,42 @@ export default class TfaEmail extends HTMLElement {
 			this.#sendCodeToEmail();
 		});
 	}
+
+	#pasteCode() {
+		this.html.addEventListener("paste", (event) =>{
+			let code;
+			if (event.clipboardData)
+				code = event.clipboardData.getData("text");
+			if (!code)
+				return ;
+			if (!this.#isValidCode(code))
+				return ;
+
+			const inputs = this.html.querySelectorAll(".otp-code");
+			if (!inputs || inputs.length < 6)
+				return ;
+
+			inputs.forEach((elm, idx) => {
+				elm.value = code[idx];
+			})
+		});
+	}
+
+	#isValidCodeDigit(digit) {
+		if (digit >= '0' &&  digit <= '9')
+			return true;
+	}
+
+	#isValidCode(code) {
+		if (!code || code.length != 6)
+			return false;
+		for(let i=0; i < 5; i++) {
+			if (!this.#isValidCodeDigit(code[i]))
+				return false;
+		}
+		return true;
+	}
+
 
 	#submit() {
 		const tfaForm = this.html.querySelector("#tfa-code");
