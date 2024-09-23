@@ -5,7 +5,7 @@ from user_profile.models import UserProfileInfo
 from channels.exceptions import StopConsumer
 from user_profile.aux import get_image_url
 from .models import Games, GameRequests
-from asgiref.sync import sync_to_async
+from asgiref.sync import sync_to_async, async_to_sync
 from user_auth.models import User
 import asyncio
 import json
@@ -18,6 +18,13 @@ from .game_logic.const_vars import WINNING_SCORE_PONTUATION
 from .utils import cancel_other_invitations
 
 from .Lobby import lobby_dict
+
+from tournament.utils import update_next_game
+from tournament.utils import is_final_game
+from tournament.utils import update_tournament_status
+from tournament.utils import update_users_tournament_stats
+from tournament.utils import send_games_notifications
+from tournament.utils import TOURNAMENT_STATUS_FINISHED
 
 user_profile_info_model = ModelManager(UserProfileInfo)
 game_req_model = ModelManager(GameRequests)
@@ -42,16 +49,23 @@ class Game(AsyncWebsocketConsumer):
 
 	async def connect(self):
 		await self.accept()
-		self.access_data = self.scope['access_data']
+		self.access_data = self.scope.get('access_data')
+		if not self.access_data:
+			await self.close(4000)
+			return
 		await self.__check_authentication()
 		self.user = await sync_to_async(get_authenticated_user)(self.access_data.sub)
 		if not self.user:
 			self.refresh_token_status = True
 			await self.close(4000)
 			return
-		lobby_id = int(self.scope['url_route']['kwargs']['lobby_id'])
-		if lobby_id and await sync_to_async(self.__has_access_to_lobby)(lobby_id):
-			self.lobby = lobby_dict[lobby_id]
+		lobby_id = str(self.scope['url_route']['kwargs']['lobby_id'])
+		if lobby_id and await self.__has_access_to_lobby(lobby_id):
+			self.lobby = await self.get_lobby(lobby_id)
+		else:
+			self.refresh_token_status = False
+			await self.close(4000)
+			return
 		if self.lobby:
 			self.room_group_name = "game_lobby_" + str(self.lobby.get_host_id())
 		else:
@@ -64,9 +78,13 @@ class Game(AsyncWebsocketConsumer):
 				self.channel_name
 			)
 		await self.send_users_info_to_group()
-		game_id = self.lobby.get_associated_game_id()
+		game_id = await sync_to_async(self.lobby.get_associated_game_id)()
 		if game_id:
-			await self.__start_game(game_id)
+			self.game = await sync_to_async(games_dict.get_game_obj)(game_id)
+			if self.game:
+				is_tournament = await sync_to_async(self.lobby.is_tournament_game)()
+				if not is_tournament or self.game.status == GAME_STATUS_PLAYING:
+					await self.__start_game(game_id)
 
 	async def send_users_info_to_group(self):
 		await self.channel_layer.group_send(self.room_group_name, {'type': 'send_users_info'})
@@ -80,6 +98,12 @@ class Game(AsyncWebsocketConsumer):
 
 	async def disconnect(self, close_code):
 		if not self.refresh_token_status:
+			if not self.lobby:
+				await sync_to_async(print)("-----------------------")
+				await sync_to_async(print)("NAO TEM LOBBY")
+				await sync_to_async(print)("-----------------------")
+
+				raise StopConsumer()
 			if not self.game:
 				if self.user.id == self.lobby.get_host_id():
 					await sync_to_async(cancel_other_invitations)(self.user)
@@ -96,6 +120,7 @@ class Game(AsyncWebsocketConsumer):
 			await sync_to_async(self.lobby.update_connected_status)(self.user.id, False)
 			await self.send_users_info_to_group()
 		await self.__stop_game_routine()
+		await sync_to_async(self.update_users)()
 		if self.room_group_name:
 			await self.channel_layer.group_discard(
 				self.room_group_name,
@@ -116,14 +141,18 @@ class Game(AsyncWebsocketConsumer):
 			if await self.__is_already_ready():
 				await self.__send_start_game_routine()
 		elif data_type == "key":
-			self.game.update_paddle(key=data_json['key'], status=data_json['status'], user_id=self.user.id)
+			if self.game:
+				self.game.update_paddle(key=data_json['key'], status=data_json['status'], user_id=self.user.id)
 		elif data_type == "refresh_token":
 			self.refresh_token_status = True
 
 	async def __send_start_game_routine(self):
 		user_1 = await sync_to_async(user_model.get)(id=self.lobby.get_host_id())
 		user_2 = await sync_to_async(user_model.get)(id=self.lobby.get_user_2_id())
-		self.game_info = await sync_to_async(game_model.create)(user1=user_1, user2=user_2)
+		if not await sync_to_async(self.lobby.is_tournament_game)():
+			self.game_info = await sync_to_async(game_model.create)(user1=user_1, user2=user_2)
+		else:
+			self.game_info = await sync_to_async(self.lobby.get_tournament_game)()
 		game_id = self.game_info.id
 		games_dict.create_new_game(game_id, user_1.id, user_2.id)
 		self.lobby.set_associated_game_id(game_id)
@@ -136,12 +165,14 @@ class Game(AsyncWebsocketConsumer):
 		)
 
 	async def send_start_game(self, event):
-		if self.lobby.get_host_id() == self.user.id:
-			await sync_to_async(cancel_other_invitations)(self.user)
+		if not  await sync_to_async(self.lobby.is_tournament_game)():
+			if self.lobby.get_host_id() == self.user.id:
+				await sync_to_async(cancel_other_invitations)(self.user)
 		await self.__start_game(event['game_id'])
 
 	async def __start_game(self, game_id):
-		self.game = await sync_to_async(games_dict.get_game_obj)(game_id)
+		if not self.game:
+			self.game = await sync_to_async(games_dict.get_game_obj)(game_id)
 		self.game_info = await sync_to_async(game_model.get)(id=game_id)
 		await self.__send_updated_data()
 		self.task = asyncio.create_task(self.__game_routine())
@@ -189,7 +220,7 @@ class Game(AsyncWebsocketConsumer):
 		})
 
 	async def __send_updated_data(self):
-		scores = self.game.get_score_values()
+		scores = await sync_to_async(self.game.get_score_values)()
 		await self.channel_layer.group_send(
 			self.room_group_name,
 			{
@@ -227,7 +258,7 @@ class Game(AsyncWebsocketConsumer):
 		await self.send_users_info_to_group()
 
 	async def __finish_game(self, finish_status):
-		self.game_info = await self.__get_game_info(self.game_info.id)
+		self.game_info = await self.__get_game_info(self.lobby.get_associated_game_id())
 		if self.game_info.status != GAME_STATUS_FINISHED and self.game_info.status != GAME_STATUS_SURRENDER:
 			self.game.set_status(finish_status)
 			await self.__send_updated_data()
@@ -238,9 +269,13 @@ class Game(AsyncWebsocketConsumer):
 			self.game_info.user2_score = scores['player_2_score']
 			self.game_info.status = finish_status
 			self.game_info.winner = winner
+			self.game_info.played = await sync_to_async(datetime.now)()
 			await sync_to_async(self.game_info.save)()
 			games_dict.remove_game_obj(self.game_info.id)
 			surrender = True if finish_status == GAME_STATUS_SURRENDER else False
+			if await sync_to_async(self.lobby.is_tournament_game)():
+				await sync_to_async(self.__update_tournament_games)()
+				await sync_to_async(send_games_notifications)(self.game_info.tournament)
 			await self.channel_layer.group_send(
 				self.room_group_name,
 				{
@@ -252,9 +287,10 @@ class Game(AsyncWebsocketConsumer):
 				}
 			)
 
-	def __has_access_to_lobby(self, lobby_id):
+	async def __has_access_to_lobby(self, lobby_id: str):
 		if lobby_id in lobby_dict:
-			lobby = lobby_dict[lobby_id]
+			#lobby = lobby_dict[lobby_id]
+			lobby = await self.get_lobby(lobby_id)
 			if lobby.has_access(self.user.id):
 				return True
 		return False
@@ -274,6 +310,7 @@ class Game(AsyncWebsocketConsumer):
 		user_profile = user_profile_info_model.get(user=user)
 		is_ready = self.lobby.is_user_ready(user_id)
 		display_info = {
+			"id": user_id,
 			"username": user.username,
 			"image": get_image_url(user_profile),
 			"is_ready": is_ready
@@ -304,3 +341,31 @@ class Game(AsyncWebsocketConsumer):
 			await self.send(text_data=json.dumps(content))
 		except Exception as e:
 			await sync_to_async(print)(e)
+
+	def __update_tournament_games(self):
+		game = self.game_info
+		tournament = game.tournament
+		if tournament and game:
+			if is_final_game(game.id, tournament):
+				update_tournament_status(tournament, TOURNAMENT_STATUS_FINISHED)
+				update_users_tournament_stats(tournament)
+			else:
+				update_next_game(tournament, game.winner, game)
+
+	async def get_lobby(self, lobby_id: str):
+		if not lobby_id:
+			return None
+		return lobby_dict[lobby_id]
+
+	def update_users(self):
+		game_info = async_to_sync(self.__get_game_info)(self.lobby.get_associated_game_id())
+		user_profile = user_profile_info_model.get(user=self.user)
+		if game_info:
+			user_profile.total_games = user_profile.total_games + 1
+			if game_info.winner:
+				if game_info.winner.id == self.user.id:
+					user_profile.victories = user_profile.victories + 1
+				else:
+					user_profile.defeats = user_profile.defeats + 1
+			user_profile.win_rate = user_profile.victories / user_profile.total_games * 100
+		user_profile.save()

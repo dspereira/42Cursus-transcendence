@@ -1,5 +1,6 @@
 import Game from "../game/Game.js";
 import { GameLogic } from "../game/GameLogic.js";
+import { SCREEN_WIDTH, SCREEN_HEIGHT} from "../game/const_vars.js" ;
 import { redirect } from "../js/router.js";
 import stateManager from "../js/StateManager.js";
 
@@ -10,10 +11,33 @@ const styles = `
 		flex-direction: column;
 	}
 
+	.board {
+		display: flex;
+		justify-content: center;
+		width: 100%;
+		height: 80vh;
+	}
+	
+	.board-2 {
+		display: flex;
+		flex-direction: column;
+		gap: 10px;
+	}
+
 	.game-div {
+		position: relative;
 		display: flex;
 		justify-content: center;
 		margin-top: 50px;
+	}
+
+	.btn-full-screen {
+		all: unset;
+		position: absolute;
+		bottom: 20px; 
+		right: 20px;
+		color: white;
+		cursor: pointer;
 	}
 
 	.buttons-div {
@@ -31,15 +55,20 @@ const styles = `
 const getHtml = function(data) {
 	const html = `
 		<div class="general-div">
-			<div class="game-div">
-				<canvas id="canvas"></canvas>
+			<div class="board">
+				<div class="board-2">
+					<div class="game-div">
+						<button type="button" class="btn-full-screen"><i class="bi bi-fullscreen icon-full-screen"></i></button>
+						<canvas id="canvas"></canvas>
+					</div>
+					<div class="buttons-div">
+						<button type="button" class="btn btn-primary" id="start-game">Start Game</button>
+						<button type="button" class="btn btn-primary hide" id="play-again">Play Again</button>
+						<button type="button" class="btn btn-secondary" id="initial-page">Initial Page</button>
+					</div>
+				</div>
 			</div>
-			<div class="buttons-div">
-				<button type="button" class="btn btn-primary" id="start-game">Start Game</button>
-				<button type="button" class="btn btn-primary hide" id="play-again">Play Again</button>
-				<button type="button" class="btn btn-secondary" id="initial-page">Initial Page</button>
-			</div>
-		<div>
+		</div>
 			`;
 	return html;
 }
@@ -78,18 +107,20 @@ export default class LocalGame extends HTMLElement {
 		}
 		this.canvas = this.html.querySelector("#canvas");
 		this.ctx = this.canvas.getContext("2d");
-		
-		// pode receber tamanho por parametro
-		this.canvas.width = "1200";
-		this.canvas.height = "600";
-
+		this.canvas.width = SCREEN_WIDTH;
+		this.canvas.height = SCREEN_HEIGHT;
 		this.game = new Game(this.ctx, this.canvas.width, this.canvas.height);
 		this.gameLogic = new GameLogic();
-
 		this.keyDownP1Status = "released";
 		this.keyUpP1Status = "released";
 		this.keyDownP2Status = "released";
 		this.keyUpP2Status = "released";
+
+		this.board = this.html.querySelector(".board");
+		this.board2 = this.html.querySelector(".board-2");
+		this.containerCanvas = this.html.querySelector(".game-div");
+		this.btnFullScreen = this.html.querySelector(".btn-full-screen");
+		this.iconFullScreen = this.html.querySelector(".icon-full-screen");
 	}
 
 	#styles() {
@@ -109,13 +140,12 @@ export default class LocalGame extends HTMLElement {
 	}
 
 	#scripts() {
-		const initialPage = this.html.querySelector("#initial-page");
-
-		initialPage.addEventListener("click", (event) => {
-			redirect("/initial");
-		});
-
+		this.#initialPageButton();
+		this.#resizeGameBoard();
 		this.#initGame();
+		this.#windowResizingEvent();
+		this.#FullScreenEvent();
+		this.#btnFullScreenHover();
 	}
 
 	#keyEvents() {
@@ -242,6 +272,95 @@ export default class LocalGame extends HTMLElement {
 				}
 			};
 			gameLoop();
+		});
+	}
+
+	#initialPageButton() {
+		const initialPage = this.html.querySelector("#initial-page");
+
+		initialPage.addEventListener("click", (event) => {
+			redirect("/initial");
+		});
+	}
+
+	#resizeGameBoard() {
+		this.#setCanvasDimensions();
+		this.#updateFullScreenButton();
+		if (this.game)
+			this.game.resizeGame(this.canvas.width, this.canvas.height);
+	}
+
+	#setCanvasDimensions() {
+		if (this.board.offsetHeight < this.board.offsetWidth * 0.75) {
+			this.canvas.height = this.board.offsetHeight
+			this.canvas.width = this.canvas.height / 0.75;	
+		}
+		else {
+			this.canvas.width = this.board.offsetWidth;
+			this.canvas.height = this.canvas.width * 0.75;			
+		}
+		this.board2.style.width =  `${this.canvas.width}px`;
+	}
+
+	#updateFullScreenButton() {
+		this.#changeFullScreenIcon();
+		this.#changeFullScreenBtnPosition();
+	}
+
+	#changeFullScreenIcon() {
+		this.iconFullScreen.classList.remove("bi-fullscreen");
+		this.iconFullScreen.classList.remove("bi-fullscreen-exit");
+		if (this.isFullScreen)
+			this.iconFullScreen.classList.add("bi-fullscreen-exit");
+		else
+			this.iconFullScreen.classList.add("bi-fullscreen");
+
+		this.iconFullScreen.style.fontSize = `${this.canvas.width * 0.025}px`;
+	}
+
+	#changeFullScreenBtnPosition() {
+		this.btnFullScreen.style.right = `${this.canvas.width * 0.015}px`;
+		this.btnFullScreen.style.bottom = `${this.canvas.height * 0.015}px`;
+		if (this.isFullScreen) {
+			const distBtwCanvasAndRightEdge = window.innerWidth - this.canvas.getBoundingClientRect().right;
+			this.btnFullScreen.style.right = `${distBtwCanvasAndRightEdge + this.canvas.width * 0.015}px`;
+		}
+	}
+
+	#windowResizingEvent() {
+		window.addEventListener("resize", () => {
+			if (!this.isFullScreen)
+				this.#resizeGameBoard();
+		});
+	}
+
+	#FullScreenEvent() {
+		this.btnFullScreen.addEventListener("click", () => {
+			if (!this.isFullScreen && this.containerCanvas.requestFullscreen)
+				this.containerCanvas.requestFullscreen();
+			if (this.isFullScreen && document.exitFullscreen)
+				document.exitFullscreen();
+		});
+
+		document.addEventListener("fullscreenchange", () => {
+			if (document.fullscreenElement)
+				this.isFullScreen = true;
+			else {
+				this.isFullScreen = false;
+				this.#resizeGameBoard();
+			}
+			this.#updateFullScreenButton();
+			this.game.setIsFullScreen(this.isFullScreen);
+		});
+	}
+
+	#btnFullScreenHover() {
+		this.btnFullScreen.addEventListener('mouseover', () => {
+			this.iconFullScreen.style.fontSize = `${this.canvas.width * 0.028}px`;
+		});
+		
+		this.btnFullScreen.addEventListener('mouseout', () => {
+			this.iconFullScreen.style.fontSize = `${this.canvas.width * 0.025}px`;
 		});
 	}
 }

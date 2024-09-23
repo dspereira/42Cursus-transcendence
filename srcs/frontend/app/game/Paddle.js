@@ -1,14 +1,16 @@
-import { SCREEN_WIDTH, SCREEN_HEIGHT, PADDLE_SPEED } from "./const_vars.js";
+import * as const_vars from "./const_vars.js";
+import get_position_percentage from "./logicUtils.js"
 
 export class Paddle {
 	constructor(side) {
-		this.screen_height = SCREEN_HEIGHT;
-		this.screen_width = SCREEN_WIDTH;
-		this.height = 50;
-		this.width = 4;
+		this.screen_height = const_vars.SCREEN_HEIGHT;
+		this.screen_width = const_vars.SCREEN_WIDTH;
+		this.height = const_vars.PADDLE_HEIGHT;
+		this.width = const_vars.PADDLE_WIDTH;
 		this.wall_distance = 10;
 		this.half_height = this.height / 2;
 		this.half_width = this.width / 2;
+		this.step = 6;
 		this.side = side;
 		this.y = this.screen_height / 2;
 		this.x = this._getX(side);
@@ -17,7 +19,7 @@ export class Paddle {
 	}
 
 	getPosition() {
-		return this.y - this.half_height;
+		return get_position_percentage(this.y - this.half_height, const_vars.SCREEN_HEIGHT)
 	}
 
 	update() {
@@ -33,12 +35,12 @@ export class Paddle {
 				this.last_time = current_time;
 			}
 
-			const step = value * PADDLE_SPEED;
+			this.step = value * const_vars.PADDLE_SPEED;
 
 			if (this.state === 'up') {
-				this.y -= step;
+				this.y -= this.step;
 			} else if (this.state === 'down') {
-				this.y += step;
+				this.y += this.step;
 			}
 
 			if (this.y > this.screen_height - this.half_height) {

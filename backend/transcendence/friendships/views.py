@@ -13,6 +13,7 @@ from friendships.friendships import get_friends_request_list
 from friendships.friendships import check_if_friend_request
 from friendships.friendships import remove_users_with_friends_request
 from friendships.friendships import get_users_info
+from friendships.friendships import is_already_friend
 
 user_profile_info_model = ModelManager(UserProfileInfo)
 friend_requests_model = ModelManager(FriendRequests)
@@ -46,7 +47,7 @@ def search_user_by_name(request):
 def chat_list(request):
 	user = user_model.get(id=request.access_data.sub)
 	if user:
-		friends_list = get_friends_users_list(friends=get_friend_list(user=user), user_id=user.id)
+		friends_list = get_friends_users_list(friends=get_friend_list(user=user), user_id=user.id, include_bot=True)
 		if friends_list:
 			return JsonResponse({"message": "Friends List Returned With Success", "friends": friends_list}, status=200)
 		else:

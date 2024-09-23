@@ -21,13 +21,14 @@ bash delete_all_migrations.sh -y || exit
 
 cd backend/transcendence || exit
 
-dirs=("live_chat/" "two_factor_auth/" "friendships/" "user_profile/" "notifications/" "user_auth/" "game/")
+dirs=("live_chat/" "two_factor_auth/" "friendships/" "user_profile/" "notifications/" "user_auth/" "tournament/" "user_settings/" "game/")
 create_files_in_dirs "${dirs[@]}"
 
 pwd
 
 python3 manage.py makemigrations
 python3 manage.py migrate
+python3 manage.py create_blitzpong_bot
 
 deactivate || exit
 cd ../.. || exit

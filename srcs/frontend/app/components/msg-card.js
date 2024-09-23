@@ -61,14 +61,13 @@ const styles = `
 
 .msg-date-friend {
 	display: flex;
-    justify-content: flex-start;
+	justify-content: flex-start;
 }
 
 .msg-date-owner {
 	display: flex;
-    justify-content: flex-end;
+	justify-content: flex-end;
 }
-
 `;
 
 const getHtml = function(data) {
@@ -105,7 +104,7 @@ const getHtml = function(data) {
 						<span class="msg-date ${data.sender=='friend' ? 'msg-date-friend' : 'msg-date-owner'}">${data.timeDate}</span>
 					</div>
 					<div class="${data.sender=='friend' ? 'msg-date-friend' : 'msg-date-owner'}">
-						<div class="msg-text ${data.sender == 'friend' ? 'friend-color' : 'owner-color'}">${data.message}</div>
+						<div class="msg-text ${data.sender == 'friend' ? 'friend-color' : 'owner-color'}">${data.message.replaceAll('\n', '<br>')}</div>
 					</div>
 				</div>
 			</div>
@@ -164,11 +163,7 @@ export default class MsgCard extends HTMLElement {
 		this.appendChild(this.html);
 	}
 
-	#scripts() {
-	
-	}
+	#scripts() {}
 }
 
 customElements.define("msg-card", MsgCard);
-
-

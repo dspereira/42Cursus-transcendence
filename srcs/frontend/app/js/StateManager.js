@@ -1,4 +1,4 @@
-const globalEvents = ["isLoggedIn", "chatSocket"];
+const globalEvents = ["isLoggedIn", "chatSocket", "tournamentId", "idBrowser", "friendIdInvitedFromChat"];
 
 class StateManager {
 
@@ -9,12 +9,13 @@ class StateManager {
 
 		this.states = {
 			sidePanel: "open",
-			pageReady: false,
+			pageReady: false, // remover o page ready
 			isLoggedIn: null,   // realy change when user logout and not when chage refresh token
 			friendChatId: null,
 			newChatMessage: null,
 			chatMessagesCounter: 0,
 			userId: null,
+			username: null,
 			chatSocket: null,
 			idBrowser: null,
 			chatUserData: null,
@@ -29,6 +30,11 @@ class StateManager {
 			hasLobbyEnded: null,
 			hasRefreshToken: null,
 			gameSocket: null,
+			isTournamentChanged: null,
+			tournamentGameLobby: null,
+			tournamentId: null,
+			isChatMsgReadyToSend: null,
+			friendIdInvitedFromChat: null
 		}
 		this.stateEvents = {
 			sidePanel: [],
@@ -38,6 +44,7 @@ class StateManager {
 			newChatMessage: [],
 			chatMessagesCounter: [],
 			userId: [],
+			username: [],
 			chatSocket: [],
 			idBrowser: [],
 			chatUserData: [],
@@ -51,7 +58,13 @@ class StateManager {
 			gameWinner: [],
 			hasLobbyEnded: [],
 			hasRefreshToken: [],
-			gameSocket: []
+			gameSocket: [],
+			isTournamentChanged: [],
+			tournamentGameLobby: [],
+			finishedTournament: [],
+			tournamentId: [],
+			isChatMsgReadyToSend: [],
+			friendIdInvitedFromChat: []
 		}
 
 		StateManager.instance = this;
@@ -99,6 +112,8 @@ class StateManager {
 		});
 	}
 
+
+	// Fazer um loop e passar por todos os eventos e estados
 	cleanAllStatesAndEvents() {
 		this.states.sidePanel = "open";
 		this.states.pageReady = false,

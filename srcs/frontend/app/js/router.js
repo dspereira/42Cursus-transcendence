@@ -3,7 +3,6 @@ import PageHome from "../page-components/page-home.js";
 import PageProfile from "../page-components/page-profile.js";
 import PageChat from "../page-components/page-chat.js";
 import PageTournaments from "../page-components/page-tournaments.js";
-import PageNotifications from "../page-components/page-notifications.js";
 import PageConfigs from "../page-components/page-configs.js";
 import PageLogin from "../page-components/page-login.js";
 import PageSignup from "../page-components/page-signup.js";
@@ -13,16 +12,19 @@ import PageLogout from "../page-components/page-logout.js";
 import PageFriends from "../page-components/page-friends.js";
 import PagePlay from "../page-components/page-play.js";
 import PageLocalPlay from "../page-components/page-local-play.js";
-import PageGame from "../page-components/page-game.js";
+import PageTournamentInfo from "../page-components/page-tournament-info.js";
 
 // Components
-import AppTest from "../components/app-test.js";
 import AppHeader from "../components/app-header.js";
 import LoginForm from "../components/login-form.js";
 import SignupForm from "../components/signup-form.js";
 import SidePanel from "../components/side-panel.js";
 import AppChat from "../components/app-chat.js";
 import MsgCard from "../components/msg-card.js";
+import UserProfile from "../components/user-profile.js";
+import GameCard from "../components/game-card.js";
+import GameHistory from "../components/game-history.js";
+import AppConfigs from "../components/app-configs.js";
 import AppFriends from "../components/app-friends.js";
 import UserCard from "../components/user-card.js";
 import ChatFriendsList from "../components/chat-friends-list.js";
@@ -33,36 +35,49 @@ import GameInviteCard from "../components/game-invite-card.js";
 import GameInviteSend from "../components/game-invite-send.js";
 import GameInviteCard1 from "../components/game-invite-card1.js";
 import AppLobby from "../components/app-lobby.js";
+import TourneyGraph from "../components/tourney-graph.js";
+import TourneyLobby from "../components/tourney-lobby.js";
+import TourneyInviter from "../components/tourney-inviter.js";
+import TourneyInvitesReceived from "../components/tourney-invites-received.js";
+import TourneyInviteCard from "../components/tourney-invite-card.js";
+import TournamentCard from "../components/tournament-card.js";
+import TourneyInfo from "../components/tourney-info.js";
 import LocalGame from "../components/local-game.js";
 
 // Others
 import stateManager from "./StateManager.js";
 import checkUserLoginState from "../utils/checkUserLoginState.js";
 
-//  /user/:id devo poder configurar neste formato
-//  /play/:id devo poder configurar neste formato
+
+const getHtmlElm = pageObj => `<${pageObj.componentName}></${pageObj.componentName}>`;
+
 const routes = {
-	//""					: PageHome.componentName,
-	"/initial"			: PageInitial.componentName,
-	"/"					: PageHome.componentName,
-	//"/index.html"		: PageHome.componentName,
-	"/login"			: PageLogin.componentName,
-	"/signup"			: PageSignup.componentName,
-	"/logout"			: PageLogout.componentName,
-	"/profile"			: PageProfile.componentName,
-	"/chat"				: PageChat.componentName,
-	"/tournaments"		: PageTournaments.componentName,
-	"/notifications"	: PageNotifications.componentName,
-	"/configurations"	: PageConfigs.componentName,
-	"/friends"			: PageFriends.componentName,
-	"/play"				: PagePlay.componentName,
-	"/localplay"		: PageLocalPlay.componentName,
-	"/game"				: PageGame.componentName,
+	"/initial"			: getHtmlElm(PageInitial),
+	"/"					: getHtmlElm(PageHome),
+	"/login"			: getHtmlElm(PageLogin),
+	"/signup"			: getHtmlElm(PageSignup),
+	"/logout"			: getHtmlElm(PageLogout),
+	"/profile"			: getHtmlElm(PageProfile),
+	"/chat"				: getHtmlElm(PageChat),
+	"/tournaments"		: getHtmlElm(PageTournaments),
+	"/configurations"	: getHtmlElm(PageConfigs),
+	"/friends"			: getHtmlElm(PageFriends),
+	"/play"				: getHtmlElm(PagePlay),
+	"/localplay"		: getHtmlElm(PageLocalPlay),
+}
+
+const dynamicRoutes = {
+	"/profile": key => `<${PageProfile.componentName} username="${key}"></${PageProfile.componentName}>`,
+	"/tournament": key => `<${PageTournamentInfo.componentName} id="${key}"></${PageTournamentInfo.componentName}>`
 }
 
 const publicRoutes = ["/initial", "/login", "/signup", "/localplay"];
 const initialRoute = "/initial";
 
+
+// remover o page ready state
+
+/*
 const render = function(page) {
 	const app = document.querySelector("#app");
 	const oldElm = app.querySelector("#app > div");
@@ -77,23 +92,58 @@ const render = function(page) {
 				app.replaceChild(newElm, oldElm);
 		}
 	});
+	newElm.innerHTML = page;
+}
+	*/
 
-	newElm.innerHTML = `<${page}></${page}>`;
+
+export const render = function(page) {
+	const app = document.querySelector("#app");
+	const oldElm = app.querySelector("#app > div");
+	const newElm = document.createElement("div");
+	if (!oldElm)
+		app.appendChild(newElm);
+	else
+		app.replaceChild(newElm, oldElm);
+	newElm.innerHTML = page;
 }
 
-const getPageName = function(route) {
-	let pageName = null;
+const getPageComponent = function(route) {
+	let pageHtml = null;
+	let dynamicRouteData = null;
 
 	if (route)
-		pageName = routes[route];
+		pageHtml = routes[route];
 	else
-		pageName = routes[getCurrentRoute()];
+		pageHtml = routes[getCurrentRoute()];
 
-	if (pageName)
-		return pageName;
-	else
-		return Page404.componentName;
+	if (!pageHtml)
+		dynamicRouteData = getDinamycRoute(route);
+	if (dynamicRouteData) {
+		if (dynamicRoutes[dynamicRouteData.route])
+			pageHtml = dynamicRoutes[dynamicRouteData.route](dynamicRouteData.key);
+	}
+	if (!pageHtml)
+		pageHtml = getHtmlElm(Page404);
+
+	return pageHtml;
 }
+
+const getDinamycRoute = function(route) {
+	const lastSlashIdx = route.lastIndexOf("/");
+	let key = null;
+	let newRoute = null;
+	if (lastSlashIdx > 0 && lastSlashIdx < route.length - 1) {
+		key = route.substring(lastSlashIdx + 1);
+		newRoute = route.substring(0, lastSlashIdx);
+	}
+	if (!key || !newRoute)
+		return null;
+	return {
+		"key": key,
+		"route": newRoute
+	}
+} 
 
 const updateIsLoggedInState = function(state) {
 	if (state === undefined || state === null)
@@ -134,7 +184,7 @@ const normalizeRoute = function(route) {
 let init = true;
 export const router = function(route) {
 	stateManager.cleanEvents();
-	checkUserLoginState((state, userId) => {
+	checkUserLoginState((state) => {
 		if (!route)
 			route = getCurrentRoute();
 		route = normalizeRoute(route);
@@ -143,9 +193,8 @@ export const router = function(route) {
 			replaceCurrentRoute(normalizeRouteForHistory(authorizedRoute));
 		else
 			pushNewRoute(normalizeRouteForHistory(authorizedRoute));
-		render(getPageName(authorizedRoute));
+		render(getPageComponent(authorizedRoute));
 		updateIsLoggedInState(state);
-		stateManager.setState("userId", userId);
 		init = false;
 	});
 }
@@ -155,7 +204,7 @@ const routingHistory = function() {
 	checkUserLoginState((state) => {
 		const authorizedRoute = getRouteByPermissions(getCurrentRoute(), state);
 		replaceCurrentRoute(normalizeRouteForHistory(authorizedRoute));
-		render(getPageName(authorizedRoute));
+		render(getPageComponent(authorizedRoute));
 		updateIsLoggedInState(state);
 	});
 }

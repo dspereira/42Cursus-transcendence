@@ -13,6 +13,7 @@ from friendships.friendships import is_already_friend
 from friendships.friendships import is_request_already_maded
 from friendships.friendships import get_friends_request_list
 from friendships.friendships import get_friend_request
+from custom_utils.auth_utils import is_username_bot_username
 
 user_profile_info_model = ModelManager(UserProfileInfo)
 friend_requests_model = ModelManager(FriendRequests)
@@ -29,11 +30,11 @@ class FriendRequestView(View):
 			if friend_requests_ids:
 				for req in friend_requests_ids:
 					friend = user_profile_info_model.get(user=req['from_user'])
-					if friend:
+					if friend and not is_username_bot_username(friend.user.username):
 						friend_requests.append({
 							"request_id": req['id'],
 							"id": friend.id,
-							"username": friend.default_image_seed,
+							"username": friend.user.username,
 							"image": get_image_url(user=friend)
 						})
 			if not len(friend_requests):
@@ -48,7 +49,7 @@ class FriendRequestView(View):
 			req_data = json.loads(request.body)
 			user = user_model.get(id=request.access_data.sub)
 			requested_user = user_model.get(id=req_data["requested_user"])
-			if user and requested_user:
+			if user and requested_user and not is_username_bot_username(requested_user.username):
 				if is_already_friend(user1=user, user2=requested_user):
 					return JsonResponse({"message": "Error: Friendship Already Exists!"}, status=409)
 				if is_request_already_maded(user1=user, user2=requested_user):

@@ -1,22 +1,16 @@
 import { router, setHistoryEvents } from "./router.js"
 import stateManager from "./StateManager.js";
 import chatWebSocket from "./ChatWebSocket.js";
-import notifyWebSocket from "./NotifyWebSocket.js";
 import checkUserLoginState from "../utils/checkUserLoginState.js";
 
-// Cada vez que o estado do evento altera entre true or false deve fechar ou abrir as ligações websockets
-
-stateManager.setState("idBrowser", Math.floor(Math.random() * 100000000000));
-
 stateManager.addEvent("isLoggedIn", (stateValue) => {
-	stateManager.cleanAllStatesAndEvents();
 	if (stateValue) {
+		stateManager.setState("idBrowser", Math.floor(Math.random() * 100000000));
 		chatWebSocket.open();
-		//notifyWebSocket.open();
 	}
 	else {
 		chatWebSocket.close();
-		//notifyWebSocket.close();
+		stateManager.cleanAllStatesAndEvents();
 	}
 });
 
@@ -25,19 +19,18 @@ stateManager.addEvent("isLoggedIn", (stateValue) => {
 stateManager.addEvent("chatSocket", (stateValue) => {
 	console.log(`Chat socket: ${stateValue}`);
 	if (stateValue == "closed") {
-		checkUserLoginState((state, userId) => {
-			stateManager.setState("userId", userId);
-			//if (state != stateManager.getState("isLoggedIn"))
-			//	stateManager.setState("isLoggedIn", state);
+		checkUserLoginState((state) => {
 			if (state)
 				chatWebSocket.open();
 		});
 	}
 	else if (stateValue == "open") {
 		chatWebSocket.connect(stateManager.getState("friendChatId"));
-		let elm = document.querySelector("#text-area");
-		if (elm && elm.value)
-			chatWebSocket.send(elm.value);
+		if (stateManager.getState("isChatMsgReadyToSend")) {
+			let elm = document.querySelector("#text-area");
+			if (elm && elm.value)
+				chatWebSocket.send(elm.value);
+		}
 	}
 });
 
@@ -46,8 +39,7 @@ stateManager.addEvent("chatSocket", (stateValue) => {
 // The user's logged-in state should not change because of the expired refresh token.
 const setupLoginStateChecker  = function(intervalSeconds) {
 	setInterval(() => {
-		checkUserLoginState((state, userId) => {
-			stateManager.setState("userId", userId);
+		checkUserLoginState((state) => {
 			if (state != stateManager.getState("isLoggedIn"))
 				stateManager.setState("isLoggedIn", state);
 		});

@@ -36,7 +36,6 @@ const styles = `
 
 const getHtml = function(data) {
 	const html = `
-
 		<div class="lobby">
 			<div class="host">
 				<!--<img src="https://api.dicebear.com/8.x/bottts/svg?seed=dsilveri1" class="profile-photo" alt="avatar">-->
@@ -49,13 +48,12 @@ const getHtml = function(data) {
 		<div class="btn-section">
 			<button type="button" class="btn btn-primary ready-btn">ready</button>
 		</div>
-
 	`;
 	return html;
 }
 
 export default class AppLobby extends HTMLElement {
-	static observedAttributes = ["lobby-id", "player-type"];
+	static observedAttributes = ["lobby-id", "is-tournament"];
 
 	constructor() {
 		super()
@@ -85,8 +83,8 @@ export default class AppLobby extends HTMLElement {
 	attributeChangedCallback(name, oldValue, newValue) {
 		if (name == "lobby-id")
 			name = "lobbyId";
-		if (name == "player-type")
-			name = "playerType"
+		else if (name == "is-tournament")
+			name = "isTournament";
 		this.data[name] = newValue;
 	}
 
@@ -123,8 +121,10 @@ export default class AppLobby extends HTMLElement {
 		this.#openSocket();
 		this.#setLobbyStatusEvent();
 		this.#setReadyBtnEvent();
-		this.#setActiveInviteCheckEvent();
-		this.#setLobbyEndedEvent();
+		if (!this.data.isTournament) {
+			this.#setActiveInviteCheckEvent();
+			this.#setLobbyEndedEvent();
+		}
 		this.#onRefreshTokenEvent();
 		this.#onSocketCloseEvent();
 	}
@@ -135,10 +135,7 @@ export default class AppLobby extends HTMLElement {
 
 	#setLobbyStatusEvent() {
 		stateManager.addEvent("lobbyStatus", (value) => {
-			console.log(value);
-
 			this.lobbyStatus = value;
-
 			if (value.host)
 				this.#updatePlayer(value.host, "host");
 			if (value.guest)
@@ -148,24 +145,28 @@ export default class AppLobby extends HTMLElement {
 			if (!value.guest)
 				this.#removePlayer("guest");
 			if (value.host && value.guest) {
-				if (value.host.is_ready && value.guest.is_ready)
-					this.#startGame();
+				if (value.host.is_ready && value.guest.is_ready) {
+					if (this.data.isTournament)
+						this.#startTournamentGame();
+					else
+						this.#startGame();
+				}
 			}
 		});
 	}
 
-	#updatePlayer(playerinfo, playerType) {
+	#updatePlayer(playerInfo, playerType) {
 		const playerImage = this.html.querySelector(`.${playerType}`);
 		if (!playerImage)
 			return ;
 		playerImage.innerHTML = `
-			<img src="${playerinfo.image}" class="profile-photo" alt="avatar">
-			<div>${playerinfo.username}</div>
-			<div>${playerinfo.is_ready ? "ready" : "not ready"}</div>
+			<img src="${playerInfo.image}" class="profile-photo" alt="avatar">
+			<div>${playerInfo.username}</div>
+			<div>${playerInfo.is_ready ? "ready" : "not ready"}</div>
 		`;
 
-		if (playerType == this.data.playerType)
-			this.readyBtn.innerHTML = `${playerinfo.is_ready ? "not ready" : "ready"}`;
+		if (playerInfo.id == stateManager.getState("userId"))
+			this.readyBtn.innerHTML = `${playerInfo.is_ready ? "not ready" : "ready"}`;
 	}
 
 	#removePlayer(playerType) {
@@ -194,6 +195,25 @@ export default class AppLobby extends HTMLElement {
 			guest-username="${playersData.guest.username}"
 			guest-image="${playersData.guest.image}"
 			lobby-id="${lobbyId}"
+			is-tournament="${this.data.isTournament}"
+		></app-play>
+		`;
+	}
+
+	#startTournamentGame() {
+		const playersData = stateManager.getState("lobbyStatus");
+		const contentElm = document.querySelector(".tourney-section");
+		const lobbyId = this.data.lobbyId;
+		this.startGame = true;
+		this.remove();
+		contentElm.innerHTML = `
+		<app-play
+			host-username="${playersData.host.username}"
+			host-image="${playersData.host.image}"
+			guest-username="${playersData.guest.username}"
+			guest-image="${playersData.guest.image}"
+			lobby-id="${lobbyId}"
+			is-tournament="${this.data.isTournament}"
 		></app-play>
 		`;
 	}
@@ -208,7 +228,7 @@ export default class AppLobby extends HTMLElement {
 	}
 
 	#setActiveInviteCheckEvent() {
-		if (this.data.playerType == "host") {
+		if (this.data.lobbyId == stateManager.getState("userId")) {
 			this.intervalID = setInterval(() => {
 				if (this.lobbyStatus && this.lobbyStatus.guest)
 					return ;
@@ -216,7 +236,7 @@ export default class AppLobby extends HTMLElement {
 					if (res.ok) {
 						if (!data.has_pending_game_requests) {
 							clearInterval(this.intervalID);
-							redirect("/play");
+							redirect("/play"); // modificar esta redireçao
 						}
 					}
 				});
@@ -235,10 +255,29 @@ export default class AppLobby extends HTMLElement {
 
 	#onSocketCloseEvent() {
 		stateManager.addEvent("gameSocket", (state) => {
-			if (state == "closed")
-				this.#openSocket();
+			if (state == "closed") {
+				callAPI("GET", "http://127.0.0.1:8000/api/auth/login_status", null, (res, data) => {
+					if (res.ok || data)
+						this.#openSocket();
+				});
+			}
 		});
 	}
 }
 
 customElements.define("app-lobby", AppLobby);
+
+
+/*
+select * from game_games;
+select * from tournament_tournamentrequests;
+select * from tournament_tournamentplayers;
+select * from tournament_tournament;
+
+
+delete from game_games;
+delete from tournament_tournamentrequests;
+delete from tournament_tournamentplayers;
+delete from tournament_tournament;
+
+*/

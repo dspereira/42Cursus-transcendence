@@ -31,17 +31,20 @@ def color_pallet(request):
 @login_required
 @accepted_methods(["GET"])
 def get_games(request):
-	user = user_model.get(id=request.access_data.sub)
+	username = request.GET.get('username')
+	if username:
+		user = user_model.get(username=username)
+	else:
+		user = user_model.get(id=request.access_data.sub)
 	if user:
 		games_list = get_games_list(user=user)
 		return JsonResponse({"message": f"Game request list retrieved with success.", "games_list": games_list}, status=200)
 	else:
-		return JsonResponse({"message": "Error: Invalid User!"}, status=400)
+		return JsonResponse({"message": "Error: User not found!"}, status=404)
 
 @login_required
 @accepted_methods(["GET"])
 def has_pending_game_requests(request):
-
 	user = user_model.get(id=request.access_data.sub)
 	if user:
 		flag = has_user_pending_game_requests(user)

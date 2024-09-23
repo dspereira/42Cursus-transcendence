@@ -1,25 +1,29 @@
-import { SCREEN_HEIGHT, SCREEN_WIDTH, BALL_SPEED, ANGLES_INTERVALS} from "./const_vars.js";
+import * as const_vars from "./const_vars.js";
+import get_position_percentage from "./logicUtils.js"
 
 const BALL_RADIUS = 5;
 
 export class Ball {
 	constructor() {
-		this.screen_height = SCREEN_HEIGHT;
-		this.screen_width = SCREEN_WIDTH;
+		this.screen_height = const_vars.SCREEN_HEIGHT;
+		this.screen_width = const_vars.SCREEN_WIDTH;
 		this.x_start = this.screen_width / 2;
 		this.y_start = this.screen_height / 2;
 		this.x = this.x_start;
 		this.y = this.y_start;
 		this.last_time = 0;
 		this._setStartAngle();
-		this.left_wall_limit = BALL_RADIUS;
-		this.right_wall_limit = this.screen_width - BALL_RADIUS;
-		this.top_wall_limit = BALL_RADIUS;
-		this.bottom_wall_limit = this.screen_height - BALL_RADIUS;
+		this.left_wall_limit = const_vars.BALL_RADIUS;
+		this.right_wall_limit = this.screen_width - const_vars.BALL_RADIUS;
+		this.top_wall_limit = const_vars.BALL_RADIUS;
+		this.bottom_wall_limit = this.screen_height - const_vars.BALL_RADIUS;
 	}
 
 	getPosition() {
-		return { x: this.x, y: this.y };
+		return { 
+			x: get_position_percentage(this.x, const_vars.SCREEN_WIDTH),
+			y: get_position_percentage(this.y, const_vars.SCREEN_HEIGHT)
+		};
 	}
 
 	updatePosition(leftPaddle, rightPaddle) {
@@ -76,7 +80,7 @@ export class Ball {
 			this.last_time = current_time;
 		}
 
-		return value * BALL_SPEED;
+		return value * const_vars.BALL_SPEED;
 	}
 
 	_setTrigValues(angleRad) {
@@ -92,7 +96,7 @@ export class Ball {
 		if (y > this.bottom_wall_limit) {
 			col_y = this.bottom_wall_limit;
 		} else if (y < this.top_wall_limit) {
-			col_y = BALL_RADIUS;
+			col_y = const_vars.BALL_RADIUS;
 		} else {
 			return null;
 		}
@@ -109,7 +113,7 @@ export class Ball {
 	}
 
 	_setStartAngle() {
-		const chosenInterval = ANGLES_INTERVALS[Math.floor(Math.random() * ANGLES_INTERVALS.length)];
+		const chosenInterval = const_vars.ANGLES_INTERVALS[Math.floor(Math.random() * const_vars.ANGLES_INTERVALS.length)];
 		this._setAngle(Math.floor(Math.random() * (chosenInterval[1] - chosenInterval[0] + 1)) + chosenInterval[0]);
 	}
 
@@ -129,9 +133,9 @@ export class Ball {
 		let newCoords;
 
 		if (this.angle_deg > 90 && this.angle_deg < 270) {
-			newCoords = leftPaddle.getColisionPoint(this.x, this.y, x, y, BALL_RADIUS);
+			newCoords = leftPaddle.getColisionPoint(this.x, this.y, x, y, const_vars.BALL_RADIUS);
 		} else {
-			newCoords = rightPaddle.getColisionPoint(this.x, this.y, x, y, BALL_RADIUS);
+			newCoords = rightPaddle.getColisionPoint(this.x, this.y, x, y, const_vars.BALL_RADIUS);
 		}
 
 		return newCoords;

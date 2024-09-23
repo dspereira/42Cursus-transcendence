@@ -8,7 +8,6 @@ const styles = `
 	}
 
 	img {
-		/*display: inline-block;*/
 		width: auto;
 		height: 60vh;
 		align: center;
@@ -26,11 +25,9 @@ const styles = `
 
 const getHtml = function(data) {
 	const html = `
-		<!--<a href="/">Home</a>
-		<h1>404 Not Found</h1>-->
 		<div class=page-container>
 			<div class="image-container">
-				<img src="../img/not_found.jpg" alt="404 Not Found Image">
+				<img src="/img/not_found.jpg" alt="404 Not Found Image">
 			</div>
 			<div class="home-btn">
 				<button type="button" class="btn btn-primary btn-lg">Go Home</button>
