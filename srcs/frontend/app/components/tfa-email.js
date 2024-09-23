@@ -3,12 +3,27 @@ import stateManager from "../js/StateManager.js";
 
 const styles = `
 .tfa-container {
+	width: 100%;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+}
+
+.tfa-elements {
 	width: 50%;
-	margin: 0px auto;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 20px;
+	padding: 20px;
+	background-color: #D3D3D3;
+	border-radius: 8px;
 }
 
 p {
 	font-size: 22px;
+	margin: 0;
+	padding: 0;
 }
 
 .otp-code {
@@ -23,30 +38,51 @@ p {
 	gap: 10px;
 }
 
+.btn-resend {
+	background: none;
+	border: none;
+	color: blue;
+	cursor: pointer;
+	padding: 0;
+	font: inherit;
+	width: 100%;
+	display: flex;
+	margin-top: 10px;
+}
+
+.submit-container {
+	width: 100%;
+	display: flex;
+	justify-content: flex-end;
+	margin-top: 10px;
+}
+
 `;
 
 const getHtml = function(data) {
 	const html = `
 		<div class="tfa-container">
-			<p>A code has been sent to your email. Please check it and enter it in the box below.</p>
-			<form id="tfa-code">
-				<div class="form-group">
-					<div class="code-container">
-					<input type="text" class="input-padding form-control form-control-md otp-code" id="idx-0" maxlength="1">
-					<input type="text" class="input-padding form-control form-control-md otp-code" id="idx-1" maxlength="1">
-					<input type="text" class="input-padding form-control form-control-md otp-code" id="idx-2" maxlength="1">
-					<input type="text" class="input-padding form-control form-control-md otp-code" id="idx-3" maxlength="1">
-					<input type="text" class="input-padding form-control form-control-md otp-code" id="idx-4" maxlength="1">
-					<input type="text" class="input-padding form-control form-control-md otp-code" id="idx-5" maxlength="1">
+			<div class="tfa-elements">
+				<p>A code has been sent to your email. Please check it and enter it in the box below.</p>
+				<form id="tfa-code">
+					<div class="form-group">
+						<div class="code-container">
+						<input type="text" class="input-padding form-control form-control-md otp-code" id="idx-0" maxlength="1">
+						<input type="text" class="input-padding form-control form-control-md otp-code" id="idx-1" maxlength="1">
+						<input type="text" class="input-padding form-control form-control-md otp-code" id="idx-2" maxlength="1">
+						<input type="text" class="input-padding form-control form-control-md otp-code" id="idx-3" maxlength="1">
+						<input type="text" class="input-padding form-control form-control-md otp-code" id="idx-4" maxlength="1">
+						<input type="text" class="input-padding form-control form-control-md otp-code" id="idx-5" maxlength="1">
 					</div>
-				<div>
-					<button type="submit" class="btn btn-primary btn-submit">validate</button>
-				</div>
-			</form>
-			<button type="button" class="btn btn-primary btn-resend">Resend email</button>
+					<button class="btn-resend">Resend code</button>
+					<div class="submit-container">
+						<button type="submit" class="btn btn-primary btn-submit">submit</button>
+					<div>
+				</form>
+				<!--<button type="button" class="btn btn-primary btn-resend">Resend email</button>-->
+			<div>
 		<div>
 	`;
-
 	return html;
 }
 
@@ -79,6 +115,7 @@ export default class TfaEmail extends HTMLElement {
 		}
 		this.submitBtn = this.html.querySelector(".btn-submit");
 		this.inputs = this.html.querySelectorAll(".otp-code");
+		this.resendCodeBtn = this.html.querySelector(".btn-resend");
 	}
 
 	#styles() {
@@ -118,7 +155,6 @@ export default class TfaEmail extends HTMLElement {
 		if (!btn)
 			return ;
 		btn.addEventListener("click", () => {
-			console.log("resend email");
 			this.#sendCodeToEmail();
 		});
 	}
@@ -184,13 +220,10 @@ export default class TfaEmail extends HTMLElement {
 		document.addEventListener("keyup", (event) => {
 			this.#cleanNonNumericInputs();
 
-			console.log(event.key);
-
 			if (event.key.toLowerCase() == "escape") {
 				this.#removeAllInputValues();
 				this.#removeFocus();
 			}
-
 			if (event.key.toLowerCase() == "backspace")
 				this.#moveBackward();
 			this.#toggleSubmitBtnDisabledBasedOnInput();
@@ -218,7 +251,6 @@ export default class TfaEmail extends HTMLElement {
 			i = elm.id.substring("idx-".length);
 		return i;
 	}
-
 
 	#removeAllInputValues() {
 		this.inputs.forEach((elm) => {
