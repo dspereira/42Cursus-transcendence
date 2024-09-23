@@ -18,6 +18,7 @@ from .two_factor import exist_phone_number
 from .two_factor import is_valid_input_code
 from .two_factor import is_valid_otp_method
 from .two_factor import get_new_code_wait_time
+from .two_factor import initiate_two_factor_authentication
 
 # Apenas para Testes
 from .two_factor import is_configuration_in_db
@@ -43,7 +44,12 @@ def configured_2fa(request):
 				configured_methods['email'] = True
 			if exist_phone_number(user):
 				configured_methods['phone'] = True
-			return JsonResponse({"message": "OTP option sended with success!", "configured_methods": configured_methods}, status=200)
+			otp_method = initiate_two_factor_authentication(user)
+			return JsonResponse({
+					"message": "OTP option sended with success!",
+					"configured_methods": configured_methods,
+					"method": otp_method
+				}, status=200)
 	return JsonResponse({"message": "Error: Invalid Request!"}, status=400)
 
 @login_required
