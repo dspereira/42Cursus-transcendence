@@ -4,7 +4,7 @@ from user_auth.models import User, BlacklistToken
 import json
 from custom_decorators import login_required, accepted_methods
 
-from .auth_utils import login as user_login
+from .auth_utils import two_factor_auth as user_tfa
 from .auth_utils import logout as user_logout
 from .auth_utils import refresh_token as user_refresh_token
 from .auth_utils import update_blacklist
@@ -79,7 +79,7 @@ def login(request):
 			return JsonResponse({"message": "Invalid credentials. Please check your username or password."}, status=401)
 		if not is_email_verified(user):
 			return JsonResponse({"message": "Email not verified. Please verify your email."}, status=401)
-		response = user_login(JsonResponse({"message": "success"}), user)
+		response = user_tfa(JsonResponse({"message": "success"}, status=200), user)
 		return response
 	return JsonResponse({"message": "Empty request body"}, status=400)
 

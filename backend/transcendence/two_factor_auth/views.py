@@ -1,4 +1,4 @@
-from custom_decorators import accepted_methods, login_required
+from custom_decorators import accepted_methods, login_required, tfa_required
 from custom_utils.models_utils import ModelManager
 from django.http import JsonResponse
 from .models import OtpUserOptions
@@ -25,13 +25,16 @@ from .two_factor import is_configuration_in_db
 from .two_factor import create_user_options
 from .two_factor import get_user_otp_options
 
+from user_auth.auth_utils import login as user_login
+
 otp_user_settings_model = ModelManager(OtpUserOptions)
 
 @accepted_methods(["GET"])
+@tfa_required
 def configured_2fa(request):
 	if request:
-		if request.access_data:
-			user = getUser(request.access_data.sub)
+		if request.tfa_data:
+			user = getUser(request.tfa_data.sub)
 			if not user:
 				return JsonResponse({"message": "Error: Invalid Users!"}, status=409)
 			otp_user_settings = otp_user_settings_model.get(user=user)
@@ -69,10 +72,11 @@ def generate_qr_code(request):
 	return JsonResponse({"message": "Error: Invalid Request!"}, status=400)
 
 @accepted_methods(["POST"])
+@tfa_required
 def generate_user_phone_code(request):
 	if request:
-		if request.access_data:
-			user = getUser(request.access_data.sub)
+		if request.tfa_data:
+			user = getUser(request.tfa_data.sub)
 			if not user:
 				return JsonResponse({"message": "Error: Invalid Users!"}, status=409)
 			if not exist_phone_number(user):
@@ -86,10 +90,11 @@ def generate_user_phone_code(request):
 	return JsonResponse({"message": "Error: Invalid Request!"}, status=400)
 
 @accepted_methods(["POST"])
+@tfa_required
 def generate_user_email_code(request):
 	if request:
-		if request.access_data:
-			user = getUser(request.access_data.sub)
+		if request.tfa_data:
+			user = getUser(request.tfa_data.sub)
 			if not user:
 				return JsonResponse({"message": "Error: Invalid Users!"}, status=409)
 			if not exist_email(user):
@@ -103,6 +108,7 @@ def generate_user_email_code(request):
 	return JsonResponse({"message": "Error: Invalid Request!"}, status=400)
 
 @accepted_methods(["POST"])
+@tfa_required
 def validateOTP(request):
 	if request:
 		if not request.body:
@@ -115,17 +121,22 @@ def validateOTP(request):
 		if not is_valid_otp_method(req_data.get('method')):
 			return JsonResponse({"message": "Error: Invalid OTP Method!"}, status=409)
 		tfa_method = str(req_data['method'])
-		if request.access_data:
-			user = getUser(request.access_data.sub)
+		if request.tfa_data:
+			user = getUser(request.tfa_data.sub)
 			if not user:
 				return JsonResponse({"message": "Error: Invalid Users!"}, status=409)
+			is_valid_otp_status = False
 			if tfa_method == "email" or tfa_method == "phone":
 				if is_valid_otp(code, user):
-					return JsonResponse({"message": "OTP validated with success!"}, status=200)
+					is_valid_otp_status = True
 			else:
 				if is_valid_otp_qr_code(code, user):
-					return JsonResponse({"message": "OTP validated with success!"}, status=200)
-			return JsonResponse({"message": "Invalid Submited Code!"}, status=409)
+					is_valid_otp_status = True
+			if not is_valid_otp_status:
+				return JsonResponse({"message": "Invalid Submited Code!"}, status=409)
+			response = user_login(JsonResponse({"message": "OTP validated with success!"}, status=200), user)
+			response.delete_cookie('two_factor_auth', path="/api/two-factor-auth")
+			return response
 	return JsonResponse({"message": "Error: Invalid Request!"}, status=400)
 
 @accepted_methods(["GET"])
@@ -231,18 +242,6 @@ def update_configurations(request):
 			status = "OK"
 
 	return JsonResponse({"message": message, "status": status})
-
-
-
-
-
-
-
-
-
-
-
-
 
 """
 ---------------------------------------------------------------------

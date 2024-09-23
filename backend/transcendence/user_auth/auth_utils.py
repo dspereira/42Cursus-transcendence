@@ -14,6 +14,12 @@ friend_list_model = ModelManager(FriendList)
 user_model = ModelManager(User)
 chatroom_model = ModelManager(ChatRoom)
 
+def two_factor_auth(response, user):
+	user.last_login = timezone.now()
+	user.save()
+	_set_tfa_cookie(response, _generate_tfa_token(user.id))
+	return response
+
 def login(response, user):
 	user.last_login = timezone.now()
 	user.save()
@@ -107,6 +113,11 @@ def _generate_email_verification_token(user_id):
 	token_gen.generate_email_verification_token()
 	return token_gen
 
+def _generate_tfa_token(user_id):
+	token_gen = TokenGenerator(user_id)
+	token_gen.generate_tfa_token()
+	return token_gen
+
 def _set_cookies(response, token_gen):
 	response.set_cookie(
 		key="access",
@@ -119,7 +130,17 @@ def _set_cookies(response, token_gen):
 	response.set_cookie(
 		key="refresh",
 		value=token_gen.get_refresh_token(),
-		httponly=True, expires=token_gen.get_refresh_token_exp(),
+		httponly=True,
+		expires=token_gen.get_refresh_token_exp(),
 		samesite="Lax",
 		path="/api/auth"
+	)
+
+def _set_tfa_cookie(response, token):
+	response.set_cookie(
+		key="two_factor_auth",
+		value=token.get_tfa_token(),
+		httponly=True, expires=token.get_tfa_token_exp(),
+		samesite="Lax",
+		path="/api/two-factor-auth"
 	)
