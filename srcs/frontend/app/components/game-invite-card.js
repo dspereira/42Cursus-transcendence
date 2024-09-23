@@ -2,14 +2,19 @@ import { callAPI } from "../utils/callApiUtils.js";
 import { colors } from "../js/globalStyles.js";
 import { charLimiter } from "../utils/characterLimit.js";
 import charLimit from "../utils/characterLimit.js";
+import { pfpStyle } from "../utils/stylingFunctions.js";
 
 const styles = `
 .card-container {
 	display: inline-block;
-	background-color: ${colors.btn_active};
-	border-radius: 8px;	
+	background-color: ${colors.second_card};
+	color: ${colors.primary_text};
+	font-family: system-ui;
+	border-radius: 8px;
 	padding: 20px 30px 20px 30px;
 }
+
+
 
 .invite-card {
 	display: flex;
@@ -42,9 +47,7 @@ const styles = `
 	margin-bottom: 5px;
 }
 
-.profile-photo {
-	width: 60px;
-}
+${pfpStyle(".profile-photo", "60px", "auto")};
 
 .exp-date {
 	margin-bottom: 5px;

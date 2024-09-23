@@ -3,6 +3,7 @@ import stateManager from "../js/StateManager.js";
 import { colors } from "../js/globalStyles.js";
 import { charLimiter } from "../utils/characterLimit.js";
 import charLimit from "../utils/characterLimit.js";
+import { pfpStyle } from "../utils/stylingFunctions.js";
 
 const styles = `
 .card-container {
@@ -44,9 +45,7 @@ const styles = `
 	margin-bottom: 5px;
 }
 
-.profile-photo {
-	width: 60px;
-}
+${pfpStyle(".profile-photo", "60px", "auto")};
 
 .exp-date {
 	margin-bottom: 5px;

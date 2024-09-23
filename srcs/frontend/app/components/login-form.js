@@ -95,24 +95,6 @@ h1 {
 	background-color: ${colors.btn_default};
 	color: ${colors.primary_text};
 }
-
-.alert-bar {
-	width: 80%;
-	height: 5px;
-	background-color: white;
-	position: absolute;
-	bottom: 0;
-	animation: extend 10s forwards;
-}
-
-@keyframes extend {
-	from {
-		width: 80%;
-	}
-	to {
-		width: 0%;
-	}
-}
 `;
 
 const getHtml = function(data) {
@@ -120,8 +102,7 @@ const getHtml = function(data) {
 		<h1 class="highlight-text">Sign in</h1>
 		<form id="login-form">
 			<div class="alert alert-danger hide from" role="alert">
-				Invalid authentication credentials  sfsdfsdfsd .
-				<div class=alert-bar></div>
+				Invalid authentication credentials.
 			</div>
 			<div class="form-group">
 				<i class="icon left-icon bi-person"></i>

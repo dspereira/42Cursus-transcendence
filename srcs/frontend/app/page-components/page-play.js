@@ -17,6 +17,7 @@ const styles = `
 
 	.invite-game-btn {
 		background-color: ${colors.btn_default};
+		border-style: hidden;
 		color: ${colors.primary_text};
 		padding: 10px 70px 10px 70px;
 		margin-bottom: 25px;

@@ -113,6 +113,7 @@ user-card {
 
 .selected-option {
 	background-color: ${colors.btn_default};
+	border-style: hidden;
 	border-radius: 5px;
 	transition: 0.5s;
 }
@@ -477,7 +478,6 @@ export default class AppFriends extends HTMLElement {
 				const alertBefore  = this.html.querySelector(".alert");
 				if (alertBefore)
 					alertBefore.remove();
-				console.log("HIIII");
 				const insertElement = this.html.querySelector(".friends-section");
 				var alertCard = document.createElement("div");
 				alertCard.className = "alert alert-danger hide from alert-div";
@@ -486,9 +486,6 @@ export default class AppFriends extends HTMLElement {
 						${msg}
 						<div class=alert-bar></div>
 					`;
-				// button.textContent = "Invite";
-				// rightListFriendHtml.appendChild(button);
-				// this.#setInviteSubmitEvent();
 				this.html.insertBefore(alertCard, insertElement);
 			}
 		});

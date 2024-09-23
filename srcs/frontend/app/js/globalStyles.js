@@ -7,23 +7,19 @@ export const colors = {
 	second_card: "#36393F", //primary_background
 	third_card: "#40444B",
 	input_background: "#40444B",
-	scroll_hover: "#63686F",
 	// Divider Colors
 	divider: "#2E3338",
 	// Text Colors
 	primary_text: "#FFFFFF",
 	second_text: "#B9BBBE",
+	third_text: "#72767D",
 	btn_text: "#FFFFFF",
 	hover_text: "#B9BBBE",
 	link: "#17F5F9",
 	link_hover: "#25B3B7",
 	//unused
-	third_text: "#72767D",
-	extra_text: "#00AFF4",
 	// Divider Colors
 	// Input Colors
-	input_text_background: "#DCDDDE",
-	placeholder_text: "#72767D",
 	// Interaction Colors
 	btn_default: "#5865F2", //button_background
 	btn_hover: "#4A53BC",

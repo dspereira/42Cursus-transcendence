@@ -65,6 +65,7 @@ const styles = `
 
 .friend-selected {
 	background-color: ${colors.btn_default};
+	border-style: hidden;
 	color: ${colors.primary_text};
 	border-radius: 5px;
 }

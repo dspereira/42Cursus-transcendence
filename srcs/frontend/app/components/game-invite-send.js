@@ -18,7 +18,7 @@ const styles = `
 	color: ${colors.second_text};
 }
 
-.search-bar input, .search-bar input:hover, .search-bar input:focus{
+.search-bar input, .search-bar input:hover, .search-bar input:focus {
 	padding-left: 40px;
 	color:  ${colors.second_text};
 }
@@ -41,149 +41,191 @@ const styles = `
 	background-color: ${colors.input_background};
 }
 
-	.friend-list {
-		display: flex;
-		flex-wrap: wrap;
-		gap: 30px;
-		justify-content: center;
-		overflow-y: auto;
-	}
+.friend-list {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 30px;
+	justify-content: center;
+	overflow-y: auto;
+}
 
-	.send-invite-section {
-		display: flex;
-		gap: 30px;
-	}
+.send-invite-section {
+	display: flex;
+	gap: 30px;
+}
+
+.friend-section {
+	display: flex;
+	flex-direction: column;
+	width: 80%;
+	padding: 20px;
+	border-radius: 5px;
+	height: 90vh;
+	background-color:  ${colors.second_card};
+}
+
+.selected-list-section {
+	width: 100%;
+	padding: 0px 20px 0px 20px;
+	margin-bottom: 70px;
+	overflow-y: auto;
+}
+
+.selected-list-section::-webkit-scrollbar {
+	width: 15px;
+}
 	
-	.friend-section {
-		display: flex;
-		flex-direction: column;
-		width: 80%;
-		padding: 20px;
-		border-radius: 5px;
-		height: 90vh;
-		background-color:  ${colors.second_card};
-	}
+.selected-list-section::-webkit-scrollbar-track {
+	width: 15px;
+	background: ${colors.second_card};
+}
 
-	.selected-list-section {
+.selected-list-section::-webkit-scrollbar-thumb {
+	background: ${colors.main_card};
+	border-radius: 10px;
+	border-style: hidden;
+	border: 3px solid transparent;
+	background-clip: content-box;
+}
+
+.friend-right-list {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	margin-bottom: 10px;
+	background-color: ${colors.third_card};
+	padding: 0px 10px 0px 10px;
+	border-radius: 5px;
+	border-style: hidden;
+	color: ${colors.primary_text};
+}
+
+.friend-right-list span {
+	font-size: 20px;
+	font-weight: bold;
+}
+
+.cross-icon {
+	color: red;
+	font-size: 24px;
+	cursor: pointer;
+}
+
+.cross-icon:hover {
+	color: blue; /* outra cor igual mas mais carregada */
+}
+
+.btn-primary:not(disabled) {
+	background-color: ${colors.btn_default};
+	color: ${colors.second_text};
+}
+
+.btn-primary:not(:disabled):hover {
+	background-color: ${colors.btn_default};
+	color: ${colors.primary_text};
+}
+
+.btn-primary:disabled {
+	background-color: ${colors.main_card};
+	cursor: not-allowed;
+	border-style: hidden;
+}
+
+.btn-invite {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	position: absolute;
+	border-style: hidden;
+	border-radius: 5px;
+	bottom: 20px;
+	width: 100px;
+	height: 40px;
+	left: 50%;
+	transform: translateX(-50%);
+}
+
+.players-invited {
+	margin-top: 20px;
+	color: ${colors.second_text};
+}
+
+.separator {
+	display: flex;
+	width: 80%;
+	height: 5px;
+	border-radius: 10px;
+	justify-content: center;
+	align-items: center;
+	margin: 20px 0px 20px 0px;
+	background-color: ${colors.main_card};
+}
+
+.selected-list-container {
+	display: flex;
+	width: 30%;
+	flex-direction: column;
+	position: relative;
+	align-items: center;
+	width: 20%;
+	min-width: 200px;
+	height: 90vh;
+	border-radius: 5px;
+	background-color: ${colors.second_card};
+}
+
+.friend-list::-webkit-scrollbar-track {
+	background: ${colors.second_card};
+}
+
+.friend-list::-webkit-scrollbar-thumb {
+	background: ${colors.main_card};
+	border-radius: 10px;
+	border-style: hidden;
+	border: 3px solid transparent;
+	background-clip: content-box;
+}
+
+.alert-div {
+	display: flex;
+	width: 100%;
+	animation: disappear linear 10s forwards;
+	background-color: ${colors.alert};
+}
+
+.alert-bar {
+	width: 100%;
+	height: 5px;
+	border-style: hidden;
+	border-radius: 2px;
+	background-color: ${colors.alert_bar};
+	position: absolute;
+	bottom: 2px;
+	animation: expire linear 10s forwards;
+}
+
+@keyframes expire {
+	from {
 		width: 100%;
-		padding: 0px 20px 0px 20px;
-		margin-bottom: 70px;
-		overflow-y: auto;
 	}
+	to {
+		width: 0%;
+	}
+}
 
-	.selected-list-section::-webkit-scrollbar {
-		width: 15px;
+@keyframes disappear {
+	0% {
+		visibility: visible;
+		opacity: 1;
 	}
-	
-	.selected-list-section::-webkit-scrollbar-track {
-		width: 15px;
-		background: ${colors.second_card};
+	99% {
+		visibility: visible;
+		opacity: 1;
 	}
-	
-	.selected-list-section::-webkit-scrollbar-thumb {
-		background: ${colors.main_card};
-		border-radius: 10px;
-		border-style: hidden;
-		border: 3px solid transparent;
-		background-clip: content-box;
-	}
-		
-	.friend-right-list {
-		display: flex;
-		justify-content: space-between;
-		align-items: center;
-		margin-bottom: 10px;
-		background-color: ${colors.third_card};
-		padding: 0px 10px 0px 10px;
-		border-radius: 5px;
-		border-style: hidden;
-		color: ${colors.primary_text};
-	}
-	
-	.friend-right-list span {
-		font-size: 20px;
-		font-weight: bold;
-	}
-
-	.cross-icon {
-		color: red;
-		font-size: 24px;
-		cursor: pointer;
-	}
-
-	.cross-icon:hover {
-		color: blue; /* outra cor igual mas mais carregada */
-	}
-
-	.btn-primary:not(disabled) {
-		background-color: ${colors.btn_default};
-		color: ${colors.second_text};
-	}
-
-	.btn-primary:not(:disabled):hover {
-		background-color: ${colors.btn_default};
-		color: ${colors.primary_text};
-	}
-
-	.btn-primary:disabled {
-		background-color: ${colors.main_card};
-		cursor: not-allowed;
-		border-style: hidden;
-	}
-
-	.btn-invite {
-		display: flex;
-		justify-content: center;
-		align-items: center;
-		position: absolute;
-		border-style: hidden;
-		border-radius: 5px;
-		bottom: 20px;
-		width: 100px;
-		height: 40px;
-		left: 50%;
-		transform: translateX(-50%);
-	}
-
-	.players-invited {
-		margin-top: 20px;
-		color: ${colors.second_text};
-	}
-
-	.separator {
-		display: flex;
-		width: 80%;
-		height: 5px;
-		border-radius: 10px;
-		justify-content: center;
-		align-items: center;
-		margin: 20px 0px 20px 0px;
-		background-color: ${colors.main_card};
-	}
-
-	.selected-list-container {
-		display: flex;
-		width: 30%;
-		flex-direction: column;
-		position: relative;
-		align-items: center;
-		width: 20%;
-		min-width: 200px;
-		height: 90vh;
-		border-radius: 5px;
-		background-color: ${colors.second_card};
-	}
-
-	.friend-list::-webkit-scrollbar-track {
-		background: ${colors.second_card};
-	}
-	
-	.friend-list::-webkit-scrollbar-thumb {
-		background: ${colors.main_card};
-		border-radius: 10px;
-		border-style: hidden;
-		border: 3px solid transparent;
-		background-clip: content-box;
+	100% {
+		visibility: hidden;
+		opacity: 0;
+		display: none;
 	}
 }
 `;
@@ -268,6 +310,7 @@ export default class GameInviteSend extends HTMLElement {
 		this.#setInviteSubmitEvent();
 		const inviteButton = document.querySelector(".btn-primary");
 		inviteButton.disabled = this.selectedElm == 0;
+		this.#errorMsgEvents();
 	}
 
 	#setFriendsSearchEvent() {
@@ -395,7 +438,30 @@ export default class GameInviteSend extends HTMLElement {
 					></app-lobby>
 					`;
 				}
+				else
+					stateManager.setState("errorMsg", "Couldn't send invite");
 			});
+		});
+	}
+
+	#errorMsgEvents() {
+		stateManager.addEvent("errorMsg", (msg) => {
+			if (msg) {
+				console.log(msg);
+				stateManager.setState("errorMsg", null);
+				const alertBefore  = this.html.querySelector(".alert");
+				if (alertBefore)
+					alertBefore.remove();
+				const insertElement = this.html.querySelector(".send-invite-section");
+				var alertCard = document.createElement("div");
+				alertCard.className = "alert alert-danger hide from alert-div";
+				alertCard.role = "alert";
+				alertCard.innerHTML = `
+						${msg}
+						<div class=alert-bar></div>
+					`;
+				this.html.insertBefore(alertCard, insertElement);
+			}
 		});
 	}
 }

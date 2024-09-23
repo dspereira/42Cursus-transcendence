@@ -68,6 +68,7 @@ const styles = `
 
 	.btn-primary {
 		background-color: ${colors.btn_default};
+		border-style: hidden;
 		color: ${colors.btn_text};
 	}
 

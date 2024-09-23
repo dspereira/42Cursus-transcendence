@@ -4,11 +4,11 @@ import { callAPI } from "../utils/callApiUtils.js";
 import stateManager from "../js/StateManager.js";
 import { redirect } from "../js/router.js";
 import { colors } from "../js/globalStyles.js";
+import { pfpStyle } from "../utils/stylingFunctions.js";
 
 const styles = `
-.profile-photo {
-	width: 50px;
-}
+
+${pfpStyle(".profile-photo", "50px", "auto")};
 
 .players-info {
 	display: flex;

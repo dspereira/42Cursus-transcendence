@@ -1,6 +1,7 @@
 import { callAPI } from "../utils/callApiUtils.js";
 import { colors } from "../js/globalStyles.js";
 import stateManager from "../js/StateManager.js";
+import { pfpStyle } from "../utils/stylingFunctions.js";
 
 const styles = `
 
@@ -23,9 +24,7 @@ const styles = `
 	margin-bottom: 20px;
 }
 
-.user-photo {
-	width: 70px;
-}
+${pfpStyle(".user-photo", "70px", "auto")};
 
 .user-name {
 	font-size: 16px;

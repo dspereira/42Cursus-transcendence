@@ -3,6 +3,10 @@ import { colors } from "../js/globalStyles.js";
 import { charLimiter } from "../utils/characterLimit.js";
 import charLimit from "../utils/characterLimit.js";
 import stateManager from "../js/StateManager.js";
+import { pfpStyle } from "../utils/stylingFunctions.js";
+
+// --bs-font-sans-serif: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", "Noto Sans", "Liberation Sans", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+
 
 const styles = `
 .card-container {
@@ -32,14 +36,13 @@ const styles = `
 	margin-bottom: 5px;
 }
 
-.profile-photo {
-	width: 60px;
-}
 
 .selected {
 	background-color: ${colors.btn_default};
 	color: ${colors.primary_text};
 }
+
+${pfpStyle(".profile-photo", "60px", "auto")};
 
 .online-status {
 	position: absolute;

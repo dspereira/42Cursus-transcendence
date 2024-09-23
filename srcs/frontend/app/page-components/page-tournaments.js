@@ -21,6 +21,7 @@ const styles = `
 .btn-create-tourney {
 	color: ${colors.btn_text};
 	background-color: ${colors.btn_default};
+	border-style: hidden;
 }
 
 .btn-create-tourney:hover {

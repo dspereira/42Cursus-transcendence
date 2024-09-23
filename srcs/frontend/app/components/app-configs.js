@@ -74,6 +74,8 @@ const styles = `
 	margin-bottom: 30px;
 	color: ${colors.primary_text};
 	background-color: ${colors.btn_default};
+	border-style: hidden;
+
 }
 
 .btn-submit:hover {
@@ -87,6 +89,7 @@ const styles = `
 	/*font-size: clamp(0.5rem, 1vw, 1rem);*/
 	color: ${colors.primary_text};
 	background-color: ${colors.btn_default};
+	border-style: hidden;
 }
 
 .btn-img:hover {
