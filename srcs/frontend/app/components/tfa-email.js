@@ -2,6 +2,10 @@ import {callAPI} from "../utils/callApiUtils.js";
 import stateManager from "../js/StateManager.js";
 
 const styles = `
+.tfa-container {
+	margin: 0px auto;
+}
+
 p {
 	font-size: 22px;
 }
@@ -22,33 +26,24 @@ p {
 
 const getHtml = function(data) {
 	const html = `
-		<p>A code has been sent to your email. Please check it and enter it in the box below.</p>
-
-		<form id="tfa-code">
-			<div class="form-group">
-				
-				<div class="code-container">
-				<input type="text" class="input-padding form-control form-control-md otp-code" id="idx-0" maxlength="1">
-				<input type="text" class="input-padding form-control form-control-md otp-code" id="idx-1" maxlength="1">
-				<input type="text" class="input-padding form-control form-control-md otp-code" id="idx-2" maxlength="1">
-				<input type="text" class="input-padding form-control form-control-md otp-code" id="idx-3" maxlength="1">
-				<input type="text" class="input-padding form-control form-control-md otp-code" id="idx-4" maxlength="1">
-				<input type="text" class="input-padding form-control form-control-md otp-code" id="idx-5" maxlength="1">
+		<div class="tfa-container">
+			<p>A code has been sent to your email. Please check it and enter it in the box below.</p>
+			<form id="tfa-code">
+				<div class="form-group">
+					<div class="code-container">
+					<input type="text" class="input-padding form-control form-control-md otp-code" id="idx-0" maxlength="1">
+					<input type="text" class="input-padding form-control form-control-md otp-code" id="idx-1" maxlength="1">
+					<input type="text" class="input-padding form-control form-control-md otp-code" id="idx-2" maxlength="1">
+					<input type="text" class="input-padding form-control form-control-md otp-code" id="idx-3" maxlength="1">
+					<input type="text" class="input-padding form-control form-control-md otp-code" id="idx-4" maxlength="1">
+					<input type="text" class="input-padding form-control form-control-md otp-code" id="idx-5" maxlength="1">
+					</div>
+				<div>
+					<button type="submit" class="btn btn-primary btn-submit">validate</button>
 				</div>
-				
-				<!--
-				<input type="text" class="input-padding form-control form-control-md otp-code" id="code"  maxlength="6">
-				-->
-				</div>
-			<br></br>
-			<div>
-				<button type="submit" class="btn btn-primary btn-submit">validate</button>
-			</div>
-
-		</form>
-
-		<br></br>
-		<button type="button" class="btn btn-primary btn-resend">Resend email</button>
+			</form>
+			<button type="button" class="btn btn-primary btn-resend">Resend email</button>
+		<div>
 	`;
 
 	return html;
@@ -107,6 +102,7 @@ export default class TfaEmail extends HTMLElement {
 		this.#pasteCode();
 		this.#submit();
 		this.#writeKeys();
+		this.#activeInactiveValidateBtn();
 	}
 
 	#sendCodeToEmail() {
@@ -126,7 +122,6 @@ export default class TfaEmail extends HTMLElement {
 		});
 	}
 
-	//123456
 	#pasteCode() {
 		this.html.addEventListener("paste", (event) =>{
 			let code;
@@ -165,7 +160,6 @@ export default class TfaEmail extends HTMLElement {
 		const tfaForm = this.html.querySelector("#tfa-code");
 		tfaForm.addEventListener("submit", (event) => {
 			event.preventDefault();
-			//this.submitBtn.disabled = true;
 			const formData = {
 				code: this.html.querySelector('#code').value.trim(),
 				method: "email"
@@ -186,8 +180,16 @@ export default class TfaEmail extends HTMLElement {
 		document.addEventListener("keyup", (event) => {
 			this.#cleanNonNumericInputs();
 
-			if (event.key == "Backspace")
+			console.log(event.key);
+
+			if (event.key.toLowerCase() == "escape") {
+				this.#removeAllInputValues();
+				this.#removeFocus();
+			}
+
+			if (event.key.toLowerCase() == "backspace")
 				this.#moveBackward();
+			this.#activeInactiveValidateBtn();
 
 			const value = event.key;
 			if (!value || value < '0' || value > '9')
@@ -201,6 +203,7 @@ export default class TfaEmail extends HTMLElement {
 				this.inputs[idx+1].focus();
 			else if (idx == 5)
 				this.inputs[idx].blur();
+			this.#activeInactiveValidateBtn();
 		});
 	}
 
@@ -226,7 +229,6 @@ export default class TfaEmail extends HTMLElement {
 				this.inputs[i].focus();
 				return ;
 			}
-
 		}
 	}
 
@@ -235,6 +237,22 @@ export default class TfaEmail extends HTMLElement {
 			if (elm.value < "0" || elm.value > "9")
 				elm.value = "";
 		});
+	}
+
+	#activeInactiveValidateBtn() {
+		this.submitBtn.disabled=false;
+		this.inputs.forEach((elm) => {
+			if (elm.value < "0" || elm.value > "9") {
+				this.submitBtn.disabled=true;
+				return ;
+			}
+		});
+	}
+
+	#removeFocus() {
+		let elm = document.activeElement;
+		if (elm.tagName.toLowerCase() == "input")
+			elm.blur();
 	}
 }
 
