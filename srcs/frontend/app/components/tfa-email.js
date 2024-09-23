@@ -153,14 +153,13 @@ export default class TfaEmail extends HTMLElement {
 	}
 
 	#scripts() {
-		//this.#sendCodeToEmail();
+		this.#sendCodeToEmail();
 		this.#resendEmailBtn();
 		this.#pasteCode();
 		this.#submit();
 		this.#writeKeys();
 		this.#toggleSubmitBtnDisabledBasedOnInput();
 	}
-
 
 	#sendCodeToEmail() {
 		callAPI("POST", `http://127.0.0.1:8000/api/two-factor-auth/request-email/`, {}, (res, data) => {		
@@ -173,7 +172,8 @@ export default class TfaEmail extends HTMLElement {
 		const btn = this.html.querySelector(".btn-resend");
 		if (!btn)
 			return ;
-		btn.addEventListener("click", () => {
+		btn.addEventListener("click", (event) => {
+			event.preventDefault();
 			this.#sendCodeToEmail();
 		});
 	}
