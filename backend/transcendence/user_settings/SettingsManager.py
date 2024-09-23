@@ -1,14 +1,17 @@
+from two_factor_auth.two_factor import is_valid_phone_number
+from custom_utils.auth_utils import is_valid_username
 from custom_utils.models_utils import ModelManager
+from two_factor_auth.models import OtpUserOptions
 from user_profile.models import UserProfileInfo
+from user_profile.aux import get_image_url
 from user_auth.models import User
 from .models import UserSettings
-from custom_utils.auth_utils import is_valid_username
-from user_profile.aux import get_image_url
-from PIL import Image
 from io import BytesIO
+from PIL import Image
 import os
 
 user_profile_model = ModelManager(UserProfileInfo)
+otp_user_opt_model = ModelManager(OtpUserOptions)
 user_settings_model = ModelManager(UserSettings)
 user_model = ModelManager(User)
 
@@ -17,6 +20,7 @@ class SettingsManager:
 		self.user = user
 		self.user_profile = user_profile_model.get(user=user)
 		self.user_settings = user_settings_model.get(user=user)
+		self.user_otp_settings = otp_user_opt_model.get(user=user)
 
 	def get_current_settings(self):
 		settings = {
@@ -24,7 +28,8 @@ class SettingsManager:
 			'bio': self.user_profile.bio,
 			'image': get_image_url(self.user_profile),
 			'game_theme': self.user_settings.game_theme,
-			'language': self.user_settings.language
+			'language': self.user_settings.language,
+			'tfa': self.__get_tfa_settings()
 		}
 		return settings
 
@@ -100,6 +105,28 @@ class SettingsManager:
 				self.user_profile.save()
 				return True
 		return False
+
+	def update_tfa(self, tfa_options):
+		if tfa_options.get('qr_code'):
+			new_qr_code = tfa_options['qr_code']
+			if not isinstance(new_qr_code, bool):
+				return 'invalid QR Code value'
+			if  new_qr_code != self.user_otp_settings.qr_code:
+				self.user_otp_settings.qr_code = new_qr_code
+		if tfa_options.get('phone'):
+			new_phone_number = tfa_options['phone']
+			if not is_valid_phone_number(new_phone_number):
+				return 'invalid Phone Number'
+			if new_phone_number != self.user_otp_settings.phone_number:
+				self.user_otp_settings.phone_number = new_phone_number
+		self.user_otp_settings.save()
+		return None
+
+	def __get_tfa_settings(self):
+		return {
+			'qr_code': self.user_otp_settings.qr_code,
+			'phone': self.user_otp_settings.phone_number
+		}
 
 	def __remove_image_from_profile(self):
 		if self.user_profile.compressed_profile_image:

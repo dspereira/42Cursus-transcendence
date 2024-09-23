@@ -31,7 +31,15 @@ OTP_EXP_TIME_MIN = 3
 OTP_EXP_TIME_SEC = OTP_EXP_TIME_MIN * 60
 
 def setup_default_tfa_configs(user):
-	default_user_options(user)
+	secret_key = generate_encrypted_user_secret_key()
+	default_user_options = otp_user_opt_model.create(
+		user=user,
+		secret_key=secret_key,
+		qr_code=False,
+		email=user.email,
+		phone_number=None
+	)
+	return default_user_options
 
 def initiate_two_factor_authentication(user):
 	if exist_qr_code(user=user):
@@ -41,7 +49,7 @@ def initiate_two_factor_authentication(user):
 	else:
 		return "phone"
 
-def invaidate_all_valid_user_otp(user):
+def invalidate_all_valid_user_otp(user):
 	if user:
 		valid_otps = otp_codes_model.filter(created_by=user, status=OTP_STATUS_AVAILABLE)
 		if valid_otps:
@@ -52,7 +60,7 @@ def invaidate_all_valid_user_otp(user):
 def generate_otp_code(user):
 	otp_value = None
 	if user:
-		invaidate_all_valid_user_otp(user)
+		invalidate_all_valid_user_otp(user)
 		secret_key = get_user_secret_key(user)
 		if secret_key:
 			totp = pyotp.TOTP(secret_key, interval=OTP_EXP_TIME_SEC)
@@ -103,14 +111,6 @@ def is_valid_otp_qr_code(otp: str, user):
 				return True
 	return False
 
-def getUser(user_id):
-	return user_model.get(id=user_id)
-
-def is_configuration_in_db(user):
-	if otp_user_opt_model.get(user=user):
-		return True
-	return False
-
 def generate_encrypted_user_secret_key():
 	secret_key = pyotp.random_base32()
 	encrypted_secret_key = Cryptographer().encrypt_message(message=secret_key)
@@ -123,52 +123,6 @@ def get_user_secret_key(user):
 		decrypted_secret_jey = Cryptographer().decrypt_message(encrypted_message=encrypted_secret_key)
 		return decrypted_secret_jey
 	return None
-
-def create_user_options(user, qr_code, email, phone):
-	secret_key = generate_encrypted_user_secret_key()
-
-	if email:
-		user_email = user.email
-	else:
-		user_email = None
-
-	if phone:
-		user_phone_number = phone
-	else:
-		user_phone_number = None
-
-	otp_user_opt_model.create(
-		user=user,
-		secret_key=secret_key,
-		qr_code=qr_code,
-		email=user_email,
-		phone_number=user_phone_number
-	)
-
-def default_user_options(user):
-	create_user_options(user=user, qr_code=False, email=user.email, phone=False)
-
-def get_user_otp_options(user):
-	return otp_user_opt_model.get(user=user)
-
-def update_user_2fa_options(user, qr_code_status, email_status, phone_status, phone_value):
-	otp_user_opt = otp_user_opt_model.get(user=user)
-	if otp_user_opt:
-
-		if qr_code_status != otp_user_opt.qr_code:
-			otp_user_opt.qr_code = qr_code_status
-
-		if not otp_user_opt.email and email_status:
-			otp_user_opt.email = user.email
-		elif otp_user_opt.email and not email_status:
-			otp_user_opt.email = None
-
-		if not otp_user_opt.phone_number and phone_status:
-			otp_user_opt.phone_number = phone_value
-		elif otp_user_opt.phone_number and not phone_status:
-			otp_user_opt.phone_number = None
-
-		otp_user_opt.save()
 
 def exist_qr_code(user):
 	otp_user_opt = otp_user_opt_model.get(user=user)
@@ -246,3 +200,10 @@ def get_new_code_wait_time(user):
 				else:
 					wait_time_str = f"{math.floor(wait_time) + 1} minute(s)"
 	return wait_time_str
+
+def is_valid_phone_number(phone_number):
+	if phone_number:
+		phone_number_pattern = r'^\+?[1-9]\d{0,2}[-.\s]?(\d{1,4}[-.\s]?){1,4}\d{1,9}$'
+		if re.match(phone_number_pattern, phone_number):
+			return True
+	return False
