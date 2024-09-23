@@ -125,7 +125,7 @@ def validateOTP(request):
 			else:
 				if is_valid_otp_qr_code(code, user):
 					return JsonResponse({"message": "OTP validated with success!"}, status=200)
-			return JsonResponse({"message": "Invalid OTP!"}, status=409)
+			return JsonResponse({"message": "Invalid Submited Code!"}, status=409)
 	return JsonResponse({"message": "Error: Invalid Request!"}, status=400)
 
 @accepted_methods(["GET"])
