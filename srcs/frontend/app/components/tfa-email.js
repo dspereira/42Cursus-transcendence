@@ -57,6 +57,9 @@ p {
 	margin-top: 10px;
 }
 
+.code-invalid {
+	border: 2px solid #dc3545;
+}
 `;
 
 const getHtml = function(data) {
@@ -135,7 +138,6 @@ export default class TfaEmail extends HTMLElement {
 	}
 
 	#scripts() {
-		this.#sendCodeToEmail();
 		this.#resendEmailBtn();
 		this.#pasteCode();
 		this.#submit();
@@ -151,10 +153,7 @@ export default class TfaEmail extends HTMLElement {
 	}
 
 	#resendEmailBtn() {
-		const btn = this.html.querySelector(".btn-resend");
-		if (!btn)
-			return ;
-		btn.addEventListener("click", () => {
+		this.resendCodeBtn.addEventListener("click", () => {
 			this.#sendCodeToEmail();
 		});
 	}
@@ -201,9 +200,11 @@ export default class TfaEmail extends HTMLElement {
 				code: this.#getCodeValue(),
 				method: "email"
 			}
-			this.#removeAllInputValues();
+			/*this.#removeAllInputValues();
 			this.#removeFocus();
-			this.#toggleSubmitBtnDisabledBasedOnInput();
+			this.#toggleSubmitBtnDisabledBasedOnInput();*/
+
+			this.#updateInvalidCodeStyle(true);
 			if (!formData.code) {
 				// tem de dar erro não tem código, o melhor é o botão começar desabilitado.
 			}
@@ -223,15 +224,18 @@ export default class TfaEmail extends HTMLElement {
 			if (event.key.toLowerCase() == "escape") {
 				this.#removeAllInputValues();
 				this.#removeFocus();
+				this.#updateInvalidCodeStyle(false);
 			}
-			if (event.key.toLowerCase() == "backspace")
+			if (event.key.toLowerCase() == "backspace") {
 				this.#moveBackward();
+				this.#updateInvalidCodeStyle(false);
+			}
 			this.#toggleSubmitBtnDisabledBasedOnInput();
 
 			const value = event.key;
 			if (!value || value < '0' || value > '9')
 				return ;
-			
+			this.#updateInvalidCodeStyle(false);
 			const idx = parseInt(this.#getInputIdxToWrite());
 			if (idx == 0)
 				this.#removeAllInputValues();
@@ -258,14 +262,14 @@ export default class TfaEmail extends HTMLElement {
 		});
 	}
 
-	#moveBackward() {
-		for(let i = 5; i >= 0; i--) {
-			if (this.inputs[i].value != "") {
-				this.inputs[i].value = "";
-				this.inputs[i].focus();
-				return ;
-			}
-		}
+	#moveBackward() {	
+		let idx = 5;
+		let elm = document.activeElement;
+		if (elm.tagName.toLowerCase() == "input")
+			idx = parseInt(elm.id.substring("idx-".length));
+		this.inputs[idx].value = "";
+		if (idx > 0)
+			this.inputs[idx-1].focus();
 	}
 
 	#cleanNonNumericInputs() {
@@ -294,11 +298,19 @@ export default class TfaEmail extends HTMLElement {
 	#getCodeValue() {
 		let code = ""; 
 		this.inputs.forEach((elm) => {
-			if (elm.value >= "0" || elm.value <= "9") {
+			if (elm.value >= "0" || elm.value <= "9")
 				code += elm.value;
-			}
 		});
 		return code.trim();
+	}
+
+	#updateInvalidCodeStyle(setInvalid) {
+		this.inputs.forEach((elm) => {
+			if (setInvalid)
+				elm.classList.add("code-invalid");
+			else
+				elm.classList.remove("code-invalid");
+		});
 	}
 }
 
