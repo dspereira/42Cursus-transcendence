@@ -10,6 +10,8 @@ import base64
 import io
 import os
 import re
+import math
+from datetime import datetime, timedelta
 from twilio.rest import Client
 from custom_utils.email_utils import EmailSender
 
@@ -25,7 +27,7 @@ OTP_STATUS_USED = "used"
 OTP_STATUS_AVAILABLE = "available"
 OTP_STATUS_INVALID = "invalid"
 
-OTP_EXP_TIME_MIN = 5
+OTP_EXP_TIME_MIN = 3
 OTP_EXP_TIME_SEC = OTP_EXP_TIME_MIN * 60
 
 def setup_default_tfa_configs(user):
@@ -43,10 +45,10 @@ def initiate_two_factor_authentication(user):
 
 def invaidate_all_valid_user_otp(user):
 	if user:
-		valid_otps = otp_codes_model.filter(user=user, status=OTP_STATUS_AVAILABLE)
+		valid_otps = otp_codes_model.filter(created_by=user, status=OTP_STATUS_AVAILABLE)
 		if valid_otps:
 			for otp in valid_otps:
-				otp._status = OTP_STATUS_INVALID
+				otp.status = OTP_STATUS_INVALID
 				otp.save()
 
 def generate_otp_code(user):
@@ -88,6 +90,7 @@ def is_valid_otp(otp: str, user):
 				if otp:
 					if totp.verify(otp):
 						code.status = OTP_STATUS_USED
+						code.save()
 						return True
 	return False
 
@@ -227,3 +230,21 @@ def is_valid_otp_method(otp_method):
 		if otp_method in AVAILABLE_OTP_METHODS:
 			return True
 	return False
+
+def get_new_code_wait_time(user):
+	wait_time_str = None
+	wait_time = None
+	if user:
+		secret_key = get_user_secret_key(user)
+		last_code = otp_codes_model.get(created_by=user, status=OTP_STATUS_AVAILABLE)
+		if last_code:
+			totp = pyotp.TOTP(secret_key)
+			exp_time_otp = last_code.created.timestamp() + OTP_EXP_TIME_SEC
+			time_now = datetime.now().timestamp()
+			if exp_time_otp > time_now:
+				wait_time = (exp_time_otp - time_now) / 60
+				if wait_time <= 0.3:
+					wait_time_str = "30 seconds left"
+				else:
+					wait_time_str = f"{math.floor(wait_time) + 1} minute(s)"
+	return wait_time_str

@@ -17,6 +17,7 @@ from .two_factor import exist_email
 from .two_factor import exist_phone_number
 from .two_factor import is_valid_input_code
 from .two_factor import is_valid_otp_method
+from .two_factor import get_new_code_wait_time
 
 # Apenas para Testes
 from .two_factor import is_configuration_in_db
@@ -70,6 +71,9 @@ def generate_user_phone_code(request):
 				return JsonResponse({"message": "Error: Invalid Users!"}, status=409)
 			if not exist_phone_number(user):
 				return JsonResponse({"message": "Error: Phone Number is not configured in 2FA!"}, status=409)
+			wait_time = get_new_code_wait_time(user)
+			if wait_time:
+				return JsonResponse({"message": f"Error: Wait {wait_time} to send a new code. Please check your mail box."}, status=409)
 			if not send_smsto_user(user):
 				return JsonResponse({"message": "Error: Failed to send 2FA SMS!"}, status=409)
 			return JsonResponse({"message": "SMS sended with success!"}, status=200)
@@ -84,6 +88,9 @@ def generate_user_email_code(request):
 				return JsonResponse({"message": "Error: Invalid Users!"}, status=409)
 			if not exist_email(user):
 				return JsonResponse({"message": "Error: Email is not configured in 2FA!"}, status=409)
+			wait_time = get_new_code_wait_time(user)
+			if wait_time:
+				return JsonResponse({"message": f"Error: Wait {wait_time} to send a new code. Please check your mail box."}, status=409)
 			if not send_email_to_user(user):
 				return JsonResponse({"message": "Error: Failed to send 2FA email!"}, status=409)
 			return JsonResponse({"message": "Email sended with success!"}, status=200)
