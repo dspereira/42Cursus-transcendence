@@ -62,14 +62,16 @@ export default class Page2FA extends HTMLElement {
 	}
 
 	#get2faOption() {
-		callAPI("GET", `http://127.0.0.1:8000/api/two-factor-auth/configured-2fa/`, null, (res, data) => {			
-			if (res.ok && data && data.configured_methods) {
-				if (data.configured_methods.qr_code)
-					this.option2fa.innerHTML = "Qr code";
-				else if (data.configured_methods.email)
-					this.option2fa.innerHTML = "<tfa-email></tfa-email>";
-				else if (data.configured_methods.phone)
-					this.option2fa.innerHTML = "phone";
+		this.option2fa.innerHTML = "<tfa-email></tfa-email>";
+		
+		callAPI("GET", `http://127.0.0.1:8000/api/two-factor-auth/configured-2fa/`, null, (res, data) => {	
+			const allowedMethods =  JSON.stringify(data.configured_methods);
+			if (res.ok && data) {
+				this.option2fa.innerHTML = 
+				`<tfa-email 
+					method=${data.method}
+					allowed-methods='${allowedMethods}'
+					></tfa-email>`;
 			}
 		});
 	}

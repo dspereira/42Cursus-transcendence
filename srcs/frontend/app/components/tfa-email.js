@@ -1,5 +1,6 @@
 import {callAPI} from "../utils/callApiUtils.js";
 import stateManager from "../js/StateManager.js";
+import { redirect } from "../js/router.js";
 
 const styles = `
 .tfa-container {
@@ -63,10 +64,21 @@ p {
 `;
 
 const getHtml = function(data) {
+
+	console.log(data.method);
+
+	let infoMsg;
+	if (data.method == "email")
+		infoMsg = "A code has been sent to your email. Please check it and enter it in the box below.";
+	else if (data.method == "phone")
+		infoMsg = "A code has been sent to your mobile phone via SMS. Please check your messages and enter it in the box below.";
+	else
+		infoMsg = "Please scan the QR code using your authentication app and enter the generated code in the box below.";
+
 	const html = `
 		<div class="tfa-container">
 			<div class="tfa-elements">
-				<p>A code has been sent to your email. Please check it and enter it in the box below.</p>
+				<p>${infoMsg}</p>
 				<form id="tfa-code">
 					<div class="form-group">
 						<div class="code-container">
@@ -77,7 +89,7 @@ const getHtml = function(data) {
 						<input type="text" class="input-padding form-control form-control-md otp-code" id="idx-4" maxlength="1">
 						<input type="text" class="input-padding form-control form-control-md otp-code" id="idx-5" maxlength="1">
 					</div>
-					<button class="btn-resend">Resend code</button>
+					${data.method != "qr_code" ? '<button class="btn-resend">Resend code</button>' : ""}
 					<div class="submit-container">
 						<button type="submit" class="btn btn-primary btn-submit">submit</button>
 					<div>
@@ -90,7 +102,7 @@ const getHtml = function(data) {
 }
 
 export default class TfaEmail extends HTMLElement {
-	static observedAttributes = [];
+	static observedAttributes = ["method", "allowed-methods"];
 
 	constructor() {
 		super();
@@ -104,6 +116,10 @@ export default class TfaEmail extends HTMLElement {
 	}
 
 	attributeChangedCallback(name, oldValue, newValue) {
+		if (name == "allowed-methods") {
+			name = "allowedMethods";
+			newValue = JSON.parse(newValue);
+		}
 		this.data[name] = newValue;
 	}
 
@@ -118,7 +134,6 @@ export default class TfaEmail extends HTMLElement {
 		}
 		this.submitBtn = this.html.querySelector(".btn-submit");
 		this.inputs = this.html.querySelectorAll(".otp-code");
-		this.resendCodeBtn = this.html.querySelector(".btn-resend");
 	}
 
 	#styles() {
@@ -138,12 +153,14 @@ export default class TfaEmail extends HTMLElement {
 	}
 
 	#scripts() {
+		//this.#sendCodeToEmail();
 		this.#resendEmailBtn();
 		this.#pasteCode();
 		this.#submit();
 		this.#writeKeys();
 		this.#toggleSubmitBtnDisabledBasedOnInput();
 	}
+
 
 	#sendCodeToEmail() {
 		callAPI("POST", `http://127.0.0.1:8000/api/two-factor-auth/request-email/`, {}, (res, data) => {		
@@ -153,7 +170,10 @@ export default class TfaEmail extends HTMLElement {
 	}
 
 	#resendEmailBtn() {
-		this.resendCodeBtn.addEventListener("click", () => {
+		const btn = this.html.querySelector(".btn-resend");
+		if (!btn)
+			return ;
+		btn.addEventListener("click", () => {
 			this.#sendCodeToEmail();
 		});
 	}
@@ -198,20 +218,21 @@ export default class TfaEmail extends HTMLElement {
 			event.preventDefault();
 			const formData = {
 				code: this.#getCodeValue(),
-				method: "email"
+				method: this.data.method
 			}
-			/*this.#removeAllInputValues();
-			this.#removeFocus();
-			this.#toggleSubmitBtnDisabledBasedOnInput();*/
-
+			this.#toggleSubmitBtnDisabledBasedOnInput();
 			this.#updateInvalidCodeStyle(true);
-			if (!formData.code) {
-				// tem de dar erro não tem código, o melhor é o botão começar desabilitado.
+			if (!formData.code){
+				this.#updateInvalidCodeStyle(true);
+				return ;
 			}
 			else {
 				callAPI("POST", "http://127.0.0.1:8000/api/two-factor-auth/validate-otp/", formData, (res, data) => {		
 					console.log(res);
 					console.log(data);
+					if (res.ok)
+						redirect("/");
+					this.#updateInvalidCodeStyle(true);
 				});
 			}
 		});
