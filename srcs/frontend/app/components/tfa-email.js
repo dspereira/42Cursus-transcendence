@@ -3,6 +3,7 @@ import stateManager from "../js/StateManager.js";
 
 const styles = `
 .tfa-container {
+	width: 50%;
 	margin: 0px auto;
 }
 
@@ -102,7 +103,7 @@ export default class TfaEmail extends HTMLElement {
 		this.#pasteCode();
 		this.#submit();
 		this.#writeKeys();
-		this.#activeInactiveValidateBtn();
+		this.#toggleSubmitBtnDisabledBasedOnInput();
 	}
 
 	#sendCodeToEmail() {
@@ -161,9 +162,12 @@ export default class TfaEmail extends HTMLElement {
 		tfaForm.addEventListener("submit", (event) => {
 			event.preventDefault();
 			const formData = {
-				code: this.html.querySelector('#code').value.trim(),
+				code: this.#getCodeValue(),
 				method: "email"
 			}
+			this.#removeAllInputValues();
+			this.#removeFocus();
+			this.#toggleSubmitBtnDisabledBasedOnInput();
 			if (!formData.code) {
 				// tem de dar erro não tem código, o melhor é o botão começar desabilitado.
 			}
@@ -189,7 +193,7 @@ export default class TfaEmail extends HTMLElement {
 
 			if (event.key.toLowerCase() == "backspace")
 				this.#moveBackward();
-			this.#activeInactiveValidateBtn();
+			this.#toggleSubmitBtnDisabledBasedOnInput();
 
 			const value = event.key;
 			if (!value || value < '0' || value > '9')
@@ -203,7 +207,7 @@ export default class TfaEmail extends HTMLElement {
 				this.inputs[idx+1].focus();
 			else if (idx == 5)
 				this.inputs[idx].blur();
-			this.#activeInactiveValidateBtn();
+			this.#toggleSubmitBtnDisabledBasedOnInput();
 		});
 	}
 
@@ -239,7 +243,7 @@ export default class TfaEmail extends HTMLElement {
 		});
 	}
 
-	#activeInactiveValidateBtn() {
+	#toggleSubmitBtnDisabledBasedOnInput() {
 		this.submitBtn.disabled=false;
 		this.inputs.forEach((elm) => {
 			if (elm.value < "0" || elm.value > "9") {
@@ -253,6 +257,16 @@ export default class TfaEmail extends HTMLElement {
 		let elm = document.activeElement;
 		if (elm.tagName.toLowerCase() == "input")
 			elm.blur();
+	}
+
+	#getCodeValue() {
+		let code = ""; 
+		this.inputs.forEach((elm) => {
+			if (elm.value >= "0" || elm.value <= "9") {
+				code += elm.value;
+			}
+		});
+		return code.trim();
 	}
 }
 
