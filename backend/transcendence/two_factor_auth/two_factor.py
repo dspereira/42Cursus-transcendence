@@ -14,6 +14,7 @@ import math
 from datetime import datetime, timedelta
 from twilio.rest import Client
 from custom_utils.email_utils import EmailSender
+from transcendence import settings
 
 load_dotenv()
 
@@ -146,9 +147,9 @@ def exist_phone_number(user):
 	return False
 
 def send_smsto_user(user):
-	account_sid = os.environ['TWILIO_ACCOUNT_SID']
-	auth_token = os.environ['TWILIO_AUTH_TOKEN']
-	phone_number = os.environ['TWILIO_PHONE_NUMBER']
+	account_sid = settings.TWILIO_ACCOUNT_SID
+	auth_token = settings.TWILIO_AUTH_TOKEN
+	phone_number = settings.TWILIO_PHONE_NUMBER
 	otp_code = generate_otp_code(user)
 	if not otp_code:
 		return None
@@ -201,9 +202,9 @@ def get_new_code_wait_time(user):
 					wait_time_str = f"{math.floor(wait_time) + 1} minute(s)"
 	return wait_time_str
 
-def is_valid_phone_number(phone_number):
+def is_valid_phone_number(phone_number: str):
 	if phone_number:
-		phone_number_pattern = r'^\+?[1-9]\d{0,2}[-.\s]?(\d{1,4}[-.\s]?){1,4}\d{1,9}$'
+		phone_number_pattern = r'^\+\d{1,3} \d{4,14}$'
 		if re.match(phone_number_pattern, phone_number):
 			return True
 	return False
