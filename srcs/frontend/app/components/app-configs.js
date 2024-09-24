@@ -102,9 +102,7 @@ const getHtml = function(data) {
 					</div>
 					<div class="form-check">
 						<input class="form-check-input" type="checkbox" value="qrcode" id="qrcode">
-						<label class="form-check-label" for="qrcode">
-							QR Code
-						</label>
+						<label class="form-check-label" for="qrcode">QR Code</label>
 					</div>
 					<div class="form-check">
 						<input class="form-check-input" type="checkbox" value="phone" id="phone">
@@ -115,12 +113,12 @@ const getHtml = function(data) {
 
 					<div class="phone-container hide">
 						<div class="country-code">
-							<select class="form-select country-code-select" id="aaaa" aria-label="Language selection">
+							<select class="form-select country-code-select" aria-label="Language selection">
 							${getCountryCodesOptions()}
 							</select>
 						</div>
 						<div class="phone-number">
-							<input class="form-control form-control-md" type="text" id="phone">
+							<input class="form-control form-control-md phone-number-input" type="text">
 						</div>
 					<div>
 
@@ -241,6 +239,9 @@ export default class AppConfigs extends HTMLElement {
 		this.submitBtn = this.html.querySelector(".btn-submit");
 		this.phoneContainer = this.html.querySelector(".phone-container");
 		this.countryCode = this.html.querySelector(".country-code-select");
+		this.phoneNumber = this.html.querySelector(".phone-number-input");
+		this.qrcode = this.html.querySelector("#qrcode");
+		this.phoneCheckbox = this.html.querySelector("#phone");
 	}
 
 	#styles() {
@@ -288,7 +289,11 @@ export default class AppConfigs extends HTMLElement {
 				"bio": this.bioInp.value.trim(),
 				"game_theme": this.gameThemeOption.value.trim(),
 				"language": this.languageOption.value.trim(),
-				"image_seed": this.imageSeed.trim()
+				"image_seed": this.imageSeed.trim(),
+				"tfa": {
+					"qr_code": this.qrcode.checked,
+					"phone": this.phoneCheckbox.checked ? this.#getPhoneNumberFromInput() : null
+				}
 			});
 
 			const formData = new FormData();
@@ -297,6 +302,9 @@ export default class AppConfigs extends HTMLElement {
 			if (this.imageFile)
 				formData.append('image', this.imageFile);
 
+			console.log(data);
+
+			/*
 			callAPI("POST", "http://127.0.0.1:8000/api/settings/", formData, (res, resData) => {
 				if (res.ok && resData) {
 					this.#loadData(resData.settings);
@@ -310,13 +318,18 @@ export default class AppConfigs extends HTMLElement {
 				}
 				this.submitBtn.disabled = false;
 			});
+			*/
 		});
 	}
 
 	#getUserSettings() {
 		callAPI("GET", "http://127.0.0.1:8000/api/settings/", null, (res, resData) => {
-			if (res.ok && resData && resData.settings)
+			if (res.ok && resData && resData.settings) {
+
+				console.log(resData.settings);
+				
 				this.#loadData(resData.settings);
+			}
 		});
 	}
 
@@ -442,6 +455,11 @@ export default class AppConfigs extends HTMLElement {
 		if (!inp)
 			return ;
 		inp.disabled = true;
+	}
+
+	#getPhoneNumberFromInput() {
+		let phoneNumber = `${this.countryCode.value} ${this.phoneNumber.value}`;
+		return phoneNumber.trim();
 	}
 }
 
