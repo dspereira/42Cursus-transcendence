@@ -113,12 +113,11 @@ class SettingsManager:
 				return 'invalid QR Code value'
 			if  new_qr_code != self.user_otp_settings.qr_code:
 				self.user_otp_settings.qr_code = new_qr_code
-		if tfa_options.get('phone'):
-			new_phone = tfa_options['phone']
-			if not is_valid_phone_number(new_phone):
-				return 'invalid Phone Number'
-			if new_phone != self.user_otp_settings.phone_number:
-				self.user_otp_settings.phone_number = new_phone
+		new_phone = tfa_options.get('phone')
+		if not is_valid_phone_number(new_phone):
+			return 'invalid Phone Number'
+		if new_phone != self.user_otp_settings.phone_number:
+			self.user_otp_settings.phone_number = new_phone
 		self.user_otp_settings.save()
 		return None
 

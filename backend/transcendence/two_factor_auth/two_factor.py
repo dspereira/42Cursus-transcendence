@@ -207,4 +207,6 @@ def is_valid_phone_number(phone_number: str):
 		phone_number_pattern = r'^\+\d{1,3} \d{4,14}$'
 		if re.match(phone_number_pattern, phone_number):
 			return True
-	return False
+		return False
+	else:
+		return True
