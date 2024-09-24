@@ -310,10 +310,6 @@ export default class AppConfigs extends HTMLElement {
 				return ;
 			}
 			const phoneNum = this.phoneCheckbox.checked ? this.#getPhoneNumberFromInput() : null;
-
-			console.log("tem telephone ou nao: ", phoneNum);
-			console.log("this.phoneCheckbox.checked: ", this.phoneCheckbox.checked);
-
 			if (phoneNum) {
 				if (!this.#isValidPhoneNumber(phoneNum)) {
 					this.#setFieldInvalid("phone");
@@ -342,9 +338,6 @@ export default class AppConfigs extends HTMLElement {
 				formData.append('image', this.imageFile);
 
 			callAPI("POST", "http://127.0.0.1:8000/api/settings/", formData, (res, resData) => {
-				console.log(res);
-				console.log(resData);
-				
 				if (res.ok && resData) {
 					this.#loadData(resData.settings);
 					this.#cleanErrorStyles();
@@ -481,13 +474,35 @@ export default class AppConfigs extends HTMLElement {
 		});		
 	}
 
+	/*
 	#setCountryCode(code) {
 		const option = this.html.querySelector(`[value="${code}"]`);
 		if (!option)
 			return ;
 		option.setAttribute("selected", "");
 		let value = option.innerHTML;
+
+		//<option value="+53">Cuba&nbsp;&nbsp;&#x1f1e8;&#x1f1fa;&nbsp;&nbsp;(+53)</option>
+
 		let idx = value.indexOf("&nbsp;&nbsp;") + "&nbsp;&nbsp;".length;			
+		let newValue = value.substring(idx);
+		this.countryBufferStr = value.substring(0, idx);
+		option.innerHTML = newValue;
+	}
+	*/
+
+	#setCountryCode(code) {
+		const option = this.html.querySelector(`[value="${code}"]`);
+		if (!option)
+			return ;
+
+		option.setAttribute("selected", "");
+		let value = option.innerHTML;
+		let idx = value.indexOf("&nbsp;&nbsp; ");
+		if (idx < 0)
+			return ;
+
+		idx += "&nbsp;&nbsp; ".length;
 		let newValue = value.substring(idx);
 		this.countryBufferStr = value.substring(0, idx);
 		option.innerHTML = newValue;
@@ -501,7 +516,7 @@ export default class AppConfigs extends HTMLElement {
 	}
 
 	#getPhoneNumberFromInput() {
-		let phoneNumber = `${this.countryCode.value} ${this.phoneNumberInp.value}`;
+		let phoneNumber = `${this.countryCode.value.trim()} ${this.phoneNumberInp.value.trim()}`;
 		return phoneNumber.trim();
 	}
 
@@ -517,7 +532,7 @@ export default class AppConfigs extends HTMLElement {
 			this.phoneNumberInp.value = data.substring(data.indexOf(" "));
 			this.#setCountryCode(data.substring(0, data.indexOf(" ")));
 		}
-		else 
+		else
 			this.#setCountryCode("+351");
 	}
 
