@@ -1,5 +1,6 @@
 import { callAPI } from "../utils/callApiUtils.js";
 import isValidUsername from "../utils/usernameValidationUtils.js";
+import getCountryCodesOptions from "../utils/countryCodesUtils.js";
 
 const styles = `
 .main-container {
@@ -10,7 +11,6 @@ const styles = `
 
 .general-settings-container {
 	width: 70%;
-	/*background-color: red;*/
 }
 
 .image-settings-container {
@@ -18,8 +18,6 @@ const styles = `
 	flex-direction: column; 	
 	justify-content: center;
 	width: 30%;
-
-	/*background-color: blue;*/
 }
 
 .img-container {
@@ -53,6 +51,26 @@ legend {
 
 #new-username, #new-bio, #theme-options, #language-options {
 	background-image: none;
+}
+
+.hide {
+	display: none;
+}
+
+.phone-container {
+	display: flex;
+}
+
+.country-code {
+	width: 20%;
+}
+
+.phone-number {
+	width: 80%;
+}
+
+.country-code-select {
+	background-color: #E9ECEF;
 }
 
 .hide {
@@ -96,6 +114,18 @@ const getHtml = function(data) {
 							Phone
 						</label>
 					</div>
+
+					<div class="phone-container hide">
+						<div class="country-code">
+							<select class="form-select country-code-select" id="aaaa" aria-label="Language selection">
+							${getCountryCodesOptions()}
+							</select>
+						</div>
+						<div class="phone-number">
+							<input class="form-control form-control-md" type="text" id="phone">
+						</div>
+					<div>
+
 				</fieldset>
 
 				<h2>Game Settings</h2>
@@ -117,7 +147,6 @@ const getHtml = function(data) {
 					<option value="pt">Português &#x1F1F5;&#x1F1F9;</option>
 					<option value="es">Espanhol &#x1F1EA;&#x1F1F8;</option>
 				</select>
-
 				<div><button type="submit" class="btn btn-primary btn-submit">Apply Changes</button></div>
 			</div>
 
@@ -127,8 +156,7 @@ const getHtml = function(data) {
 				</div>
 				<div class="img-buttons">
 					<label for="new-image" class="btn btn-primary btn-img">Upload Image</label>
-					<!--<input id="new-image" class="hide" type="file" accept="image/png, image/jpeg, image/webp">-->
-					<input id="new-image" class="hide" type="file">
+					<input id="new-image" class="hide" type="file" accept="image/png, image/jpeg, image/webp">
 					<button class="btn btn-primary btn-img btn-new-seed">New Avatar</button>
 				</div>
 			</div>
@@ -181,6 +209,7 @@ export default class AppConfigs extends HTMLElement {
 
 	constructor() {
 		super()
+		this.countryBufferStr;
 		this.imageSeed = "";
 		this.imageFile = "";
 		this.#initComponent();
@@ -209,10 +238,11 @@ export default class AppConfigs extends HTMLElement {
 		this.imagePreview = this.html.querySelector(".image-preview");
 		this.newSeedBtn = this.html.querySelector(".btn-new-seed");
 		this.newImageInp = this.html.querySelector("#new-image");
-		
 		this.errorAlert =  this.html.querySelector(".alert-danger");
 		this.successAlert = this.html.querySelector(".alert-success");
 		this.submitBtn = this.html.querySelector(".btn-submit");
+		this.phoneContainer = this.html.querySelector(".phone-container");
+		this.countryCode = this.html.querySelector(".country-code-select");
 	}
 
 	#styles() {
@@ -236,6 +266,10 @@ export default class AppConfigs extends HTMLElement {
 		this.#getUserSettings();
 		this.#newSeedBtn();
 		this.#setNewImageInput();
+		this.#phoneSelectEvent();
+		this.#removeCountryName();
+		this.#insertCountryNameToOption()
+		this.#initialConfigSelectCountryCode();
 	}
 
 	#submit() {
@@ -358,6 +392,50 @@ export default class AppConfigs extends HTMLElement {
 		if (elm)
 			elm.classList.remove("is-invalid");
 		this.errorAlert.classList.add("hide");
+	}
+
+	#phoneSelectEvent() {
+		const elm = this.html.querySelector("#phone");
+		if (!elm)
+			return ;
+		elm.addEventListener("change", () => {
+			if (elm.checked)
+				this.phoneContainer.classList.remove("hide");
+			else
+				this.phoneContainer.classList.add("hide");
+		});
+	}
+
+	#removeCountryName() {
+		this.countryCode.addEventListener("click", (event) => {
+			let value = event.target.options[event.target.selectedIndex].innerHTML;
+			let idx = value.indexOf("&nbsp;&nbsp;") + "&nbsp;&nbsp;".length;			
+			let newValue = value.substring(idx);
+			this.countryBufferStr = value.substring(0, idx);
+			event.target.options[event.target.selectedIndex].innerHTML = newValue;
+		});
+	}
+
+	#insertCountryNameToOption() {
+		this.countryCode.addEventListener("mousedown", (event) => {
+			const actualValue = event.target.options[event.target.selectedIndex].innerHTML;
+			if (this.countryBufferStr){
+				event.target.options[event.target.selectedIndex].innerHTML = `${this.countryBufferStr}${actualValue}`;
+				this.countryBufferStr = "";
+			}
+		});		
+	}
+
+	#initialConfigSelectCountryCode() {
+		const option = this.html.querySelector(`[value="+351"]`);
+		if (!option)
+			return ;
+		option.setAttribute("selected", "");
+		let value = option.innerHTML;
+		let idx = value.indexOf("&nbsp;&nbsp;") + "&nbsp;&nbsp;".length;			
+		let newValue = value.substring(idx);
+		this.countryBufferStr = value.substring(0, idx);
+		option.innerHTML = newValue;
 	}
 }
 

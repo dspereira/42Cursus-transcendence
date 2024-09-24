@@ -64,9 +64,6 @@ p {
 `;
 
 const getHtml = function(data) {
-
-	console.log(data.method);
-
 	let infoMsg;
 	if (data.method == "email")
 		infoMsg = "A code has been sent to your email. Please check it and enter it in the box below.";
