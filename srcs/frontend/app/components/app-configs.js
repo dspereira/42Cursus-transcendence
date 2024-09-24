@@ -80,6 +80,19 @@ legend {
 	border-bottom-left-radius: 0;
 }
 
+.show-qrcode {
+	background: none;
+	border: none;
+	color: blue;
+	cursor: pointer;
+	padding: 0;
+	font: inherit;
+}
+
+.qrcode-img {
+	dispay: inline-block;
+}
+
 .hide {
 	display: none;
 }
@@ -110,6 +123,8 @@ const getHtml = function(data) {
 					<div class="form-check">
 						<input class="form-check-input" type="checkbox" value="qrcode" id="qrcode">
 						<label class="form-check-label" for="qrcode">QR Code</label>
+						<button class="show-qrcode hide">Show Qrcode</button>
+						<img src="" class="qrcode-img hide" alt="Qrcode image"></img>
 					</div>
 					<div class="form-check">
 						<input class="form-check-input" type="checkbox" value="phone" id="phone">
@@ -213,6 +228,7 @@ export default class AppConfigs extends HTMLElement {
 	constructor() {
 		super()
 		this.countryBufferStr;
+		this.qrcodeConfigured = false;
 		this.imageSeed = "";
 		this.imageFile = "";
 		this.#initComponent();
@@ -247,8 +263,10 @@ export default class AppConfigs extends HTMLElement {
 		this.phoneContainer = this.html.querySelector(".phone-container");
 		this.countryCode = this.html.querySelector("#country-code-select");
 		this.phoneNumberInp = this.html.querySelector("#phone-number-input");
-		this.qrcode = this.html.querySelector("#qrcode");
+		this.qrcodeCheckbox = this.html.querySelector("#qrcode");
 		this.phoneCheckbox = this.html.querySelector("#phone");
+		this.showQrcode = this.html.querySelector(".show-qrcode");
+		this.qrcodeImg = this.html.querySelector(".qrcode-img");
 	}
 
 	#styles() {
@@ -276,6 +294,8 @@ export default class AppConfigs extends HTMLElement {
 		this.#removeCountryName();
 		this.#insertCountryNameToOption();
 		this.#disableEmailCheckbox();
+		this.#qrcodeSelectEvent();
+		this.#showQrcode();
 	}
 
 	#submit() {
@@ -310,7 +330,7 @@ export default class AppConfigs extends HTMLElement {
 				"language": this.languageOption.value.trim(),
 				"image_seed": this.imageSeed.trim(),
 				"tfa": {
-					"qr_code": this.qrcode.checked,
+					"qr_code": this.qrcodeCheckbox.checked,
 					"phone": phoneNum
 				}
 			});
@@ -348,18 +368,19 @@ export default class AppConfigs extends HTMLElement {
 	}
 
 	#loadData(data) {
-		console.log(data);
-
 		this.usernameInp.value = data.username;
 		this.bioInp.value = data.bio;
 		this.gameThemeOption.value = data.game_theme;
 		this.languageOption.value = data.language;
 		this.imagePreview.setAttribute("src", data.image);
-
-
 		this.#setPhoneNumberField(data.tfa.phone);
-	
-		
+		if (data.tfa.qr_code) {
+			this.qrcodeConfigured = true;
+			this.qrcodeCheckbox.checked = true;
+			this.showQrcode.classList.remove("hide");
+		}
+		else
+			this.qrcodeConfigured = false;
 	}
 
 	#newSeedBtn() {
@@ -460,18 +481,6 @@ export default class AppConfigs extends HTMLElement {
 		});		
 	}
 
-	/*#initialConfigSelectCountryCode() {
-		const option = this.html.querySelector(`[value="+351"]`);
-		if (!option)
-			return ;
-		option.setAttribute("selected", "");
-		let value = option.innerHTML;
-		let idx = value.indexOf("&nbsp;&nbsp;") + "&nbsp;&nbsp;".length;			
-		let newValue = value.substring(idx);
-		this.countryBufferStr = value.substring(0, idx);
-		option.innerHTML = newValue;
-	}*/
-
 	#setCountryCode(code) {
 		const option = this.html.querySelector(`[value="${code}"]`);
 		if (!option)
@@ -510,6 +519,32 @@ export default class AppConfigs extends HTMLElement {
 		}
 		else 
 			this.#setCountryCode("+351");
+	}
+
+	#qrcodeSelectEvent() {
+		this.qrcodeCheckbox.addEventListener("change", () => {
+			if (this.qrcodeConfigured) {
+				if (this.qrcodeCheckbox.checked)
+					this.showQrcode.classList.remove("hide");
+				else
+					this.showQrcode.classList.add("hide");
+			}
+			else
+				this.showQrcode.classList.add("hide");
+
+		});
+	}
+
+	#showQrcode() {
+		this.showQrcode.addEventListener("click", (event) => {
+			event.preventDefault();
+			callAPI("POST", "http://127.0.0.1:8000/api/two-factor-auth/request-qr-code/", {}, (res, data) => {
+				if (res.ok && data && data.qr_code) {
+					this.qrcodeImg.classList.remove("hide");
+					this.qrcodeImg.setAttribute("src", 'data:image/png;base64,' + data.qr_code);
+				}
+			});
+		});
 	}
 }
 
