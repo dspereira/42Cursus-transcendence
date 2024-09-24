@@ -97,15 +97,13 @@ const getHtml = function(data) {
 				<fieldset>
 					<legend>Choose where to receive your two-factor authentication:</legend>
 					<div class="form-check">
+						<input class="form-check-input" checked type="checkbox" value="email" id="email">
+						<label class="form-check-label" for="email">Email</label>
+					</div>
+					<div class="form-check">
 						<input class="form-check-input" type="checkbox" value="qrcode" id="qrcode">
 						<label class="form-check-label" for="qrcode">
 							QR Code
-						</label>
-					</div>
-					<div class="form-check">
-						<input class="form-check-input" type="checkbox" value="email" id="email">
-						<label class="form-check-label" for="email">
-							Email
 						</label>
 					</div>
 					<div class="form-check">
@@ -268,8 +266,9 @@ export default class AppConfigs extends HTMLElement {
 		this.#setNewImageInput();
 		this.#phoneSelectEvent();
 		this.#removeCountryName();
-		this.#insertCountryNameToOption()
+		this.#insertCountryNameToOption();
 		this.#initialConfigSelectCountryCode();
+		this.#disableEmailCheckbox();
 	}
 
 	#submit() {
@@ -436,6 +435,13 @@ export default class AppConfigs extends HTMLElement {
 		let newValue = value.substring(idx);
 		this.countryBufferStr = value.substring(0, idx);
 		option.innerHTML = newValue;
+	}
+
+	#disableEmailCheckbox() {
+		const inp = this.html.querySelector("#email");
+		if (!inp)
+			return ;
+		inp.disabled = true;
 	}
 }
 
