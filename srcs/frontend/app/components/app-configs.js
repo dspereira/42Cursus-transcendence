@@ -49,7 +49,7 @@ legend {
 	font-size: 16px
 }
 
-#new-username, #new-bio, #theme-options, #language-options {
+#new-username, #new-bio, #theme-options, #language-options, #phone-number-input {
 	background-image: none;
 }
 
@@ -69,8 +69,15 @@ legend {
 	width: 80%;
 }
 
-.country-code-select {
+#country-code-select {
 	background-color: #E9ECEF;
+	border-top-right-radius: 0;
+	border-bottom-right-radius: 0;
+}
+
+#phone-number-input {
+	border-top-left-radius: 0;
+	border-bottom-left-radius: 0;
 }
 
 .hide {
@@ -113,12 +120,12 @@ const getHtml = function(data) {
 
 					<div class="phone-container hide">
 						<div class="country-code">
-							<select class="form-select country-code-select" aria-label="Language selection">
+							<select class="form-select" id="country-code-select" aria-label="Country Code">
 							${getCountryCodesOptions()}
 							</select>
 						</div>
 						<div class="phone-number">
-							<input class="form-control form-control-md phone-number-input" type="text">
+							<input class="form-control form-control-md" id="phone-number-input" type="text">
 						</div>
 					<div>
 
@@ -238,8 +245,8 @@ export default class AppConfigs extends HTMLElement {
 		this.successAlert = this.html.querySelector(".alert-success");
 		this.submitBtn = this.html.querySelector(".btn-submit");
 		this.phoneContainer = this.html.querySelector(".phone-container");
-		this.countryCode = this.html.querySelector(".country-code-select");
-		this.phoneNumber = this.html.querySelector(".phone-number-input");
+		this.countryCode = this.html.querySelector("#country-code-select");
+		this.phoneNumberInp = this.html.querySelector("#phone-number-input");
 		this.qrcode = this.html.querySelector("#qrcode");
 		this.phoneCheckbox = this.html.querySelector("#phone");
 	}
@@ -268,7 +275,6 @@ export default class AppConfigs extends HTMLElement {
 		this.#phoneSelectEvent();
 		this.#removeCountryName();
 		this.#insertCountryNameToOption();
-		this.#initialConfigSelectCountryCode();
 		this.#disableEmailCheckbox();
 	}
 
@@ -283,6 +289,19 @@ export default class AppConfigs extends HTMLElement {
 				this.submitBtn.disabled = false;
 				return ;
 			}
+			const phoneNum = this.phoneCheckbox.checked ? this.#getPhoneNumberFromInput() : null;
+
+			console.log("tem telephone ou nao: ", phoneNum);
+			console.log("this.phoneCheckbox.checked: ", this.phoneCheckbox.checked);
+
+			if (phoneNum) {
+				if (!this.#isValidPhoneNumber(phoneNum)) {
+					this.#setFieldInvalid("phone");
+					this.#setErrorMessage("Invalid Phone Number!");
+					this.submitBtn.disabled = false;
+					return ;
+				}
+			}
 
 			const data = JSON.stringify({
 				"username": username,
@@ -292,7 +311,7 @@ export default class AppConfigs extends HTMLElement {
 				"image_seed": this.imageSeed.trim(),
 				"tfa": {
 					"qr_code": this.qrcode.checked,
-					"phone": this.phoneCheckbox.checked ? this.#getPhoneNumberFromInput() : null
+					"phone": phoneNum
 				}
 			});
 
@@ -302,10 +321,10 @@ export default class AppConfigs extends HTMLElement {
 			if (this.imageFile)
 				formData.append('image', this.imageFile);
 
-			console.log(data);
-
-			/*
 			callAPI("POST", "http://127.0.0.1:8000/api/settings/", formData, (res, resData) => {
+				console.log(res);
+				console.log(resData);
+				
 				if (res.ok && resData) {
 					this.#loadData(resData.settings);
 					this.#cleanErrorStyles();
@@ -318,27 +337,29 @@ export default class AppConfigs extends HTMLElement {
 				}
 				this.submitBtn.disabled = false;
 			});
-			*/
 		});
 	}
 
 	#getUserSettings() {
 		callAPI("GET", "http://127.0.0.1:8000/api/settings/", null, (res, resData) => {
-			if (res.ok && resData && resData.settings) {
-
-				console.log(resData.settings);
-				
+			if (res.ok && resData && resData.settings)
 				this.#loadData(resData.settings);
-			}
 		});
 	}
 
 	#loadData(data) {
+		console.log(data);
+
 		this.usernameInp.value = data.username;
 		this.bioInp.value = data.bio;
 		this.gameThemeOption.value = data.game_theme;
 		this.languageOption.value = data.language;
 		this.imagePreview.setAttribute("src", data.image);
+
+
+		this.#setPhoneNumberField(data.tfa.phone);
+	
+		
 	}
 
 	#newSeedBtn() {
@@ -376,6 +397,7 @@ export default class AppConfigs extends HTMLElement {
 			"bio": () => this.bioInp.classList.add("is-invalid"),
 			"game_theme": () => this.gameThemeOption.classList.add("is-invalid"),
 			"language": () => this.languageOption.classList.add("is-invalid"),
+			"phone": () => this.phoneNumberInp.classList.add("is-invalid"),
 			"image": () => {}
 		}
 		obj[field]();
@@ -438,8 +460,20 @@ export default class AppConfigs extends HTMLElement {
 		});		
 	}
 
-	#initialConfigSelectCountryCode() {
+	/*#initialConfigSelectCountryCode() {
 		const option = this.html.querySelector(`[value="+351"]`);
+		if (!option)
+			return ;
+		option.setAttribute("selected", "");
+		let value = option.innerHTML;
+		let idx = value.indexOf("&nbsp;&nbsp;") + "&nbsp;&nbsp;".length;			
+		let newValue = value.substring(idx);
+		this.countryBufferStr = value.substring(0, idx);
+		option.innerHTML = newValue;
+	}*/
+
+	#setCountryCode(code) {
+		const option = this.html.querySelector(`[value="${code}"]`);
 		if (!option)
 			return ;
 		option.setAttribute("selected", "");
@@ -458,8 +492,24 @@ export default class AppConfigs extends HTMLElement {
 	}
 
 	#getPhoneNumberFromInput() {
-		let phoneNumber = `${this.countryCode.value} ${this.phoneNumber.value}`;
+		let phoneNumber = `${this.countryCode.value} ${this.phoneNumberInp.value}`;
 		return phoneNumber.trim();
+	}
+
+	#isValidPhoneNumber(number) {
+		const regex = /^\+\d{1,3} \d{7,14}$/;
+		return(regex.test(number));
+	}
+
+	#setPhoneNumberField(data) {
+		if (data) {
+			this.phoneContainer.classList.remove("hide");
+			this.phoneCheckbox.checked = true;
+			this.phoneNumberInp.value = data.substring(data.indexOf(" "));
+			this.#setCountryCode(data.substring(0, data.indexOf(" ")));
+		}
+		else 
+			this.#setCountryCode("+351");
 	}
 }
 
