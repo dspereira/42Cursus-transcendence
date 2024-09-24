@@ -79,6 +79,7 @@ const styles = `
 		align-items: center;
 		background-color: ${colors.second_card};
 		color: ${colors.primary_text};
+		padding: 10px;
 		width: 100%;
 		height: 60px;
 		border-radius: 8px;
@@ -178,6 +179,7 @@ const styles = `
 	@media (max-width:800px) {
 		.player-1, .player-2 {
 			height: auto;
+			min-height: 88px;
 			min-width: 100px;
 		}
 

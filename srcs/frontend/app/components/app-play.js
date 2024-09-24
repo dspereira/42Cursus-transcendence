@@ -8,10 +8,11 @@ import { pfpStyle } from "../utils/stylingFunctions.js";
 
 const styles = `
 
-${pfpStyle(".profile-photo", "50px", "auto")};
+${pfpStyle(".profile-photo", "50px", "auto")}
 
 .players-info {
 	display: flex;
+	flex-direction: row;
 	justify-content: space-between;
 	color: ${colors.primary_text};
 }

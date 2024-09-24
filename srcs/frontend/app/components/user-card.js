@@ -24,7 +24,7 @@ const styles = `
 	margin-bottom: 20px;
 }
 
-${pfpStyle(".user-photo", "70px", "auto")};
+${pfpStyle(".user-photo", "70px", "auto")}
 
 .user-name {
 	font-size: 16px;

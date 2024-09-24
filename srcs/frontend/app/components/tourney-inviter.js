@@ -180,7 +180,7 @@ game-invite-card1 {
 
 .invite-btn.btn-primary:not(:disabled):hover {
 	background-color: ${colors.btn_hover};
-	color: ${colors.primary_text};
+	color: ${colors.second_text};
 }
 
 .invite-btn.btn-primary:disabled {

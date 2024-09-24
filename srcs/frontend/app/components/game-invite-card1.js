@@ -42,7 +42,7 @@ const styles = `
 	color: ${colors.primary_text};
 }
 
-${pfpStyle(".profile-photo", "60px", "auto")};
+${pfpStyle(".profile-photo", "60px", "auto")}
 
 .online-status {
 	position: absolute;
@@ -60,7 +60,7 @@ ${pfpStyle(".profile-photo", "60px", "auto")};
 .hide {
 	display: none;
 }
-
+	
 `;
 const getHtml = function(data) {
 	let onlineVisibility = "";

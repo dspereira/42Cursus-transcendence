@@ -117,12 +117,12 @@ const styles = `
 
 .btn-primary:not(disabled) {
 	background-color: ${colors.btn_default};
-	color: ${colors.second_text};
+	color: ${colors.primary_text};
 }
 
 .btn-primary:not(:disabled):hover {
-	background-color: ${colors.btn_default};
-	color: ${colors.primary_text};
+	background-color: ${colors.btn_hover};
+	color: ${colors.second_text};
 }
 
 .btn-primary:disabled {

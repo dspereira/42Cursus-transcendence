@@ -45,7 +45,7 @@ const styles = `
 	margin-bottom: 5px;
 }
 
-${pfpStyle(".profile-photo", "60px", "auto")};
+${pfpStyle(".profile-photo", "60px", "auto")}
 
 .exp-date {
 	margin-bottom: 5px;
@@ -53,6 +53,23 @@ ${pfpStyle(".profile-photo", "60px", "auto")};
 
 .date {
 	font-size: 18px;
+}
+
+.online-status {
+	position: absolute;
+	display: inline-block;
+	width: 15px;
+	height: 15px;
+	border-radius: 50%;
+	background-color: green;
+	z-index: 2;
+	top: 50px;
+	left: 45px;
+	border: 2px solid #A9A9A9;
+}
+
+.hide {
+	display: none;
 }
 
 `;
