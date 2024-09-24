@@ -107,12 +107,11 @@ class SettingsManager:
 		return False
 
 	def update_tfa(self, tfa_options):
-		if tfa_options.get('qr_code'):
-			new_qr_code = tfa_options['qr_code']
-			if not isinstance(new_qr_code, bool):
-				return 'invalid QR Code value'
-			if  new_qr_code != self.user_otp_settings.qr_code:
-				self.user_otp_settings.qr_code = new_qr_code
+		if not isinstance(new_qr_code, bool):
+			return 'invalid QR Code value'
+		new_qr_code = tfa_options['qr_code']
+		if  new_qr_code != self.user_otp_settings.qr_code:
+			self.user_otp_settings.qr_code = new_qr_code
 		new_phone = tfa_options.get('phone')
 		if not is_valid_phone_number(new_phone):
 			return 'invalid Phone Number'
