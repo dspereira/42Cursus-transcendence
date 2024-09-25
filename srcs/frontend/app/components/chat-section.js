@@ -229,7 +229,7 @@ const getHtml = function(data) {
 				<div>
 					<div class="profile-photo-status">
 						<img src="${data.profilePhoto}" class="profile-photo clickable" alt="profile photo chat"/>
-						<div id="hover-popup" class="hover-popup">/profile/${data.username}</div>
+						<div id="hover-popup" class="hover-popup">${data.username}'s profile</div>
 						<div class="online-status ${onlineVisibility}"></div>
 					</div>
 					<span class="name">${charLimiter(data.username, charLimit)}</span>

@@ -2,6 +2,7 @@ import { callAPI } from "../utils/callApiUtils.js";
 import { colors } from "../js/globalStyles.js";
 import stateManager from "../js/StateManager.js";
 import { pfpStyle } from "../utils/stylingFunctions.js";
+import { redirect } from "../js/router.js";
 
 const styles = `
 
@@ -19,6 +20,7 @@ const styles = `
 
 .user {
 	display: flex;
+	position: relative;
 	flex-direction: column;
 	align-items: center;
 	margin-bottom: 20px;
@@ -78,6 +80,24 @@ button {
 		display: none;
 	}
 }
+
+.clickable {
+	cursor: pointer;
+}
+
+.hover-popup {
+	position: fixed;
+	padding: 10px;
+	background-color: ${colors.main_card};
+	color: ${colors.primary_text};
+	opacity: 0.9;
+	border-radius: 5px;
+	white-space: nowrap;
+	display: none;
+	pointer-events: none;
+	z-index: 1000;
+	transform: translate(30px, 65px);
+}
 `;
 
 const getBtn = function(type) {
@@ -133,7 +153,8 @@ const getHtml = function(data) {
 	const html = `
 		<div class="user-card">
 			<div class="user">
-				<img src="${data.profilePhoto}" class="user-photo" alt="profile photo chat"/>
+				<img src="${data.profilePhoto}" class="user-photo clickable" alt="profile photo chat"/>
+				<div id="hover-popup" class="hover-popup">${data.username}'s profile</div>
 				<span class="user-name">${data.username}</span>
 			</div>
 			<div class="buttons">
@@ -229,6 +250,7 @@ export default class UserCard extends HTMLElement {
 		this.#setDeclineEvent();
 		this.#setAcceptEvent();
 		this.#setRemoveEvent();
+		this.#addProfileRedirect();
 	}
 
 	#friendRequest(method, body, callback) {
@@ -310,6 +332,17 @@ export default class UserCard extends HTMLElement {
 				this.remove();
 			});
 		});
+	}
+
+	#addProfileRedirect() {
+		const userCard = this.html.querySelector(".user-card");
+		const profilePhoto = userCard.querySelector(".user-photo");
+		const popup = userCard.querySelector('.hover-popup');
+		profilePhoto.addEventListener("click", (event) => {
+			redirect(`profile/${this.data.username}`)
+		});
+		profilePhoto.addEventListener('mouseenter', () => popup.style.display = 'block');
+		profilePhoto.addEventListener('mouseleave', () => popup.style.display = 'none');
 	}
 }
 

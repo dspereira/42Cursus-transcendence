@@ -216,21 +216,25 @@ const getHtml = function(data) {
 		<div class="players">
 			<div class="player">
 				<div class="img-container"><img src="../img/default_profile.png" class="default-photo" alt="avatar"></div>
+				<div id="hover-popup" class="hover-popup"></div>
 				<div class="username">waiting...</div>
 				<div class="player-id hiden">0</div>
 			</div>
 			<div class="player">
 				<div class="img-container"><img src="../img/default_profile.png" class="default-photo" alt="avatar"></div>
+				<div id="hover-popup" class="hover-popup"></div>
 				<div class="username">waiting...</div>
 				<div class="player-id hiden">0</div>
 			</div>
 			<div class="player">
 				<div class="img-container"><img src="../img/default_profile.png" class="default-photo" alt="avatar"></div>
+				<div id="hover-popup" class="hover-popup"></div>
 				<div class="username">waiting...</div>
 				<div class="player-id hiden">0</div>
 			</div>
 			<div class="player">
 				<div class="img-container"><img src="../img/default_profile.png" class="default-photo" alt="avatar"></div>
+				<div id="hover-popup" class="hover-popup"></div>
 				<div class="username">waiting...</div>
 				<div class="player-id hiden">0</div>
 			</div>
