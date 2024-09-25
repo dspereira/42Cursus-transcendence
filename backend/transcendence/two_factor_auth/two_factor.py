@@ -76,14 +76,14 @@ def generate_otp_code(user):
 				return None
 			otp_options = otp_user_opt_model.get(user=user)
 			if otp_options:
-				TFACodesSendedManager.new_code_sended(otp_options, code)
+				TFACodesSendedManager().new_code_sended(otp_options, code)
 	return otp_value
 
 def reset_wait_time_codes(user):
 	if user:
 		otp_options = otp_user_opt_model.get(user=user)
 		if otp_options:
-			TFACodesSendedManager.reset(otp_options)
+			TFACodesSendedManager().reset(otp_options)
 
 def generate_qr_code_img_base64(user):
 	if user:
@@ -172,11 +172,14 @@ def send_smsto_user(user):
 	otp_user_opt = otp_user_opt_model.get(user=user)
 	user_phone_number = re.sub(r'\s+', '', otp_user_opt.phone_number)
 	client = Client(account_sid, auth_token)
-	message = client.messages.create(
-		body=message_body,
-		from_=phone_number,
-		to=user_phone_number
-	)
+	try:
+		message = client.messages.create(
+			body=message_body,
+			from_=phone_number,
+			to=user_phone_number
+		)
+	except Exception:
+		return None
 	return otp_code
 
 def send_email_to_user(user):
@@ -205,7 +208,7 @@ def get_new_code_wait_time(user):
 	if user:
 		otp_options = otp_user_opt_model.get(user=user)
 		if otp_options:
-			wait_time = TFACodesSendedManager.get_wait_time(otp_options)
+			wait_time = TFACodesSendedManager().get_wait_time(otp_options)
 		if wait_time:
 			time_now = datetime.now().timestamp()
 			if wait_time > time_now:

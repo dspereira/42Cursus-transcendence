@@ -117,8 +117,10 @@ class SettingsManager:
 		new_phone = tfa_options.get('phone')
 		if not is_valid_phone_number(new_phone):
 			return 'invalid Phone Number'
-		if otp_user_opt_model.get(phone_number=new_phone):
-			return 'Phone Number already in use'
+		if new_phone:
+			otp_options = otp_user_opt_model.get(phone_number=new_phone)
+			if otp_options and otp_options.user.id != self.user_otp_settings.user.id:
+				return 'Phone Number already in use'
 		if new_phone != self.user_otp_settings.phone_number:
 			self.user_otp_settings.phone_number = new_phone
 		self.user_otp_settings.save()

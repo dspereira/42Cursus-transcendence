@@ -13,7 +13,7 @@ class TFACodesSendedManager:
 		otp_options.wait_time_timestamp = 0
 		otp_options.save()
 
-	def get_wait_seconds_time(self, otp_options):
+	def get_wait_time(self, otp_options):
 		if otp_options.nbr_codes_sended:
 			if datetime.now().timestamp() > otp_options.wait_time_timestamp:
 				if not otp_options.nbr_codes_sended % 5:
