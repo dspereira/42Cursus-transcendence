@@ -91,12 +91,12 @@ button {
 	background-color: ${colors.main_card};
 	color: ${colors.primary_text};
 	opacity: 0.9;
+	backdrop-filter: blur(5px);
 	border-radius: 5px;
 	white-space: nowrap;
 	display: none;
 	pointer-events: none;
 	z-index: 1000;
-	transform: translate(30px, 65px);
 }
 `;
 
@@ -335,14 +335,24 @@ export default class UserCard extends HTMLElement {
 	}
 
 	#addProfileRedirect() {
+		const movePopup = (event) => {
+			popup.style.left = event.clientX + 'px';
+			popup.style.top = event.clientY + 'px';
+		};
 		const userCard = this.html.querySelector(".user-card");
 		const profilePhoto = userCard.querySelector(".user-photo");
 		const popup = userCard.querySelector('.hover-popup');
 		profilePhoto.addEventListener("click", (event) => {
 			redirect(`profile/${this.data.username}`)
 		});
-		profilePhoto.addEventListener('mouseenter', () => popup.style.display = 'block');
-		profilePhoto.addEventListener('mouseleave', () => popup.style.display = 'none');
+		profilePhoto.addEventListener('mouseenter', () => {
+			popup.style.display = 'block'
+			profilePhoto.addEventListener('mousemove', movePopup);
+		});
+		profilePhoto.addEventListener('mouseleave', () => {
+			popup.style.display = 'none'
+			profilePhoto.removeEventListener('mousemove', movePopup);
+		});
 	}
 }
 

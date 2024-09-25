@@ -18,13 +18,13 @@ const styles = `
 	justify-content: center;
 }
 
-.btn-create-tourney {
+.btn-create-tourney, .btn-exit-tourney {
 	color: ${colors.btn_text};
 	background-color: ${colors.btn_default};
 	border-style: hidden;
 }
 
-.btn-create-tourney:hover {
+.btn-create-tourney:hover, btn-exit-tourney:hover {
 	color: ${colors.hover_text};
 	background-color: ${colors.btn_hover};
 }

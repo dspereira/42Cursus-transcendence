@@ -4,6 +4,7 @@ import { colors } from "../js/globalStyles.js";
 import { charLimiter } from "../utils/characterLimit.js";
 import charLimit from "../utils/characterLimit.js";
 import { pfpStyle } from "../utils/stylingFunctions.js";
+import { redirect } from "../js/router.js";
 
 const styles = `
 
@@ -95,6 +96,10 @@ const styles = `
 	}
 
 	${pfpStyle(".profile-photo", "40px", "auto")}
+
+	.profile-photo {
+		cursor: pointer;
+	}
 
 	${pfpStyle(".winner .profile-photo", "70px", "auto")}
 
@@ -199,6 +204,24 @@ const styles = `
 			gap: 10px;
 		}
 	}
+	.clickable {
+	cursor: pointer;
+	}
+
+	.hover-popup {
+		position: fixed;
+		padding: 10px;
+		background-color: ${colors.main_card};
+		color: ${colors.primary_text};
+		opacity: 0.9;
+		backdrop-filter: blur(5px);
+		border-radius: 5px;
+		white-space: nowrap;
+		display: none;
+		pointer-events: none;
+		z-index: 1000;
+		transform: translate(-50%, 10px);
+	}
 `;
 
 const getHtml = function(data) {
@@ -217,6 +240,7 @@ const getHtml = function(data) {
 								<div class="img-name-info">
 									<img src="https://api.dicebear.com/8.x/bottts/svg?seed=dsilveri" class="profile-photo" alt="profile photo chat"/>
 									<span class="username">username</span>
+									<div id="hover-popup" class="hover-popup"></div>
 								</div>
 								<div class="score-info">
 									<span class="score hide">7</span>
@@ -228,6 +252,7 @@ const getHtml = function(data) {
 								<div class="img-name-info">
 									<img src="https://api.dicebear.com/8.x/bottts/svg?seed=dsilveri" class="profile-photo" alt="profile photo chat"/>
 									<span class="username">username</span>
+									<div id="hover-popup" class="hover-popup"></div>
 								</div>
 								<div class="score-info">
 									<span class="score hide">7</span>
@@ -241,6 +266,7 @@ const getHtml = function(data) {
 								<div class="img-name-info">
 									<img src="https://api.dicebear.com/8.x/bottts/svg?seed=dsilveri" class="profile-photo" alt="profile photo chat"/>
 									<span class="username">username</span>
+									<div id="hover-popup" class="hover-popup"></div>
 								</div>
 								<div class="score-info">
 									<span class="score hide">7</span>
@@ -255,6 +281,7 @@ const getHtml = function(data) {
 								<div class="img-name-info justify-end">
 									<span class="username">username</span>
 									<img src="https://api.dicebear.com/8.x/bottts/svg?seed=dsilveri" class="profile-photo" alt="profile photo chat"/>
+									<div id="hover-popup" class="hover-popup"></div>
 								</div>
 							</div>
 						</div>
@@ -268,6 +295,7 @@ const getHtml = function(data) {
 								<div class="img-name-info justify-end">
 									<span class="username">username</span>
 									<img src="https://api.dicebear.com/8.x/bottts/svg?seed=dsilveri" class="profile-photo" alt="profile photo chat"/>
+									<div id="hover-popup" class="hover-popup"></div>
 								</div>
 							</div>
 						</div>
@@ -279,6 +307,7 @@ const getHtml = function(data) {
 								<div class="img-name-info justify-end">
 									<span class="username">username</span>
 									<img src="https://api.dicebear.com/8.x/bottts/svg?seed=dsilveri" class="profile-photo" alt="profile photo chat"/>
+									<div id="hover-popup" class="hover-popup"></div>
 								</div>
 							</div>
 						</div>
@@ -392,6 +421,7 @@ export default class TourneyGraph extends HTMLElement {
 		img.setAttribute("src", playerInfo.image);
 		username.innerHTML = charLimiter(playerInfo.username, charLimit);
 		score.innerHTML = `${playerScore}`;
+		this.#addProfileRedirect(player, playerInfo);
 
 		if (playerWinner) {
 			score.classList.remove("hide");
@@ -454,6 +484,27 @@ export default class TourneyGraph extends HTMLElement {
 			this.#checkTournamentFinished();
 
 		}, 5000);
+	}
+
+	#addProfileRedirect(elmHtml, playerData) {
+		const movePopup = (event) => {
+			popup.style.left = event.clientX + 'px';
+			popup.style.top = event.clientY + 'px';
+		};
+		const profilePhoto = elmHtml.querySelector(".profile-photo");
+		const popup = elmHtml.querySelector('.hover-popup');
+		popup.innerHTML = `${playerData.username}'s profile`;
+		profilePhoto.addEventListener("click", () => {
+			redirect(`profile/${playerData.username}`)
+		});
+		profilePhoto.addEventListener('mouseenter', () => {
+			popup.style.display = 'block'
+			profilePhoto.addEventListener('mousemove', movePopup);
+		});
+		profilePhoto.addEventListener('mouseleave', () => {
+			popup.style.display = 'none'
+			profilePhoto.removeEventListener('mousemove', movePopup);
+		});
 	}
 }
 

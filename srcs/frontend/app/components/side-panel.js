@@ -403,6 +403,12 @@ export default class SidePanel extends HTMLElement {
 		this.#render();
 		this.#scripts();
 		this.lastState = "open";
+		this.escClose = () => {
+			const popup = document.querySelector('.logout-popup');
+			popup.style.display = "none";
+			console.log("ESC!!!");
+			document.removeEventListener('keydown', this.escClose);
+		};
 	}
 
 	attributeChangedCallback(name, oldValue, newValue) {
@@ -477,10 +483,10 @@ export default class SidePanel extends HTMLElement {
 			{
 				const popup = document.querySelector('.logout-popup');
 				popup.style.display = 'flex';
+				document.addEventListener('keydown', this.escClose);
 				this.#logOutPopUp();
 				return ;
 			}
-				this.#logOutPopUp();
 			if (btnId === "home")
 				btnId = "/";
 			redirect(btnId);
@@ -526,10 +532,13 @@ export default class SidePanel extends HTMLElement {
 		const closePopupButton = document.querySelector('.close-popup');
 		closePopupButton.addEventListener('click', () => {
 			popup.style.display = 'none';
+			document.removeEventListener('keydown',this.escClose);
 		});
+
 		window.addEventListener('click', (event) => {
 			if (event.target === popup) {
 				popup.style.display = 'none';
+				document.removeEventListener('keydown', this.escClose);
 			}
 		});
 		this.#logoutEvent();

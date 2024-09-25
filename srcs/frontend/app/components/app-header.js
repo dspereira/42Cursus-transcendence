@@ -66,6 +66,20 @@ header {
     font-size: 9px;
 	padding: 0px 2px 0px 2px;
 }
+
+.hover-popup {
+	position: fixed;
+	padding: 10px;
+	background-color: ${colors.main_card};
+	color: ${colors.primary_text};
+	opacity: 0.9;
+	border-radius: 5px;
+	white-space: nowrap;
+	display: none;
+	pointer-events: none;
+	z-index: 1000;
+	transform: translate(-20px, 40px);
+}
 `;
 
 const getHtml = function(data) {
@@ -135,21 +149,27 @@ export default class AppHeader extends HTMLElement {
 		this.#getUserImage();
 	}
 
-	#addPageRedirection(page, classIdentifier) {
+	#addPageRedirection(page, classIdentifier, elmHtml) {
 		const elm = this.html.querySelector(`.${classIdentifier}`);
 		if (!elm)
 			return ;
+		const popup = elmHtml.querySelector('.my-profile');
+		elm.addEventListener('mouseenter', () => popup.style.display = 'block');
+		elm.addEventListener('mouseleave', () => popup.style.display = 'none');
 		if (page === "/home" || page === "home")
 			page = "";
-		elm.addEventListener("click", () => redirect(`/${page}`));		
+		elm.addEventListener("click", () => redirect(`/${page}`));
 	}
 
 	#createImgTag(imageSrc) {
 		const elmHtml = this.html.querySelector(".right-side");
 		if (!elmHtml)
 			return ;
-		elmHtml.innerHTML = `<img src="${imageSrc}" class="profile-photo"  alt="avatar"/>`;
-		this.#addPageRedirection("profile", "profile-photo");
+		elmHtml.innerHTML = `
+			<img src="${imageSrc}" class="profile-photo"  alt="avatar"/>
+			<div id="hover-popup" class="hover-popup my-profile">My profile</div>`;
+		this.#addPageRedirection("profile", "profile-photo", elmHtml);
+
 	}
 
 	#getUserImage() {
