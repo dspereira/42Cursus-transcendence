@@ -17,10 +17,13 @@ from .two_factor import is_valid_input_code
 from .two_factor import is_valid_otp_method
 from .two_factor import get_new_code_wait_time
 from .two_factor import initiate_two_factor_authentication
+from .two_factor import reset_wait_time_codes
 from user_auth.auth_utils import login as user_login
 
 otp_user_settings_model = ModelManager(OtpUserOptions)
 user_model = ModelManager(User)
+
+
 
 @tfa_required
 @accepted_methods(["GET"])
@@ -127,6 +130,7 @@ def validateOTP(request):
 					is_valid_otp_status = True
 			if not is_valid_otp_status:
 				return JsonResponse({"message": "Invalid Submited Code!"}, status=409)
+			reset_wait_time_codes(user)
 			response = user_login(JsonResponse({"message": "OTP validated with success!"}, status=200), user)
 			response.delete_cookie('two_factor_auth', path="/api/two-factor-auth")
 			return response

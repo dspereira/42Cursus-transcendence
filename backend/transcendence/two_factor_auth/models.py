@@ -16,6 +16,8 @@ class OtpUserOptions(models.Model):
 	qr_code = models.BooleanField(default=False)
 	email = models.CharField(unique=True, null=True)
 	phone_number = models.CharField(max_length=20, unique=True, null=True, default=None)
-
+	nbr_codes_sended = models.IntegerField()
+	last_code_sended_timestamp = models.BigIntegerField()
+	wait_time_timestamp = models.BigIntegerField()
 	class Meta:
 		db_table = 'two_factor_user_config'

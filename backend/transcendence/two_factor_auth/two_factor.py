@@ -16,6 +16,8 @@ from twilio.rest import Client
 from custom_utils.email_utils import EmailSender
 from transcendence import settings
 
+from TFACodesSendedManager import TFACodesSendedManager
+
 load_dotenv()
 
 otp_codes_model = ModelManager(OtpCodes)
@@ -28,10 +30,10 @@ OTP_STATUS_USED = "used"
 OTP_STATUS_AVAILABLE = "available"
 OTP_STATUS_INVALID = "invalid"
 
-OTP_EXP_TIME_MIN = 3
+OTP_EXP_TIME_MIN = 5
 OTP_EXP_TIME_SEC = OTP_EXP_TIME_MIN * 60
 
-def setup_default_tfa_configs(user):
+def setup_two_factor_auth(user):
 	secret_key = generate_encrypted_user_secret_key()
 	default_user_options = otp_user_opt_model.create(
 		user=user,
@@ -39,6 +41,9 @@ def setup_default_tfa_configs(user):
 		qr_code=False,
 		email=user.email,
 		phone_number=None
+		nbr_codes_sended = 0,
+		last_code_sended_timestamp = None,
+		wait_time_timestamp = 0
 	)
 	return default_user_options
 
@@ -66,9 +71,19 @@ def generate_otp_code(user):
 		if secret_key:
 			totp = pyotp.TOTP(secret_key, interval=OTP_EXP_TIME_SEC)
 			otp_value = totp.now()
-			if not otp_codes_model.create(created_by=user, code=otp_value, status=OTP_STATUS_AVAILABLE):
+			code = otp_codes_model.create(created_by=user, code=otp_value, status=OTP_STATUS_AVAILABLE)
+			if not code:
 				return None
+			otp_options = otp_user_opt_model.get(user=user)
+			if otp_options:
+				TFACodesSendedManager.new_code_sended(otp_options, code)
 	return otp_value
+
+def reset_wait_time_codes(user):
+	if user:
+		otp_options = otp_user_opt_model.get(user=user)
+		if otp_options:
+			TFACodesSendedManager.reset(otp_options)
 
 def generate_qr_code_img_base64(user):
 	if user:
@@ -188,18 +203,17 @@ def get_new_code_wait_time(user):
 	wait_time_str = None
 	wait_time = None
 	if user:
-		secret_key = get_user_secret_key(user)
-		last_code = otp_codes_model.get(created_by=user, status=OTP_STATUS_AVAILABLE)
-		if last_code:
-			totp = pyotp.TOTP(secret_key)
-			exp_time_otp = last_code.created.timestamp() + OTP_EXP_TIME_SEC
+		otp_options = otp_user_opt_model.get(user=user)
+		if otp_options:
+			wait_time = TFACodesSendedManager.get_wait_time(otp_options)
+		if wait_time:
 			time_now = datetime.now().timestamp()
-			if exp_time_otp > time_now:
-				wait_time = (exp_time_otp - time_now) / 60
-				if wait_time <= 0.3:
+			if wait_time > time_now:
+				new_wait_time = (wait_time - time_now) / 60
+				if new_wait_time <= 0.3:
 					wait_time_str = "30 seconds left"
 				else:
-					wait_time_str = f"{math.floor(wait_time) + 1} minute(s)"
+					wait_time_str = f"{math.floor(new_wait_time) + 1} minute(s)"
 	return wait_time_str
 
 def is_valid_phone_number(phone_number: str):

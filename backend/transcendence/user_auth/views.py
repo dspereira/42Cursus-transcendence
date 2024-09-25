@@ -18,7 +18,7 @@ from .auth_utils import is_email_verified
 from custom_utils.auth_utils import is_valid_username
 from custom_utils.auth_utils import is_username_bot_username
 
-from two_factor_auth.two_factor import setup_default_tfa_configs
+from two_factor_auth.two_factor import setup_two_factor_auth
 from two_factor_auth.two_factor import initiate_two_factor_authentication
 from user_profile.models import UserProfileInfo
 
@@ -59,7 +59,7 @@ def register(request):
 		if not add_bot_as_friend(user=user):
 			return JsonResponse({"message": "Error adding bot user as friend"}, status=409)
 		send_custom_bot_message(user, generate_welcome_message(user.username))
-		setup_default_tfa_configs(user)
+		setup_two_factor_auth(user)
 	return JsonResponse({"message": "success"})
 
 @accepted_methods(["POST"])
