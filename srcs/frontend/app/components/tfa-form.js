@@ -92,7 +92,6 @@ const getHtml = function(data) {
 						<button type="submit" class="btn btn-primary btn-submit">submit</button>
 					<div>
 				</form>
-				<!--<button type="button" class="btn btn-primary btn-resend">Resend email</button>-->
 			<div>
 		<div>
 	`;
@@ -153,6 +152,7 @@ export default class TfaForm extends HTMLElement {
 		this.#pasteCode();
 		this.#submit();
 		this.#writeKeys();
+		this.#submitKey();
 		this.#toggleSubmitBtnDisabledBasedOnInput();
 	}
 
@@ -264,6 +264,15 @@ export default class TfaForm extends HTMLElement {
 			else if (idx == 5)
 				this.inputs[idx].blur();
 			this.#toggleSubmitBtnDisabledBasedOnInput();
+		});
+	}
+
+	#submitKey() {
+		document.addEventListener("keydown", (event) => { 
+			if (event.key.toLowerCase() == "enter") {
+				if(!this.submitBtn.disabled)
+					this.html.querySelector("#tfa-code").requestSubmit();
+			}
 		});
 	}
 

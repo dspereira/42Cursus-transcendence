@@ -474,23 +474,6 @@ export default class AppConfigs extends HTMLElement {
 		});		
 	}
 
-	/*
-	#setCountryCode(code) {
-		const option = this.html.querySelector(`[value="${code}"]`);
-		if (!option)
-			return ;
-		option.setAttribute("selected", "");
-		let value = option.innerHTML;
-
-		//<option value="+53">Cuba&nbsp;&nbsp;&#x1f1e8;&#x1f1fa;&nbsp;&nbsp;(+53)</option>
-
-		let idx = value.indexOf("&nbsp;&nbsp;") + "&nbsp;&nbsp;".length;			
-		let newValue = value.substring(idx);
-		this.countryBufferStr = value.substring(0, idx);
-		option.innerHTML = newValue;
-	}
-	*/
-
 	#setCountryCode(code) {
 		const option = this.html.querySelector(`[value="${code}"]`);
 		if (!option)
