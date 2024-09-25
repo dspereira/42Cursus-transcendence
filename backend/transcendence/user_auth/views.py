@@ -15,6 +15,7 @@ from .auth_utils import create_user_profile_info
 from .auth_utils import create_user_settings
 from .auth_utils import add_bot_as_friend
 from .auth_utils import is_email_verified
+from .auth_utils import get_new_email_wait_time
 from custom_utils.auth_utils import is_valid_username
 from custom_utils.auth_utils import is_username_bot_username
 
@@ -281,11 +282,9 @@ def resend_email_validation(request):
 						return JsonResponse({"message": "Error: Doesn't exist user!"}, status=409)
 				if user.active:
 					return JsonResponse({"message": "Error: Email already verified!"}, status=409)
-				otp_options = otp_user_opt_model.get(user=user)
-				if otp_options:
-					wait_time = EmailVerificationWaitManager().get_wait_time(otp_options)
-					if wait_time:
-						return JsonResponse({"message": f"Error: Please wait {wait_time} to resend a new email!"}, status=409)
+				wait_time = get_new_email_wait_time(user)
+				if wait_time:
+					return JsonResponse({"message": f"Error: Please wait {wait_time} to resend a new email!"}, status=409)
 				send_email_verification(user)
 				return JsonResponse({"message": "Email verification sended!"}, status=200)
 	return JsonResponse({"message": "Error: Empty Body"}, status=400)

@@ -7,6 +7,7 @@ from friendships.models import FriendList
 from live_chat.models import ChatRoom
 from django.utils import timezone
 from datetime import datetime
+import math
 
 from two_factor_auth.models import OtpUserOptions
 from user_profile.models import UserProfileInfo
@@ -108,6 +109,23 @@ def add_bot_as_friend(user):
 	if friendship and chatroom:
 		return friendship
 	return None
+
+def get_new_email_wait_time(user):
+	wait_time_str = None
+	wait_time = None
+	if user:
+		otp_options = otp_user_opt_model.get(user=user)
+		if otp_options:
+			wait_time = EmailVerificationWaitManager().get_wait_time(otp_options)
+		if wait_time:
+			time_now = datetime.now().timestamp()
+			if wait_time > time_now:
+				new_wait_time = (wait_time - time_now) / 60
+				if new_wait_time <= 0.3:
+					wait_time_str = "30 seconds left"
+				else:
+					wait_time_str = f"{math.floor(new_wait_time) + 1} minute(s)"
+	return wait_time_str
 
 def _generate_tokens(user_id):
 	token_gen = TokenGenerator(user_id)
