@@ -45,7 +45,7 @@ import TourneyInvitesReceived from "../components/tourney-invites-received.js";
 import TourneyInviteCard from "../components/tourney-invite-card.js";
 import TournamentCard from "../components/tournament-card.js";
 import TourneyInfo from "../components/tourney-info.js";
-import TfaEmail from "../components/tfa-email.js";
+import TfaForm from "../components/tfa-form.js";
 
 // Others
 import stateManager from "./StateManager.js";

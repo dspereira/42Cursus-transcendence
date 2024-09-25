@@ -150,9 +150,9 @@ export default class Page2FA extends HTMLElement {
 		this.msgBtn.classList.remove("hide");
 		this.#manageAllowedMethods();
 		this.option2fa.innerHTML = 
-		`<tfa-email 
+		`<tfa-form 
 			method=${this.chosenMethod}
-			></tfa-email>`;		
+			></tfa-form>`;
 	}
 
 	#setChosenMethod(method) {

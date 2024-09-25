@@ -404,16 +404,16 @@ export default class AppConfigs extends HTMLElement {
 	}
 
 	#setFieldInvalid(field) {
-		if (!field)
-			return ;
 		const obj = {
 			"username": () => this.usernameInp.classList.add("is-invalid"),
 			"bio": () => this.bioInp.classList.add("is-invalid"),
 			"game_theme": () => this.gameThemeOption.classList.add("is-invalid"),
 			"language": () => this.languageOption.classList.add("is-invalid"),
 			"phone": () => this.phoneNumberInp.classList.add("is-invalid"),
-			"image": () => {}
+			"image": () => {},
 		}
+		if (!field || !(field in obj))
+			return ;
 		obj[field]();
 	}
 

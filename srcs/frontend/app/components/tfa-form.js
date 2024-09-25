@@ -1,5 +1,4 @@
 import {callAPI} from "../utils/callApiUtils.js";
-import stateManager from "../js/StateManager.js";
 import { redirect } from "../js/router.js";
 
 const styles = `
@@ -63,6 +62,8 @@ p {
 }
 `;
 
+const QRCODE_METHOD = "qr_code";
+
 const getHtml = function(data) {
 	let infoMsg;
 	if (data.method == "email")
@@ -86,7 +87,7 @@ const getHtml = function(data) {
 						<input type="text" class="input-padding form-control form-control-md otp-code" id="idx-4" maxlength="1">
 						<input type="text" class="input-padding form-control form-control-md otp-code" id="idx-5" maxlength="1">
 					</div>
-					${data.method != "qr_code" ? '<button class="btn-resend">Resend code</button>' : ""}
+					${data.method != QRCODE_METHOD ? '<button class="btn-resend">Resend code</button>' : ""}
 					<div class="submit-container">
 						<button type="submit" class="btn btn-primary btn-submit">submit</button>
 					<div>
@@ -98,7 +99,7 @@ const getHtml = function(data) {
 	return html;
 }
 
-export default class TfaEmail extends HTMLElement {
+export default class TfaForm extends HTMLElement {
 	static observedAttributes = ["method"];
 
 	constructor() {
@@ -146,7 +147,8 @@ export default class TfaEmail extends HTMLElement {
 	}
 
 	#scripts() {
-		this.#sendCodeToEmail();
+		if (this.data.method != QRCODE_METHOD)
+			this.#sendTwoFactorCode(this.data.method);
 		this.#resendEmailBtn();
 		this.#pasteCode();
 		this.#submit();
@@ -154,8 +156,10 @@ export default class TfaEmail extends HTMLElement {
 		this.#toggleSubmitBtnDisabledBasedOnInput();
 	}
 
-	#sendCodeToEmail() {
-		callAPI("POST", `http://127.0.0.1:8000/api/two-factor-auth/request-email/`, {}, (res, data) => {		
+	#sendTwoFactorCode(destination) {
+		console.log(destination);
+
+		callAPI("POST", `http://127.0.0.1:8000/api/two-factor-auth/request-${destination}/`, {}, (res, data) => {		
 			console.log(res);
 			console.log(data);
 		});
@@ -167,7 +171,8 @@ export default class TfaEmail extends HTMLElement {
 			return ;
 		btn.addEventListener("click", (event) => {
 			event.preventDefault();
-			this.#sendCodeToEmail();
+			if (this.data.method != QRCODE_METHOD)
+				this.#sendTwoFactorCode(this.data.method);
 		});
 	}
 
@@ -328,4 +333,4 @@ export default class TfaEmail extends HTMLElement {
 	}
 }
 
-customElements.define("tfa-email", TfaEmail);
+customElements.define("tfa-form", TfaForm);
