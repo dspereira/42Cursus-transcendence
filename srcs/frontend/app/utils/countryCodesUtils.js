@@ -262,7 +262,7 @@ const getCountryCodesOptions = function() {
 	let optionsStr = "";
 	countryCodesArr.forEach((elm) => {
 		if (elm.code.indexOf('-') == -1)
-			optionsStr += `<option value="+${elm.code}">${elm.country}&nbsp;&nbsp;${getCountryFlag(elm.iso)}&nbsp;&nbsp;(+${elm.code})</option>`;
+			optionsStr += `<option value="+${elm.code}">${elm.country}&nbsp;&nbsp; ${getCountryFlag(elm.iso)}&nbsp;&nbsp;(+${elm.code})</option>`;
 	});
 	return optionsStr;
 }
