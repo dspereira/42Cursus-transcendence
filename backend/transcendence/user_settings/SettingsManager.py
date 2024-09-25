@@ -50,10 +50,12 @@ class SettingsManager:
 	def update_bio(self, new_bio):
 		if new_bio is not None:
 			bio = str(new_bio).strip()
-			if bio != self.user_profile.bio:
-				self.user_profile.bio = bio
-				self.user_profile.save()
-			return True
+			bio_len = len(bio)
+			if bio_len >= 1 and bio_len <= 255:
+				if bio != self.user_profile.bio:
+					self.user_profile.bio = bio
+					self.user_profile.save()
+				return True
 		return False
 
 	def update_language(self, new_language):
