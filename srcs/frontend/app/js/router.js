@@ -8,7 +8,6 @@ import PageLogin from "../page-components/page-login.js";
 import PageSignup from "../page-components/page-signup.js";
 import Page404 from "../page-components/page-404.js";
 import PageInitial from "../page-components/page-initial.js";
-import PageLogout from "../page-components/page-logout.js";
 import PageFriends from "../page-components/page-friends.js";
 import PagePlay from "../page-components/page-play.js";
 import PageTournamentInfo from "../page-components/page-tournament-info.js";
@@ -54,7 +53,6 @@ const routes = {
 	"/"					: getHtmlElm(PageHome),
 	"/login"			: getHtmlElm(PageLogin),
 	"/signup"			: getHtmlElm(PageSignup),
-	"/logout"			: getHtmlElm(PageLogout),
 	"/profile"			: getHtmlElm(PageProfile),
 	"/chat"				: getHtmlElm(PageChat),
 	"/tournaments"		: getHtmlElm(PageTournaments),

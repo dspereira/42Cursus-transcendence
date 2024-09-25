@@ -53,7 +53,19 @@ const styles = `
 		border-radius: 5px;
 		border-style: hidden;
 		margin: 25px 5px 0px 5px;
+		padding: 5px 0px 5px 0px;
 		background-color: ${colors.third_card};
+	}
+
+	.separator {
+		display: flex;
+		width: 80%;
+		height: 5px;
+		border-radius: 10px;
+		justify-content: center;
+		align-items: center;
+		margin: 10px 0px 10px 0px;
+		background-color: ${colors.main_card};
 	}
 
 	.win-rate-bar {
@@ -100,7 +112,11 @@ const styles = `
 		.game-stats {
 			flex-direction: row;
 			gap: 10px;
-			padding: 20px;
+			padding: 10px;
+		}
+
+		.game-stats > .separator {
+			display: none;
 		}
 	}
 
@@ -111,6 +127,10 @@ const styles = `
 
 		.game-stats {
 			flex-direction: column;
+		}
+
+		.game-stats > .separator {
+			display: flex;
 		}
 	
 	}
@@ -147,7 +167,7 @@ const getHtml = function(data) {
 							<div class="losses game"></div>
 						</div>
 					</div>
-
+					<div class="separator"></div>
 					<div class="tournament-stats-container">
 						<div class="total-tournaments"></div>
 						<div class="tournaments-win-rate"></div>

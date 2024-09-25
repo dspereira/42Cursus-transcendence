@@ -150,16 +150,7 @@ const styles = `
 	color: ${colors.second_text};
 }
 
-.separator {
-	display: flex;
-	width: 80%;
-	height: 5px;
-	border-radius: 10px;
-	justify-content: center;
-	align-items: center;
-	margin: 20px 0px 20px 0px;
-	background-color: ${colors.main_card};
-}
+
 
 .selected-list-container {
 	display: flex;
