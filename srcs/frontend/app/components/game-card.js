@@ -14,7 +14,7 @@ const styles = `
 	}
 
 	.game-win {
-		border: 5px solid ${colors.game_win};
+		border: 3px solid ${colors.game_win};
 	}
 
 	.game-loss {

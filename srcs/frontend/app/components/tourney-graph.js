@@ -3,6 +3,7 @@ import { callAPI } from "../utils/callApiUtils.js";
 import { colors } from "../js/globalStyles.js";
 import { charLimiter } from "../utils/characterLimit.js";
 import charLimit from "../utils/characterLimit.js";
+import { pfpStyle } from "../utils/stylingFunctions.js";
 
 const styles = `
 
@@ -93,10 +94,9 @@ const styles = `
 		justify-content: flex-end;
 	}
 
+	${pfpStyle(".profile-photo", "40px", "auto")}
 
-	.profile-photo {
-		width: 40px;
-	}
+	${pfpStyle(".winner .profile-photo", "70px", "auto")}
 
 	.winner {
 		padding-top: 20px;

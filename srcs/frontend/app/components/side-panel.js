@@ -168,6 +168,8 @@ button {
 }
 
 .popup-content {
+	display: flex;
+	flex-direction: column;
 	background-color: ${colors.second_card};
 	color: ${colors.primary_text};
 	padding: 20px;
@@ -175,6 +177,7 @@ button {
 	text-align: center;
 	box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 	width: 30%;
+	gap: 10px;
 }
 
 .logout-btn, .close-popup {
