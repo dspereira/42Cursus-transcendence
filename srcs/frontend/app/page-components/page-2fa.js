@@ -2,12 +2,45 @@ import {redirect} from "../js/router.js";
 import stateManager from "../js/StateManager.js";
 import { callAPI } from "../utils/callApiUtils.js";
 
-const styles = ``;
+const styles = `
+.tfa-methods {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+}
+
+.message {
+	background: none;
+	border: none;
+	color: blue;
+	cursor: pointer;
+	padding: 0;
+	font: inherit;
+}
+
+.methods {
+	width: 50%;
+}
+
+.hide {
+	display: none;
+}
+
+`;
 
 const getHtml = function(data) {
 	const html = `
 		<h1>2FA</h1>
-		<div class="option-2fa"><div>
+		<div class="option-2fa"></div>
+
+		<div class="tfa-methods">
+			<button class="message">Select an alternative authentication method</button>
+			<div class="list-group methods hide">
+				<button type="button" class="list-group-item list-group-item-action hide" id="qr_code">Use QR Code</button>
+				<button type="button" class="list-group-item list-group-item-action hide" id="email">Use Email</button>
+				<button type="button" class="list-group-item list-group-item-action hide" id="phone">Use Mobile Phone</button>
+			</div>
+		<div>
 	`;
 	return html;
 }
@@ -19,6 +52,8 @@ export default class Page2FA extends HTMLElement {
 
 	constructor() {
 		super()
+		this.chosenMethod;
+		this.methodsObj;
 		this.#initComponent();
 		this.#render();
 		this.#scripts();
@@ -38,6 +73,8 @@ export default class Page2FA extends HTMLElement {
 			this.html.classList.add(`${this.elmtId}`);
 		}
 		this.option2fa = this.html.querySelector(".option-2fa");
+		this.msgBtn = this.html.querySelector(".message");
+		this.methods = this.html.querySelector(".methods");
 	}
 
 	#styles() {
@@ -59,21 +96,71 @@ export default class Page2FA extends HTMLElement {
 
 	#scripts() {
 		this.#get2faOption();
+		this.#selectAnAlternativeMsgEvent();
+		this.#setChooseMethodsBtnEvents();
 	}
 
 	#get2faOption() {
-		this.option2fa.innerHTML = "<tfa-email></tfa-email>";
-		
 		callAPI("GET", `http://127.0.0.1:8000/api/two-factor-auth/configured-2fa/`, null, (res, data) => {	
-			const allowedMethods =  JSON.stringify(data.configured_methods);
 			if (res.ok && data) {
-				this.option2fa.innerHTML = 
-				`<tfa-email 
-					method=${data.method}
-					allowed-methods='${allowedMethods}'
-					></tfa-email>`;
+				this.#setAllowedMethods(data.configured_methods);
+				this.#setChosenMethod(data.method);
+				this.#update2faMethod();
 			}
 		});
+	}
+
+	#selectAnAlternativeMsgEvent() {
+		this.msgBtn.addEventListener("click", () => {
+			this.methods.classList.remove("hide");
+			this.msgBtn.classList.add("hide");
+		});
+	}
+
+	#setChooseMethodsBtnEvents() {
+		const btnList = this.html.querySelectorAll(".methods > button");
+		if (!btnList)
+			return ;
+		btnList.forEach((elm) => {
+			elm.addEventListener("click", () => {
+				this.#setChosenMethod(elm.id);
+				this.#update2faMethod();
+			});
+		});
+	}
+
+	#manageAllowedMethods() {
+		if (!this.methodsObj.phone && !this.methodsObj.qr_code) {
+			this.methods.classList.add("hide");
+			this.msgBtn.classList.add("hide");
+			return ;
+		}
+		let elm;
+		for (let key in this.methodsObj) {
+			elm = this.html.querySelector(`#${key}`);
+			if (this.methodsObj[key] && key != this.chosenMethod)
+				elm.classList.remove("hide");
+			else
+				elm.classList.add("hide");
+		}
+	}
+
+	#update2faMethod() {
+		this.methods.classList.add("hide");
+		this.msgBtn.classList.remove("hide");
+		this.#manageAllowedMethods();
+		this.option2fa.innerHTML = 
+		`<tfa-email 
+			method=${this.chosenMethod}
+			></tfa-email>`;		
+	}
+
+	#setChosenMethod(method) {
+		this.chosenMethod = method;
+	}
+
+	#setAllowedMethods(methods) {
+		this.methodsObj = methods;
 	}
 }
 

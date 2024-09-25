@@ -99,7 +99,7 @@ const getHtml = function(data) {
 }
 
 export default class TfaEmail extends HTMLElement {
-	static observedAttributes = ["method", "allowed-methods"];
+	static observedAttributes = ["method"];
 
 	constructor() {
 		super();
@@ -113,10 +113,6 @@ export default class TfaEmail extends HTMLElement {
 	}
 
 	attributeChangedCallback(name, oldValue, newValue) {
-		if (name == "allowed-methods") {
-			name = "allowedMethods";
-			newValue = JSON.parse(newValue);
-		}
 		this.data[name] = newValue;
 	}
 
