@@ -278,7 +278,7 @@ def resend_email_validation(request):
 					return JsonResponse({"message": "Error: Email already verified!"}, status=409)
 				otp_options = otp_user_opt_model.get(user=user)
 				if otp_options:
-					wait_time = EmailVerificationWaitManager().get_wait_time()
+					wait_time = EmailVerificationWaitManager().get_wait_time(otp_options)
 					if wait_time:
 						return JsonResponse({"message": f"Error: Please wait {wait_time} to resend a new email!"}, status=409)
 				send_email_verification(user)
