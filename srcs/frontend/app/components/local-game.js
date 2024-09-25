@@ -109,6 +109,7 @@ export default class LocalGame extends HTMLElement {
 		this.ctx = this.canvas.getContext("2d");
 		this.canvas.width = SCREEN_WIDTH;
 		this.canvas.height = SCREEN_HEIGHT;
+		
 		this.game = new Game(this.ctx, this.canvas.width, this.canvas.height);
 		this.gameLogic = new GameLogic();
 		this.keyDownP1Status = "released";

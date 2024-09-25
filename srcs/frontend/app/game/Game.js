@@ -25,8 +25,8 @@ export default class Game {
 		this.lastStartCounterValue = null;
 		this.winnerUsername = null;
 		this.surrender = null;
-		this.player1 = null;
-		this.player2 = null;
+		this.player1 = "player1";
+		this.player2 = "player2";
 		this.isFullScreen = null;
 		this.scoreFont = this.width * 0.25;
 		this.startCounterFontStore = this.width * 0.25;
