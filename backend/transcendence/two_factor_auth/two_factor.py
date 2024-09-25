@@ -41,9 +41,9 @@ def setup_two_factor_auth(user):
 		qr_code=False,
 		email=user.email,
 		phone_number=None,
-		nbr_codes_sended = 0,
-		last_code_sended_timestamp = None,
-		wait_time_timestamp = 0
+		nbr_codes_sended=0,
+		last_code_sended_timestamp=0,
+		wait_time_timestamp=0
 	)
 	return default_user_options
 

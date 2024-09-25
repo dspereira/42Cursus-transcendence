@@ -9,7 +9,7 @@ class TFACodesSendedManager:
 
 	def reset(self, otp_options):
 		otp_options.nbr_codes_sended = 0
-		otp_options.last_code_sended_timestamp = None
+		otp_options.last_code_sended_timestamp = 0
 		otp_options.wait_time_timestamp = 0
 		otp_options.save()
 

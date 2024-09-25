@@ -107,6 +107,10 @@ export default class Page2FA extends HTMLElement {
 				this.#setChosenMethod(data.method);
 				this.#update2faMethod();
 			}
+			else if (!res.ok) {
+				console.log("Error: Genting 2fa Configs.");
+				redirect("/");
+			}
 		});
 	}
 
