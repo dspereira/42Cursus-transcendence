@@ -23,8 +23,6 @@ from user_auth.auth_utils import login as user_login
 otp_user_settings_model = ModelManager(OtpUserOptions)
 user_model = ModelManager(User)
 
-
-
 @tfa_required
 @accepted_methods(["GET"])
 def configured_2fa(request):

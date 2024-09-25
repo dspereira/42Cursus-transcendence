@@ -1,18 +1,21 @@
-from django.utils import timezone
+from .EmailVerificationWaitManager import EmailVerificationWaitManager
 from custom_utils.jwt_utils import TokenGenerator, JwtData
 from custom_utils.email_utils import EmailSender
 from custom_utils.models_utils import ModelManager
 from user_auth.models import User, BlacklistToken
 from friendships.models import FriendList
 from live_chat.models import ChatRoom
+from django.utils import timezone
 from datetime import datetime
 
+from two_factor_auth.models import OtpUserOptions
 from user_profile.models import UserProfileInfo
 from user_settings.models import UserSettings
 
 friend_list_model = ModelManager(FriendList)
 user_model = ModelManager(User)
 chatroom_model = ModelManager(ChatRoom)
+otp_user_opt_model = ModelManager(OtpUserOptions)
 
 def two_factor_auth(response, user):
 	user.last_login = timezone.now()
@@ -58,6 +61,9 @@ def send_email_verification(user):
 	token_gen = _generate_email_verification_token(user_id=user.id)
 	token = token_gen.get_email_verification_token()
 	EmailSender().send_email_verification(receiver_email=user.email, token=token)
+	otp_options = otp_user_opt_model.get(user=user)
+	if otp_options:
+		EmailVerificationWaitManager().new_code_sended(otp_options, datetime.now().timestamp())
 
 def is_jwt_token_valid(token: str):
 	jwt_data = JwtData(token=token)

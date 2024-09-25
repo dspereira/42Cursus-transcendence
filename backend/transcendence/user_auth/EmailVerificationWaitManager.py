@@ -1,10 +1,10 @@
 from datetime import datetime
 
-class TFACodesSendedManager:
+class EmailVerificationWaitManager:
 
-	def new_code_sended(self, otp_options, code):
+	def new_code_sended(self, otp_options, timestamp):
 		otp_options.nbr_codes_sended += 1
-		otp_options.last_code_sended_timestamp = code.created.timestamp()
+		otp_options.last_code_sended_timestamp = timestamp
 		otp_options.save()
 
 	def reset(self, otp_options):

@@ -1,8 +1,8 @@
+from custom_decorators import login_required, accepted_methods
+from user_auth.models import User, BlacklistToken
 from django.contrib.auth import authenticate
 from django.http import JsonResponse
-from user_auth.models import User, BlacklistToken
 import json
-from custom_decorators import login_required, accepted_methods
 
 from .auth_utils import two_factor_auth as user_tfa
 from .auth_utils import logout as user_logout
@@ -26,6 +26,10 @@ from custom_utils.models_utils import ModelManager
 from custom_utils.blitzpong_bot_utils import send_custom_bot_message
 from custom_utils.blitzpong_bot_utils import generate_welcome_message
 
+from .EmailVerificationWaitManager import EmailVerificationWaitManager
+from two_factor_auth.models import OtpUserOptions
+
+otp_user_opt_model = ModelManager(OtpUserOptions)
 user_model = ModelManager(User)
 
 @accepted_methods(["POST"])
@@ -243,12 +247,16 @@ def validate_email(request):
 				if email_token_data:
 					if email_token_data.type == "email_verification":
 						user = user_model.get(id=email_token_data.sub)
-						if user and user.active == False:
-							user.active = True
-							user.save()
-							validation_status = "validated"
-						elif user and user.active == True:
-							validation_status = "active"
+						if user:
+							if user.active:
+								validation_status = "active"
+							else:
+								user.active = True
+								user.save()
+								validation_status = "validated"
+							otp_options = otp_user_opt_model.get(user=user)
+							if otp_options:
+								EmailVerificationWaitManager().reset(otp_options)
 				else:
 					add_email_token_to_blacklist(email_token_data)
 				return JsonResponse({"message": "Email validation done!", "validation_status": validation_status}, status=200)
@@ -268,6 +276,11 @@ def resend_email_validation(request):
 						return JsonResponse({"message": "Error: Doesn't exist user!"}, status=409)
 				if user.active:
 					return JsonResponse({"message": "Error: Email already verified!"}, status=409)
+				otp_options = otp_user_opt_model.get(user=user)
+				if otp_options:
+					wait_time = EmailVerificationWaitManager().get_wait_time()
+					if wait_time:
+						return JsonResponse({"message": f"Error: Please wait {wait_time} to resend a new email!"}, status=409)
 				send_email_verification(user)
 				return JsonResponse({"message": "Email verification sended!"}, status=200)
 	return JsonResponse({"message": "Error: Empty Body"}, status=400)
