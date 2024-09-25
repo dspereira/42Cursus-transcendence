@@ -224,15 +224,12 @@ export default class TfaForm extends HTMLElement {
 				method: this.data.method
 			}
 			this.#toggleSubmitBtnDisabledBasedOnInput();
-			this.#updateInvalidCodeStyle(true);
 			if (!formData.code){
 				this.#updateInvalidCodeStyle(true);
 				return ;
 			}
 			else {
 				callAPI("POST", "http://127.0.0.1:8000/api/two-factor-auth/validate-otp/", formData, (res, data) => {		
-					console.log(res);
-					console.log(data);
 					if (res.ok)
 						redirect("/");
 					this.#updateInvalidCodeStyle(true);
