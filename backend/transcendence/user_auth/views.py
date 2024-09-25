@@ -260,9 +260,9 @@ def validate_email(request):
 								user.active = True
 								user.save()
 								validation_status = "validated"
-							otp_options = otp_user_opt_model.get(user=user)
-							if otp_options:
-								EmailVerificationWaitManager().reset(otp_options)
+								otp_options = otp_user_opt_model.get(user=user)
+								if otp_options:
+									EmailVerificationWaitManager().reset(otp_options)
 				else:
 					add_email_token_to_blacklist(email_token_data)
 				return JsonResponse({"message": "Email validation done!", "validation_status": validation_status}, status=200)
