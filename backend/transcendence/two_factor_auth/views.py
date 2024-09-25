@@ -79,7 +79,7 @@ def generate_user_phone_code(request):
 				return JsonResponse({"message": "Error: Phone Number is not configured in 2FA!"}, status=409)
 			wait_time = get_new_code_wait_time(user)
 			if wait_time:
-				return JsonResponse({"message": f"Error: Wait {wait_time} to send a new code. Please check your mail box."}, status=409)
+				return JsonResponse({"message": f"Error: Wait {wait_time} to send a new code. Please check your Mobile Phone."}, status=409)
 			if not send_smsto_user(user):
 				return JsonResponse({"message": "Error: Failed to send 2FA SMS!"}, status=409)
 			return JsonResponse({"message": "SMS sended with success!"}, status=200)
@@ -135,54 +135,3 @@ def validateOTP(request):
 			response.delete_cookie('two_factor_auth', path="/api/two-factor-auth")
 			return response
 	return JsonResponse({"message": "Error: Invalid Request!"}, status=400)
-
-"""
----------------------------------------------------------------------
----------------- VERIFICAR SE ESTAS ROTAS SÃO USADAS ----------------
----------------------------------------------------------------------
-"""
-
-@accepted_methods(["GET"])
-def is_qr_code_configured(request):
-
-	message = "QR Code is not Configured"
-	config_status = False
-
-	if request.access_data:
-		user = user_model.get(id=request.access_data.sub)
-
-	if exist_qr_code(user):
-		message = "QR Code is Configured"
-		config_status = True
-
-	return JsonResponse({"message": message, "config_status": config_status})
-
-@accepted_methods(["GET"])
-def is_email_configured(request):
-
-	message = "Email is not Configured"
-	config_status = False
-
-	if request.access_data:
-		user = user_model.get(id=request.access_data.sub)
-
-	if exist_email(user):
-		message = "Email is Configured"
-		config_status = True
-
-	return JsonResponse({"message": message, "config_status": config_status})
-
-@accepted_methods(["GET"])
-def is_phone_configured(request):
-
-	message = "Phone Number is not Configured"
-	config_status = False
-
-	if request.access_data:
-		user = user_model.get(id=request.access_data.sub)
-
-	if exist_phone_number(user):
-		message = "Phone Number is Configured"
-		config_status = True
-
-	return JsonResponse({"message": message, "config_status": config_status})
