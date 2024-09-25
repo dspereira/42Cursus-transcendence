@@ -113,7 +113,6 @@ export default class PageEmailResend extends HTMLElement {
 					render(getHtmlElm(PageEmailSent));	
 			});
 		});
-
 	}
 }
 

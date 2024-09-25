@@ -112,6 +112,11 @@ export default class TfaForm extends HTMLElement {
 		this.#scripts();
 	}
 
+	disconnectedCallback() {
+		document.removeEventListener("keyup", this.#keyUpHandler);
+		document.removeEventListener("keydown", this.#keyEnterHandler);
+	}
+
 	attributeChangedCallback(name, oldValue, newValue) {
 		this.data[name] = newValue;
 	}
@@ -236,44 +241,59 @@ export default class TfaForm extends HTMLElement {
 		});
 	}
 
-	#writeKeys() {
-		document.addEventListener("keyup", (event) => {
-			this.#cleanNonNumericInputs();
-
-			if (event.key.toLowerCase() == "escape") {
-				this.#removeAllInputValues();
-				this.#removeFocus();
-				this.#updateInvalidCodeStyle(false);
-			}
-			if (event.key.toLowerCase() == "backspace") {
-				this.#moveBackward();
-				this.#updateInvalidCodeStyle(false);
-			}
-			this.#toggleSubmitBtnDisabledBasedOnInput();
-
-			const value = event.key;
-			if (!value || value < '0' || value > '9')
-				return ;
+	#backspaceKey(keyPressed) {
+		if (keyPressed.toLowerCase() == "escape") {
+			this.#removeAllInputValues();
+			this.#removeFocus();
 			this.#updateInvalidCodeStyle(false);
-			const idx = parseInt(this.#getInputIdxToWrite());
-			if (idx == 0)
-				this.#removeAllInputValues();
-			this.inputs[idx].value = value;
-			if (idx < 5)
-				this.inputs[idx+1].focus();
-			else if (idx == 5)
-				this.inputs[idx].blur();
-			this.#toggleSubmitBtnDisabledBasedOnInput();
-		});
+		}
 	}
 
+	#escapeKey(keyPressed) {
+		if (keyPressed.toLowerCase() == "backspace") {
+			this.#moveBackward();
+			this.#updateInvalidCodeStyle(false);
+		}
+	}
+
+	#numbersKey(keyPressed) {
+		if (!keyPressed || keyPressed < '0' || keyPressed > '9')
+			return ;
+		this.#updateInvalidCodeStyle(false);
+		const idx = parseInt(this.#getInputIdxToWrite());
+		if (idx == 0)
+			this.#removeAllInputValues();
+		this.inputs[idx].value = keyPressed;
+		if (idx < 5)
+			this.inputs[idx+1].focus();
+		else if (idx == 5)
+			this.inputs[idx].blur();
+	}
+
+	#keyUpHandler = (event) => {
+		console.log(event.key);
+
+		this.#cleanNonNumericInputs();
+		this.#backspaceKey(event.key);
+		this.#escapeKey(event.key);
+		this.#numbersKey(event.key);
+		this.#toggleSubmitBtnDisabledBasedOnInput();
+	}
+
+	#writeKeys() {
+		document.addEventListener("keyup", this.#keyUpHandler);
+	}
+
+	#keyEnterHandler = (event) => {
+		console.log(event.key);
+		if (event.key.toLowerCase() == "enter") {
+			if(!this.submitBtn.disabled)
+				this.html.querySelector("#tfa-code").requestSubmit();
+		}
+	};
+
 	#submitKey() {
-		document.addEventListener("keydown", (event) => { 
-			if (event.key.toLowerCase() == "enter") {
-				if(!this.submitBtn.disabled)
-					this.html.querySelector("#tfa-code").requestSubmit();
-			}
-		});
+		document.addEventListener("keydown", this.#keyEnterHandler);
 	}
 
 	#getInputIdxToWrite() {
