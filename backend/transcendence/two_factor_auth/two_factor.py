@@ -16,7 +16,7 @@ from twilio.rest import Client
 from custom_utils.email_utils import EmailSender
 from transcendence import settings
 
-from TFACodesSendedManager import TFACodesSendedManager
+from .TFACodesSendedManager import TFACodesSendedManager
 
 load_dotenv()
 
