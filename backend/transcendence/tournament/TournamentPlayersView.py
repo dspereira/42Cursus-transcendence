@@ -40,7 +40,7 @@ class TournamentPlayersView(View):
 		if not tournament or tournament.owner == user:
 			return JsonResponse({"message": "Error: User is the host of an tournament!"}, status=409)
 		if tournament.status != TOURNAMENT_STATUS_CREATED:
-			return JsonResponse({"message": "Error: The Tournament already started!"}, status=409)
+			return JsonResponse({"message": "Error: You cannot leave the tournament!"}, status=409)
 		if not delete_single_tournament_player(user, tournament):
 			return JsonResponse({"message": "Error: Failed to leave the tournament!"}, status=409)
 		update_nbr_players(tournament, tournament.nbr_players - 1)
