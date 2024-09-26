@@ -37,18 +37,6 @@ def search_user_by_name(request):
 		users = user_profile_info_model.filter(default_image_seed__istartswith=search_username)
 		message = f"Search Username: [{search_username}]"
 
-	print()
-	print("------------------------------------------------")
-	print(f"SEARCH -> {search_username}")
-	print("------------------------------------------------")
-	print("USERS")	
-	print("------------------------------------------------")
-	if users:
-		for usr in users:
-			print("User: ", usr.user.username)
-			print("------------------------------------------------")
-	print()
-
 	if users:
 		users_values = get_users_info(users=users)
 		result_users = remove_user_and_friends_from_users_list(user_id=user.id, users_list=users_values)
@@ -58,8 +46,12 @@ def search_user_by_name(request):
 		result_users = sorted(result_users, key=lambda x: x["username"])
 
 		print()
-		print("result_users")
-		print(result_users)
+		print("USERS")	
+		print("------------------------------------------------")
+		if result_users:
+			for usr in result_users:
+				print("User: ", usr['username'])
+		print("------------------------------------------------")
 		print()
 
 	return JsonResponse({"message": message, "users": result_users}, status=200)
