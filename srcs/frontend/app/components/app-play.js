@@ -233,18 +233,8 @@ export default class AppPlay extends HTMLElement {
 		this.#setGameTimeToStartEvent();
 	}
 
-	/*
-		Color Pallets IDs
-		1: Classic Retro
-		2: Modern Neon
-		3: Ocean Vibes
-		4: Sunset Glow
-		5: Forest Retreat
-	*/
 	#getGameColorPallet() {
-		const queryParam = `?id=${1}`;
-
-		callAPI("GET", `http://127.0.0.1:8000/api/game/color_pallet/${queryParam}`, null, (res, data) => {
+		callAPI("GET", `http://127.0.0.1:8000/api/game/color_pallet/`, null, (res, data) => {
 			if (res.ok) {
 				if (data && data.color_pallet)
 					this.game.setColorPallet(data.color_pallet);
