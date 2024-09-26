@@ -29,14 +29,12 @@ def search_user_by_name(request):
 	search_username = request.GET.get('key')
 	users_values = None
 	result_users = None
-
 	if not search_username or search_username == "" or search_username == '""':
 		users = user_profile_info_model.all()
 		message = f"Search Username is empty!"
 	else:
-		users = user_profile_info_model.filter(default_image_seed__istartswith=search_username)
+		users = user_profile_info_model.filter(user__username__istartswith=search_username).exclude(user__username="BlitzPong")
 		message = f"Search Username: [{search_username}]"
-
 	if users:
 		users_values = get_users_info(users=users)
 		result_users = remove_user_and_friends_from_users_list(user_id=user.id, users_list=users_values)
