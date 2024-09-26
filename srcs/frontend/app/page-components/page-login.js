@@ -15,7 +15,6 @@ const getHtml = function(data) {
 	return html;
 }
 
-
 const title = "Login Page";
 
 export default class PageLogin extends HTMLElement {

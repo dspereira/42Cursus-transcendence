@@ -46,6 +46,10 @@ class SettingsView(View):
 					if req_data.get('image_seed'):
 						if not user_settings_manager.update_image_seed(req_data['image_seed']):
 							return JsonResponse({"message": f"Invalid image seed!", "field": "image_seed"}, status=409)
+					if req_data.get('tfa'):
+						tfa_update = user_settings_manager.update_tfa(req_data['tfa'])
+						if tfa_update:
+							return JsonResponse({"message": f"Invalid {tfa_update}!", "field": "tfa"}, status=409)
 					fields_to_update = {
 						'bio': user_settings_manager.update_bio,
 						'language': user_settings_manager.update_language,

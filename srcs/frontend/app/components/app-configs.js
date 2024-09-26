@@ -1,4 +1,6 @@
-import {callAPI} from "../utils/callApiUtils.js";
+import { callAPI } from "../utils/callApiUtils.js";
+import isValidUsername from "../utils/usernameValidationUtils.js";
+import getCountryCodesOptions from "../utils/countryCodesUtils.js";
 
 const styles = `
 .main-container {
@@ -9,7 +11,6 @@ const styles = `
 
 .general-settings-container {
 	width: 70%;
-	/*background-color: red;*/
 }
 
 .image-settings-container {
@@ -17,8 +18,6 @@ const styles = `
 	flex-direction: column; 	
 	justify-content: center;
 	width: 30%;
-
-	/*background-color: blue;*/
 }
 
 .img-container {
@@ -50,8 +49,48 @@ legend {
 	font-size: 16px
 }
 
-#new-username, #new-bio, #theme-options, #language-options {
+#new-username, #new-bio, #theme-options, #language-options, #phone-number-input {
 	background-image: none;
+}
+
+.hide {
+	display: none;
+}
+
+.phone-container {
+	display: flex;
+}
+
+.country-code {
+	width: 20%;
+}
+
+.phone-number {
+	width: 80%;
+}
+
+#country-code-select {
+	background-color: #E9ECEF;
+	border-top-right-radius: 0;
+	border-bottom-right-radius: 0;
+}
+
+#phone-number-input {
+	border-top-left-radius: 0;
+	border-bottom-left-radius: 0;
+}
+
+.show-qrcode {
+	background: none;
+	border: none;
+	color: blue;
+	cursor: pointer;
+	padding: 0;
+	font: inherit;
+}
+
+.qrcode-img {
+	dispay: inline-block;
 }
 
 .hide {
@@ -78,16 +117,14 @@ const getHtml = function(data) {
 				<fieldset>
 					<legend>Choose where to receive your two-factor authentication:</legend>
 					<div class="form-check">
-						<input class="form-check-input" type="checkbox" value="qrcode" id="qrcode">
-						<label class="form-check-label" for="qrcode">
-							QR Code
-						</label>
+						<input class="form-check-input" checked type="checkbox" value="email" id="email">
+						<label class="form-check-label" for="email">Email</label>
 					</div>
 					<div class="form-check">
-						<input class="form-check-input" type="checkbox" value="email" id="email">
-						<label class="form-check-label" for="email">
-							Email
-						</label>
+						<input class="form-check-input" type="checkbox" value="qrcode" id="qrcode">
+						<label class="form-check-label" for="qrcode">QR Code</label>
+						<button class="show-qrcode hide">Show Qrcode</button>
+						<img src="" class="qrcode-img hide" alt="Qrcode image"></img>
 					</div>
 					<div class="form-check">
 						<input class="form-check-input" type="checkbox" value="phone" id="phone">
@@ -95,6 +132,18 @@ const getHtml = function(data) {
 							Phone
 						</label>
 					</div>
+
+					<div class="phone-container hide">
+						<div class="country-code">
+							<select class="form-select" id="country-code-select" aria-label="Country Code">
+							${getCountryCodesOptions()}
+							</select>
+						</div>
+						<div class="phone-number">
+							<input class="form-control form-control-md" id="phone-number-input" type="text">
+						</div>
+					<div>
+
 				</fieldset>
 
 				<h2>Game Settings</h2>
@@ -116,7 +165,6 @@ const getHtml = function(data) {
 					<option value="pt">Português &#x1F1F5;&#x1F1F9;</option>
 					<option value="es">Espanhol &#x1F1EA;&#x1F1F8;</option>
 				</select>
-
 				<div><button type="submit" class="btn btn-primary btn-submit">Apply Changes</button></div>
 			</div>
 
@@ -126,8 +174,7 @@ const getHtml = function(data) {
 				</div>
 				<div class="img-buttons">
 					<label for="new-image" class="btn btn-primary btn-img">Upload Image</label>
-					<!--<input id="new-image" class="hide" type="file" accept="image/png, image/jpeg, image/webp">-->
-					<input id="new-image" class="hide" type="file">
+					<input id="new-image" class="hide" type="file" accept="image/png, image/jpeg, image/webp">
 					<button class="btn btn-primary btn-img btn-new-seed">New Avatar</button>
 				</div>
 			</div>
@@ -180,6 +227,8 @@ export default class AppConfigs extends HTMLElement {
 
 	constructor() {
 		super()
+		this.countryBufferStr;
+		this.qrcodeConfigured = false;
 		this.imageSeed = "";
 		this.imageFile = "";
 		this.#initComponent();
@@ -208,15 +257,22 @@ export default class AppConfigs extends HTMLElement {
 		this.imagePreview = this.html.querySelector(".image-preview");
 		this.newSeedBtn = this.html.querySelector(".btn-new-seed");
 		this.newImageInp = this.html.querySelector("#new-image");
-		
 		this.errorAlert =  this.html.querySelector(".alert-danger");
 		this.successAlert = this.html.querySelector(".alert-success");
+		this.submitBtn = this.html.querySelector(".btn-submit");
+		this.phoneContainer = this.html.querySelector(".phone-container");
+		this.countryCode = this.html.querySelector("#country-code-select");
+		this.phoneNumberInp = this.html.querySelector("#phone-number-input");
+		this.qrcodeCheckbox = this.html.querySelector("#qrcode");
+		this.phoneCheckbox = this.html.querySelector("#phone");
+		this.showQrcode = this.html.querySelector(".show-qrcode");
+		this.qrcodeImg = this.html.querySelector(".qrcode-img");
 	}
 
 	#styles() {
-			if (styles)
-				return `@scope (.${this.elmtId}) {${styles}}`;
-			return null;
+		if (styles)
+			return `@scope (.${this.elmtId}) {${styles}}`;
+		return null;
 	}
 
 	#html(data){
@@ -234,17 +290,33 @@ export default class AppConfigs extends HTMLElement {
 		this.#getUserSettings();
 		this.#newSeedBtn();
 		this.#setNewImageInput();
+		this.#phoneSelectEvent();
+		this.#removeCountryName();
+		this.#insertCountryNameToOption();
+		this.#disableEmailCheckbox();
+		this.#qrcodeSelectEvent();
+		this.#showQrcode();
 	}
 
 	#submit() {
 		this.settingsForm.addEventListener("submit", (event) => {
 			event.preventDefault();
-
+			this.submitBtn.disabled = true;
 			const username = this.usernameInp.value.trim();
-			if (!this.#isValidUsername(username)) {
+			if (!isValidUsername(username)) {
 				this.#setFieldInvalid("username");
 				this.#setErrorMessage("Invalid username!");
+				this.submitBtn.disabled = false;
 				return ;
+			}
+			const phoneNum = this.phoneCheckbox.checked ? this.#getPhoneNumberFromInput() : null;
+			if (phoneNum) {
+				if (!this.#isValidPhoneNumber(phoneNum)) {
+					this.#setFieldInvalid("phone");
+					this.#setErrorMessage("Invalid Phone Number!");
+					this.submitBtn.disabled = false;
+					return ;
+				}
 			}
 
 			const data = JSON.stringify({
@@ -252,7 +324,11 @@ export default class AppConfigs extends HTMLElement {
 				"bio": this.bioInp.value.trim(),
 				"game_theme": this.gameThemeOption.value.trim(),
 				"language": this.languageOption.value.trim(),
-				"image_seed": this.imageSeed.trim()
+				"image_seed": this.imageSeed.trim(),
+				"tfa": {
+					"qr_code": this.qrcodeCheckbox.checked,
+					"phone": phoneNum
+				}
 			});
 
 			const formData = new FormData();
@@ -272,6 +348,7 @@ export default class AppConfigs extends HTMLElement {
 					this.#setFieldInvalid(resData.field);
 					this.#setErrorMessage(resData.message);
 				}
+				this.submitBtn.disabled = false;
 			});
 		});
 	}
@@ -289,15 +366,19 @@ export default class AppConfigs extends HTMLElement {
 		this.gameThemeOption.value = data.game_theme;
 		this.languageOption.value = data.language;
 		this.imagePreview.setAttribute("src", data.image);
-	}
-
-	#isValidUsername(username) {
-		let regex = /^[a-zA-Z0-9_-]+$/;
-		return regex.test(username);
+		this.#setPhoneNumberField(data.tfa.phone);
+		if (data.tfa.qr_code) {
+			this.qrcodeConfigured = true;
+			this.qrcodeCheckbox.checked = true;
+			this.showQrcode.classList.remove("hide");
+		}
+		else
+			this.qrcodeConfigured = false;
 	}
 
 	#newSeedBtn() {
-		this.newSeedBtn.addEventListener("click", () => {
+		this.newSeedBtn.addEventListener("click", (event) => {
+			event.preventDefault();
 			this.imageSeed = `${this.usernameInp.value}-${Math.floor(Math.random() * 1000000)}`;
 			this.imagePreview.setAttribute("src", `${IMG_PATH}${this.imageSeed}`);
 			this.imageFile = "";
@@ -323,15 +404,16 @@ export default class AppConfigs extends HTMLElement {
 	}
 
 	#setFieldInvalid(field) {
-		if (!field)
-			return ;
 		const obj = {
 			"username": () => this.usernameInp.classList.add("is-invalid"),
 			"bio": () => this.bioInp.classList.add("is-invalid"),
 			"game_theme": () => this.gameThemeOption.classList.add("is-invalid"),
 			"language": () => this.languageOption.classList.add("is-invalid"),
-			"image": () => {}
+			"phone": () => this.phoneNumberInp.classList.add("is-invalid"),
+			"image": () => {},
 		}
+		if (!field || !(field in obj))
+			return ;
 		obj[field]();
 	}
 
@@ -358,6 +440,109 @@ export default class AppConfigs extends HTMLElement {
 		if (elm)
 			elm.classList.remove("is-invalid");
 		this.errorAlert.classList.add("hide");
+	}
+
+	#phoneSelectEvent() {
+		const elm = this.html.querySelector("#phone");
+		if (!elm)
+			return ;
+		elm.addEventListener("change", () => {
+			if (elm.checked)
+				this.phoneContainer.classList.remove("hide");
+			else
+				this.phoneContainer.classList.add("hide");
+		});
+	}
+
+	#removeCountryName() {
+		this.countryCode.addEventListener("click", (event) => {
+			let value = event.target.options[event.target.selectedIndex].innerHTML;
+			let idx = value.indexOf("&nbsp;&nbsp;") + "&nbsp;&nbsp;".length;			
+			let newValue = value.substring(idx);
+			this.countryBufferStr = value.substring(0, idx);
+			event.target.options[event.target.selectedIndex].innerHTML = newValue;
+		});
+	}
+
+	#insertCountryNameToOption() {
+		this.countryCode.addEventListener("mousedown", (event) => {
+			const actualValue = event.target.options[event.target.selectedIndex].innerHTML;
+			if (this.countryBufferStr){
+				event.target.options[event.target.selectedIndex].innerHTML = `${this.countryBufferStr}${actualValue}`;
+				this.countryBufferStr = "";
+			}
+		});		
+	}
+
+	#setCountryCode(code) {
+		const option = this.html.querySelector(`[value="${code}"]`);
+		if (!option)
+			return ;
+
+		option.setAttribute("selected", "");
+		let value = option.innerHTML;
+		let idx = value.indexOf("&nbsp;&nbsp; ");
+		if (idx < 0)
+			return ;
+
+		idx += "&nbsp;&nbsp; ".length;
+		let newValue = value.substring(idx);
+		this.countryBufferStr = value.substring(0, idx);
+		option.innerHTML = newValue;
+	}
+
+	#disableEmailCheckbox() {
+		const inp = this.html.querySelector("#email");
+		if (!inp)
+			return ;
+		inp.disabled = true;
+	}
+
+	#getPhoneNumberFromInput() {
+		let phoneNumber = `${this.countryCode.value.trim()} ${this.phoneNumberInp.value.trim()}`;
+		return phoneNumber.trim();
+	}
+
+	#isValidPhoneNumber(number) {
+		const regex = /^\+\d{1,3} \d{7,14}$/;
+		return(regex.test(number));
+	}
+
+	#setPhoneNumberField(data) {
+		if (data) {
+			this.phoneContainer.classList.remove("hide");
+			this.phoneCheckbox.checked = true;
+			this.phoneNumberInp.value = data.substring(data.indexOf(" "));
+			this.#setCountryCode(data.substring(0, data.indexOf(" ")));
+		}
+		else
+			this.#setCountryCode("+351");
+	}
+
+	#qrcodeSelectEvent() {
+		this.qrcodeCheckbox.addEventListener("change", () => {
+			if (this.qrcodeConfigured) {
+				if (this.qrcodeCheckbox.checked)
+					this.showQrcode.classList.remove("hide");
+				else
+					this.showQrcode.classList.add("hide");
+			}
+			else
+				this.showQrcode.classList.add("hide");
+
+		});
+	}
+
+	#showQrcode() {
+		this.showQrcode.addEventListener("click", (event) => {
+			event.preventDefault();
+			callAPI("POST", "http://127.0.0.1:8000/api/two-factor-auth/request-qr-code/", {}, (res, data) => {
+				if (res.ok && data && data.qr_code) {
+					this.qrcodeImg.classList.remove("hide");
+					this.qrcodeImg.setAttribute("src", 'data:image/png;base64,' + data.qr_code);
+				}
+			});
+		});
 	}
 }
 
