@@ -78,7 +78,7 @@ const getHtml = function(data) {
 			<div class="search-bar">
 				<div class="form-group">
 					<i class="search-icon bi bi-search"></i>
-					<input type="text" class="form-control form-control-md" id="search" placeholder="Search friends..." maxlength="50">
+					<input type="text" class="form-control form-control-md" id="search" placeholder="Search friends..." maxlength="15">
 				</div>
 			</div>
 			<div class="friend-list"></div>
