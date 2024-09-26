@@ -32,6 +32,8 @@ def search_user_by_name(request):
 	if not search_username or search_username == "" or search_username == '""':
 		users = user_profile_info_model.all()
 		message = f"Search Username is empty!"
+	elif len(search_username) > 15:
+		message = f"Invalid username!" 
 	else:
 		users = user_profile_info_model.filter(user__username__istartswith=search_username)
 		if users:
