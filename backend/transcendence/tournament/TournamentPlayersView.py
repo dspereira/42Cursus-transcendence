@@ -13,6 +13,7 @@ user_model = ModelManager(User)
 from .utils import get_tournament_players
 from .utils import update_nbr_players
 from .utils import delete_single_tournament_player
+from .consts import TOURNAMENT_STATUS_CREATED
 
 class TournamentPlayersView(View):
 	@method_decorator(login_required)
@@ -38,6 +39,8 @@ class TournamentPlayersView(View):
 		tournament = tournament_model.get(id=request.GET.get('id'))
 		if not tournament or tournament.owner == user:
 			return JsonResponse({"message": "Error: User is the host of an tournament!"}, status=409)
+		if tournament.status != TOURNAMENT_STATUS_CREATED:
+			return JsonResponse({"message": "Error: The Tournament already started!"}, status=409)
 		if not delete_single_tournament_player(user, tournament):
 			return JsonResponse({"message": "Error: Failed to leave the tournament!"}, status=409)
 		update_nbr_players(tournament, tournament.nbr_players - 1)
