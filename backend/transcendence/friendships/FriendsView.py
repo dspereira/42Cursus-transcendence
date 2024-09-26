@@ -32,6 +32,8 @@ class FriendsView(View):
 			if friends_list:
 				if not search_username or search_username == "" or search_username == '""':
 					friends_values = sorted(friends_list, key=lambda x: x["username"])
+				elif len(search_username) > 15:
+					friends_values = []
 				else:
 					searched_friends = [friend for friend in friends_list if friend["username"].lower().startswith(search_username.lower())]
 					if searched_friends:
