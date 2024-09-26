@@ -44,19 +44,8 @@ def search_user_by_name(request):
 		friends_requests_list = get_friends_request_list(user=user, own=True)
 		check_if_friend_request(users_list=result_users, requests_list=friends_requests_list)
 		result_users = sorted(result_users, key=lambda x: x["username"])
-
 		if not len(result_users):
 			result_users = None
-
-		print()
-		print("USERS")	
-		print("------------------------------------------------")
-		if result_users:
-			for usr in result_users:
-				print("User: ", usr['username'])
-		print("------------------------------------------------")
-		print()
-
 	return JsonResponse({"message": message, "users": result_users}, status=200)
 
 @login_required
