@@ -28,10 +28,12 @@ class FriendsView(View):
 		friends_values = None
 		user = user_model.get(id=request.access_data.sub)
 		if user:
-			friends_list = get_friends_users_list(friends=get_friend_list(user=user), user_id=user.id, include_bot=False)
+			friends_list = get_friends_users_list(friends=get_friend_list(user=user), user_id=user.id, include_bot=False, include_blocked=True)
 			if friends_list:
 				if not search_username or search_username == "" or search_username == '""':
 					friends_values = sorted(friends_list, key=lambda x: x["username"])
+				elif len(search_username) > 15:
+					friends_values = []
 				else:
 					searched_friends = [friend for friend in friends_list if friend["username"].lower().startswith(search_username.lower())]
 					if searched_friends:
