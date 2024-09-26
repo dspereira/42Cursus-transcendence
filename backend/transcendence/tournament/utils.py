@@ -19,7 +19,7 @@ from custom_utils.requests_utils import REQ_STATUS_PENDING, REQ_STATUS_ABORTED, 
 from custom_utils.requests_utils import update_request_status
 from custom_utils.requests_utils import is_valid_request
 from .consts import *
-from game.utils import GAME_STATUS_CREATED, GAME_STATUS_FINISHED
+from game.utils import GAME_STATUS_CREATED, GAME_STATUS_FINISHED, GAME_STATUS_SURRENDER
 from friendships.friendships import get_single_user_info, get_friendship
 from custom_utils.blitzpong_bot_utils import send_message
 from user_settings.models import UserSettings
@@ -102,10 +102,11 @@ def get_tournament_list(user):
 		for tournament in tournaments:
 			current_tournament = tournament.tournament
 			if current_tournament.status == TOURNAMENT_STATUS_FINISHED:
+				winner = get_tournament_winner(current_tournament)
 				tournament_info = {
 					"id": current_tournament.id,
 					'name': current_tournament.name,
-					"is_winner": is_user_tournament_winner(user.id, get_tournament_winner(current_tournament)['id']),
+					"is_winner": is_user_tournament_winner(user.id, winner['id'] if winner else 0),
 					"creation_date": current_tournament.created
 				}
 				tournaments_list.append(tournament_info)
@@ -238,7 +239,7 @@ def is_tournament_finished(tournament):
 		tournament_games = tournament_games.order_by('id')
 		tournament_games = list(tournament_games)
 		last_game = tournament_games[-1]
-		if last_game.status == GAME_STATUS_FINISHED:
+		if last_game.status == GAME_STATUS_FINISHED or last_game.status == GAME_STATUS_SURRENDER:
 			return last_game
 	return None
 
@@ -287,7 +288,7 @@ def get_tournament_winner(tournament):
 		tournament_games = tournament_games.order_by("id")
 		tournament_games = list(tournament_games)
 		last_game = tournament_games[-1]
-		if last_game.status == GAME_STATUS_FINISHED:
+		if last_game.status == GAME_STATUS_FINISHED or last_game.status == GAME_STATUS_SURRENDER:
 			winner = get_single_user_info(get_user_profile(last_game.winner))
 	return winner
 
