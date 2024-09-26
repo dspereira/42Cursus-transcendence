@@ -29,6 +29,7 @@ def search_user_by_name(request):
 	search_username = request.GET.get('key')
 	users_values = None
 	result_users = None
+	users = None
 	if not search_username or search_username == "" or search_username == '""':
 		users = user_profile_info_model.all()
 		message = f"Search Username is empty!"
