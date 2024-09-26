@@ -30,6 +30,8 @@ from custom_utils.blitzpong_bot_utils import generate_welcome_message
 from .EmailVerificationWaitManager import EmailVerificationWaitManager
 from two_factor_auth.models import OtpUserOptions
 
+from transcendence.settings import DEBUG
+
 otp_user_opt_model = ModelManager(OtpUserOptions)
 user_model = ModelManager(User)
 
@@ -56,12 +58,16 @@ def register(request):
 		user = user_model.create(username=username, email=email, password=password)
 		if not user:
 			return JsonResponse({"message": "Error creating user"}, status=409)
-		otp_options = otp_user_opt_model.get(user=user)
-		if otp_options:
-			wait_time = EmailVerificationWaitManager().get_wait_time(otp_options)
-			if wait_time:
-				return JsonResponse({"message": f"Error: Please wait {wait_time} to resend a new email!"}, status=409)
-		send_email_verification(user)
+		if not DEBUG:
+			otp_options = otp_user_opt_model.get(user=user)
+			if otp_options:
+				wait_time = EmailVerificationWaitManager().get_wait_time(otp_options)
+				if wait_time:
+					return JsonResponse({"message": f"Error: Please wait {wait_time} to resend a new email!"}, status=409)
+			send_email_verification(user)
+		else:
+			user.active = True
+			user.save()
 		if not create_user_profile_info(user=user):
 			return JsonResponse({"message": "Error creating user profile"}, status=409)
 		if not create_user_settings(user=user):
