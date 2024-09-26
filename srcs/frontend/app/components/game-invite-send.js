@@ -156,7 +156,7 @@ export default class GameInviteSend extends HTMLElement {
 		if (key)
 			queryParam = `?key=${key}`;
 
-		callAPI("GET", `http://127.0.0.1:8000/api/friends/friendships/${queryParam}`, null, (res, data) => {
+		callAPI("GET", `http://127.0.0.1:8000/api/game/friends/${queryParam}`, null, (res, data) => {
 			if (res.ok) {
 				this.#createFriendsList(data.friends);
 				this.#selectFriendEvent();

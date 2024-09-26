@@ -9,6 +9,9 @@ import json
 from .utils import has_user_pending_game_requests
 from .utils import get_games_list
 
+from friendships.friendships import get_friends_users_list
+from friendships.friendships import get_friend_list
+
 user_model = ModelManager(User)
 game_model = ModelManager(Games)
 user_settings_model = ModelManager(UserSettings)
@@ -90,3 +93,25 @@ def has_pending_game_requests(request):
 		return JsonResponse({"message": f"Pending game requests flag returned with success.", "has_pending_game_requests": flag}, status=200)
 	else:
 		return JsonResponse({"message": "Error: Invalid User!"}, status=400)
+
+@login_required
+@accepted_methods(["GET"])
+def friends(request):
+	search_username = request.GET.get('key')
+	friends_values = None
+	user = user_model.get(id=request.access_data.sub)
+	if user:
+		friends_list = get_friends_users_list(friends=get_friend_list(user=user), user_id=user.id, include_bot=False, include_blocked=False)
+		if friends_list:
+			if not search_username or search_username == "" or search_username == '""':
+				friends_values = sorted(friends_list, key=lambda x: x["username"])
+			elif len(search_username) > 15:
+				friends_values = []
+			else:
+				searched_friends = [friend for friend in friends_list if friend["username"].lower().startswith(search_username.lower())]
+				if searched_friends:
+					friends_values = sorted(searched_friends, key=lambda x: x["username"])
+			return JsonResponse({"message": "Friends List Returned With Success", "friends": friends_values}, status=200)
+		else:
+			return JsonResponse({"message": "Empty Friends List", "friends": None}, status=200)
+	return JsonResponse({"message": "Error: Invalid User"}, status=401)

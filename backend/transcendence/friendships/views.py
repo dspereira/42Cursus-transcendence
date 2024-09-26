@@ -56,7 +56,7 @@ def search_user_by_name(request):
 def chat_list(request):
 	user = user_model.get(id=request.access_data.sub)
 	if user:
-		friends_list = get_friends_users_list(friends=get_friend_list(user=user), user_id=user.id, include_bot=True)
+		friends_list = get_friends_users_list(friends=get_friend_list(user=user), user_id=user.id, include_bot=True, include_blocked=True)
 		if friends_list:
 			return JsonResponse({"message": "Friends List Returned With Success", "friends": friends_list}, status=200)
 		else:
