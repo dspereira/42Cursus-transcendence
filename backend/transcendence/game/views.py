@@ -14,27 +14,27 @@ game_model = ModelManager(Games)
 user_settings_model = ModelManager(UserSettings)
 
 CLASSIC_RETRO = {
-    "ground": "#101010", 
-    "paddle": "#FFFFFF", 
-    "ball": "#FFD700", 
-    "score": "rgba(255, 255, 255, 0.8)", 
-    "middleLine": "#FFFFFF"
+	"ground": "#101010", 
+	"paddle": "#FFFFFF", 
+	"ball": "#FFD700", 
+	"score": "rgba(255, 255, 255, 0.8)", 
+	"middleLine": "#FFFFFF"
 }
 
 MODERN_NEON = {
-    "ground": "#000000",
-    "paddle": "#00FF00",
-    "ball": "#FF00FF",
-    "score": "rgba(255, 255, 255, 0.7)",
-    "middleLine": "#00FF00"
+	"ground": "#000000",
+	"paddle": "#00FF00",
+	"ball": "#FF00FF",
+	"score": "rgba(255, 255, 255, 0.7)",
+	"middleLine": "#00FF00"
 }
 
 OCEAN_VIBES = {
-    "ground": "#001F3F", 
-    "paddle": "#00AFFF", 
-    "ball": "#00DFFF", 
-    "score": "rgba(255, 255, 255, 0.7)", 
-    "middleLine": "#00DFFF"
+	"ground": "#001F3F", 
+	"paddle": "#00AFFF", 
+	"ball": "#00DFFF", 
+	"score": "rgba(255, 255, 255, 0.7)", 
+	"middleLine": "#00DFFF"
 }
 
 SUNSET_GLOW = {
@@ -46,11 +46,11 @@ SUNSET_GLOW = {
 }
 
 FOREST_RETREAT = {
-    "ground": "#022B19", 
-    "paddle": "#98FB98", 
-    "ball": "#32CD32", 
-    "score": "rgba(255, 255, 255, 0.5)", 
-    "middleLine": "#32CD32"
+	"ground": "#022B19", 
+	"paddle": "#98FB98", 
+	"ball": "#32CD32", 
+	"score": "rgba(255, 255, 255, 0.5)", 
+	"middleLine": "#32CD32"
 }
 
 COLOR_PALLETS = [CLASSIC_RETRO, MODERN_NEON, OCEAN_VIBES, SUNSET_GLOW, FOREST_RETREAT]

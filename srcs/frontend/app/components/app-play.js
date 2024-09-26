@@ -122,6 +122,8 @@ export default class AppPlay extends HTMLElement {
 	}
 
 	disconnectedCallback() {
+		document.removeEventListener('keydown',this.#keyDownHandler);
+		document.removeEventListener('keyup',this.#keyUpHandler);
 		this.game.stop();
 		this.game = null;
 		gameWebSocket.close();
@@ -198,23 +200,26 @@ export default class AppPlay extends HTMLElement {
 		
 	}
 
-    #keyEvents() {
-        document.addEventListener('keydown', (event) => {
-            if (event.code == "ArrowDown" || event.code == "KeyS")
-                this.keyDownStatus = "pressed";
-            else if (event.code == "ArrowUp" || event.code == "KeyW")
-                this.keyUpStatus = "pressed";
-			this.#sendkeyStatus();
-        });
+	#keyDownHandler = (event) => {
+		if (event.code == "ArrowDown" || event.code == "KeyS")
+			this.keyDownStatus = "pressed";
+		else if (event.code == "ArrowUp" || event.code == "KeyW")
+			this.keyUpStatus = "pressed";
+		this.#sendkeyStatus();
+	};
 
-        document.addEventListener('keyup', (event) => {
-            if (event.code == "ArrowDown" || event.code == "KeyS")
-                this.keyDownStatus = "released";
-            else if (event.code == "ArrowUp" || event.code == "KeyW")
-                this.keyUpStatus = "released";
-			this.#sendkeyStatus();
-        })
-    }
+	#keyUpHandler = (event) => {
+		if (event.code == "ArrowDown" || event.code == "KeyS")
+			this.keyDownStatus = "released";
+		else if (event.code == "ArrowUp" || event.code == "KeyW")
+			this.keyUpStatus = "released";
+		this.#sendkeyStatus();
+	}
+
+	#keyEvents() {
+		document.addEventListener('keydown',this.#keyDownHandler);
+		document.addEventListener('keyup',this.#keyUpHandler);
+	}
 
 	#sendkeyStatus() {
 		gameWebSocket.send("up", this.keyUpStatus);
