@@ -124,6 +124,7 @@ export default class AppPlay extends HTMLElement {
 	disconnectedCallback() {
 		document.removeEventListener('keydown',this.#keyDownHandler);
 		document.removeEventListener('keyup',this.#keyUpHandler);
+		document.removeEventListener('fullscreenchange', this.#fullsCreenChangeEventHandler);
 		this.game.stop();
 		this.game = null;
 		gameWebSocket.close();
@@ -346,6 +347,17 @@ export default class AppPlay extends HTMLElement {
 		});
 	}
 
+	#fullsCreenChangeEventHandler = () => {
+		if (document.fullscreenElement)
+			this.isFullScreen = true;
+		else {
+			this.isFullScreen = false;
+			this.#resizeGameBoard();
+		}
+		this.#updateFullScreenButton();
+		this.game.setIsFullScreen(this.isFullScreen);
+	}
+
 	#FullScreenEvent() {
 		this.btnFullScreen.addEventListener("click", () => {
 			if (!this.isFullScreen && this.containerCanvas.requestFullscreen)
@@ -353,17 +365,7 @@ export default class AppPlay extends HTMLElement {
 			if (this.isFullScreen && document.exitFullscreen)
 				document.exitFullscreen();
 		});
-
-		document.addEventListener("fullscreenchange", () => {
-			if (document.fullscreenElement)
-				this.isFullScreen = true;
-			else {
-				this.isFullScreen = false;
-				this.#resizeGameBoard();
-			}
-			this.#updateFullScreenButton();
-			this.game.setIsFullScreen(this.isFullScreen);
-		});
+		document.addEventListener("fullscreenchange", this.#fullsCreenChangeEventHandler);
 	}
 
 	#btnFullScreenHover() {
