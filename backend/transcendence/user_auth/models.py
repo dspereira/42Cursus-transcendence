@@ -33,7 +33,7 @@ class User(AbstractBaseUser):
 	USERNAME_FIELD = 'username'
 	EMAIL_FIELD = 'email'
 	email = models.EmailField(("email address"), unique=True)
-	username = models.CharField(max_length=50, blank=False, null=False, unique=True)
+	username = models.CharField(max_length=15, blank=False, null=False, unique=True)
 	objects = UserManager()
 	active = models.BooleanField(default=False)
 

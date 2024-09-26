@@ -18,7 +18,7 @@ verification_code_html = """<!DOCTYPE html>
                 <div style="background-color: #66c0f4; color: #fff; border-radius: 10px; padding: 10px; font-size: 30px; display: inline-block;">
                     <h2 style="margin: 0;">{verification_code}</h2>
                 </div>
-                <p style="color: #777; margin-top: 20px;">This code will expire in 10 minutes.</p>
+                <p style="color: #777; margin-top: 20px;">This code will expire in 5 minutes.</p>
                 <p style="color: #777;">If you didn't request this code, you can safely ignore this email.</p>
             </div>
         </div>

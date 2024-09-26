@@ -1,8 +1,11 @@
 from django.db import models
 from user_auth.models import User
 
-class BlacklistOtp(models.Model):
-	code = models.IntegerField(unique=True, db_index=True)
+class OtpCodes(models.Model):
+	code = models.CharField(db_index=True, max_length=6)
+	created_by = models.ForeignKey(User, on_delete=models.CASCADE, db_index=True)
+	status = models.CharField(max_length=20)
+	created = models.DateTimeField(auto_now_add=True)
 
 	def __str__(self) -> str:
 		return f"Code: {self.code}"
@@ -12,7 +15,9 @@ class OtpUserOptions(models.Model):
 	secret_key = models.CharField()
 	qr_code = models.BooleanField(default=False)
 	email = models.CharField(unique=True, null=True)
-	phone_number = models.CharField(max_length=255, unique=True, null=True, default=None)
-
+	phone_number = models.CharField(max_length=20, unique=True, null=True, default=None)
+	nbr_codes_sended = models.IntegerField()
+	last_code_sended_timestamp = models.BigIntegerField()
+	wait_time_timestamp = models.BigIntegerField()
 	class Meta:
 		db_table = 'two_factor_user_config'
