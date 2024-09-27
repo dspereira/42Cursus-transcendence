@@ -46,12 +46,10 @@ class Command(BaseCommand):
 		bot_user_settings = None
 		bot_password = self.__generate_password()
 		bot_user = user_model.create(username=BOT_USERNAME, email=BOT_EMAIL, password=bot_password)
-		print("User ->  ", bot_user)
 		bot_user_profile = create_user_profile_info(bot_user)
 		if not bot_user_profile:
 			self.__delete_elements_from_db(bot_user, bot_user_profile, bot_user_settings)
 			return None
-		print("Profile -> ", bot_user_profile)
 		bot_user_settings = user_settings_model.create(user=bot_user)
 		if not bot_user_settings:
 			self.__delete_elements_from_db(bot_user, bot_user_profile, bot_user_settings)
@@ -59,7 +57,6 @@ class Command(BaseCommand):
 		if not self.__set_bot_profile_settings(bot_user):
 			self.__delete_elements_from_db(bot_user, bot_user_profile, bot_user_settings)
 			return None
-		print("Settings -> ", bot_user_settings)
 		return bot_user
 
 	def __generate_password(self):
