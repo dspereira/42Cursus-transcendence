@@ -17,6 +17,7 @@ friend_list_model = ModelManager(FriendList)
 user_model = ModelManager(User)
 chatroom_model = ModelManager(ChatRoom)
 otp_user_opt_model = ModelManager(OtpUserOptions)
+black_list_token_model = ModelManager(BlacklistToken)
 
 def two_factor_auth(response, user):
 	user.last_login = timezone.now()
@@ -36,22 +37,21 @@ def logout(response):
 	return response
 
 def refresh_token(response, user_id):
+	response.delete_cookie("access", path="/")
+	response.delete_cookie("refresh", path="/")
 	_set_cookies(response, _generate_tokens(user_id))
 	return response
 
 def update_blacklist(access_token_data, refresh_token_data):
 	if access_token_data:
-		try:
-			black_listed = BlacklistToken(jti = access_token_data.jti, exp = access_token_data.exp)
-			black_listed.save()
-		except Exception as e:
-			print(f"Error access token: {e}")
+		access_token_blacklisted = black_list_token_model.create(jti=access_token_data.jti, exp=access_token_data.exp)
+		if not access_token_blacklisted:
+			return False
 	if refresh_token_data:
-		try:
-			black_listed = BlacklistToken(jti = refresh_token_data.jti, exp = refresh_token_data.exp)
-			black_listed.save()
-		except Exception as e:
-			print(f"Error refresh token: {e}")
+		refresh_token_blacklisted = black_list_token_model.create(jti=refresh_token_data.jti, exp=refresh_token_data.exp)
+		if not refresh_token_blacklisted:
+			return False
+	return True
 
 def add_email_token_to_blacklist(email_validation_token):
 	if email_validation_token:
@@ -157,7 +157,7 @@ def _set_cookies(response, token_gen):
 		httponly=True,
 		expires=token_gen.get_refresh_token_exp(),
 		samesite="Lax",
-		path="/api/auth"
+		path="/"
 	)
 
 def _set_tfa_cookie(response, token):

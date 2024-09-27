@@ -1,12 +1,13 @@
 import jwt
-import uuid
+from uuid_extensions import uuid7str
 from datetime import datetime, timedelta
 
 ACCESS_TOKEN = "access"
 REFRESH_TOKEN = "refresh"
 EMAIL_VERIFICATION_TOKEN = "email_verification"
 TFA_TOKEN = "two_factor_auth"
-ACCESS_TOKEN_EXP_MIN = 1
+ACCESS_TOKEN_EXP_SEC = 10
+ACCESS_TOKEN_EXP_MIN = ACCESS_TOKEN_EXP_SEC / 60
 REFRESH_TOKEN_EXP_DAY = 1
 EMAIL_VERIFICATION_TOKEN_EXP_MIN = 5
 TFA_TOKEN_EXP_MIN = 15
@@ -85,17 +86,23 @@ class TokenGenerator:
 		else:
 			exp = iat + timedelta(minutes=TFA_TOKEN_EXP_MIN)
 			self.__tfa_exp = exp
-		token = jwt.encode(
-			{
-				"type": token_type,
-				"sub": self.__user_id,
-				"iat": iat,
-				"exp": exp,
-				"jti": str(uuid.uuid4())
-			},
-			"your-256-bit-secret",
-			algorithm='HS256'
-		)
+		try:
+			token = jwt.encode(
+				{
+					"type": token_type,
+					"sub": self.__user_id,
+					"iat": iat,
+					"exp": exp,
+					"jti": uuid7str()
+				},
+				"your-256-bit-secret",
+				algorithm='HS256'
+			)
+		except Exception as e:
+			print()
+			print("JWT EXCEPTION")
+			print(e)
+			print()
 		return token
 
 	def __check_token_exists(self, token_type):

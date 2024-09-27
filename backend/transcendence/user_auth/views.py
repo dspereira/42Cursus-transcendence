@@ -104,7 +104,8 @@ def logout(request):
 	if request.access_data:
 		response = JsonResponse({"message": "success"})
 		response = user_logout(response)
-		update_blacklist(request.access_data, request.refresh_data)
+		if not update_blacklist(request.access_data, request.refresh_data):
+			return JsonResponse({"message": "Failed to update blacklist tokens."}, status=409)
 		return response
 	return JsonResponse({"message": "Unauthorized: Logout failed."}, status=401)
 
@@ -113,7 +114,8 @@ def refresh_token(request):
 	if request.refresh_data:
 		response = JsonResponse({"message": "success"})
 		response = user_refresh_token(response, request.refresh_data.sub)
-		update_blacklist(request.access_data, request.refresh_data)
+		if not update_blacklist(request.access_data, request.refresh_data):
+			return JsonResponse({"message": "Failed to update blacklist tokens."}, status=409)
 		return response
 	return JsonResponse({"message": "Invalid refresh token. Please authenticate again."}, status=401)
 
