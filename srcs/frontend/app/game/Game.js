@@ -73,6 +73,10 @@ export default class Game {
 		this.isFullScreen = isFullScreen;
 	}
 
+	draw() {
+		this.#drawAll();
+	}
+
 	start() {
 		this.#animate();
 	}
@@ -132,8 +136,10 @@ export default class Game {
 	#drawScore(score, side) {
 		if (!score && !side)
 			return ;
-
 		this.ctx.font = `${this.scoreFont}px VT323`;
+
+		console.log("teste: ", this.ctx.font);
+
 		this.ctx.fillStyle = this.colors.score;
 		if (side == "left")
 			this.ctx.fillText(score, this.scoreLeftPos.x, this.scoreLeftPos.y);

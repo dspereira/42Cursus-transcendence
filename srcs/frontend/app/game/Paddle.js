@@ -89,7 +89,7 @@ export class Paddle {
 		return { x: newX, y: newY, hit_paddle_percentage: hitPaddlePercentage };
 	}
 
-	endGamePosition() {
+	resetPosition() {
 		this.y = this.screen_height / 2;
 	}
 

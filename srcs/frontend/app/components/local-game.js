@@ -5,7 +5,6 @@ import { redirect } from "../js/router.js";
 import stateManager from "../js/StateManager.js";
 
 const styles = `
-
 	.general-div {
 		display: flex;
 		flex-direction: column;
@@ -62,7 +61,7 @@ const getHtml = function(data) {
 						<canvas id="canvas"></canvas>
 					</div>
 					<div class="buttons-div">
-						<button type="button" class="btn btn-primary" id="start-game">Start Game</button>
+						<button type="button" class="btn btn-primary start-game">Start Game</button>
 						<button type="button" class="btn btn-primary hide" id="play-again">Play Again</button>
 						<button type="button" class="btn btn-secondary" id="initial-page">Initial Page</button>
 					</div>
@@ -79,6 +78,7 @@ export default class LocalGame extends HTMLElement {
 	constructor() {
 		super()
 		this.data = {};
+		this.gameLoopId = null;
 	}
 
 	connectedCallback() {
@@ -109,8 +109,7 @@ export default class LocalGame extends HTMLElement {
 		this.ctx = this.canvas.getContext("2d");
 		this.canvas.width = SCREEN_WIDTH;
 		this.canvas.height = SCREEN_HEIGHT;
-		
-		this.game = new Game(this.ctx, this.canvas.width, this.canvas.height);
+		this.game = new Game(this.ctx, SCREEN_WIDTH, SCREEN_HEIGHT);
 		this.gameLogic = new GameLogic();
 		this.keyDownP1Status = "released";
 		this.keyUpP1Status = "released";
@@ -122,6 +121,7 @@ export default class LocalGame extends HTMLElement {
 		this.containerCanvas = this.html.querySelector(".game-div");
 		this.btnFullScreen = this.html.querySelector(".btn-full-screen");
 		this.iconFullScreen = this.html.querySelector(".icon-full-screen");
+		this.btnStart = this.html.querySelector(".start-game");
 	}
 
 	#styles() {
@@ -141,16 +141,21 @@ export default class LocalGame extends HTMLElement {
 	}
 
 	#scripts() {
+		this.#GameFontLoadEvent();
 		this.#initialPageButton();
 		this.#resizeGameBoard();
-		this.#initGame();
+		this.#keyEvents();
 		this.#windowResizingEvent();
 		this.#FullScreenEvent();
 		this.#btnFullScreenHover();
+		this.#startGameBtnEvent();
+		this.#initGameBoard();
 	}
 
 	#keyEvents() {
 		document.addEventListener('keydown', (event) => {
+			console.log(event.code);
+
 			if (event.code == "KeyS")
 				this.keyDownP1Status = "pressed";
 			else if (event.code == "KeyW")
@@ -165,6 +170,7 @@ export default class LocalGame extends HTMLElement {
 		});
 
 		document.addEventListener('keyup', (event) => {
+			console.log(event.code);
 			if (event.code == "KeyS")
 				this.keyDownP1Status = "released";
 			else if (event.code == "KeyW")
@@ -185,45 +191,61 @@ export default class LocalGame extends HTMLElement {
 		this.gameLogic.updatePaddle("down", this.keyDownP2Status, "P2");
 	}
 
-	#initGame() {
+	#getGameColorPallet() {
+		this.game.setColorPallet({"ground": "#000000", "paddle": "#FFFFFF", "ball": "#FFD700", "score": "rgba(26, 26, 26, 0.8)", "middleLine": "#FFFFFF"});
+	}
+
+	#initGameBoard() {
 		this.#getGameColorPallet();
-		this.#setGameStatusEvent();
-		this.game.updateState({
+		this.game.setPlayers("player1", "player2");
+		this.game.updateState(this.#getGameState());
+		this.game.draw();
+	}
+
+	#getGameState() {
+		return {
 			ball: this.gameLogic.getBallPositions(),
 			paddle_left_pos: this.gameLogic.getPaddleLeft(),
 			paddle_right_pos: this.gameLogic.getPaddleRight(),
 			player_1_score: this.gameLogic.getScoreValues().player1Score,
 			player_2_score: this.gameLogic.getScoreValues().player2Score,
-		})
-		this.game.start();
-		this.#keyEvents();
-		this.#readyToPlayBtnEvent();
+		}
 	}
 
-	#getGameColorPallet() {
-		this.game.setColorPallet({"ground": "#000000", "paddle": "#FFFFFF", "ball": "#FFD700", "score": "rgba(26, 26, 26, 0.8)", "middleLine": "#FFFFFF"});
-	}
-
-	#setGameStatusEvent() {
-		stateManager.addEvent("gameStatus", (data) => {
-			this.game.updateState(data);
+	#startGameBtnEvent() {
+		this.btnStart.addEventListener('click', (event) => {
+			console.log("Inicia o jogo start game");
+			this.#startGame();
 		});
 	}
 
+	#startGame() {
+		this.gameLogic.reset();
+		this.game.updateState(this.#getGameState());
+		this.game.start();
+		this.#gameLoop();
+	}
+
+	#gameLoop() {
+		const intervalMiliSeconds = 10;
+		this.gameLoopId = setInterval(() => {
+			this.gameLogic.update();
+			this.game.updateState(this.#getGameState());
+			if (this.gameLogic.isEndGame()) {
+				this.game.updateState(this.#getGameState());
+				this.#finishGame();
+			}
+		}, intervalMiliSeconds);
+	}
+
 	#readyToPlayBtnEvent() {
-		const btnStart = this.html.querySelector("#start-game");
+		
 		btnStart.addEventListener('click', (event) => {
 			const gameLoop = () => {
 				btnStart.disabled = true;
 				this.gameLogic.update();
 				
-				this.game.updateState({
-					ball: this.gameLogic.getBallPositions(),
-					paddle_left_pos: this.gameLogic.getPaddleLeft(),
-					paddle_right_pos: this.gameLogic.getPaddleRight(),
-					player_1_score: this.gameLogic.getScoreValues().player1Score,
-					player_2_score: this.gameLogic.getScoreValues().player2Score,
-				})
+				this.game.updateState(this.#getGameState());
 	
 				if (!this.gameLogic.isEndGame())
 					setTimeout(gameLoop, 10);
@@ -238,49 +260,45 @@ export default class LocalGame extends HTMLElement {
 	}
 
 	#finishGame() {
-		const btnAgain = this.html.querySelector("#play-again");
+		// const btnAgain = this.html.querySelector("#play-again");
 
 		if (this.gameLogic.getScoreValues().player1Score === 7)
 			this.game.updateWinner({winner_username: "player1"})
 		else
 			this.game.updateWinner({winner_username: "player2"})
 
-		btnAgain.classList.remove("hide");
+		// btnAgain.classList.remove("hide");
 
-		btnAgain.addEventListener('click', (event) => {
-			this.game = new Game(this.ctx, this.canvas.width, this.canvas.height);
-			this.gameLogic = new GameLogic();
-			this.#initGame()
+		// btnAgain.addEventListener('click', (event) => {
+		// 	console.log("novo evento");
+		// 	this.game = new Game(this.ctx, this.canvas.width, this.canvas.height);
+		// 	this.gameLogic = new GameLogic();
+		// 	this.#initGame()
 
-			const gameLoop = () => {
-				btnAgain.disabled = true;
-				this.gameLogic.update();
+		// 	const gameLoop = () => {
+		// 		btnAgain.disabled = true;
+		// 		this.gameLogic.update();
 				
-				this.game.updateState({
-					ball: this.gameLogic.getBallPositions(),
-					paddle_left_pos: this.gameLogic.getPaddleLeft(),
-					paddle_right_pos: this.gameLogic.getPaddleRight(),
-					player_1_score: this.gameLogic.getScoreValues().player1Score,
-					player_2_score: this.gameLogic.getScoreValues().player2Score,
-				})
+		// 		this.game.updateState(this.#getGameState());
 	
-				if (!this.gameLogic.isEndGame())
-					setTimeout(gameLoop, 10);
-				else
-				{
-					btnAgain.disabled = false;
-					this.#finishGame();
-				}
-			};
-			gameLoop();
-		});
+		// 		if (!this.gameLogic.isEndGame())
+		// 			setTimeout(gameLoop, 10);
+		// 		else
+		// 		{
+		// 			btnAgain.disabled = false;
+		// 			this.#finishGame();
+		// 		}
+		// 	};
+		// 	gameLoop();
+		// });
 	}
 
 	#initialPageButton() {
 		const initialPage = this.html.querySelector("#initial-page");
-
-		initialPage.addEventListener("click", (event) => {
-			redirect("/initial");
+		if (!initialPage)
+			return ;
+		initialPage.addEventListener("click", () => {
+			redirect("/");
 		});
 	}
 
@@ -364,7 +382,14 @@ export default class LocalGame extends HTMLElement {
 			this.iconFullScreen.style.fontSize = `${this.canvas.width * 0.025}px`;
 		});
 	}
-}
 
+	#GameFontLoadEvent() {
+		document.fonts.load('1rem VT323').then(() => {
+			this.#initGameBoard();
+		}).catch((error) => {
+			console.error('Font Load Error: ', error);
+		});		
+	}
+}
 
 customElements.define("local-game", LocalGame);

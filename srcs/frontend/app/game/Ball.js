@@ -62,7 +62,7 @@ export class Ball {
 		return null;
 	}
 
-	setEndGamePosition() {
+	resetPosition() {
 		this.x = this.x_start;
 		this.y = this.y_start;
 	}

@@ -1,5 +1,6 @@
 import { Ball } from './Ball.js';
 import { Paddle } from './Paddle.js';
+import { WINNING_SCORE_PONTUATION } from './const_vars.js';
 
 export class GameLogic {
 	constructor() {
@@ -27,6 +28,14 @@ export class GameLogic {
 		this.paddleRight.update();
 	}
 
+	reset() {
+		this.player1Score = 0;
+		this.player2Score = 0;
+		this.ball.resetPosition();
+		this.paddleLeft.resetPosition();
+		this.paddleRight.resetPosition();
+	}
+
 	getPaddleLeft() {
 		return this.paddleLeft.getPosition();
 	}
@@ -50,10 +59,10 @@ export class GameLogic {
 	}
 
 	isEndGame() {
-		if (this.player1Score === 7 || this.player2Score === 7) {
-			this.ball.setEndGamePosition();
-			this.paddleLeft.endGamePosition();
-			this.paddleRight.endGamePosition();
+		if (this.player1Score == WINNING_SCORE_PONTUATION || this.player2Score == WINNING_SCORE_PONTUATION) {
+			this.ball.resetPosition();
+			this.paddleLeft.resetPosition();
+			this.paddleRight.resetPosition();
 			return true;
 		}
 		return false;
