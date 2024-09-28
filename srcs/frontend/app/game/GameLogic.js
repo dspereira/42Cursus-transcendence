@@ -20,9 +20,8 @@ export class GameLogic {
 		this.ball.updatePosition(this.paddleLeft, this.paddleRight);
 		const goalInfo = this.ball.goalDetection();
 
-		if (goalInfo) {
-			this._addScore(goalInfo);
-		}
+		if (goalInfo)
+			this.#addScore(goalInfo);
 
 		this.paddleLeft.update();
 		this.paddleRight.update();
@@ -37,11 +36,10 @@ export class GameLogic {
 	}
 
 	updatePaddle(key, status, userId) {
-		if (userId === this.player1) {
+		if (userId === this.player1)
 			this.paddleLeft.setState(key, status);
-		} else if (userId === this.player2) {
+		else if (userId === this.player2)
 			this.paddleRight.setState(key, status);
-		}
 	}
 
 	getScoreValues() {
@@ -56,17 +54,15 @@ export class GameLogic {
 			this.ball.setEndGamePosition();
 			this.paddleLeft.endGamePosition();
 			this.paddleRight.endGamePosition();
-
 			return true;
 		}
 		return false;
 	}
 
-	_addScore(info) {
-		if (info.player1) {
+	#addScore(info) {
+		if (info.player1)
 			this.player1Score += 1;
-		} else if (info.player2) {
+		else if (info.player2)
 			this.player2Score += 1;
-		}
 	}
 }

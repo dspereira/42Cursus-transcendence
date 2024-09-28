@@ -12,7 +12,7 @@ export class Ball {
 		this.x = this.x_start;
 		this.y = this.y_start;
 		this.last_time = 0;
-		this._setStartAngle();
+		this.#setStartAngle();
 		this.left_wall_limit = const_vars.BALL_RADIUS;
 		this.right_wall_limit = this.screen_width - const_vars.BALL_RADIUS;
 		this.top_wall_limit = const_vars.BALL_RADIUS;
@@ -20,29 +20,30 @@ export class Ball {
 	}
 
 	getPosition() {
-		return { 
+		return {
 			x: get_position_percentage(this.x, const_vars.SCREEN_WIDTH),
 			y: get_position_percentage(this.y, const_vars.SCREEN_HEIGHT)
 		};
 	}
 
 	updatePosition(leftPaddle, rightPaddle) {
-		const radius = this._getMovedDistance();
+		const radius = this.#getMovedDistance();
 		const x = this.x + radius * this.trig_values.cos_value;
 		const y = this.y + radius * this.trig_values.sin_value;
-		
-		const colisionCoords = this._getColisionPoint(y);
-		const paddleColisionsCoords = this._getPaddleColisionsCoords(x, y, leftPaddle, rightPaddle);
-		
+		const colisionCoords = this.#getColisionPoint(y);
+		const paddleColisionsCoords = this.#getPaddleColisionsCoords(x, y, leftPaddle, rightPaddle);
+
 		if (colisionCoords) {
 			this.x = colisionCoords.x;
 			this.y = colisionCoords.y;
-			this._setNewReflectionAngle();
-		} else if (paddleColisionsCoords) {
+			this.#setNewReflectionAngle();
+		}
+		else if (paddleColisionsCoords) {
 			this.x = paddleColisionsCoords.x;
 			this.y = paddleColisionsCoords.y;
-			this._setNewPaddleAngle(paddleColisionsCoords.hit_paddle_percentage);
-		} else {
+			this.#setNewPaddleAngle(paddleColisionsCoords.hit_paddle_percentage);
+		}
+		else {
 			this.x = x;
 			this.y = y;
 		}
@@ -51,15 +52,13 @@ export class Ball {
 	goalDetection() {
 		const player1Goal = this.x >= this.right_wall_limit;
 		const player2Goal = this.x <= this.left_wall_limit;
-
 		if (player1Goal || player2Goal) {
 			const goalInfo = { player1: player1Goal, player2: player2Goal };
 			this.x = this.x_start;
 			this.y = this.y_start;
-			this._setStartAngle();
+			this.#setStartAngle();
 			return goalInfo;
 		}
-
 		return null;
 	}
 
@@ -68,88 +67,75 @@ export class Ball {
 		this.y = this.y_start;
 	}
 
-	_getMovedDistance() {
+	#getMovedDistance() {
 		let value;
-
 		if (!this.last_time) {
 			this.last_time = Date.now();
 			value = 1;
-		} else {
+		}
+		else {
 			const current_time = Date.now();
 			value = (current_time - this.last_time);
 			this.last_time = current_time;
 		}
-
 		return value * const_vars.BALL_SPEED;
 	}
 
-	_setTrigValues(angleRad) {
+	#setTrigValues(angleRad) {
 		this.trig_values = {
 			sin_value: -Math.sin(angleRad),
 			cos_value: Math.cos(angleRad),
 		};
 	}
 
-	_getColisionPoint(y) {
+	#getColisionPoint(y) {
 		let col_y;
-
-		if (y > this.bottom_wall_limit) {
+		if (y > this.bottom_wall_limit)
 			col_y = this.bottom_wall_limit;
-		} else if (y < this.top_wall_limit) {
+		else if (y < this.top_wall_limit)
 			col_y = const_vars.BALL_RADIUS;
-		} else {
+		else
 			return null;
-		}
-
 		const m = Math.tan(this.angle_rad);
 		const b = this.y - m * this.x;
 		const col_x = (col_y - b) / m;
-
 		return { x: col_x, y: col_y };
 	}
 
-	_setNewReflectionAngle() {
-		this._setAngle(360 - this.angle_deg);
+	#setNewReflectionAngle() {
+		this.#setAngle(360 - this.angle_deg);
 	}
 
-	_setStartAngle() {
+	#setStartAngle() {
 		const chosenInterval = const_vars.ANGLES_INTERVALS[Math.floor(Math.random() * const_vars.ANGLES_INTERVALS.length)];
-		this._setAngle(Math.floor(Math.random() * (chosenInterval[1] - chosenInterval[0] + 1)) + chosenInterval[0]);
+		this.#setAngle(Math.floor(Math.random() * (chosenInterval[1] - chosenInterval[0] + 1)) + chosenInterval[0]);
 	}
 
-	_setAngle(angleDeg) {
-		if (angleDeg < 0) {
+	#setAngle(angleDeg) {
+		if (angleDeg < 0)
 			angleDeg += 360;
-		} else if (angleDeg > 360) {
+		else if (angleDeg > 360)
 			angleDeg -= 360;
-		}
-		
 		this.angle_deg = angleDeg;
 		this.angle_rad = this.angle_deg * (Math.PI / 180);
-		this._setTrigValues(this.angle_rad);
+		this.#setTrigValues(this.angle_rad);
 	}
 
-	_getPaddleColisionsCoords(x, y, leftPaddle, rightPaddle) {
+	#getPaddleColisionsCoords(x, y, leftPaddle, rightPaddle) {
 		let newCoords;
-
-		if (this.angle_deg > 90 && this.angle_deg < 270) {
+		if (this.angle_deg > 90 && this.angle_deg < 270)
 			newCoords = leftPaddle.getColisionPoint(this.x, this.y, x, y, const_vars.BALL_RADIUS);
-		} else {
+		else
 			newCoords = rightPaddle.getColisionPoint(this.x, this.y, x, y, const_vars.BALL_RADIUS);
-		}
-
 		return newCoords;
 	}
 
-	_setNewPaddleAngle(hitPercentage) {
+	#setNewPaddleAngle(hitPercentage) {
 		let resultAngle;
-
-		if (this.angle_deg > 90 && this.angle_deg < 270) {
+		if (this.angle_deg > 90 && this.angle_deg < 270)
 			resultAngle = 420 + (hitPercentage / 100) * (300 - 420);
-		} else {
+		else
 			resultAngle = 120 + (hitPercentage / 100) * (240 - 120);
-		}
-
-		this._setAngle(resultAngle);
+		this.#setAngle(resultAngle);
 	}
 }
