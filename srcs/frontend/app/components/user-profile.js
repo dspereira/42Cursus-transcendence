@@ -13,7 +13,7 @@ const styles = `
 		align-items: center;
 		border-radius: 10px;
 		background: ${colors.second_card};
-		color: ${colors.second_text};
+		color: ${colors.primary_text};
 	}
 
 	.profile-info {
@@ -60,12 +60,23 @@ const styles = `
 	.separator {
 		display: flex;
 		width: 80%;
-		height: 5px;
+		height: 3px;
 		border-radius: 10px;
 		justify-content: center;
 		align-items: center;
 		margin: 10px 0px 10px 0px;
-		background-color: ${colors.main_card};
+		background-color: ${colors.second_card};
+	}
+
+	.separator-v {
+		display: none;
+		width: 5px;
+		height: 120px;
+		border-radius: 10px;
+		justify-content: center;
+		align-items: center;
+		margin: 0px 10px 0px 10px;
+		background-color: ${colors.second_card};
 	}
 
 	.win-rate-bar {
@@ -86,6 +97,7 @@ const styles = `
 		width: 100%;
 		margin-bottom: 10px;
 		text-align: center;
+		color: ${colors.second_text};
 	}
 
 	.bio-and-stats {
@@ -118,6 +130,9 @@ const styles = `
 		.game-stats > .separator {
 			display: none;
 		}
+		.game-stats > .separator-v {
+			display: flex;
+		}
 	}
 
 	@media (max-width: 620px) {
@@ -132,6 +147,10 @@ const styles = `
 		.game-stats > .separator {
 			display: flex;
 		}
+
+		.game-stats > .separator-v {
+			display: none;
+		}
 	
 	}
 
@@ -141,6 +160,10 @@ const styles = `
 		justify-content: center;
 		align-items: center;
 		width: 100%;
+	}
+
+	.games-win-rate, .tournaments-win-rate {
+		margin-bottom: 10px;
 	}
 `;
 
@@ -168,6 +191,7 @@ const getHtml = function(data) {
 						</div>
 					</div>
 					<div class="separator"></div>
+					<div class="separator-v"></div>
 					<div class="tournament-stats-container">
 						<div class="total-tournaments"></div>
 						<div class="tournaments-win-rate"></div>
@@ -202,6 +226,8 @@ export default class UserProfile extends HTMLElement {
 		this.#initComponent();
 		this.#render();
 		this.#scripts();
+		// console.log("Online = ", this.data.online);
+		console.log("Data = ", this.data);
 	}
 
 	attributeChangedCallback(name, oldValue, newValue) {

@@ -87,6 +87,10 @@ export default class AppLobby extends HTMLElement {
 			clearInterval(this.intervalID);
 		if (!this.startGame) {
 			gameWebSocket.close();
+			console.log("WEB SOCKET LEAVE");
+			setTimeout(() => {
+				stateManager.setState("errorMsg", "All players have declined your invite")
+			}, 200);
 		}
 		stateManager.cleanStateEvents("hasRefreshToken");
 		stateManager.cleanStateEvents("gameSocket"); 
