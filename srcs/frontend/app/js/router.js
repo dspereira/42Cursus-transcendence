@@ -13,6 +13,10 @@ import PageFriends from "../page-components/page-friends.js";
 import PagePlay from "../page-components/page-play.js";
 import PageLocalPlay from "../page-components/page-local-play.js";
 import PageTournamentInfo from "../page-components/page-tournament-info.js";
+import PageEmailVerification from "../page-components/page-email-verification.js";
+import PageEmailSent from "../page-components/page-email-sent.js";
+import PageEmailResend from "../page-components/page-email-resend.js";
+import Page2FA from "../page-components/page-2fa.js";
 
 // Components
 import AppHeader from "../components/app-header.js";
@@ -43,13 +47,12 @@ import TourneyInviteCard from "../components/tourney-invite-card.js";
 import TournamentCard from "../components/tournament-card.js";
 import TourneyInfo from "../components/tourney-info.js";
 import LocalGame from "../components/local-game.js";
+import TfaForm from "../components/tfa-form.js";
 
 // Others
 import stateManager from "./StateManager.js";
 import checkUserLoginState from "../utils/checkUserLoginState.js";
-
-
-const getHtmlElm = pageObj => `<${pageObj.componentName}></${pageObj.componentName}>`;
+import { getHtmlElm } from "../utils/getHtmlElmUtils.js";
 
 const routes = {
 	"/initial"			: getHtmlElm(PageInitial),
@@ -68,12 +71,15 @@ const routes = {
 
 const dynamicRoutes = {
 	"/profile": key => `<${PageProfile.componentName} username="${key}"></${PageProfile.componentName}>`,
-	"/tournament": key => `<${PageTournamentInfo.componentName} id="${key}"></${PageTournamentInfo.componentName}>`
+	"/tournament": key => `<${PageTournamentInfo.componentName} id="${key}"></${PageTournamentInfo.componentName}>`,
+	"/email-verification": key => `<${PageEmailVerification.componentName} token="${key}"></${PageEmailVerification.componentName}>`,
 }
 
-const publicRoutes = ["/initial", "/login", "/signup", "/localplay"];
+const publicRoutes = ["/initial", "/login", "/signup", "/email-verification", "/localplay"];
 const initialRoute = "/initial";
 
+const PUBLIC_ACCESS = "public";
+const PRIVATE_ACCESS = "private";
 
 // remover o page ready state
 
@@ -108,28 +114,7 @@ export const render = function(page) {
 	newElm.innerHTML = page;
 }
 
-const getPageComponent = function(route) {
-	let pageHtml = null;
-	let dynamicRouteData = null;
-
-	if (route)
-		pageHtml = routes[route];
-	else
-		pageHtml = routes[getCurrentRoute()];
-
-	if (!pageHtml)
-		dynamicRouteData = getDinamycRoute(route);
-	if (dynamicRouteData) {
-		if (dynamicRoutes[dynamicRouteData.route])
-			pageHtml = dynamicRoutes[dynamicRouteData.route](dynamicRouteData.key);
-	}
-	if (!pageHtml)
-		pageHtml = getHtmlElm(Page404);
-
-	return pageHtml;
-}
-
-const getDinamycRoute = function(route) {
+const getDynamicRoute = function(route) {
 	const lastSlashIdx = route.lastIndexOf("/");
 	let key = null;
 	let newRoute = null;
@@ -153,16 +138,40 @@ const updateIsLoggedInState = function(state) {
 	}
 }
 
-const getRouteByPermissions = function(route, isLoggedIn) {
-	if (isLoggedIn) {
-		if (publicRoutes.includes(route))
-			return "/";
+const getRouteInfo = function(route, isLoggedIn) {	
+	let isNotFound = false;
+	let accessLevel = null;
+	let dynamicRouteData;
+	let basePath;
+
+	let htmlPage = routes[route];
+	if (!htmlPage)
+		dynamicRouteData = getDynamicRoute(route);
+	if (dynamicRouteData) {
+		if (dynamicRoutes[dynamicRouteData.route])
+			htmlPage = dynamicRoutes[dynamicRouteData.route](dynamicRouteData.key);
 	}
-	else {
-		if (!publicRoutes.includes(route) && routes[route])
-			return initialRoute;
+	if (!htmlPage) {
+		dynamicRouteData = null;
+		isNotFound = true;
+		htmlPage = getHtmlElm(Page404);
 	}
-	return route;
+	basePath = dynamicRouteData ? dynamicRouteData.route : route;
+	if (!isNotFound)
+		accessLevel = publicRoutes.includes(basePath) ? PUBLIC_ACCESS : PRIVATE_ACCESS;
+
+	if (isLoggedIn == false && route == basePath && route == "/") {
+		accessLevel = PUBLIC_ACCESS;
+		htmlPage = getHtmlElm(PageInitial);
+	}
+
+	return {
+		rawPath: route,
+		basePath: basePath,
+		htmlPage: htmlPage,
+		isNotFound: isNotFound,
+		accessLevel: accessLevel
+	}
 }
 
 const normalizeRouteForHistory = function(route) {
@@ -182,31 +191,55 @@ const normalizeRoute = function(route) {
 }
 
 let init = true;
-export const router = function(route) {
+let isRouting;
+export const router = function(route, isHistoryNavigation) {
+	isRouting = true;
 	stateManager.cleanEvents();
-	checkUserLoginState((state) => {
+	checkUserLoginState((isLoggedIn) => {
+		let htmlPage;
+		let authorizedRoute;
+
 		if (!route)
 			route = getCurrentRoute();
 		route = normalizeRoute(route);
-		const authorizedRoute = getRouteByPermissions(route, state);
-		if (init)
+		
+		const routeObj = getRouteInfo(route, isLoggedIn);
+		if (!routeObj)
+			console.log("Error: Getting the route");
+
+		if ((isLoggedIn && routeObj.accessLevel == PRIVATE_ACCESS) 
+			|| (!isLoggedIn && routeObj.accessLevel == PUBLIC_ACCESS)) {
+			htmlPage = routeObj.htmlPage;
+			authorizedRoute = routeObj.rawPath;
+		}
+		else if (!routeObj.isNotFound) {
+			if (isLoggedIn) {
+				authorizedRoute = "/";
+				htmlPage = getHtmlElm(PageHome);
+			}
+			else {
+				authorizedRoute = "/initial";
+				htmlPage = getHtmlElm(PageInitial);
+			}
+		}
+		else if (routeObj.isNotFound)
+			htmlPage = routeObj.htmlPage;
+
+		if (init || isHistoryNavigation)
 			replaceCurrentRoute(normalizeRouteForHistory(authorizedRoute));
 		else
 			pushNewRoute(normalizeRouteForHistory(authorizedRoute));
-		render(getPageComponent(authorizedRoute));
-		updateIsLoggedInState(state);
+
+		render(htmlPage);
+		updateIsLoggedInState(isLoggedIn);
 		init = false;
+		isRouting = false;
 	});
 }
 
 const routingHistory = function() {
 	stateManager.cleanEvents();
-	checkUserLoginState((state) => {
-		const authorizedRoute = getRouteByPermissions(getCurrentRoute(), state);
-		replaceCurrentRoute(normalizeRouteForHistory(authorizedRoute));
-		render(getPageComponent(authorizedRoute));
-		updateIsLoggedInState(state);
-	});
+	router(null, true);
 }
 
 export const setHistoryEvents = function() {
@@ -236,9 +269,10 @@ export const redirect = function(route) {
 	}
 }
 
-stateManager.addEvent("isLoggedIn", (state) => {
-	if (state == false) {
-		if (!publicRoutes.includes(getCurrentRoute()))
+stateManager.addEvent("isLoggedIn", (isLoggedIn) => {
+	if (!isLoggedIn && !isRouting) {
+		const routeObj = getRouteInfo(getCurrentRoute());
+		if (routeObj.accessLevel == PRIVATE_ACCESS)
 			redirect(initialRoute);
 	}
 });

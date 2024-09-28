@@ -7,6 +7,7 @@ from custom_utils.blitzpong_bot_utils import generate_welcome_message
 from user_auth.auth_utils import create_user_profile_info
 from user_auth.auth_utils import add_bot_as_friend
 from user_settings.models import UserSettings
+from two_factor_auth.two_factor import setup_two_factor_auth
 
 user_model = ModelManager(User)
 user_settings_model = ModelManager(UserSettings)
@@ -38,7 +39,9 @@ class Command(BaseCommand):
             if not user:
                 self.stdout.write(self.style.ERROR(f'Failed to create User'))
                 return
-            
+            user.active = True
+            user.save()
+
             if not create_user_profile_info(user=user):
                 self.stdout.write(self.style.ERROR(f'Failed to create User Profile'))
                 return
@@ -48,6 +51,7 @@ class Command(BaseCommand):
                 self.stdout.write(self.style.ERROR(f'Failed to create User Profile'))
                 return
 
+            setup_two_factor_auth(user)
             add_bot_as_friend(user)
             send_custom_bot_message(user, generate_welcome_message(user.username))
             self.stdout.write(self.style.SUCCESS(f'User {username} created successfully'))

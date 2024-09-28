@@ -1,5 +1,11 @@
 import {redirect} from "../js/router.js";
 import {callAPI} from "../utils/callApiUtils.js";
+import { render } from "../js/router.js";
+import PageEmailResend from "../page-components/page-email-resend.js";
+import { getDynamicHtmlElm, getHtmlElm } from "../utils/getHtmlElmUtils.js";
+import Page2FA from "../page-components/page-2fa.js";
+
+const EMAIL_NOT_VERIFIED_MSG = 'Email not verified. Please verify your email.';
 
 const styles = `
 form {
@@ -57,6 +63,10 @@ h1 {
 	width: 100%;
 }
 
+.btn-resend-email {
+	width: 100%;
+}
+
 `;
 
 const getHtml = function(data) {
@@ -111,6 +121,7 @@ export default class LoginForm extends HTMLElement {
 		}
 		this.signupBtn = this.html.querySelector(".btn-signup");
 		this.submitBtn = this.html.querySelector(".btn-submit");
+		this.resendEmailBtn = this.html.querySelector(".btn-resend-email");
 	}
 
 	#styles() {
@@ -164,7 +175,7 @@ export default class LoginForm extends HTMLElement {
 				password: this.html.querySelector('#password').value.trim()
 			}
 			if (!dataForm.username || !dataForm.password) {
-				this.#setInvalidCredentialsStyle();
+				this.#setLogInErrorStyles();
 				this.submitBtn.disabled = false;
 			}
 			else
@@ -173,25 +184,33 @@ export default class LoginForm extends HTMLElement {
 	}
 
 	#apiResHandlerCalback = (res, data) => {
+		const value = this.html.querySelector('#email').value.trim();
 		if (res.ok && data.message === "success")
-			redirect("/");
+			render(getHtmlElm(Page2FA));
+			//redirect("/");
+		else if (res.status == 401 && data.message == EMAIL_NOT_VERIFIED_MSG)
+			render(getDynamicHtmlElm(PageEmailResend, value ,"key"));
 		else {
-			this.#setInvalidCredentialsStyle();
+			if (data && data.message)
+				this.#setLogInErrorStyles(data.message);
 			this.submitBtn.disabled = false;
 		}
 	}
 
-	#setInvalidCredentialsStyle() {
+	#setLogInErrorStyles(message) {
 		const inputs = this.html.querySelectorAll('input');
+		if (!inputs)
+			return ;
 		inputs.forEach(input => {
 			input.classList.add("is-invalid");
 		})
 		const alert = this.html.querySelector(".alert");
-		if (alert.classList.contains("hide"))
-		{
+		if (alert.classList.contains("hide")) {
 			alert.classList.add("show");
 			alert.classList.remove("hide");
-		}	
+		}
+		if (message)
+			alert.innerHTML = message;
 	}
 }
 
