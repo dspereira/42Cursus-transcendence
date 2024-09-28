@@ -36,6 +36,11 @@ export default class Game {
 		this.ballRadius = this.#getValueFromPercentage(0.7, this.width);
 		this.paddleWidth = this.#getValueFromPercentage(0.5, this.width);
 		this.paddleHeigth = this.#getValueFromPercentage(13, this.height);
+		this.alwaysShowPlayerNames = false;
+	}
+
+	setAlwaysShowPlayerNames(isAlwaysVisible) {
+		this.alwaysShowPlayerNames = isAlwaysVisible;
 	}
 
 	updateState(data) {
@@ -221,7 +226,7 @@ export default class Game {
 	}
 
 	#drawPlayers() {
-		if (!this.isFullScreen)
+		if (!this.isFullScreen && !this.alwaysShowPlayerNames)
 			return ;
 		this.ctx.fillStyle = this.colors.score;
 		let pos = this.#calculatePlayersPosition(this.player1, "left");

@@ -198,6 +198,7 @@ export default class LocalGame extends HTMLElement {
 	#initGameBoard() {
 		this.#getGameColorPallet();
 		this.game.setPlayers("player1", "player2");
+		this.game.setAlwaysShowPlayerNames(true);
 		this.game.updateState(this.#getGameState());
 		this.game.draw();
 	}
