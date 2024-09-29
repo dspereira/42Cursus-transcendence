@@ -90,6 +90,8 @@ export default class LocalGame extends HTMLElement {
 	disconnectedCallback() {
 		this.game.stop();
 		this.game = null;
+		if (this.gameLoopId)
+			clearInterval(this.gameLoopId);
 	}
 
 	attributeChangedCallback(name, oldValue, newValue) {
@@ -215,7 +217,6 @@ export default class LocalGame extends HTMLElement {
 
 	#startGameBtnEvent() {
 		this.btnStart.addEventListener('click', (event) => {
-			console.log("Inicia o jogo start game");
 			this.#startGame();
 		});
 	}
@@ -261,12 +262,14 @@ export default class LocalGame extends HTMLElement {
 	}
 
 	#finishGame() {
-		// const btnAgain = this.html.querySelector("#play-again");
-
-		if (this.gameLogic.getScoreValues().player1Score === 7)
+		if (this.gameLogic.getScoreValues().player1Score == 7)
 			this.game.updateWinner({winner_username: "player1"})
 		else
 			this.game.updateWinner({winner_username: "player2"})
+		if (this.gameLoopId)
+			clearInterval(this.gameLoopId);
+		this.gameLoopId = null;
+
 
 		// btnAgain.classList.remove("hide");
 

@@ -109,8 +109,10 @@ export default class Game {
 	#animate() {
 		this.#drawAll();
 		this.animation = window.requestAnimationFrame(this.#animate.bind(this));
-		if (this.winnerUsername)
+		if (this.winnerUsername) {
 			this.stop();
+			this.winnerUsername = null;
+		}
 	}
 
 	#drawAll() {
@@ -142,9 +144,6 @@ export default class Game {
 		if (!score && !side)
 			return ;
 		this.ctx.font = `${this.scoreFont}px VT323`;
-
-		console.log("teste: ", this.ctx.font);
-
 		this.ctx.fillStyle = this.colors.score;
 		if (side == "left")
 			this.ctx.fillText(score, this.scoreLeftPos.x, this.scoreLeftPos.y);
