@@ -92,6 +92,8 @@ export default class LocalGame extends HTMLElement {
 		this.game = null;
 		if (this.gameLoopId)
 			clearInterval(this.gameLoopId);
+		document.removeEventListener('keydown',this.#keyDownHandler);
+		document.removeEventListener('keyup',this.#keyUpHandler);
 	}
 
 	attributeChangedCallback(name, oldValue, newValue) {
@@ -154,36 +156,35 @@ export default class LocalGame extends HTMLElement {
 		this.#initGameBoard();
 	}
 
+	#keyDownHandler = (event) => {
+		if (event.code == "KeyS")
+			this.keyDownP1Status = "pressed";
+		else if (event.code == "KeyW")
+			this.keyUpP1Status = "pressed";
+
+		if (event.code == "ArrowDown")
+			this.keyDownP2Status = "pressed";
+		else if (event.code == "ArrowUp")
+			this.keyUpP2Status = "pressed";
+		this.#sendkeyStatus();
+	}
+
+	#keyUpHandler = (event) => {
+		if (event.code == "KeyS")
+			this.keyDownP1Status = "released";
+		else if (event.code == "KeyW")
+			this.keyUpP1Status = "released";
+
+		if (event.code == "ArrowDown")
+			this.keyDownP2Status = "released";
+		else if (event.code == "ArrowUp")
+			this.keyUpP2Status = "released";
+		this.#sendkeyStatus();		
+	}
+
 	#keyEvents() {
-		document.addEventListener('keydown', (event) => {
-			console.log(event.code);
-
-			if (event.code == "KeyS")
-				this.keyDownP1Status = "pressed";
-			else if (event.code == "KeyW")
-				this.keyUpP1Status = "pressed";
-
-			if (event.code == "ArrowDown")
-				this.keyDownP2Status = "pressed";
-			else if (event.code == "ArrowUp")
-				this.keyUpP2Status = "pressed";
-
-			this.#sendkeyStatus();
-		});
-
-		document.addEventListener('keyup', (event) => {
-			console.log(event.code);
-			if (event.code == "KeyS")
-				this.keyDownP1Status = "released";
-			else if (event.code == "KeyW")
-				this.keyUpP1Status = "released";
-
-			if (event.code == "ArrowDown")
-				this.keyDownP2Status = "released";
-			else if (event.code == "ArrowUp")
-				this.keyUpP2Status = "released";
-			this.#sendkeyStatus();
-		})
+		document.addEventListener('keydown', this.#keyDownHandler);
+		document.addEventListener('keyup', this.#keyUpHandler);
 	}
 
 	#sendkeyStatus() {
@@ -240,27 +241,6 @@ export default class LocalGame extends HTMLElement {
 		}, intervalMiliSeconds);
 	}
 
-	#readyToPlayBtnEvent() {
-		
-		btnStart.addEventListener('click', (event) => {
-			const gameLoop = () => {
-				btnStart.disabled = true;
-				this.gameLogic.update();
-				
-				this.game.updateState(this.#getGameState());
-	
-				if (!this.gameLogic.isEndGame())
-					setTimeout(gameLoop, 10);
-				else 
-				{
-					btnStart.classList.add("hide");
-					this.#finishGame();
-				}
-			};
-			gameLoop();
-		});
-	}
-
 	#finishGame() {
 		if (this.gameLogic.getScoreValues().player1Score == 7)
 			this.game.updateWinner({winner_username: "player1"})
@@ -269,32 +249,6 @@ export default class LocalGame extends HTMLElement {
 		if (this.gameLoopId)
 			clearInterval(this.gameLoopId);
 		this.gameLoopId = null;
-
-
-		// btnAgain.classList.remove("hide");
-
-		// btnAgain.addEventListener('click', (event) => {
-		// 	console.log("novo evento");
-		// 	this.game = new Game(this.ctx, this.canvas.width, this.canvas.height);
-		// 	this.gameLogic = new GameLogic();
-		// 	this.#initGame()
-
-		// 	const gameLoop = () => {
-		// 		btnAgain.disabled = true;
-		// 		this.gameLogic.update();
-				
-		// 		this.game.updateState(this.#getGameState());
-	
-		// 		if (!this.gameLogic.isEndGame())
-		// 			setTimeout(gameLoop, 10);
-		// 		else
-		// 		{
-		// 			btnAgain.disabled = false;
-		// 			this.#finishGame();
-		// 		}
-		// 	};
-		// 	gameLoop();
-		// });
 	}
 
 	#initialPageButton() {
