@@ -87,10 +87,6 @@ export default class AppLobby extends HTMLElement {
 			clearInterval(this.intervalID);
 		if (!this.startGame) {
 			gameWebSocket.close();
-			console.log("WEB SOCKET LEAVE");
-			setTimeout(() => {
-				stateManager.setState("errorMsg", "All players have declined your invite")
-			}, 200);
 		}
 		stateManager.cleanStateEvents("hasRefreshToken");
 		stateManager.cleanStateEvents("gameSocket"); 
@@ -244,6 +240,10 @@ export default class AppLobby extends HTMLElement {
 			if (value) {
 				stateManager.setState("hasLobbyEnded", false);
 				redirect("/play");
+				console.log("lobby ended");//host leaves
+				setTimeout( () => {
+					stateManager.setState("errorMsg", "The lobby has ended");
+				}, 100);
 			}
 		});
 	}
@@ -255,9 +255,15 @@ export default class AppLobby extends HTMLElement {
 					return ;
 				callAPI("GET", `http://127.0.0.1:8000/api/game/has-pending-game-requests/`, null, (res, data) => {
 					if (res.ok) {
+						console.log("data = ", data);
+						console.log(res);
 						if (!data.has_pending_game_requests) {
 							clearInterval(this.intervalID);
 							redirect("/play"); // modificar esta redireçao
+							setTimeout( () => {
+								stateManager.setState("errorMsg", "All players have declined your invite");
+							}, 100);
+							console.log("lobby ended2"); //quando dao decline a todos os convites
 						}
 					}
 				});

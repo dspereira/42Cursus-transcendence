@@ -1,5 +1,6 @@
 import { callAPI } from "../utils/callApiUtils.js";
 import { colors } from "../js/globalStyles.js";
+import stateManager from "../js/StateManager.js";
 
 const styles = `
 	h3 {
@@ -14,6 +15,49 @@ const styles = `
 		flex-wrap: wrap;
 		gap: 30px;
 		justify-content: center;
+	}
+
+	.alert-div {
+		display: flex;
+		width: 100%;
+		animation: disappear linear 10s forwards;
+		background-color: ${colors.alert};
+	}
+	
+	.alert-bar {
+		width: 100%;
+		height: 5px;
+		border-style: hidden;
+		border-radius: 2px;
+		background-color: ${colors.alert_bar};
+		position: absolute;
+		bottom: 2px;
+		animation: expire linear 10s forwards;
+	}
+	
+	@keyframes expire {
+		from {
+			width: 100%;
+		}
+		to {
+			width: 0%;
+		}
+	}
+	
+	@keyframes disappear {
+		0% {
+			visibility: visible;
+			opacity: 1;
+		}
+		99% {
+			visibility: visible;
+			opacity: 1;
+		}
+		100% {
+			visibility: hidden;
+			opacity: 0;
+			display: none;
+		}
 	}
 `;
 
@@ -33,6 +77,7 @@ export default class GameInviteRequest extends HTMLElement {
 		super()
 		this.data = {};
 		this.intervalID = null;
+		this.lastRequestSize = 0;;
 	}
 
 	connectedCallback() {
@@ -64,7 +109,7 @@ export default class GameInviteRequest extends HTMLElement {
 
 	#styles() {
 			if (styles)
-				return `@scope (.${this.elmtId}) {${styles}}`;
+				return `@scope (.${this.elmtId}) {${styles}}`;	
 			return null;
 	}
 
@@ -81,13 +126,22 @@ export default class GameInviteRequest extends HTMLElement {
 	#scripts() {
 		this.#getInviteGamesCallApi();
 		this.#startGameInvitesPolling();
+		this.#errorMsgEvents();
 	}
 
 	#getInviteGamesCallApi() {
 		callAPI("GET", `http://127.0.0.1:8000/api/game/request/`, null, (res, data) => {
 			if (res.ok){
 				if (data)
+					console.log(data);
+				if (data)
+				{
 					this.#createRequestList(data.requests_list);
+					console.log(data.requests_list.length);
+					if (data.requests_list.length < this.lastRequestSize)
+						stateManager.setState("errorMsg", "An invite has expired");
+					this.lastRequestSize = data.requests_list.length;
+				}
 			}
 		});
 	}
@@ -114,6 +168,27 @@ export default class GameInviteRequest extends HTMLElement {
 		this.intervalID = setInterval(() => {
 			this.#getInviteGamesCallApi();
 		}, 5000);
+	}
+
+	#errorMsgEvents() {
+		stateManager.addEvent("errorMsg", (msg) => {
+			if (msg) {
+				console.log(msg);
+				stateManager.setState("errorMsg", null);
+				const alertBefore  = this.html.querySelector(".alert");
+				if (alertBefore)
+					alertBefore.remove();
+				const insertElement = this.html.querySelector(".send-invite-section");
+				var alertCard = document.createElement("div");
+				alertCard.className = "alert alert-danger hide from alert-div";
+				alertCard.role = "alert";
+				alertCard.innerHTML = `
+						${msg}
+						<div class=alert-bar></div>
+					`;
+				this.html.insertBefore(alertCard, insertElement);
+			}
+		});
 	}
 }
 

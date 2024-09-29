@@ -227,8 +227,8 @@ button {
 }
 
 .logo-img {
-	width: 30px;
-	height: 30px;
+	width: 60px;
+	height: auto;
 }
 
 .logo-text {
@@ -296,8 +296,8 @@ const getHtml = function(data) {
 					</button>
 				</div>
 				<div class= "logo">
-					<img src="/img/logo.png" class="logo-img" alt="logo">
-					<span class="logo-text"><strong>BlitzPong</strong></span>
+					<img src="/img/Pong.png" class="logo-img" alt="logo">
+					<span class="logo-text"><strong></strong></span>
 				</div>
 				<div class="btn-container">
 					<div class="link-btn">
