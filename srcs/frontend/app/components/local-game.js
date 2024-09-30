@@ -4,8 +4,8 @@ import { SCREEN_WIDTH, SCREEN_HEIGHT} from "../game/const_vars.js" ;
 import { redirect } from "../js/router.js";
 import stateManager from "../js/StateManager.js";
 
-const P1_name = "player1";
-const P2_name = "player2";
+const P1_name = "Player 1";
+const P2_name = "Player 2";
 
 const MODERN_NEON = {
 	"ground": "#000000",
@@ -168,14 +168,22 @@ export default class LocalGame extends HTMLElement {
 	}
 
 	#keyDownHandler = (event) => {
-		if (event.code == "KeyS")
+		if (event.code == "KeyS") {
 			this.keyDownP1Status = "pressed";
-		else if (event.code == "KeyW")
+			this.keyUpP1Status = "released";
+		}
+		else if (event.code == "KeyW") {
 			this.keyUpP1Status = "pressed";
-		if (event.code == "ArrowDown")
+			this.keyDownP1Status = "released";
+		}
+		if (event.code == "ArrowDown") {
 			this.keyDownP2Status = "pressed";
-		else if (event.code == "ArrowUp")
+			this.keyUpP2Status = "released";
+		}
+		else if (event.code == "ArrowUp") {
 			this.keyUpP2Status = "pressed";
+			this.keyDownP2Status = "released";
+		}
 		this.#sendkeyStatus();
 	}
 
@@ -201,6 +209,7 @@ export default class LocalGame extends HTMLElement {
 		this.gameLogic.updatePaddle("down", this.keyDownP1Status, "P1");
 		this.gameLogic.updatePaddle("up", this.keyUpP2Status, "P2");
 		this.gameLogic.updatePaddle("down", this.keyDownP2Status, "P2");
+
 	}
 
 	#getGameColorPallet() {
