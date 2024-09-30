@@ -404,7 +404,8 @@ export default class SidePanel extends HTMLElement {
 		this.lastState = "open";
 		this.escClose = () => {
 			const popup = document.querySelector('.logout-popup');
-			popup.style.display = "none";
+			if (popup)
+				popup.style.display = "none";
 			console.log("ESC!!!");
 			document.removeEventListener('keydown', this.escClose);
 		};

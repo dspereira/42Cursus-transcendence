@@ -40,6 +40,7 @@ const styles = `
 
 const getHtml = function(data) {
 	console.log(data);
+	console.log("Id = ", stateManager.getState("userId"));
 	const html = `
 		<app-header></app-header>
 		<side-panel selected="profile"></side-panel>

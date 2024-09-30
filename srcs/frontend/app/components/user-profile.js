@@ -165,14 +165,37 @@ const styles = `
 	.games-win-rate, .tournaments-win-rate {
 		margin-bottom: 10px;
 	}
+
+	.online-status {
+		position: absolute;
+		display: inline-block;
+		width: 20px;
+		height: 20px;
+		border-radius: 50%;
+		background-color: green;
+		z-index: 2;
+		bottom: 33px;
+		right: 20px;
+		border: 2px solid white;
+	}
+
+	.profile-photo-status {
+		position: relative;
+	}
+
+	.hide {
+		display: none;
+	}
+
 `;
 
 const getHtml = function(data) {
 	const html = `
 		<div class="profile-grid-container">
 			<div class="profile-info">
-				<div>
+				<div class="profile-photo-status">
 					<img class="profile-picture" src="" alt="Profile Picture">
+					<div class="online-status hide"></div>
 				</div>
 				<div class="username-container">
 					<div class="username"></div>
@@ -202,7 +225,6 @@ const getHtml = function(data) {
 						</div>
 					</div>
 				</div>
-
 				<br></br>
 				<div class="bio-box">
 					<span class="bio"></span>
@@ -215,7 +237,7 @@ const getHtml = function(data) {
 }
 
 export default class UserProfile extends HTMLElement {
-	static observedAttributes = ["user-id", "username"];
+	static observedAttributes = ["username"];
 
 	constructor() {
 		super();
@@ -226,8 +248,6 @@ export default class UserProfile extends HTMLElement {
 		this.#initComponent();
 		this.#render();
 		this.#scripts();
-		// console.log("Online = ", this.data.online);
-		console.log("Data = ", this.data);
 	}
 
 	attributeChangedCallback(name, oldValue, newValue) {
@@ -288,6 +308,7 @@ export default class UserProfile extends HTMLElement {
 		this.#updateUsername(data.username);
 		this.#updateBio(data.bio);
 		this.#updateStats(this.#getPlayedStatsObj(data));
+		this.#updateOnline(data.online);
 	}
 
 	#updateImage(image_url) {
@@ -309,8 +330,6 @@ export default class UserProfile extends HTMLElement {
 	}
 
 	#updateStats(stats) {
-		console.log(stats);
-
 		this.totalGames.innerHTML = `Total games: ${stats.totalGames}`;
 		this.gameWinRate.innerHTML = `Game win rate: ${stats.totalGames > 0 ? stats.gamesWinRate : "---"}%`;
 
@@ -332,6 +351,13 @@ export default class UserProfile extends HTMLElement {
 
 		this.tournamentWins.innerHTML = `W: ${stats.tournamentsWon}`;
 		this.tournamentLoses.innerHTML = `L: ${stats.tournamentsLost}`;
+	}
+
+	#updateOnline(online) {
+		if (!online || online == "false")
+			return ;
+		const onlineHtml = this.html.querySelector(".online-status");
+		onlineHtml.classList.remove("hide");
 	}
 
 	#getPlayedStatsObj(data) {

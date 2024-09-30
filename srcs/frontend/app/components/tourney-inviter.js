@@ -11,7 +11,7 @@ game-invite-card1 {
 }
 
 .invites-section {
-	max-height: calc(100vh - 420px);
+	max-height: calc(100vh - 500px);
 	min-height: 240px;
 	display: flex;
 	width: 100%;
@@ -22,7 +22,7 @@ game-invite-card1 {
 .friend-list {
 	display: flex;
 	flex-direction: column;
-	width: 70%;
+	width: 80%;
 	min-width: 250px;
 	background-color: ${colors.second_card};
 	border-radius: 5px;
@@ -31,6 +31,7 @@ game-invite-card1 {
 
 .invites-send-container {
 	min-width: 200px;
+	max-width: 300px;
 	display: flex;
 	flex-direction: column;
 	position: relative;
@@ -89,7 +90,7 @@ game-invite-card1 {
 	border-radius: 10px;
 	justify-content: center;
 	align-items: center;
-	margin: 20px 0px 20px 0px;
+	margin: 10px 0px 10px 0px;
 	background-color: ${colors.main_card};
 }
 
@@ -148,10 +149,19 @@ game-invite-card1 {
 	align-items: center;
 	margin-bottom: 10px;
 	background-color: ${colors.third_card};
-	padding: 0px 10px 0px 10px;
+	padding: 0px 10px 0px 0px;
 	border-radius: 5px;
 	border-style: hidden;
 	color: ${colors.second_text};
+}
+
+.invite-sep {
+	display: flex;
+	width: 100%;
+	flex-direction: column;
+	justify-content: space-between;
+	align-items: center;
+	padding: 0px 10px 0px 10px;
 }
 
 .player-invite-send span {
@@ -243,7 +253,6 @@ export default class TourneyInviter extends HTMLElement {
 		this.data = {};
 		this.selectedElm = [];
 		this.intervalID = null;
-		this.lastListSize;
 	}
 
 	connectedCallback() {
@@ -297,7 +306,6 @@ export default class TourneyInviter extends HTMLElement {
 		this.#getListPendingInvites();
 		this.#setRefreshFriendsListEvent();
 		this.#checkInvitesPolling();
-		this.#errorMsgEvents();
 	}
 
 	#setFriendsSearchEvent() {
@@ -377,9 +385,13 @@ export default class TourneyInviter extends HTMLElement {
 					return ;
 				elm.classList.add("player-invite-send");
 				elm.classList.add(`id-${invite.req_id}`);
+				console.log("invite: ", invite);
 				elm.innerHTML = `
-				<span>${charLimiter(invite.username, charLimit)}</span>
-					<div class="cross-icon btn-	-invite btn-cancel-invite" id="id-${invite.req_id}">x</div>
+				<div class=invite-sep>
+					<span>${charLimiter(invite.username, charLimit)}</span>
+					<div>${invite.exp}</div>
+					</div>
+					<div class="cross-icon btn-cancel-invite" id="id-${invite.req_id}">x</div>
 				`;
 				listHtml.appendChild(elm);
 				this.#setCancelInviteEvent(elm);
@@ -392,8 +404,6 @@ export default class TourneyInviter extends HTMLElement {
 		// listHtml.appendChild(button);
 		// this.#setBtnInviteEvent();
 		const inviteButton = document.querySelector(".invite-btn");
-		console.log("createInvitesSendList", this.selectedElm);
-		console.log("button!!: ", inviteButton.innerHTML);
 		inviteButton.disabled = this.selectedElm == 0;
 	}
 
@@ -421,11 +431,7 @@ export default class TourneyInviter extends HTMLElement {
 	#getListPendingInvites() {
 		callAPI("GET", `http://127.0.0.1:8000/api/tournament/invited-friends/`, null, (res, data) => {
 			if (res.ok && data) {
-				console.log(data);
 				this.#createInvitesSendList(data.invited_users);
-				if (this.lastListSize > data.invited_users.length)
-					stateManager.setState("errorMsg", "One or more invites have expired or been declined");
-				this.lastListSize = data.invited_users.length;// it doesnt check if the invite was accepted, only if it disappeared
 			}
 		});
 	}	
@@ -484,27 +490,6 @@ export default class TourneyInviter extends HTMLElement {
 		this.intervalID = setInterval(() => {
 			this.#getListPendingInvites();
 		}, 5000);
-	}
-
-	#errorMsgEvents() {
-		stateManager.addEvent("errorMsg", (msg) => {
-			if (msg) {
-				console.log(msg);
-				stateManager.setState("errorMsg", null);
-				const alertBefore  = this.html.querySelector(".alert");
-				if (alertBefore)
-					alertBefore.remove();
-				const insertElement = this.html.querySelector(".tournament-name-update");
-				var alertCard = document.createElement("div");
-				alertCard.className = "alert alert-danger hide from alert-div";
-				alertCard.role = "alert";
-				alertCard.innerHTML = `
-						${msg}
-						<div class=alert-bar></div>
-					`;
-				this.html.insertBefore(alertCard, insertElement);
-			}
-		});
 	}
 }
 
