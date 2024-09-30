@@ -323,8 +323,10 @@ export default class TourneyLobby extends HTMLElement {
 			return ;
 		btn.addEventListener("click", () => {
 			callAPI("DELETE", `http://127.0.0.1:8000/api/tournament/players/?id=${this.data.tournamentId}`, null, (res, data) => {
-				if (res.ok)
+				if (res.ok) {
+					stateManager.setState("tournamentId", null);
 					stateManager.setState("isTournamentChanged", true);
+				}
 			});	
 		});
 	}
