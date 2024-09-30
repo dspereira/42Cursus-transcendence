@@ -4,6 +4,17 @@ import { SCREEN_WIDTH, SCREEN_HEIGHT} from "../game/const_vars.js" ;
 import { redirect } from "../js/router.js";
 import stateManager from "../js/StateManager.js";
 
+const P1_name = "player1";
+const P2_name = "player2";
+
+const MODERN_NEON = {
+	"ground": "#000000",
+	"paddle": "#00FF00",
+	"ball": "#FF00FF",
+	"score": "rgba(255, 255, 255, 0.7)",
+	"middleLine": "#00FF00"
+}
+
 const styles = `
 	.general-div {
 		display: flex;
@@ -161,7 +172,6 @@ export default class LocalGame extends HTMLElement {
 			this.keyDownP1Status = "pressed";
 		else if (event.code == "KeyW")
 			this.keyUpP1Status = "pressed";
-
 		if (event.code == "ArrowDown")
 			this.keyDownP2Status = "pressed";
 		else if (event.code == "ArrowUp")
@@ -174,7 +184,6 @@ export default class LocalGame extends HTMLElement {
 			this.keyDownP1Status = "released";
 		else if (event.code == "KeyW")
 			this.keyUpP1Status = "released";
-
 		if (event.code == "ArrowDown")
 			this.keyDownP2Status = "released";
 		else if (event.code == "ArrowUp")
@@ -195,12 +204,12 @@ export default class LocalGame extends HTMLElement {
 	}
 
 	#getGameColorPallet() {
-		this.game.setColorPallet({"ground": "#000000", "paddle": "#FFFFFF", "ball": "#FFD700", "score": "rgba(26, 26, 26, 0.8)", "middleLine": "#FFFFFF"});
+		this.game.setColorPallet(MODERN_NEON);
 	}
 
 	#initGameBoard() {
 		this.#getGameColorPallet();
-		this.game.setPlayers("player1", "player2");
+		this.game.setPlayers(P1_name, P2_name);
 		this.game.setAlwaysShowPlayerNames(true);
 		this.game.updateState(this.#getGameState());
 		this.game.draw();
@@ -243,9 +252,9 @@ export default class LocalGame extends HTMLElement {
 
 	#finishGame() {
 		if (this.gameLogic.getScoreValues().player1Score == 7)
-			this.game.updateWinner({winner_username: "player1"})
+			this.game.updateWinner({winner_username: P1_name})
 		else
-			this.game.updateWinner({winner_username: "player2"})
+			this.game.updateWinner({winner_username: P2_name})
 		if (this.gameLoopId)
 			clearInterval(this.gameLoopId);
 		this.gameLoopId = null;
