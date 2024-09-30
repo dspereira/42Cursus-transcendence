@@ -27,8 +27,8 @@ const styles = `
 		width: 25px;
 		border-style: hidden;
 		border-radius: 50%;
-		left: 30%;
-		top: 20%;
+		right: 15%;
+		bottom: 30%;
 		background-color: white;
 	}
 
@@ -36,11 +36,11 @@ const styles = `
 		position: absolute;
 		display: flex;
 		flex-direction: column;
-		width: 900px;
-		height: 600px;
+		max-width: 900px;
+		min-width: 460px;
+		max-height: 600px;
 		justify-content: center;
 		align-items: center;
-		gap: 100px;
 		left: 50%;
 		top: 50%;
 		transform: translate(-50%, -40%);
@@ -48,12 +48,13 @@ const styles = `
 		border-style: hidden;
 		border-radius: 20px;
 		color: ${colors.primary_text};
+		z-index: 1001;
 	}
 
 	.title-container {
 		display: flex;
 		flex-direction: column;
-		width: 70%;
+		width: 90%;
 	}
 
 	.button-container {
@@ -107,6 +108,19 @@ const styles = `
 		width:100%;
 		z-index:1;
 	}
+
+	.blur-test {
+		position: fixed;
+		top: 0;
+		left: 0;
+		width: 100%;
+		height: 100%;
+		background: rgba(0, 0, 0, 0.5);
+		backdrop-filter: blur(5px);
+		justify-content: center; 
+		align-items: center;
+		z-index: 1000;
+	}
 `;
 //font: workbench
 
@@ -114,15 +128,18 @@ const getHtml = function(data) {
 	const html = `
 		<div class=main-container>
 			<div class=title-container>
-				<img src="../img/logo_white_big.png" class=logo-img>
+				<img src="../img/Pong.png" class=logo-img>
 			</div>
 			<div class=button-container>
 				<button type="button" class="btn btn-primary" id="login">Login</button>
 				<button type="button" class="btn btn-secondary" id="signup">SignUp</button>
 			</div>
 		</div>
+		<div class=ball></div>
 		<div class=paddle id=left></div>
 		<div class=paddle id=right></div>
+		<div class="blur-test">
+		</div>
 		<!--<div class=ball></div>-->
 
 	`;

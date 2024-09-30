@@ -227,8 +227,8 @@ button {
 }
 
 .logo-img {
-	width: 30px;
-	height: 30px;
+	width: 60px;
+	height: auto;
 }
 
 .logo-text {
@@ -296,8 +296,8 @@ const getHtml = function(data) {
 					</button>
 				</div>
 				<div class= "logo">
-					<img src="/img/logo.png" class="logo-img" alt="logo">
-					<span class="logo-text"><strong>BlitzPong</strong></span>
+					<img src="/img/Pong.png" class="logo-img" alt="logo">
+					<span class="logo-text"><strong></strong></span>
 				</div>
 				<div class="btn-container">
 					<div class="link-btn">
@@ -399,7 +399,6 @@ export default class SidePanel extends HTMLElement {
 	constructor() {
 		super()
 		this.#initComponent();
-		console.log("html = ", this.html);
 		this.#render();
 		this.#scripts();
 		this.lastState = "open";
@@ -573,8 +572,6 @@ export default class SidePanel extends HTMLElement {
 	#openSidePanel() {
 		console.log();
 		let sidePanel = this.html.querySelector(".side-panel-wrapper");
-		console.log("sidePanel = ", sidePanel);
-		console.log("lastState = ", this.lastState);
 		if (this.lastState == "close")
 			return ;
 		if (sidePanel.classList.contains("close"))
@@ -589,7 +586,6 @@ export default class SidePanel extends HTMLElement {
 
 	#closeSidePanel() {
 		let sidePanel = this.html.querySelector(".side-panel-wrapper");
-		console.log("sidePanel = ", sidePanel);
 		if (sidePanel.classList.contains("open"))
 		{
 			sidePanel.classList.remove("open");

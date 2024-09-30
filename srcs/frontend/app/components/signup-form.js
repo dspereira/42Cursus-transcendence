@@ -26,6 +26,13 @@ form {
 	margin-right: 10px;
 }
 
+.highlight-text {
+	text-align: center;
+	font-size: 32px;
+	margin-top: 0px;
+	color: ${colors.primary_text};
+}
+
 .left-icon {
 	left: 0;
 	margin-left: 10px;
@@ -91,11 +98,27 @@ h1 {
 	color: ${colors.second_text};
 }
 
+.logo-img {
+	width: 80%;
+	height: auto;
+	align-test: center;
+	margin-top: 40px;
+}
+
+.logo-container {
+	display: flex;
+	width: 100%;
+	justify-content: center;
+}
 `;
 
 const getHtml = function(data) {
 	const html = `
-		<h1>Sign up</h1>
+
+		<div class="logo-container">
+			<img src="/img/Pong.png" class="logo-img" alt="logo">
+		</div>
+		<div class="highlight-text">Sign up</div>
 		<form id="signup-form">
 			<div class="alert alert-danger hide" role="alert"></div>
 			<div class="form-group">

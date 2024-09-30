@@ -78,7 +78,7 @@ header {
 	display: none;
 	pointer-events: none;
 	z-index: 1000;
-	transform: translate(-20px, 40px);
+	transform: translate(-40px, 40px);
 }
 `;
 

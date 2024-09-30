@@ -81,7 +81,7 @@ const styles = `
 		align-items: center;
 		background-color: ${colors.second_card};
 		color: ${colors.primary_text};
-		padding: 10px;
+		padding: 10px 2px 10px 2px;
 		width: 100%;
 		height: 60px;
 		border-radius: 8px;
@@ -178,7 +178,7 @@ const styles = `
 	}
 
 	.player-1, .player-2 {
-		min-width: 150px;
+		min-width: 152px;
 	}
 
 	@media (max-width:800px) {

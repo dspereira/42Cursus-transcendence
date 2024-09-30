@@ -22,6 +22,9 @@ input:-internal-autofill-selected {
 }
 
 .highlight-text {
+	text-align: center;
+	font-size: 32px;
+	margin-top: 0px;
 	color: ${colors.primary_text};
 }
 
@@ -95,11 +98,27 @@ h1 {
 	background-color: ${colors.btn_default};
 	color: ${colors.primary_text};
 }
+
+.logo-img {
+	width: 100%;
+	height: auto;
+	align-test: center;
+	margin-top: 40px;
+}
+
+.logo-container {
+	display: flex;
+	width: 100%;
+	justify-content: center;
+}
 `;
 
 const getHtml = function(data) {
 	const html = `
-		<h1 class="highlight-text">Sign in</h1>
+		<div class="logo-container">
+			<img src="/img/Pong.png" class="logo-img" alt="logo">
+		</div>
+		<div class="highlight-text">Sign in</div>
 		<form id="login-form">
 			<div class="alert alert-danger hide from" role="alert">
 				Invalid authentication credentials.

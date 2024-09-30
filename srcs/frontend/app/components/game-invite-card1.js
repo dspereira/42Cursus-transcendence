@@ -140,7 +140,6 @@ export default class GameInviteCard1 extends HTMLElement {
 
 	#scripts() {
 		this.#changeOnlineStatus();
-		console.log("data =", this.data);
 	}
 
 	#markAsSelected() {
