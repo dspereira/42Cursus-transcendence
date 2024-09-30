@@ -5,12 +5,7 @@ const styles = ``;
 const getHtml = function(data) {
 	const html = `
 	<!--<app-header></app-header>-->
-	
-	<div class="row">
-	  <div class="col-md-4 offset-md-4">
-		  <signup-form></signup-form>
-	  </div>
-	</div>
+		<signup-form></signup-form>
 	`;
 	return html;
 }

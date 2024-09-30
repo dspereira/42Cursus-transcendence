@@ -227,7 +227,7 @@ button {
 }
 
 .logo-img {
-	width: 60px;
+	width: 80px;
 	height: auto;
 }
 

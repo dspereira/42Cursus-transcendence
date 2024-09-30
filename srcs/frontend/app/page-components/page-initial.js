@@ -11,12 +11,12 @@ const styles = `
 		background-color: white;
 	}
 
-	#right {
+	#left {
 		left: 20px;
 		top: 30%;
 	}
 
-	#left {
+	#right {
 		right: 30px;
 		top: 60%;
 	}
@@ -33,7 +33,18 @@ const styles = `
 	}
 
 	.main-container {
-		position: absolute;
+		display: fixed;
+		width: 100vw;
+		min-width: 460px;
+		height: 100vh;
+		justify-content: center;
+		z-index: 1001;
+		top: 0px;
+		right: 0px;
+	}
+
+	.second-container {
+		position: relative;
 		display: flex;
 		flex-direction: column;
 		max-width: 900px;
@@ -126,7 +137,8 @@ const styles = `
 
 const getHtml = function(data) {
 	const html = `
-		<div class=main-container>
+	<div class=main-container>
+	<div class=second-container>
 			<div class=title-container>
 				<img src="../img/Pong.png" class=logo-img>
 			</div>
@@ -138,10 +150,8 @@ const getHtml = function(data) {
 		<div class=ball></div>
 		<div class=paddle id=left></div>
 		<div class=paddle id=right></div>
-		<div class="blur-test">
-		</div>
-		<!--<div class=ball></div>-->
-
+		<div class="blur-test"></div>
+	</div>
 	`;
 	return html;
 }

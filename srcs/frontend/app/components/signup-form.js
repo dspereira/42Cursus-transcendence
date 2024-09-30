@@ -107,45 +107,80 @@ h1 {
 
 .logo-container {
 	display: flex;
-	width: 100%;
+	width: 90%;
 	justify-content: center;
+}
+
+
+.main-container {
+	display: flex;
+	align-items: center;
+	width: 100%;
+	flex-direction: column;
+}
+
+.second-container {
+	display: flex;
+	align-items: center;
+	flex-direction: column;
+	width: 50%;
+	min-width: 460px;
+	max-width: 750px;
+}
+
+#signup-form {
+	width: 100%;
+}
+
+
+
+input:-webkit-autofill, input:-webkit-autofill:hover, input:-webkit-autofill:focus, input:-webkit-autofill:active {
+	-webkit-background-clip: text;
+	-webkit-text-fill-color: #ffffff;
+	transition: background-color 5000s ease-in-out 0s;
+	box-shadow: inset 0 0 20px 20px #23232329;
 }
 `;
 
 const getHtml = function(data) {
 	const html = `
 
-		<div class="logo-container">
-			<img src="/img/Pong.png" class="logo-img" alt="logo">
+
+		<div class="main-container">
+			<div class="second-container">
+				<div class="logo-container">
+					<img src="/img/Pong.png" class="logo-img" alt="logo">
+				</div>
+				<div class="highlight-text">Sign up</div>
+				<form id="signup-form">
+					<div class="alert alert-danger hide" role="alert"></div>
+					<div class="form-group">
+						<i class="icon left-icon bi-envelope"></i>
+						<input type="text" class="input-padding form-control form-control-lg" id="email" placeholder="Email" maxlength="100">
+					</div>
+					<div class="form-group">
+						<i class="icon left-icon bi-person"></i>
+						<input type="text" class="input-padding form-control form-control-lg" id="username" placeholder="Username" maxlength="30">
+					</div>
+					<div class="form-group">
+						<i class="icon left-icon bi bi-key"></i>
+						<i class="icon right-icon bi bi-eye-slash eye-icon"></i>
+						<input type="password" class="input-padding form-control form-control-lg" id="password" placeholder="Password" maxlength="128">
+					</div>
+					<div class="form-group">
+						<i class="icon left-icon bi bi-key"></i>
+						<i class="icon right-icon bi bi-eye-slash eye-icon"></i>
+						<input type="password" class="input-padding form-control form-control-lg" id="confirm-password" placeholder="Confirm Password" maxlength="128">
+					</div>
+					<div>
+						<button type="submit" class="btn btn-primary btn-submit">Sign Up</button>
+					</div>
+					<div>
+						<button type="button" class="btn btn-outline-primary btn-signin">Already has an account? Sign in here</button>
+					</div>
+				</form>
+			</div>
 		</div>
-		<div class="highlight-text">Sign up</div>
-		<form id="signup-form">
-			<div class="alert alert-danger hide" role="alert"></div>
-			<div class="form-group">
-				<i class="icon left-icon bi-envelope"></i>
-				<input type="text" class="input-padding form-control form-control-lg" id="email" placeholder="Email" maxlength="100">
-			</div>
-			<div class="form-group">
-				<i class="icon left-icon bi-person"></i>
-				<input type="text" class="input-padding form-control form-control-lg" id="username" placeholder="Username" maxlength="30">
-			</div>
-			<div class="form-group">
-				<i class="icon left-icon bi bi-key"></i>
-				<i class="icon right-icon bi bi-eye-slash eye-icon"></i>
-				<input type="password" class="input-padding form-control form-control-lg" id="password" placeholder="Password" maxlength="128">
-			</div>
-			<div class="form-group">
-				<i class="icon left-icon bi bi-key"></i>
-				<i class="icon right-icon bi bi-eye-slash eye-icon"></i>
-				<input type="password" class="input-padding form-control form-control-lg" id="confirm-password" placeholder="Confirm Password" maxlength="128">
-			</div>
-			<div>
-				<button type="submit" class="btn btn-primary btn-submit">Sign Up</button>
-			</div>
-			<div>
-				<button type="button" class="btn btn-outline-primary btn-signin">Already has an account? Sign in here</button>
-			</div>
-		</form>
 	`;
 	return html;
 }

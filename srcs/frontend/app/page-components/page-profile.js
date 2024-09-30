@@ -39,6 +39,7 @@ const styles = `
 `;
 
 const getHtml = function(data) {
+	console.log(data);
 	const html = `
 		<app-header></app-header>
 		<side-panel selected="profile"></side-panel>

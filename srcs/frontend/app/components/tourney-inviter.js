@@ -243,6 +243,7 @@ export default class TourneyInviter extends HTMLElement {
 		this.data = {};
 		this.selectedElm = [];
 		this.intervalID = null;
+		this.lastListSize;
 	}
 
 	connectedCallback() {
@@ -296,6 +297,7 @@ export default class TourneyInviter extends HTMLElement {
 		this.#getListPendingInvites();
 		this.#setRefreshFriendsListEvent();
 		this.#checkInvitesPolling();
+		this.#errorMsgEvents();
 	}
 
 	#setFriendsSearchEvent() {
@@ -421,6 +423,9 @@ export default class TourneyInviter extends HTMLElement {
 			if (res.ok && data) {
 				console.log(data);
 				this.#createInvitesSendList(data.invited_users);
+				if (this.lastListSize > data.invited_users.length)
+					stateManager.setState("errorMsg", "One or more invites have expired or been declined");
+				this.lastListSize = data.invited_users.length;// it doesnt check if the invite was accepted, only if it disappeared
 			}
 		});
 	}	
@@ -479,6 +484,27 @@ export default class TourneyInviter extends HTMLElement {
 		this.intervalID = setInterval(() => {
 			this.#getListPendingInvites();
 		}, 5000);
+	}
+
+	#errorMsgEvents() {
+		stateManager.addEvent("errorMsg", (msg) => {
+			if (msg) {
+				console.log(msg);
+				stateManager.setState("errorMsg", null);
+				const alertBefore  = this.html.querySelector(".alert");
+				if (alertBefore)
+					alertBefore.remove();
+				const insertElement = this.html.querySelector(".tournament-name-update");
+				var alertCard = document.createElement("div");
+				alertCard.className = "alert alert-danger hide from alert-div";
+				alertCard.role = "alert";
+				alertCard.innerHTML = `
+						${msg}
+						<div class=alert-bar></div>
+					`;
+				this.html.insertBefore(alertCard, insertElement);
+			}
+		});
 	}
 }
 

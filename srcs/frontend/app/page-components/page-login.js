@@ -6,11 +6,7 @@ const styles = ``;
 const getHtml = function(data) {
 	const html = `
 	<!--<app-header></app-header>-->
-	<div class="row">
-	  <div class="col-md-4 offset-md-4">
 		<login-form></login-form>
-	  </div>
-	</div>
 	`;
 	return html;
 }

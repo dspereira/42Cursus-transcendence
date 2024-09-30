@@ -215,7 +215,7 @@ const getHtml = function(data) {
 }
 
 export default class UserProfile extends HTMLElement {
-	static observedAttributes = ["username"];
+	static observedAttributes = ["user-id", "username"];
 
 	constructor() {
 		super();
