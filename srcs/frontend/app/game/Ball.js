@@ -108,7 +108,10 @@ export class Ball {
 
 	#setStartAngle() {
 		const chosenInterval = const_vars.ANGLES_INTERVALS[Math.floor(Math.random() * const_vars.ANGLES_INTERVALS.length)];
-		this.#setAngle(Math.floor(Math.random() * (chosenInterval[1] - chosenInterval[0] + 1)) + chosenInterval[0]);
+		let startAngle = 180;
+		while (startAngle == 180 || startAngle == 360)
+			startAngle = Math.floor(Math.random() * (chosenInterval[1] - chosenInterval[0] + 1)) + chosenInterval[0];
+		this.#setAngle(startAngle);
 	}
 
 	#setAngle(angleDeg) {
@@ -133,9 +136,9 @@ export class Ball {
 	#setNewPaddleAngle(hitPercentage) {
 		let resultAngle;
 		if (this.angle_deg > 90 && this.angle_deg < 270)
-			resultAngle = 420 + (hitPercentage / 100) * (300 - 420);
+			resultAngle = 395 + (hitPercentage / 100) * (325 - 395);
 		else
-			resultAngle = 120 + (hitPercentage / 100) * (240 - 120);
+			resultAngle = 145 + (hitPercentage / 100) * (215 - 145);
 		this.#setAngle(resultAngle);
 	}
 }
