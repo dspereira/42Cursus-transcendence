@@ -202,10 +202,14 @@ export default class AppPlay extends HTMLElement {
 	}
 
 	#keyDownHandler = (event) => {
-		if (event.code == "ArrowDown" || event.code == "KeyS")
+		if (event.code == "ArrowDown" || event.code == "KeyS") {
 			this.keyDownStatus = "pressed";
-		else if (event.code == "ArrowUp" || event.code == "KeyW")
+			this.keyUpStatus = "released";
+		}
+		else if (event.code == "ArrowUp" || event.code == "KeyW") {
 			this.keyUpStatus = "pressed";
+			this.keyDownStatus = "released";
+		}
 		this.#sendkeyStatus();
 	};
 
