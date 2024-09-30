@@ -66,6 +66,7 @@ def get_user_profile_data(user):
     	"tournaments_won": user_profile.tournaments_won,
     	"tournaments_lost": user_profile.tournaments_lost,
     	"tournaments_played": user_profile.tournaments_played,
-    	"tournaments_win_rate": user_profile.tournaments_win_rate
+    	"tournaments_win_rate": user_profile.tournaments_win_rate,
+        "online": True if user_profile.online else False
     }
     return user_profile_data
