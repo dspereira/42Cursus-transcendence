@@ -25,8 +25,8 @@ export default class Game {
 		this.lastStartCounterValue = null;
 		this.winnerUsername = null;
 		this.surrender = null;
-		this.player1 = null;
-		this.player2 = null;
+		this.player1 = "player1";
+		this.player2 = "player2";
 		this.isFullScreen = null;
 		this.scoreFont = this.width * 0.25;
 		this.startCounterFontStore = this.width * 0.25;
@@ -36,6 +36,11 @@ export default class Game {
 		this.ballRadius = this.#getValueFromPercentage(0.7, this.width);
 		this.paddleWidth = this.#getValueFromPercentage(0.5, this.width);
 		this.paddleHeigth = this.#getValueFromPercentage(13, this.height);
+		this.alwaysShowPlayerNames = false;
+	}
+
+	setAlwaysShowPlayerNames(isAlwaysVisible) {
+		this.alwaysShowPlayerNames = isAlwaysVisible;
 	}
 
 	updateState(data) {
@@ -73,6 +78,10 @@ export default class Game {
 		this.isFullScreen = isFullScreen;
 	}
 
+	draw() {
+		this.#drawAll();
+	}
+
 	start() {
 		this.#animate();
 	}
@@ -100,8 +109,10 @@ export default class Game {
 	#animate() {
 		this.#drawAll();
 		this.animation = window.requestAnimationFrame(this.#animate.bind(this));
-		if (this.winnerUsername)
+		if (this.winnerUsername) {
 			this.stop();
+			this.winnerUsername = null;
+		}
 	}
 
 	#drawAll() {
@@ -132,7 +143,6 @@ export default class Game {
 	#drawScore(score, side) {
 		if (!score && !side)
 			return ;
-
 		this.ctx.font = `${this.scoreFont}px VT323`;
 		this.ctx.fillStyle = this.colors.score;
 		if (side == "left")
@@ -215,7 +225,7 @@ export default class Game {
 	}
 
 	#drawPlayers() {
-		if (!this.isFullScreen)
+		if (!this.isFullScreen && !this.alwaysShowPlayerNames)
 			return ;
 		this.ctx.fillStyle = this.colors.score;
 		let pos = this.#calculatePlayersPosition(this.player1, "left");

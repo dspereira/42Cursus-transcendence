@@ -11,6 +11,7 @@ import PageInitial from "../page-components/page-initial.js";
 import PageLogout from "../page-components/page-logout.js";
 import PageFriends from "../page-components/page-friends.js";
 import PagePlay from "../page-components/page-play.js";
+import PageLocalPlay from "../page-components/page-local-play.js";
 import PageTournamentInfo from "../page-components/page-tournament-info.js";
 import PageEmailVerification from "../page-components/page-email-verification.js";
 import PageEmailSent from "../page-components/page-email-sent.js";
@@ -45,6 +46,7 @@ import TourneyInvitesReceived from "../components/tourney-invites-received.js";
 import TourneyInviteCard from "../components/tourney-invite-card.js";
 import TournamentCard from "../components/tournament-card.js";
 import TourneyInfo from "../components/tourney-info.js";
+import LocalGame from "../components/local-game.js";
 import TfaForm from "../components/tfa-form.js";
 
 // Others
@@ -53,17 +55,18 @@ import checkUserLoginState from "../utils/checkUserLoginState.js";
 import { getHtmlElm } from "../utils/getHtmlElmUtils.js";
 
 const routes = {
-	"/initial"				: getHtmlElm(PageInitial),
-	"/"						: getHtmlElm(PageHome),
-	"/login"				: getHtmlElm(PageLogin),
-	"/signup"				: getHtmlElm(PageSignup),
-	"/logout"				: getHtmlElm(PageLogout),
-	"/profile"				: getHtmlElm(PageProfile),
-	"/chat"					: getHtmlElm(PageChat),
-	"/tournaments"			: getHtmlElm(PageTournaments),
-	"/configurations"		: getHtmlElm(PageConfigs),
-	"/friends"				: getHtmlElm(PageFriends),
-	"/play"					: getHtmlElm(PagePlay),
+	"/initial"			: getHtmlElm(PageInitial),
+	"/"					: getHtmlElm(PageHome),
+	"/login"			: getHtmlElm(PageLogin),
+	"/signup"			: getHtmlElm(PageSignup),
+	"/logout"			: getHtmlElm(PageLogout),
+	"/profile"			: getHtmlElm(PageProfile),
+	"/chat"				: getHtmlElm(PageChat),
+	"/tournaments"		: getHtmlElm(PageTournaments),
+	"/configurations"	: getHtmlElm(PageConfigs),
+	"/friends"			: getHtmlElm(PageFriends),
+	"/play"				: getHtmlElm(PagePlay),
+	"/localplay"		: getHtmlElm(PageLocalPlay),
 }
 
 const dynamicRoutes = {
@@ -72,13 +75,11 @@ const dynamicRoutes = {
 	"/email-verification": key => `<${PageEmailVerification.componentName} token="${key}"></${PageEmailVerification.componentName}>`,
 }
 
-const publicRoutes = ["/initial", "/login", "/signup", "/email-verification"];
-
+const publicRoutes = ["/initial", "/login", "/signup", "/email-verification", "/localplay"];
 const initialRoute = "/initial";
 
 const PUBLIC_ACCESS = "public";
 const PRIVATE_ACCESS = "private";
-
 
 // remover o page ready state
 
