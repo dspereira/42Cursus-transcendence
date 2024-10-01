@@ -2,11 +2,8 @@ import { redirect } from "../js/router.js";
 import { callAPI } from "../utils/callApiUtils.js";
 import isValidUsername from "../utils/usernameValidationUtils.js";
 import { render } from "../js/router.js";
-//import PageEmailSent from "../page-components/page-email-sent.js";
-
 import { getHtmlElm } from "../utils/getHtmlElmUtils.js";
 import PageEmailSent from "../page-components/page-email-sent.js";
-
 
 const styles = `
 form {
@@ -64,6 +61,22 @@ h1 {
 	width: 100%;
 }
 
+.invalid{
+	color: #D9534F;	
+}
+
+.valid {
+	color: #5CB85C;
+}
+
+.bi-x-lg, .bi-check-lg {
+	margin-right: 10px;
+}
+
+.check-pass-field {
+	margin: 0px;
+	padding: 0px;
+}
 `;
 
 const getHtml = function(data) {
@@ -84,6 +97,14 @@ const getHtml = function(data) {
 				<i class="icon right-icon bi bi-eye-slash eye-icon"></i>
 				<input type="password" class="input-padding form-control form-control-lg" id="password" placeholder="Password" maxlength="128">
 			</div>
+			<div class="password-msg hide">
+				<div class="password-validation-msg invalid" id="length"><i class="bi bi-x-lg"></i>Between 8 and 25 characters</div>
+				<div class="password-validation-msg valid" id="lower_character"><i class="bi bi-check-lg"></i>At least one lowercase character</div>
+				<div class="password-validation-msg invalid" id="upper_character"><i class="bi bi-x-lg"></i>At least one uppercase character</div>
+				<div class="password-validation-msg valid" id="digit"><i class="bi bi-check-lg"></i>At least one number</div>
+				<div class="password-validation-msg invalid" id="special_character"><i class="bi bi-x-lg"></i>At least one special character (@, #, $, %, etc.)</div>
+				<div class="password-validation-msg invalid hide" id="white_character"><i class="bi bi-x-lg"></i>Can't have white characters</div>
+			</div>
 			<div class="form-group">
 				<i class="icon left-icon bi bi-key"></i>
 				<i class="icon right-icon bi bi-eye-slash eye-icon"></i>
@@ -97,6 +118,7 @@ const getHtml = function(data) {
 			</div>
 		</form>
 	`;
+
 	return html;
 }
 
@@ -124,6 +146,9 @@ export default class SignupForm extends HTMLElement {
 			this.html.classList.add(`${this.elmtId}`);
 		}
 		this.submitBtn = this.html.querySelector(".btn-submit");
+		this.passwordInp = this.html.querySelector("#password");
+		this.passwordMsg = this.html.querySelector(".password-msg");
+		this.passValidationsElms = this.#getValidationMenssagesObj();
 	}
 
 	#styles() {
@@ -146,6 +171,7 @@ export default class SignupForm extends HTMLElement {
 		this.#showHidePassword();
 		this.#submit();
 		this.#redirectToSignInForm();
+		this.#passwordInputEvents();
 	}
 
 	#showHidePassword() {
@@ -236,7 +262,40 @@ export default class SignupForm extends HTMLElement {
 		else {
 			this.#handleApiFormErrors(res.status, data.message);
 			this.submitBtn.disabled = false;
+			if (data.hasOwnProperty("requirements")) {
+				let key, value;
+				for (key in data.requirements) {
+					value = data.requirements[key];
+					this.#updatePasswordValidations(this.passValidationsElms[key], value);
+				}
+			}
 		}
+	}
+
+	#updatePasswordValidations(elm, isValid) {
+		const icon = elm.querySelector("i");
+
+		elm.classList.remove("valid");
+		elm.classList.remove("invalid");
+		icon.classList.remove("bi-x-lg");
+		icon.classList.remove("bi-check-lg");
+		if (!isValid) {
+			elm.classList.add("invalid");
+			icon.classList.add("bi-x-lg");
+		}
+		else {
+			elm.classList.add("valid");
+			icon.classList.add("bi-check-lg");
+		}
+	}
+
+	#getValidationMenssagesObj() {
+		const obj = {};
+		const elms = this.html.querySelectorAll(".password-validation-msg");
+		elms.forEach((elm) => {
+			obj[elm.id] = elm;
+		});
+		return obj;
 	}
 
 	#setInvalidInputStyle(inputId) {
@@ -310,6 +369,15 @@ export default class SignupForm extends HTMLElement {
 			else if (message.indexOf("Email") > -1)
 				this.#setInvalidInputStyle("email");
 		} 
+	}
+
+	#passwordInputEvents() {
+		this.passwordInp.addEventListener("input", () => {
+			if (this.passwordInp.value.length)
+				this.passwordMsg.classList.remove("hide");
+			else
+				this.passwordMsg.classList.add("hide");
+		});
 	}
 }
 
