@@ -2,7 +2,7 @@ import jwt
 
 class JwtData:
 	def __init__(self, token: str):
-		self.__token = token
+		self.__token = token.strip() if token else None
 		self.__decode_token()
 
 	def __str__(self):

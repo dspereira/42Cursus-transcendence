@@ -20,6 +20,8 @@ from .two_factor import initiate_two_factor_authentication
 from .two_factor import reset_wait_time_codes
 from user_auth.auth_utils import login as user_login
 
+from transcendence.settings import DEBUG
+
 otp_user_settings_model = ModelManager(OtpUserOptions)
 user_model = ModelManager(User)
 
@@ -105,29 +107,30 @@ def generate_user_email_code(request):
 @accepted_methods(["POST"])
 def validateOTP(request):
 	if request:
-		if not request.body:
-			return JsonResponse({"message": "Error: Empty Body Request!"}, status=400)
-		body_unicode = request.body.decode('utf-8')
-		req_data = json.loads(body_unicode)
-		if not is_valid_input_code(req_data.get('code')):
-			return JsonResponse({"message": "Error: Invalid OTP Code!"}, status=409)
-		code = str(req_data['code'])
-		if not is_valid_otp_method(req_data.get('method')):
-			return JsonResponse({"message": "Error: Invalid OTP Method!"}, status=409)
-		tfa_method = str(req_data['method'])
 		if request.tfa_data:
+			if not request.body:
+				return JsonResponse({"message": "Error: Empty Body Request!"}, status=400)
 			user = user_model.get(id=request.tfa_data.sub)
 			if not user:
 				return JsonResponse({"message": "Error: Invalid Users!"}, status=409)
-			is_valid_otp_status = False
-			if tfa_method == "email" or tfa_method == "phone":
-				if is_valid_otp(code, user):
-					is_valid_otp_status = True
-			else:
-				if is_valid_otp_qr_code(code, user):
-					is_valid_otp_status = True
-			if not is_valid_otp_status:
-				return JsonResponse({"message": "Invalid Submited Code!"}, status=409)
+			body_unicode = request.body.decode('utf-8')
+			req_data = json.loads(body_unicode)
+			if not is_valid_input_code(req_data.get('code')):
+				return JsonResponse({"message": "Error: Invalid OTP Code!"}, status=409)
+			if not DEBUG:
+				code = str(req_data['code'])
+				if not is_valid_otp_method(req_data.get('method')):
+					return JsonResponse({"message": "Error: Invalid OTP Method!"}, status=409)
+				tfa_method = str(req_data['method'])
+				is_valid_otp_status = False
+				if tfa_method == "email" or tfa_method == "phone":
+					if is_valid_otp(code, user):
+						is_valid_otp_status = True
+				else:
+					if is_valid_otp_qr_code(code, user):
+						is_valid_otp_status = True
+				if not is_valid_otp_status:
+					return JsonResponse({"message": "Invalid Submited Code!"}, status=409)
 			reset_wait_time_codes(user)
 			response = user_login(JsonResponse({"message": "OTP validated with success!"}, status=200), user)
 			response.delete_cookie('two_factor_auth', path="/api/two-factor-auth")

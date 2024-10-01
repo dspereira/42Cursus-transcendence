@@ -105,7 +105,7 @@ const getHtml = function(data) {
 	const html = `
 		<div class="form-group search">
 			<i class="search-icon bi bi-search"></i>
-			<input type="text" class="form-control form-control-sm" id="search" placeholder="${data.langDict.search_bar_placeholder_search}" maxlength="50">
+			<input type="text" class="form-control form-control-sm" id="search" placeholder="${data.langDict.search_bar_placeholder_search}" maxlength="15">
 		</div>
 		<div class="search-list scroll hide"></div>
 		<div class="friend-list scroll"></div>

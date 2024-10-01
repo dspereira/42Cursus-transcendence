@@ -8,4 +8,5 @@ cryptography>=42.0, <43.0
 python-dotenv>=1.0, <2.0
 twilio>=9.0, <10.0
 bleach>=6.0, <7.0
+uuid7>=0.0, <1.0
 pillow

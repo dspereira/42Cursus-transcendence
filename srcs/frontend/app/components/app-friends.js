@@ -121,7 +121,7 @@ const getHtml = function(data) {
 				<div class="search-bar">
 					<div class="form-group">
 						<i class="search-icon bi bi-search"></i>
-						<input type="text" class="form-control form-control-md" id="search" placeholder="${data.langDict.search_bar_placeholder_search}" maxlength="50">
+						<input type="text" class="form-control form-control-md" id="search" placeholder="${data.langDict.search_bar_placeholder_search}" maxlength="15">
 					</div>
 				</div>
 				<div class="user-list"></div>
@@ -344,7 +344,7 @@ export default class AppFriends extends HTMLElement {
 		searchBar.innerHTML = `
 		<div class="form-group">
 			<i class="search-icon bi bi-search"></i>
-			<input type="text" class="form-control form-control-md" id="search" placeholder="${placeholder}" maxlength="50">
+			<input type="text" class="form-control form-control-md" id="search" placeholder="${placeholder}" maxlength="15">
 		</div>`;
 
 		const inp = searchBar.querySelector("input");
@@ -372,14 +372,12 @@ export default class AppFriends extends HTMLElement {
 
 		callAPI("GET", `http://127.0.0.1:8000${path}?key=${value}`, null, (res, data) => {
 			if (res.ok) {
-				console.log(data);
 				if (type=="search" && data.users)
 					this.#insertUsersCards(data.users, "search");
 				else if (type=="friends" && data.friends)
 					this.#insertUsersCards(data.friends, "friends");
-				else {
+				else
 					userList.innerHTML = `<h1>${this.data.langDict.username_not_found}</h1>`;
-				}
 			}
 		});
 	}

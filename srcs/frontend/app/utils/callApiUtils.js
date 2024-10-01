@@ -10,9 +10,7 @@ export const callAPI = async function (method, url, data, callback_sucess, callb
 	if (!resApi.error && resApi.data && resApi.res) {
 		if (resApi.res.status == 401 || ("logged_in" in resApi.data && resApi.data.logged_in == false)) {
 			let resRefresh = await fetchApi(refreshMethod, refreshUrl, null);
-			if (resRefresh && resRefresh.ok && !resRefresh.res.ok || resRefresh.error)
-				resRefresh = await fetchApi(refreshMethod, refreshUrl, null);
-			if (resRefresh && resRefresh.data && resRefresh.data.message == "success") {
+			if (resRefresh && resRefresh.res && resRefresh.res.ok && resRefresh.data && resRefresh.data.message == "success") {
 				stateManager.setState("hasRefreshToken", true);
 				stateManager.setState("hasRefreshToken", false);
 				chatWebSocket.close();

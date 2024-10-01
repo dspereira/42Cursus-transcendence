@@ -93,7 +93,7 @@ const getHtml = function(data) {
 					<div class="search-bar">
 						<div class="form-group">
 							<i class="search-icon bi bi-search"></i>
-							<input type="text" class="form-control form-control-md" id="search" placeholder="${data.langDict.search_bar_placeholder_search}" maxlength="50">
+							<input type="text" class="form-control form-control-md" id="search" placeholder="${data.langDict.search_bar_placeholder_search}" maxlength="15">
 						</div>
 					</div>
 					<div><i class="bi bi-arrow-clockwise refresh-icon"></i></div>
@@ -263,8 +263,6 @@ export default class TourneyInviter extends HTMLElement {
 			queryParam = `?key=${key}`;
 
 		callAPI("GET", `http://127.0.0.1:8000/api/tournament/friend-list/${queryParam}`, null, (res, data) => {
-			console.log(res);
-			console.log(data);
 			if (res.ok) {
 				this.#createFriendsList(data.friends);
 				this.#selectFriendEvent();
@@ -274,10 +272,8 @@ export default class TourneyInviter extends HTMLElement {
 
 	#getListPendingInvites() {
 		callAPI("GET", `http://127.0.0.1:8000/api/tournament/invited-friends/`, null, (res, data) => {
-			if (res.ok && data) {
-				console.log(data);
+			if (res.ok && data)
 				this.#createInvitesSendList(data.invited_users);
-			}
 		});
 	}	
 

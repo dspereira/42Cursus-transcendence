@@ -268,8 +268,6 @@ export default class TfaForm extends HTMLElement {
 	}
 
 	#keyUpHandler = (event) => {
-		console.log(event.key);
-
 		this.#cleanNonNumericInputs();
 		this.#backspaceKey(event.key);
 		this.#escapeKey(event.key);
@@ -282,7 +280,6 @@ export default class TfaForm extends HTMLElement {
 	}
 
 	#keyEnterHandler = (event) => {
-		console.log(event.key);
 		if (event.key.toLowerCase() == "enter") {
 			if(!this.submitBtn.disabled)
 				this.html.querySelector("#tfa-code").requestSubmit();
