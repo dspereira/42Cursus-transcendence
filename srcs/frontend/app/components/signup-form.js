@@ -1,6 +1,10 @@
-import {redirect} from "../js/router.js";
-import {callAPI} from "../utils/callApiUtils.js";
+import { redirect } from "../js/router.js";
+import { callAPI } from "../utils/callApiUtils.js";
 import { colors } from "../js/globalStyles.js";
+import isValidUsername from "../utils/usernameValidationUtils.js";
+import { render } from "../js/router.js";
+import { getHtmlElm } from "../utils/getHtmlElmUtils.js";
+import PageEmailSent from "../page-components/page-email-sent.js";
 
 const styles = `
 form {
@@ -140,6 +144,22 @@ input:-webkit-autofill, input:-webkit-autofill:hover, input:-webkit-autofill:foc
 	transition: background-color 5000s ease-in-out 0s;
 	box-shadow: inset 0 0 20px 20px #23232329;
 }
+.invalid{
+	color: #D9534F;	
+}
+
+.valid {
+	color: #5CB85C;
+}
+
+.bi-x-lg, .bi-check-lg {
+	margin-right: 10px;
+}
+
+.password-validation-msg {
+	margin: 0px;
+	padding: 0px;
+}
 `;
 
 const getHtml = function(data) {
@@ -156,21 +176,29 @@ const getHtml = function(data) {
 					<div class="alert alert-danger hide" role="alert"></div>
 					<div class="form-group">
 						<i class="icon left-icon bi-envelope"></i>
-						<input type="text" class="input-padding form-control form-control-lg" id="email" placeholder="Email" maxlength="100">
+						<input type="text" class="input-padding form-control form-control-lg" id="email" placeholder="Email" maxlength="254">
 					</div>
 					<div class="form-group">
 						<i class="icon left-icon bi-person"></i>
-						<input type="text" class="input-padding form-control form-control-lg" id="username" placeholder="Username" maxlength="30">
+						<input type="text" class="input-padding form-control form-control-lg" id="username" placeholder="Username" maxlength="15">
 					</div>
 					<div class="form-group">
 						<i class="icon left-icon bi bi-key"></i>
 						<i class="icon right-icon bi bi-eye-slash eye-icon"></i>
-						<input type="password" class="input-padding form-control form-control-lg" id="password" placeholder="Password" maxlength="128">
+						<input type="password" class="input-padding form-control form-control-lg" id="password" placeholder="Password" maxlength="25">
+			</div>
+			<div class="password-msg hide">
+				<div class="password-validation-msg invalid" id="length"><i class="bi bi-x-lg"></i>Between 8 and 25 characters</div>
+				<div class="password-validation-msg valid" id="lower_character"><i class="bi bi-check-lg"></i>At least one lowercase character</div>
+				<div class="password-validation-msg invalid" id="upper_character"><i class="bi bi-x-lg"></i>At least one uppercase character</div>
+				<div class="password-validation-msg valid" id="digit"><i class="bi bi-check-lg"></i>At least one number</div>
+				<div class="password-validation-msg invalid" id="special_character"><i class="bi bi-x-lg"></i>At least one special character (@, #, $, %, etc.)</div>
+				<div class="password-validation-msg invalid hide" id="white_character"><i class="bi bi-x-lg"></i>Can't have white characters</div>
 					</div>
 					<div class="form-group">
 						<i class="icon left-icon bi bi-key"></i>
 						<i class="icon right-icon bi bi-eye-slash eye-icon"></i>
-						<input type="password" class="input-padding form-control form-control-lg" id="confirm-password" placeholder="Confirm Password" maxlength="128">
+						<input type="password" class="input-padding form-control form-control-lg" id="confirm-password" placeholder="Confirm Password" maxlength="25">
 					</div>
 					<div>
 						<button type="submit" class="btn btn-primary btn-submit">Sign Up</button>
@@ -182,7 +210,17 @@ const getHtml = function(data) {
 			</div>
 		</div>
 	`;
+
 	return html;
+}
+
+const password_requirements = {
+	length: password => password.length >= 8 && password.length <= 25,
+	lower_character: password => /[a-z]/.test(password),
+	upper_character: password => /[A-Z]/.test(password),
+	special_character: password => /[!@#$%^&*(),.?":{}|<>]/.test(password),
+	digit: password => /[0-9]/.test(password),
+	white_character: password => !/\s/.test(password)
 }
 
 export default class SignupForm extends HTMLElement {
@@ -208,6 +246,10 @@ export default class SignupForm extends HTMLElement {
 			this.styles.textContent = this.#styles();
 			this.html.classList.add(`${this.elmtId}`);
 		}
+		this.submitBtn = this.html.querySelector(".btn-submit");
+		this.passwordInp = this.html.querySelector("#password");
+		this.passwordMsg = this.html.querySelector(".password-msg");
+		this.passValidationsElms = this.#getValidationMenssagesObj();
 	}
 
 	#styles() {
@@ -230,6 +272,7 @@ export default class SignupForm extends HTMLElement {
 		this.#showHidePassword();
 		this.#submit();
 		this.#redirectToSignInForm();
+		this.#passwordInputEvents();
 	}
 
 	#showHidePassword() {
@@ -270,11 +313,6 @@ export default class SignupForm extends HTMLElement {
 		return true;
 	}
 
-	#isValidUsername(username) {
-		let regex = /^[a-zA-Z0-9_-]+$/;
-		return regex.test(username);
-	}
-
 	#getInvalidFields(data) {
 		const invalidFilds = {};
 	
@@ -283,8 +321,10 @@ export default class SignupForm extends HTMLElement {
 				invalidFilds[key] = "empty";
 			else if (key === "email" && !this.#isValidEmail(value))
 				invalidFilds.email = "invalid";
-			else if (key === "username" && !this.#isValidUsername(value))
+			else if (key === "username" && !isValidUsername(value))
 				invalidFilds.username = "invalid";
+			else if (!this.#validatePassword())
+				invalidFilds.password = "invalid";
 		}
 		if (!invalidFilds.password && !invalidFilds.confirmPassword) {
 			if (data.password !== data.confirmPassword) {
@@ -306,11 +346,14 @@ export default class SignupForm extends HTMLElement {
 		const signupForm = this.html.querySelector("#signup-form");
 		signupForm.addEventListener("submit", (event) => {
 			event.preventDefault();
+			this.submitBtn.disabled = true;
 			const dataForm = this.#getdInputData();
 			const invalidFilds = this.#getInvalidFields(dataForm);
 			this.#removeAllInvalidStyles();
-			if (Object.keys(invalidFilds).length)
+			if (Object.keys(invalidFilds).length) {
 				this.#setAllFormErrors(invalidFilds);
+				this.submitBtn.disabled = false;
+			}
 			else
 				callAPI("POST", "http://127.0.0.1:8000/api/auth/register", dataForm, this.#apiResHandlerCalback);
 		});
@@ -318,9 +361,48 @@ export default class SignupForm extends HTMLElement {
 
 	#apiResHandlerCalback = (res, data) => {
 		if (res.ok && data.message === "success")
-			redirect("/");
-		else
+			render(getHtmlElm(PageEmailSent));
+		else {
 			this.#handleApiFormErrors(res.status, data.message);
+			this.submitBtn.disabled = false;
+			if (data.hasOwnProperty("requirements")) {
+				let key, value;
+				for (key in data.requirements) {
+					value = data.requirements[key];
+					this.#updatePasswordValidations(this.passValidationsElms[key], value);
+				}
+			}
+		}
+	}
+
+	#updatePasswordValidations(elm, isValid) {
+		const icon = elm.querySelector("i");
+
+		elm.classList.remove("valid");
+		elm.classList.remove("invalid");
+		icon.classList.remove("bi-x-lg");
+		icon.classList.remove("bi-check-lg");
+		if (!isValid) {
+			elm.classList.add("invalid");
+			icon.classList.add("bi-x-lg");
+			if (elm.id == "white_character")
+				elm.classList.remove("hide");
+		}
+		else {
+			elm.classList.add("valid");
+			icon.classList.add("bi-check-lg");
+			if (elm.id == "white_character")
+				elm.classList.add("hide");
+		}
+	}
+
+	#getValidationMenssagesObj() {
+		const obj = {};
+		const elms = this.html.querySelectorAll(".password-validation-msg");
+		elms.forEach((elm) => {
+			obj[elm.id] = elm;
+		});
+		return obj;
 	}
 
 	#setInvalidInputStyle(inputId) {
@@ -371,13 +453,15 @@ export default class SignupForm extends HTMLElement {
 		this.#showAlertMessage();
 		for (const [key, value] of Object.entries(invalidFilds)) {
 			this.#setInvalidInputStyle(key);
-			if (key === "email" && value === "invalid")
+			if (key == "email" && value == "invalid")
 				this.#updateAlertMessage("Invalid email");
-			else if (key === "username" && value === "invalid")
+			else if (key == "username" && value == "invalid")
 				this.#updateAlertMessage("Invalid username");
-			else if (key === "password" && value === "unmatch")
+			else if (key == "password" && value == "invalid")
+				this.#updateAlertMessage("Invalid password");
+			else if (key == "password" && value == "unmatch")
 				this.#updateAlertMessage("Unmatched passwords");
-			else if (value === "empty")
+			else if (value == "empty")
 				emptyFilds = true;
 		}
 		if (emptyFilds)
@@ -393,7 +477,35 @@ export default class SignupForm extends HTMLElement {
 				this.#setInvalidInputStyle("username");
 			else if (message.indexOf("Email") > -1)
 				this.#setInvalidInputStyle("email");
+			else if (message.indexOf("Password") > -1)
+				this.#setInvalidInputStyle("password");
 		} 
+	}
+
+	#passwordInputEvents() {
+		this.passwordInp.addEventListener("input", () => {
+			if (this.passwordInp.value.length) {
+				this.passwordMsg.classList.remove("hide");
+				if (this.#validatePassword(this.passwordInp.value))
+					this.passwordMsg.classList.add("hide");	
+			}
+			else
+				this.passwordMsg.classList.add("hide");
+		});
+	}
+
+	#validatePassword(password) {
+		let pass = password;
+		if (!password)
+			pass = this.passwordInp.value;
+			
+		let isValid = true;
+		for (let key in password_requirements) {
+			this.#updatePasswordValidations(this.passValidationsElms[key], password_requirements[key](pass));
+			if (!password_requirements[key](pass))
+				isValid = false;
+		}
+		return isValid;
 	}
 }
 

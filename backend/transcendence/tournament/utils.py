@@ -3,6 +3,9 @@ from custom_utils.models_utils import ModelManager
 from user_profile.aux import get_image_url
 from datetime import datetime
 from django.db.models import Q
+from asgiref.sync import async_to_sync
+from live_chat.models import ChatRoom, Message
+from django.db.models import Q
 import random
 import math
 import re
@@ -17,14 +20,19 @@ from custom_utils.requests_utils import REQ_STATUS_PENDING, REQ_STATUS_ABORTED, 
 from custom_utils.requests_utils import update_request_status
 from custom_utils.requests_utils import is_valid_request
 from .consts import *
-from game.utils import GAME_STATUS_CREATED, GAME_STATUS_FINISHED
-from friendships.friendships import get_single_user_info
+from game.utils import GAME_STATUS_CREATED, GAME_STATUS_FINISHED, GAME_STATUS_SURRENDER
+from friendships.friendships import get_single_user_info, get_friendship
+from custom_utils.blitzpong_bot_utils import send_message
+from user_settings.models import UserSettings
 
 tournament_requests_model = ModelManager(TournamentRequests)
 tournament_players_model = ModelManager(TournamentPlayers)
 user_profile_model = ModelManager(UserProfileInfo)
+user_settings_model = ModelManager(UserSettings)
 games_model = ModelManager(Games)
 user_model = ModelManager(User)
+room_model = ModelManager(ChatRoom)
+msg_model = ModelManager(Message)
 
 def get_user_profile(user):
 	if user:
@@ -95,10 +103,11 @@ def get_tournament_list(user):
 		for tournament in tournaments:
 			current_tournament = tournament.tournament
 			if current_tournament.status == TOURNAMENT_STATUS_FINISHED:
+				winner = get_tournament_winner(current_tournament)
 				tournament_info = {
 					"id": current_tournament.id,
 					'name': current_tournament.name,
-					"is_winner": is_user_tournament_winner(user.id, get_tournament_winner(current_tournament)['id']),
+					"is_winner": is_user_tournament_winner(user.id, winner['id'] if winner else 0),
 					"creation_date": current_tournament.created
 				}
 				tournaments_list.append(tournament_info)
@@ -220,9 +229,11 @@ def create_tournament_games(tournament):
 
 def get_next_game(tournament, user):
 	tournament_games = games_model.filter(tournament=tournament)
-	for game in tournament_games:
-		if game.status == GAME_STATUS_CREATED and (game.user1 == user or game.user2 == user):
-			return game
+	if tournament_games:
+		for game in tournament_games:
+			if game.user1 and game.user2:
+				if game.status == GAME_STATUS_CREATED and (game.user1 == user or game.user2 == user):
+					return game
 	return None
 
 def is_tournament_finished(tournament):
@@ -231,7 +242,7 @@ def is_tournament_finished(tournament):
 		tournament_games = tournament_games.order_by('id')
 		tournament_games = list(tournament_games)
 		last_game = tournament_games[-1]
-		if last_game.status == GAME_STATUS_FINISHED:
+		if last_game.status == GAME_STATUS_FINISHED or last_game.status == GAME_STATUS_SURRENDER:
 			return last_game
 	return None
 
@@ -280,7 +291,7 @@ def get_tournament_winner(tournament):
 		tournament_games = tournament_games.order_by("id")
 		tournament_games = list(tournament_games)
 		last_game = tournament_games[-1]
-		if last_game.status == GAME_STATUS_FINISHED:
+		if last_game.status == GAME_STATUS_FINISHED or last_game.status == GAME_STATUS_SURRENDER:
 			winner = get_single_user_info(get_user_profile(last_game.winner))
 	return winner
 
@@ -333,3 +344,53 @@ def update_users_tournament_stats(tournament):
 				player_profile.tournaments_lost = player_profile.tournaments_lost + 1
 			player_profile.tournaments_win_rate = player_profile.tournaments_won / player_profile.tournaments_played * 100
 			player_profile.save()
+
+def send_games_notifications(tournament):
+	bot_user = user_model.get(username="BlitzPong")
+	tournament_games = games_model.filter(tournament=tournament, notifications_sent=False, user1__isnull=False, user2__isnull=False, status=GAME_STATUS_CREATED)
+	if tournament_games:
+		for game in tournament_games:
+			send_game_notif(bot_user, game)
+			game.notifications_sent = True
+			game.save()
+
+def send_game_notif(bot_user, game):
+	user1 = game.user1
+	user2 = game.user2
+	friendship_user1 = get_friendship(bot_user, user1)
+	friendship_user2 = get_friendship(bot_user, user2)
+	if not friendship_user1 or not friendship_user2:
+		return None
+	group_name1 = str(bot_user.id) + "_" + str(user1.id)
+	group_name2 = str(bot_user.id) + "_" + str(user2.id)
+	room1 = room_model.get(name=group_name1)
+	room2 = room_model.get(name=group_name2)
+	if not room1 or not room2:
+		return None
+	message1 = generate_next_game_message(user1, user2.username)
+	message2 = generate_next_game_message(user2, user1.username)
+	message_obj_1 = msg_model.create(user=bot_user, room=room1, content=message1)
+	message_obj_2 = msg_model.create(user=bot_user, room=room2, content=message2)
+	if not message_obj_1 or not message_obj_2:
+		return None
+	async_to_sync(send_message)(bot_user, friendship_user1, group_name1, message_obj_1)
+	async_to_sync(send_message)(bot_user, friendship_user2, group_name2, message_obj_2)
+
+def generate_next_game_message(user, against_username):
+	default_message = "You have a new tournament game."
+	if not user:
+		return default_message
+	user_settings = user_settings_model.get(user=user)
+	message = None
+	if user_settings:
+		user_language = user_settings.language
+		if user_language:
+			if user_language == "pt":
+				message = f"Tens um novo jogo de torneio contra {against_username}."
+			elif user_language == "es":
+				message = f"¡Tienes un nuevo juego de torneo contra {against_username}!"
+			else:
+				message = f"You have a new tournament game against {against_username}."
+	if not message:
+		return default_message
+	return message

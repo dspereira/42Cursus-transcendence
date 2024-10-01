@@ -1,6 +1,10 @@
 import { adjustContent } from "../utils/adjustContent.js";
 import stateManager from "../js/StateManager.js";
+<<<<<<< HEAD
 import { colors } from "../js/globalStyles.js";
+=======
+import { callAPI } from "../utils/callApiUtils.js";
+>>>>>>> main
 
 const styles = `
 	.invite-game {
@@ -140,8 +144,13 @@ export default class PagePlay extends HTMLElement {
 
 	#scripts() {
 		adjustContent(this.html.querySelector(".content"));
+<<<<<<< HEAD
 		this.#setInviteToGameEvent()
 		this.#errorMsgEvents();
+=======
+		this.#setInviteToGameEvent();
+		this.#inviteToPlayAndRedirectToLobby();
+>>>>>>> main
 	}
 
 	#setInviteToGameEvent() {
@@ -151,13 +160,12 @@ export default class PagePlay extends HTMLElement {
 		if (!btn && !page1 && !content)
 			return ;
 		btn.addEventListener("click", () => {
-
-			// api/game/game
 			content.removeChild(page1);
 			content.innerHTML = "<game-invite-send></game-invite-send>";
 		});
 	}
 
+<<<<<<< HEAD
 	#errorMsgEvents() {
 		stateManager.addEvent("errorMsg", (msg) => {
 			if (msg) {
@@ -178,6 +186,26 @@ export default class PagePlay extends HTMLElement {
 						<div class=alert-bar></div>
 					`;
 				mainDiv.insertBefore(alertCard, insertElement);
+=======
+	#inviteToPlayAndRedirectToLobby() {
+		const friendId = stateManager.getState("friendIdInvitedFromChat");
+		if (!friendId)
+			return ;
+
+		stateManager.setState("friendIdInvitedFromChat", null);
+		const data = {
+			invites_list: [`${friendId}`]
+		};
+
+		callAPI("POST", "http://127.0.0.1:8000/api/game/request/", data, (res, data) => {
+			if (res.ok) {
+				const contentElm = document.querySelector(".content");
+				contentElm.innerHTML = `
+				<app-lobby 
+					lobby-id="${stateManager.getState("userId")}"
+				></app-lobby>
+				`;
+>>>>>>> main
 			}
 		});
 	}

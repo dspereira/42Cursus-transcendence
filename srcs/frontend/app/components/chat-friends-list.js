@@ -173,7 +173,7 @@ const getHtml = function(data) {
 			<div class="search-container">
 				<div class="form-group search">
 					<i class="search-icon bi bi-search"></i>
-					<input type="text" class="form-control form-control-sm" id="search" placeholder="Search..." maxlength="50">
+					<input type="text" class="form-control form-control-sm" id="search" placeholder="Search..." maxlength="15">
 				</div>
 			</div>
 			<div class="search-list scroll hide"></div>

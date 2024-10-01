@@ -1,6 +1,12 @@
 import {redirect} from "../js/router.js";
 import {callAPI} from "../utils/callApiUtils.js";
 import { colors } from "../js/globalStyles.js"
+import { render } from "../js/router.js";
+import PageEmailResend from "../page-components/page-email-resend.js";
+import { getDynamicHtmlElm, getHtmlElm } from "../utils/getHtmlElmUtils.js";
+import Page2FA from "../page-components/page-2fa.js";
+
+const EMAIL_NOT_VERIFIED_MSG = 'Email not verified. Please verify your email.';
 
 const styles = `
 form {
@@ -140,6 +146,10 @@ input:-webkit-autofill, input:-webkit-autofill:hover, input:-webkit-autofill:foc
 	transition: background-color 5000s ease-in-out 0s;
 	box-shadow: inset 0 0 20px 20px #23232329;
 }
+.btn-resend-email {
+	width: 100%;
+}
+
 `;
 
 const getHtml = function(data) {
@@ -203,6 +213,9 @@ export default class LoginForm extends HTMLElement {
 			this.styles.textContent = this.#styles();
 			this.html.classList.add(`${this.elmtId}`);
 		}
+		this.signupBtn = this.html.querySelector(".btn-signup");
+		this.submitBtn = this.html.querySelector(".btn-submit");
+		this.resendEmailBtn = this.html.querySelector(".btn-resend-email");
 	}
 
 	#styles() {
@@ -241,8 +254,7 @@ export default class LoginForm extends HTMLElement {
 	}
 
 	#redirectToSignUpForm() {
-		const btn = this.html.querySelector(".btn-signup");
-		btn.addEventListener("click", (event) => {
+		this.signupBtn.addEventListener("click", (event) => {
 			redirect("/signup");
 		});
 	}
@@ -251,43 +263,49 @@ export default class LoginForm extends HTMLElement {
 		const loginForm = this.html.querySelector("#login-form");
 		loginForm.addEventListener("submit", (event) => {
 			event.preventDefault();
+			this.submitBtn.disabled = true;
 			const dataForm = {
 				username: this.html.querySelector('#email').value.trim(),
 				password: this.html.querySelector('#password').value.trim()
 			}
-			if (!dataForm.username || !dataForm.password)
-				this.#setInvalidCredentialsStyle();
+			if (!dataForm.username || !dataForm.password) {
+				this.#setLogInErrorStyles();
+				this.submitBtn.disabled = false;
+			}
 			else
 				callAPI("POST", "http://127.0.0.1:8000/api/auth/login", dataForm, this.#apiResHandlerCalback);
 		});
 	}
 
 	#apiResHandlerCalback = (res, data) => {
+		const value = this.html.querySelector('#email').value.trim();
 		if (res.ok && data.message === "success")
-			redirect("/");
-		else
-			this.#setInvalidCredentialsStyle();
+			render(getHtmlElm(Page2FA));
+			//redirect("/");
+		else if (res.status == 401 && data.message == EMAIL_NOT_VERIFIED_MSG)
+			render(getDynamicHtmlElm(PageEmailResend, value ,"key"));
+		else {
+			if (data && data.message)
+				this.#setLogInErrorStyles(data.message);
+			this.submitBtn.disabled = false;
+		}
 	}
 
-	#setInvalidCredentialsStyle() {
+	#setLogInErrorStyles(message) {
 		const inputs = this.html.querySelectorAll('input');
+		if (!inputs)
+			return ;
 		inputs.forEach(input => {
 			input.classList.add("is-invalid");
 		})
 		const alert = this.html.querySelector(".alert");
-		if (alert.classList.contains("hide"))
-		{
+		if (alert.classList.contains("hide")) {
 			alert.classList.add("show");
 			alert.classList.remove("hide");
 		}
-
+		if (message)
+			alert.innerHTML = message;
 	}
 }
 
 customElements.define("login-form", LoginForm);
-
-async function TextDecoderStream() {
-
-
-
-}

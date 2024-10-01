@@ -1,4 +1,4 @@
-const globalEvents = ["isLoggedIn", "chatSocket", "tournamentId", "idBrowser"];
+const globalEvents = ["isLoggedIn", "chatSocket", "tournamentId", "idBrowser", "friendIdInvitedFromChat"];
 
 class StateManager {
 
@@ -34,7 +34,11 @@ class StateManager {
 			tournamentGameLobby: null,
 			tournamentId: null,
 			isChatMsgReadyToSend: null,
+<<<<<<< HEAD
 			errorMsg: null
+=======
+			friendIdInvitedFromChat: null
+>>>>>>> main
 		}
 		this.stateEvents = {
 			sidePanel: [],
@@ -64,7 +68,11 @@ class StateManager {
 			finishedTournament: [],
 			tournamentId: [],
 			isChatMsgReadyToSend: [],
+<<<<<<< HEAD
 			errorMsg: []
+=======
+			friendIdInvitedFromChat: []
+>>>>>>> main
 		}
 
 		StateManager.instance = this;

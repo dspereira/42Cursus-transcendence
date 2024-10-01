@@ -125,6 +125,9 @@ export default class AppPlay extends HTMLElement {
 	}
 
 	disconnectedCallback() {
+		document.removeEventListener('keydown',this.#keyDownHandler);
+		document.removeEventListener('keyup',this.#keyUpHandler);
+		document.removeEventListener('fullscreenchange', this.#fullsCreenChangeEventHandler);
 		this.game.stop();
 		this.game = null;
 		gameWebSocket.close();
@@ -201,23 +204,30 @@ export default class AppPlay extends HTMLElement {
 		
 	}
 
-    #keyEvents() {
-        document.addEventListener('keydown', (event) => {
-            if (event.code == "ArrowDown" || event.code == "KeyS")
-                this.keyDownStatus = "pressed";
-            else if (event.code == "ArrowUp" || event.code == "KeyW")
-                this.keyUpStatus = "pressed";
-			this.#sendkeyStatus();
-        });
+	#keyDownHandler = (event) => {
+		if (event.code == "ArrowDown" || event.code == "KeyS") {
+			this.keyDownStatus = "pressed";
+			this.keyUpStatus = "released";
+		}
+		else if (event.code == "ArrowUp" || event.code == "KeyW") {
+			this.keyUpStatus = "pressed";
+			this.keyDownStatus = "released";
+		}
+		this.#sendkeyStatus();
+	};
 
-        document.addEventListener('keyup', (event) => {
-            if (event.code == "ArrowDown" || event.code == "KeyS")
-                this.keyDownStatus = "released";
-            else if (event.code == "ArrowUp" || event.code == "KeyW")
-                this.keyUpStatus = "released";
-			this.#sendkeyStatus();
-        })
-    }
+	#keyUpHandler = (event) => {
+		if (event.code == "ArrowDown" || event.code == "KeyS")
+			this.keyDownStatus = "released";
+		else if (event.code == "ArrowUp" || event.code == "KeyW")
+			this.keyUpStatus = "released";
+		this.#sendkeyStatus();
+	}
+
+	#keyEvents() {
+		document.addEventListener('keydown',this.#keyDownHandler);
+		document.addEventListener('keyup',this.#keyUpHandler);
+	}
 
 	#sendkeyStatus() {
 		gameWebSocket.send("up", this.keyUpStatus);
@@ -236,18 +246,8 @@ export default class AppPlay extends HTMLElement {
 		this.#setGameTimeToStartEvent();
 	}
 
-	/*
-		Color Pallets IDs
-		1: Classic Retro
-		2: Modern Neon
-		3: Ocean Vibes
-		4: Sunset Glow
-		5: Forest Retreat
-	*/
 	#getGameColorPallet() {
-		const queryParam = `?id=${1}`;
-
-		callAPI("GET", `http://127.0.0.1:8000/api/game/color_pallet/${queryParam}`, null, (res, data) => {
+		callAPI("GET", `http://127.0.0.1:8000/api/game/color_pallet/`, null, (res, data) => {
 			if (res.ok) {
 				if (data && data.color_pallet)
 					this.game.setColorPallet(data.color_pallet);
@@ -354,6 +354,17 @@ export default class AppPlay extends HTMLElement {
 		});
 	}
 
+	#fullsCreenChangeEventHandler = () => {
+		if (document.fullscreenElement)
+			this.isFullScreen = true;
+		else {
+			this.isFullScreen = false;
+			this.#resizeGameBoard();
+		}
+		this.#updateFullScreenButton();
+		this.game.setIsFullScreen(this.isFullScreen);
+	}
+
 	#FullScreenEvent() {
 		this.btnFullScreen.addEventListener("click", () => {
 			if (!this.isFullScreen && this.containerCanvas.requestFullscreen)
@@ -361,17 +372,7 @@ export default class AppPlay extends HTMLElement {
 			if (this.isFullScreen && document.exitFullscreen)
 				document.exitFullscreen();
 		});
-
-		document.addEventListener("fullscreenchange", () => {
-			if (document.fullscreenElement)
-				this.isFullScreen = true;
-			else {
-				this.isFullScreen = false;
-				this.#resizeGameBoard();
-			}
-			this.#updateFullScreenButton();
-			this.game.setIsFullScreen(this.isFullScreen);
-		});
+		document.addEventListener("fullscreenchange", this.#fullsCreenChangeEventHandler);
 	}
 
 	#btnFullScreenHover() {

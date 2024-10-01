@@ -28,6 +28,8 @@ pwd
 
 python3 manage.py makemigrations
 python3 manage.py migrate
+python3 manage.py create_blitzpong_bot
+python3 manage.py getCriptographerKeys
 
 deactivate || exit
 cd ../.. || exit

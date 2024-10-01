@@ -137,6 +137,7 @@ const styles = `
 
 const getHtml = function(data) {
 	const html = `
+<<<<<<< HEAD
 	<div class=main-container>
 	<div class=second-container>
 			<div class=title-container>
@@ -152,6 +153,13 @@ const getHtml = function(data) {
 		<div class=paddle id=right></div>
 		<div class="blur-test"></div>
 	</div>
+=======
+		<h1>Initial Page</h1>
+		<br>
+		<button type="button" class="btn btn-primary" id="login">Login</button>
+		<button type="button" class="btn btn-secondary" id="signup">SignUp</button>
+		<button type="button" class="btn btn-secondary" id="localplay">Local Play</button>
+>>>>>>> main
 	`;
 	return html;
 }
@@ -203,6 +211,7 @@ export default class PageInitial extends HTMLElement {
 	#scripts() {
 		const login = this.html.querySelector("#login");
 		const signup = this.html.querySelector("#signup");
+		const localplay = this.html.querySelector("#localplay");
 
 		login.addEventListener("click", (event) => {
 			redirect("/login");
@@ -210,6 +219,10 @@ export default class PageInitial extends HTMLElement {
 
 		signup.addEventListener("click", (event) => {
 			redirect("/signup"); 
+		})
+
+		localplay.addEventListener("click", (event) => {
+			redirect("/localplay"); 
 		})
 	}
 }
