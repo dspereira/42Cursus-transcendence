@@ -128,7 +128,7 @@ def get_new_email_wait_time(user):
 					wait_time_str = f"{math.floor(new_wait_time) + 1} minute(s)"
 	return wait_time_str
 
-def is_valid_password(password):
+def is_valid_password(password: str):
 	password_requirements = {
 		"length": False,
 		"lower_character": False,
@@ -156,6 +156,15 @@ def is_valid_password(password):
 		if not password_requirements[req]:
 			return password_requirements
 	return None
+
+def is_valid_email(email: str):
+	if email:
+		email_len = len(email)
+		if email_len >= 5 and email_len <= 254:
+			print("\nHere\n")
+			if re.match(r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{1,}$', email):
+				return True
+	return False
 
 def _generate_tokens(user_id):
 	token_gen = TokenGenerator(user_id)
