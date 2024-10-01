@@ -73,7 +73,7 @@ h1 {
 	margin-right: 10px;
 }
 
-.check-pass-field {
+.password-validation-msg {
 	margin: 0px;
 	padding: 0px;
 }
@@ -282,10 +282,14 @@ export default class SignupForm extends HTMLElement {
 		if (!isValid) {
 			elm.classList.add("invalid");
 			icon.classList.add("bi-x-lg");
+			if (elm.id == "white_character")
+				elm.classList.remove("hide");
 		}
 		else {
 			elm.classList.add("valid");
 			icon.classList.add("bi-check-lg");
+			if (elm.id == "white_character")
+				elm.classList.add("hide");
 		}
 	}
 

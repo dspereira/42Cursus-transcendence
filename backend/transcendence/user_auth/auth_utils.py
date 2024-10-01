@@ -150,11 +150,10 @@ def is_valid_password(password):
 		password_requirements["special_character"] = True
 	if re.search(r'[0-9]', password):
 		password_requirements["digit"] = True
-	if re.search(r'\s', password):
+	if not re.search(r'\s', password):
 		password_requirements["white_character"] = True
-		return password_requirements
 	for req in password_requirements:
-		if req != "white_character" and not password_requirements[req]:
+		if not password_requirements[req]:
 			return password_requirements
 	return None
 
