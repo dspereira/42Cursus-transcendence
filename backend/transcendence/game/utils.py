@@ -116,6 +116,14 @@ def cancel_other_invitations(user):
 				req.status = REQ_STATUS_DECLINED
 				req.save()
 
+def number_pending_game_requests(user):
+	game_requests = game_requests_model.filter(to_user=user, status=REQ_STATUS_PENDING)
+	number_requests = 0
+	if game_requests:
+		valid_requests = get_valid_game_requests_list(game_requests)
+		number_requests = len(valid_requests)
+	return number_requests
+
 def has_user_pending_game_requests(user):
 	game_requests = game_requests_model.filter(from_user=user, status=REQ_STATUS_PENDING)
 	if game_requests:

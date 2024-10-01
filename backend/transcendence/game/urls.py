@@ -8,4 +8,5 @@ urlpatterns = [
 	path('has-pending-game-requests/', views.has_pending_game_requests, name='has_pending_game_requests'),
 	path('color_pallet/', views.color_pallet, name='color_pallet'),
 	path('friends/', views.friends, name='friends'),
+    path('number_game_requests/', views.number_game_requests, name='number_game_requests'),
 ]
