@@ -292,12 +292,16 @@ export default class SidePanel extends HTMLElement {
 	}
 
 	#test(){
-		console.log("1");
 		callAPI("GET", "http://127.0.0.1:8000/api/game/number_game_requests/", null, (res, data) => {
-				if (res.ok && data) {
-					console.log(data);
-				}
-			});
+			if (res.ok && data) {
+				console.log("Games:", data.number_game_requests);
+			}
+		});
+		callAPI("GET", "http://127.0.0.1:8000/api/tournament/number_tournament_requests/", null, (res, data) => {
+			if (res.ok && data) {
+				console.log("Tournaments:", data.number_tournament_requests);
+			}
+		});
 	}
 
 	//btnOpenClose()

@@ -49,6 +49,11 @@ def get_valid_tournament_requests_list(tournament_requests):
 		return tournament_requests_list
 	return None
 
+def number_pending_tournament_requests(user):
+	tournament_requests = get_tournament_requests_list(user)
+	number_requests = len(tournament_requests)
+	return number_requests
+
 def get_tournament_requests_list(user):
 	tournament_requests_list = None
 	tournament_requests_info = []
