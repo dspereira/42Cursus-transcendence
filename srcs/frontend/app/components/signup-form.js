@@ -86,7 +86,7 @@ const getHtml = function(data) {
 			<div class="alert alert-danger hide" role="alert"></div>
 			<div class="form-group">
 				<i class="icon left-icon bi-envelope"></i>
-				<input type="text" class="input-padding form-control form-control-lg" id="email" placeholder="Email" maxlength="100">
+				<input type="text" class="input-padding form-control form-control-lg" id="email" placeholder="Email" maxlength="254">
 			</div>
 			<div class="form-group">
 				<i class="icon left-icon bi-person"></i>
@@ -95,7 +95,7 @@ const getHtml = function(data) {
 			<div class="form-group">
 				<i class="icon left-icon bi bi-key"></i>
 				<i class="icon right-icon bi bi-eye-slash eye-icon"></i>
-				<input type="password" class="input-padding form-control form-control-lg" id="password" placeholder="Password" maxlength="128">
+				<input type="password" class="input-padding form-control form-control-lg" id="password" placeholder="Password" maxlength="25">
 			</div>
 			<div class="password-msg hide">
 				<div class="password-validation-msg invalid" id="length"><i class="bi bi-x-lg"></i>Between 8 and 25 characters</div>
@@ -108,7 +108,7 @@ const getHtml = function(data) {
 			<div class="form-group">
 				<i class="icon left-icon bi bi-key"></i>
 				<i class="icon right-icon bi bi-eye-slash eye-icon"></i>
-				<input type="password" class="input-padding form-control form-control-lg" id="confirm-password" placeholder="Confirm Password" maxlength="128">
+				<input type="password" class="input-padding form-control form-control-lg" id="confirm-password" placeholder="Confirm Password" maxlength="25">
 			</div>
 			<div>
 				<button type="submit" class="btn btn-primary btn-submit">Sign Up</button>
@@ -123,7 +123,7 @@ const getHtml = function(data) {
 }
 
 const password_requirements = {
-	length: password => password.length >= 8,
+	length: password => password.length >= 8 && password.length <= 25,
 	lower_character: password => /[a-z]/.test(password),
 	upper_character: password => /[A-Z]/.test(password),
 	special_character: password => /[!@#$%^&*(),.?":{}|<>]/.test(password),
