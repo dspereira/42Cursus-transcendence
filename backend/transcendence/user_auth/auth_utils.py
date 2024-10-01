@@ -8,6 +8,7 @@ from live_chat.models import ChatRoom
 from django.utils import timezone
 from datetime import datetime
 import math
+import re
 
 from two_factor_auth.models import OtpUserOptions
 from user_profile.models import UserProfileInfo
@@ -126,6 +127,36 @@ def get_new_email_wait_time(user):
 				else:
 					wait_time_str = f"{math.floor(new_wait_time) + 1} minute(s)"
 	return wait_time_str
+
+def is_valid_password(password):
+	password_requirements = {
+		"length": False,
+		"lower_character": False,
+		"upper_character": False,
+		"special_character": False,
+		"digit": False,
+		"white_character": False
+	}
+	if not password:
+		return password_requirements
+	password_len = len(password)
+	if password_len >= 8 and password_len <= 25:
+		password_requirements["length"] = True
+	if re.search(r'[a-z]', password):
+		password_requirements["lower_character"] = True
+	if re.search(r'[A-Z]', password):
+		password_requirements["upper_character"] = True
+	if re.search(r'[!@#$%^&*(),.?":{}|<>]', password):
+		password_requirements["special_character"] = True
+	if re.search(r'[0-9]', password):
+		password_requirements["digit"] = True
+	if re.search(r'\s', password):
+		password_requirements["white_character"] = True
+		return password_requirements
+	for req in password_requirements:
+		if req != "white_character" and not password_requirements[req]:
+			return password_requirements
+	return None
 
 def _generate_tokens(user_id):
 	token_gen = TokenGenerator(user_id)
