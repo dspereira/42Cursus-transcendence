@@ -72,6 +72,13 @@ const styles = `
 		gap: 15px;
 	}
 
+	.notification {
+		padding: 5px 10px;
+		border-radius: 50%;
+		background: red;
+		color: white;
+	}
+
 	/*** OPEN ***/
 	.open .side-panel {
 		width: 70px;
@@ -170,6 +177,7 @@ const getHtml = function(data) {
 					<button id="tournaments">
 						<span>
 							<i class="icon bi bi-trophy"></i>
+							<span class="tournaments-notifications notification">11</span>
 							<span class="icon-text">Tournaments</span>
 						</span>
 					</button>
@@ -182,6 +190,7 @@ const getHtml = function(data) {
 					<button id="play">
 						<span>
 							<i class="icon bi bi-dpad"></i>
+							<span class="game-notifications notification">22</span>
 							<span class="icon-text">Play</span>
 						</span>
 					</button>
@@ -248,6 +257,12 @@ export default class SidePanel extends HTMLElement {
 		this.#initComponent();
 		this.#render();
 		this.#scripts();
+		this.intervalID = null;
+	}
+
+	disconnectedCallback() {
+		if (this.intervalID)
+			clearInterval(this.intervalID);
 	}
 
 	attributeChangedCallback(name, oldValue, newValue) {
@@ -266,6 +281,9 @@ export default class SidePanel extends HTMLElement {
 			this.styles.textContent = this.#styles();
 			this.html.classList.add(`${this.elmtId}`);
 		}
+
+		this.gameNotifications = this.html.querySelector(".game-notifications");
+		this.tournamentNotifications = this.html.querySelector(".tournaments-notifications");
 	}
 
 	#styles() {
@@ -285,21 +303,38 @@ export default class SidePanel extends HTMLElement {
 	}
 
 	#scripts() {
-		this.#test();
 		this.#openClosePanel();
 		this.#setupNavigationEvents();
-
+		this.#startInvitesPolling();
 	}
 
-	#test(){
+	#startInvitesPolling(){
+		this.intervalID = setInterval(() => {
+			this.#getNumberRequestsCallApi()
+		}, 15000);
+	}
+
+	#getNumberRequestsCallApi(){
 		callAPI("GET", "http://127.0.0.1:8000/api/game/number_game_requests/", null, (res, data) => {
 			if (res.ok && data) {
 				console.log("Games:", data.number_game_requests);
+				if (data.number_game_requests) {
+					this.gameNotifications.classList.remove("hide");
+					this.gameNotifications.innerHTML = `${data.number_game_requests}`;
+				}
+				else
+					this.gameNotifications.classList.add("hide");
 			}
 		});
 		callAPI("GET", "http://127.0.0.1:8000/api/tournament/number_tournament_requests/", null, (res, data) => {
 			if (res.ok && data) {
 				console.log("Tournaments:", data.number_tournament_requests);
+				if (data.number_tournament_requests) {
+					this.gameNotifications.classList.remove("hide");
+					this.tournamentNotifications.innerHTML = `${data.number_tournament_requests}`
+				}
+				else
+					this.tournamentNotifications.classList.add("hide");
 			}
 		});
 	}
