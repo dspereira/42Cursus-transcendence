@@ -122,6 +122,15 @@ const getHtml = function(data) {
 	return html;
 }
 
+const password_requirements = {
+	length: password => password.length >= 8,
+	lower_character: password => /[a-z]/.test(password),
+	upper_character: password => /[A-Z]/.test(password),
+	special_character: password => /[!@#$%^&*(),.?":{}|<>]/.test(password),
+	digit: password => /[0-9]/.test(password),
+	white_character: password => !/\s/.test(password)
+}
+
 export default class SignupForm extends HTMLElement {
 	static observedAttributes = [];
 
@@ -222,6 +231,8 @@ export default class SignupForm extends HTMLElement {
 				invalidFilds.email = "invalid";
 			else if (key === "username" && !isValidUsername(value))
 				invalidFilds.username = "invalid";
+			else if (!this.#validatePassword())
+				invalidFilds.password = "invalid";
 		}
 		if (!invalidFilds.password && !invalidFilds.confirmPassword) {
 			if (data.password !== data.confirmPassword) {
@@ -350,13 +361,15 @@ export default class SignupForm extends HTMLElement {
 		this.#showAlertMessage();
 		for (const [key, value] of Object.entries(invalidFilds)) {
 			this.#setInvalidInputStyle(key);
-			if (key === "email" && value === "invalid")
+			if (key == "email" && value == "invalid")
 				this.#updateAlertMessage("Invalid email");
-			else if (key === "username" && value === "invalid")
+			else if (key == "username" && value == "invalid")
 				this.#updateAlertMessage("Invalid username");
-			else if (key === "password" && value === "unmatch")
+			else if (key == "password" && value == "invalid")
+				this.#updateAlertMessage("Invalid password");
+			else if (key == "password" && value == "unmatch")
 				this.#updateAlertMessage("Unmatched passwords");
-			else if (value === "empty")
+			else if (value == "empty")
 				emptyFilds = true;
 		}
 		if (emptyFilds)
@@ -372,16 +385,35 @@ export default class SignupForm extends HTMLElement {
 				this.#setInvalidInputStyle("username");
 			else if (message.indexOf("Email") > -1)
 				this.#setInvalidInputStyle("email");
+			else if (message.indexOf("Password") > -1)
+				this.#setInvalidInputStyle("password");
 		} 
 	}
 
 	#passwordInputEvents() {
 		this.passwordInp.addEventListener("input", () => {
-			if (this.passwordInp.value.length)
+			if (this.passwordInp.value.length) {
 				this.passwordMsg.classList.remove("hide");
+				if (this.#validatePassword(this.passwordInp.value))
+					this.passwordMsg.classList.add("hide");	
+			}
 			else
 				this.passwordMsg.classList.add("hide");
 		});
+	}
+
+	#validatePassword(password) {
+		let pass = password;
+		if (!password)
+			pass = this.passwordInp.value;
+			
+		let isValid = true;
+		for (let key in password_requirements) {
+			this.#updatePasswordValidations(this.passValidationsElms[key], password_requirements[key](pass));
+			if (!password_requirements[key](pass))
+				isValid = false;
+		}
+		return isValid;
 	}
 }
 
