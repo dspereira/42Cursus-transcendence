@@ -252,6 +252,8 @@ def check_login_status(request):
 		user = user_model.get(id=user_id)
 		if user:
 			username = user.username
+		else:
+			username = None
 	else:
 		is_logged_in = False
 		user_id = None
