@@ -39,7 +39,7 @@ def logout(response):
 
 def refresh_token(response, user_id):
 	response.delete_cookie("access", path="/")
-	response.delete_cookie("refresh", path="/")
+	response.delete_cookie("refresh", path="/api/auth")
 	_set_cookies(response, _generate_tokens(user_id))
 	return response
 
@@ -196,7 +196,7 @@ def _set_cookies(response, token_gen):
 		httponly=True,
 		expires=token_gen.get_refresh_token_exp(),
 		samesite="Lax",
-		path="/"
+		path="/api/auth"
 	)
 
 def _set_tfa_cookie(response, token):
