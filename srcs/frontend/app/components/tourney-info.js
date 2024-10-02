@@ -1,6 +1,7 @@
 import stateManager from "../js/StateManager.js";
 import { callAPI } from "../utils/callApiUtils.js";
 import parseDate from "../utils/timeDateUtils.js";
+import { colors } from "../js/globalStyles.js";
 
 const styles = `
 	.bracket {
@@ -103,11 +104,86 @@ const styles = `
 		flex-direction: column;
 		justify-content: center;
 		align-items: center;
-		background-color: #EAE4DD;
+
+		background-color: ${colors.second_card};
 		border-radius: 10px;
 		padding: 30px;
 		width: 100%;
 	}
+
+
+	.tournament-container {
+		display: flex;
+		flex-direction: column;
+		height: 300px;
+		min-width: 460px;
+	}
+
+	.brackets-container {
+		display: flex;
+		flex-direction: row;
+		justify-content: center;
+		align-items: center;
+		height: 180px;
+		width: 100%;
+	}
+
+	.players-container {
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+		height: 180px;
+		width: 90px;
+	}
+
+	.player-container {
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+		height: 85px;
+		width: 90px;
+	}
+
+	.left-fork, .right-fork {
+		border: 2px solid red;
+		height: 90px;
+		min-width: 15px;
+		width: 100%;
+		max-width: 100%;
+	}
+		
+	.left-fork {
+		border-left: hidden;
+	}
+
+	.right-fork {
+		border-right: hidden;
+	}
+
+	.line {
+		max-width: 100%;
+		width: 100%;
+		min-width: 15px;
+		height: 2px;
+		background-color: red;
+	}
+
+	.trophy-container {
+		display: flex;
+		flex-direction: row;
+		justify-content: center;
+		width: 100%;
+		min-width: 70px;
+
+	}
+
+	.winner-container {
+		display: flex;
+		flex-direction: row;
+		justify-content: center;
+	}
+
+
 `;
 
 const getHtml = function(data) {
@@ -120,6 +196,39 @@ const getHtml = function(data) {
 	
 	const html = `
 		<h1>${data.info.name}</h1>
+
+		<div class="tournament-container">
+			<div class=brackets-container>
+				<div class="players-container">
+					<img src="${game_0.player1.image}" class="profile-photo" alt="profile photo"/>
+					<img src="${game_0.player2.image}" class="profile-photo" alt="profile photo"/>
+				</div>
+				<div class="left-fork"></div>
+				<div class="line"></div>
+				<div class="player-container">
+					<img src="${game_2.player1.image}" class="profile-photo" alt="profile photo"/>
+				</div>
+				<div class="trophy-container"><img src="/img/trophy-icon.png" class="trophy" alt="trophy"></div>
+				<div class="player-container">
+					<img src="${game_2.player2.image}" class="profile-photo" alt="profile photo"/>
+				</div>
+				<div class="line"></div>
+				<div class="right-fork"></div>
+				<div class="players-container">
+					<div><img src="${game_1.player1.image}" class="profile-photo" alt="profile photo"/></div>
+					<div><img src="${game_1.player2.image}" class="profile-photo" alt="profile photo"/></div>
+				</div>
+			</div>
+			<div class="winner-container">
+				<div>
+					<img src="${data.info.games[2].winner.image}" class="profile-photo-winner" alt="profile photo"/>
+				</div>
+			</div>
+		</div>
+
+
+
+
 		<div class="container-bracket">
 			<div class="bracket">
 				<div class="game">
@@ -156,7 +265,6 @@ const getHtml = function(data) {
 						</div>
 					</div>
 				</div>
-
 
 				<div class="game">
 					<div class="player">

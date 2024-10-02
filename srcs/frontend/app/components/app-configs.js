@@ -142,18 +142,14 @@ legend {
 .show-qrcode {
 	background: none;
 	border: none;
-	color: blue;
+	color: ${colors.btn_default};
 	cursor: pointer;
 	padding: 0;
 	font: inherit;
 }
 
 .qrcode-img {
-	dispay: inline-block;
-}
-
-.hide {
-	display: none;
+	display: flex;
 }
 
 .phone-container {
@@ -162,6 +158,7 @@ legend {
 
 .country-code {
 	width: 20%;
+	min-width: 150px;
 }
 
 .phone-number {
@@ -169,7 +166,7 @@ legend {
 }
 
 #country-code-select {
-	background-color: #E9ECEF;
+	background-color: ${colors.second_card};
 	border-top-right-radius: 0;
 	border-bottom-right-radius: 0;
 }
@@ -177,19 +174,6 @@ legend {
 #phone-number-input {
 	border-top-left-radius: 0;
 	border-bottom-left-radius: 0;
-}
-
-.show-qrcode {
-	background: none;
-	border: none;
-	color: blue;
-	cursor: pointer;
-	padding: 0;
-	font: inherit;
-}
-
-.qrcode-img {
-	dispay: inline-block;
 }
 
 .hide {
@@ -209,6 +193,7 @@ legend {
 
 .main-conf-text {
 	font-size: 24px;
+	color: ${colors.primary_text};
 }
 
 .div-margin {
@@ -238,16 +223,60 @@ legend {
 	}
 }
 
+.popup-overlay {
+	display: none;
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	background: rgba(0, 0, 0, 0.5);
+	backdrop-filter: blur(5px);
+	justify-content: center; 
+	align-items: center;
+	z-index: 9999;
+}
+
+.popup-content {
+	display: flex;
+	flex-direction: column;
+	background-color: ${colors.second_card};
+	color: ${colors.primary_text};
+	padding: 20px;
+	border-radius: 5px;
+	text-align: center;
+	box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+	width: 30%;
+	gap: 10px;
+}
+
+#country-code-select::-webkit-scrollbar {
+	width: 15px;
+}
+	
+#country-code-select::-webkit-scrollbar-track {
+	width: 15px;
+	background: ${colors.second_card};
+}
+
+#country-code-select::-webkit-scrollbar-thumb {
+	background: ${colors.main_card};
+	border-radius: 10px;
+	border-style: hidden;
+	border: 3px solid transparent;
+	background-clip: content-box;
+}
+
 `;
 
 const getHtml = function(data) {
 	const html = `
 	<form id="settings-form">
 		<div class="page-container">
-			<div class="main-conf-text">Profile Settings</div>
-			<hr>
 			<div class="main-container">
 				<div class="general-settings-container">
+					<div class="main-conf-text">Profile Settings</div>
+					<hr>
 					<div class="alert alert-danger hide" role="alert"></div>
 					<div class="alert alert-success hide" role="alert"></div>
 					<label for="new-username">Change Username</label>
@@ -255,72 +284,75 @@ const getHtml = function(data) {
 					<label for="new-bio">Change Bio</label>
 					<textarea type="text" class="form-control form-control-md div-margin" id="new-bio" placeholder="New Bio" rows="3" maxlength="255"></textarea>
 
-				<h2>Scurity Settings</h2>
-				<hr>
-				<fieldset>
-					<legend>Choose where to receive your two-factor authentication:</legend>
-					<div class="form-check">
-						<input class="form-check-input" checked type="checkbox" value="email" id="email">
-						<label class="form-check-label" for="email">Email</label>
-					</div>
-					<div class="form-check">
-						<input class="form-check-input" type="checkbox" value="qrcode" id="qrcode">
-						<label class="form-check-label" for="qrcode">QR Code</label>
-						<button class="show-qrcode hide">Show Qrcode</button>
-						<img src="" class="qrcode-img hide" alt="Qrcode image"></img>
-					</div>
-					<div class="form-check">
-						<input class="form-check-input" type="checkbox" value="phone" id="phone">
-						<label class="form-check-label" for="phone">
-							Phone
-						</label>
-					</div>
-
-					<div class="phone-container hide">
-						<div class="country-code">
-							<select class="form-select" id="country-code-select" aria-label="Country Code">
-							${getCountryCodesOptions()}
-							</select>
+					<div class="main-conf-text">Security Settings</div>
+					<hr>
+					<fieldset>
+						<legend>Choose where to receive your two-factor authentication:</legend>
+						<div class="form-check">
+							<input class="form-check-input" checked type="checkbox" value="email" id="email">
+							<label class="form-check-label" for="email">Email</label>
 						</div>
-						<div class="phone-number">
-							<input class="form-control form-control-md" id="phone-number-input" type="text">
+						<div class="form-check">
+							<input class="form-check-input" type="checkbox" value="qrcode" id="qrcode">
+							<label class="form-check-label" for="qrcode">QR Code</label>
+							<button class="show-qrcode hide">Show Qrcode</button>
+							<div class="qr-popup popup-overlay">
+								<div class="popup-content">
+									<img src="" class="qrcode-img" alt="Qrcode image"></img>
+								</div>
+							</div>
 						</div>
-					<div>
+						<div class="form-check div-margin">
+							<input class="form-check-input" type="checkbox" value="phone" id="phone">
+							<label class="form-check-label" for="phone">
+								Phone
+							</label>
+						</div>
 
-				</fieldset>
+						<div class="phone-container hide">
+							<div class="country-code">
+								<select class="form-select" id="country-code-select" aria-label="Country Code">
+								${getCountryCodesOptions()}
+								</select>
+							</div>
+							<div class="phone-number">
+								<input class="form-control form-control-md" id="phone-number-input" type="text">
+							</div>
+						<div>
+					</fieldset>
+					<div class="main-conf-text">Game Settings</div>
+					<hr>
+					<label for="theme-options">Choose the game theme:</label>
+					<select class="form-select div-margin" id="theme-options" aria-label="Game theme selection">
+						<option value="0" selected>Classic Retro</option>
+						<option value="1">Modern Neon</option>
+						<option value="2">Ocean Vibes</option>
+						<option value="3">Sunset Glow</option>
+						<option value="4">Forest Retreat</option>
+					</select>
 
-				<h2>Game Settings</h2>
-				<hr>
-				<label for="theme-options">Choose the game theme:</label>
-				<select class="form-select" id="theme-options" aria-label="Game theme selection">
-					<option value="0" selected>Classic Retro</option>
-					<option value="1">Modern Neon</option>
-					<option value="2">Ocean Vibes</option>
-					<option value="3">Sunset Glow</option>
-					<option value="4">Forest Retreat</option>
-				</select>
-			
-				<h2>Language Settings</h2>
-				<hr>
-				<label for="language-options">Choose language:</label>
-				<select class="form-select" id="language-options" aria-label="Language selection">
-					<option value="en">English &#x1F1EC;&#x1F1E7;</option>
-					<option value="pt">Português &#x1F1F5;&#x1F1F9;</option>
-					<option value="es">Espanhol &#x1F1EA;&#x1F1F8;</option>
-				</select>
-				<div><button type="submit" class="btn btn-primary btn-submit">Apply Changes</button></div>
-			</div>
-
-			<div class="image-settings-container">
-				<div class="img-container">
-					<img src="../img/default_profile.png" class="image-preview" alt="Preview of the Image to be Changed">
+					<div class="main-conf-text">Language Settings</div>
+					<hr>
+					<label for="language-options">Choose language:</label>
+					<select class="form-select" id="language-options" aria-label="Language selection">
+						<option value="en">English &#x1F1EC;&#x1F1E7;</option>
+						<option value="pt">Português &#x1F1F5;&#x1F1F9;</option>
+						<option value="es">Espanhol &#x1F1EA;&#x1F1F8;</option>
+					</select>
 				</div>
-				<div class="img-buttons">
-					<label for="new-image" class="btn btn-primary btn-img">Upload Image</label>
-					<input id="new-image" class="hide" type="file" accept="image/png, image/jpeg, image/webp">
-					<button class="btn btn-primary btn-img btn-new-seed">New Avatar</button>
+
+				<div class="image-settings-container">
+					<div class="img-container">
+						<img src="../img/default_profile.png" class="image-preview" alt="Preview of the Image to be Changed">
+					</div>
+					<div class="img-buttons">
+						<label for="new-image" class="btn btn-primary btn-img">Upload Image</label>
+						<input id="new-image" class="hide" type="file" accept="image/png, image/jpeg, image/webp">
+						<button class="btn btn-primary btn-img btn-new-seed">New Avatar</button>
+					</div>
 				</div>
 			</div>
+			<div class="btn-container"><button type="submit" class="btn btn-primary btn-submit">Apply Changes</button></div>
 		</div>
 	</form>
 	`;
@@ -377,6 +409,13 @@ export default class AppConfigs extends HTMLElement {
 		this.#initComponent();
 		this.#render();
 		this.#scripts();
+		this.escQrClose = () => {
+			const popup = document.querySelector('.qr-popup');
+			if (popup)
+				popup.style.display = "none";
+			console.log("ESC!!!");
+			document.removeEventListener('keydown', this.escQrClose);
+		};
 	}
 
 	attributeChangedCallback(name, oldValue, newValue) {
@@ -681,10 +720,25 @@ export default class AppConfigs extends HTMLElement {
 			event.preventDefault();
 			callAPI("POST", "http://127.0.0.1:8000/api/two-factor-auth/request-qr-code/", {}, (res, data) => {
 				if (res.ok && data && data.qr_code) {
-					this.qrcodeImg.classList.remove("hide");
 					this.qrcodeImg.setAttribute("src", 'data:image/png;base64,' + data.qr_code);
+					console.log("here");
+					const qrElm = document.querySelector('.qr-popup');
+					qrElm.style.display = 'flex';
+					this.#qrPopUp();
+					document.addEventListener('keydown', this.escQrClose);
+					// this.qrcodeImg.classList.remove("hide");
 				}
 			});
+		});
+	}
+
+	#qrPopUp() {
+		const popup = document.querySelector('.qr-popup');
+		window.addEventListener('click', (event) => {
+			if (event.target === popup) {
+				popup.style.display = 'none';
+				document.removeEventListener('keydown', this.escQrClose);
+			}
 		});
 	}
 }

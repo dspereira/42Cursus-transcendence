@@ -1,6 +1,7 @@
 import {redirect} from "../js/router.js";
 import stateManager from "../js/StateManager.js";
 import { callAPI } from "../utils/callApiUtils.js";
+import { colors } from "../js/globalStyles.js";
 
 const styles = `
 .tfa-methods {
@@ -9,30 +10,61 @@ const styles = `
 	align-items: center;
 }
 
+.main-container {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+}
+
 .message {
 	background: none;
 	border: none;
-	color: blue;
+	color: ${colors.btn_default};
 	cursor: pointer;
 	padding: 0;
 	font: inherit;
 }
 
 .methods {
-	width: 50%;
+	width: 100%;
 }
 
 .hide {
 	display: none;
 }
 
+.logo-img {
+	width: 200px;
+	height: auto;
+	margin: 20px 0px 20px 0px;
+}
+
+.main-text {
+	color: ${colors.primary_text};
+	font-size: 24px;
+	fonst-weight: bold;
+}
+
+.list-group-item {
+	background-color: ${colors.btn_default};
+	color: ${colors.second_text};
+	border-radius: 5px;
+	border-style: hidden;
+}
+
+.list-group-item:hover {
+	background-color: ${colors.btn_hover};
+	color: ${colors.primary_text};
+}
+
 `;
 
 const getHtml = function(data) {
 	const html = `
-		<h1>2FA</h1>
+	<div class=main-container>
+		<img src="../img/Pong.png" class=logo-img>
+		<div class="main-text">2FA</div>
 		<div class="option-2fa"></div>
-
 		<div class="tfa-methods">
 			<button class="message">Select an alternative authentication method</button>
 			<div class="list-group methods hide">
@@ -41,6 +73,7 @@ const getHtml = function(data) {
 				<button type="button" class="list-group-item list-group-item-action hide" id="phone">Use Mobile Phone</button>
 			</div>
 		<div>
+	</div>
 	`;
 	return html;
 }

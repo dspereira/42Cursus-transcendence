@@ -60,17 +60,17 @@ const styles = `
 	.separator {
 		display: flex;
 		width: 80%;
-		height: 3px;
+		height: 2px;
 		border-radius: 10px;
 		justify-content: center;
 		align-items: center;
-		margin: 10px 0px 10px 0px;
+		margin: 25px 0px 25px 0px;
 		background-color: ${colors.second_card};
 	}
 
 	.separator-v {
 		display: none;
-		width: 5px;
+		width: 3px;
 		height: 120px;
 		border-radius: 10px;
 		justify-content: center;
@@ -331,18 +331,18 @@ export default class UserProfile extends HTMLElement {
 
 	#updateStats(stats) {
 		this.totalGames.innerHTML = `Total games: ${stats.totalGames}`;
-		this.gameWinRate.innerHTML = `Game win rate: ${stats.totalGames > 0 ? stats.gamesWinRate : "---"}%`;
+		this.gameWinRate.innerHTML = `Game win rate: ${stats.totalGames > 0 ? `${stats.gamesWinRate}%` : "---"}`;
 
 		if (!stats.gamesWinRate && !stats.totalGames)
-			this.winRateBarGame.style.background = `linear-gradient(to right, blue 0%, red 100%)`;
+			this.winRateBarGame.style.background = `linear-gradient(to right, ${colors.game_win} 0%, ${colors.game_loss} 100%)`;
 		else
-			this.winRateBarGame.style.background = `linear-gradient(to right, ${colors.game_win} ${stats.gamesWinRate}%, ${colors.game_loss} ${stats.gamesWinRate}%)`;
+			this.winRateBarGame.style.background = `linear-gradient(to right, ${colors.game_win} 0%, ${colors.game_loss} 100%)`;
 		
 		this.gamesWins.innerHTML = `W: ${stats.gamesWon}`;
 		this.gamesLoses.innerHTML = `L: ${stats.gamesLost}`;
 
 		this.totalTournaments.innerHTML = `Total tornaments: ${stats.totalTournaments}`;
-		this.tournamentWinRate.innerHTML = `Tornament win rate: ${stats.totalTournaments > 0 ? stats.tournamentsWinRate: "---"}`;
+		this.tournamentWinRate.innerHTML = `Tornament win rate: ${stats.totalTournaments > 0 ? `${stats.tournamentsWinRate}%`: "---"}`;
 		
 		if (!stats.tournamentsWinRate && !stats.totalTournaments)
 			this.winRateBarTournaments.style.background = `linear-gradient(to right,  ${colors.game_win} 0%, ${colors.game_loss} 100%)`;

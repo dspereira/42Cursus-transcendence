@@ -84,31 +84,19 @@ const styles = `
 		height: auto;
 	}
 
-	#login, #signup {
+	#login, #signup, #localplay {
 		width: 150px;
 		font-size: 24px;
 		font-weight: bold;
 	}
 
-	#login {
+	#login, #signup, #localplay {
 		border: 2px solid ${colors.primary_text};
 		color: ${colors.primary_text};
 		background-color: rgba(0, 0, 0, 0);
 	}
 
-	#login:hover {
-		border: 2px solid ${colors.btn_default};
-		background-color: ${colors.btn_default};
-		color: ${colors.primary_text};
-	}
-
-	#signup {
-		border: 2px solid ${colors.primary_text};>
-		color: ${colors.primary_text};
-		background-color: rgba(0, 0, 0, 0);
-	}
-
-	#signup:hover {
+	#login:hover, #signup:hover, #localplay:hover {
 		border: 2px solid ${colors.btn_default};
 		background-color: ${colors.btn_default};
 		color: ${colors.primary_text};
@@ -137,7 +125,6 @@ const styles = `
 
 const getHtml = function(data) {
 	const html = `
-<<<<<<< HEAD
 	<div class=main-container>
 	<div class=second-container>
 			<div class=title-container>
@@ -146,6 +133,7 @@ const getHtml = function(data) {
 			<div class=button-container>
 				<button type="button" class="btn btn-primary" id="login">Login</button>
 				<button type="button" class="btn btn-secondary" id="signup">SignUp</button>
+				<button type="button" class="btn btn-secondary" id="localplay">Local Play</button>
 			</div>
 		</div>
 		<div class=ball></div>
@@ -153,13 +141,6 @@ const getHtml = function(data) {
 		<div class=paddle id=right></div>
 		<div class="blur-test"></div>
 	</div>
-=======
-		<h1>Initial Page</h1>
-		<br>
-		<button type="button" class="btn btn-primary" id="login">Login</button>
-		<button type="button" class="btn btn-secondary" id="signup">SignUp</button>
-		<button type="button" class="btn btn-secondary" id="localplay">Local Play</button>
->>>>>>> main
 	`;
 	return html;
 }

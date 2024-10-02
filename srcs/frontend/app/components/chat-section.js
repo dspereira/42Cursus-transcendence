@@ -6,7 +6,6 @@ import { charLimiter } from "../utils/characterLimit.js";
 import charLimit from "../utils/characterLimit.js";
 import { redirect } from "../js/router.js";
 import friendProfileRedirectionEvent from "../utils/profileRedirectionUtils.js";
-import { redirect } from "../js/router.js";
 
 const styles = `
 /* Chat section */

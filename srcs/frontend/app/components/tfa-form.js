@@ -1,5 +1,6 @@
 import {callAPI} from "../utils/callApiUtils.js";
 import { redirect } from "../js/router.js";
+import { colors } from "../js/globalStyles.js";
 
 const styles = `
 .tfa-container {
@@ -7,16 +8,19 @@ const styles = `
 	display: flex;
 	flex-direction: column;
 	align-items: center;
+	margin-bottom: 10px;
 }
 
 .tfa-elements {
 	width: 50%;
+	min-width: 420px;
 	display: flex;
 	flex-direction: column;
 	align-items: center;
 	gap: 20px;
 	padding: 20px;
-	background-color: #D3D3D3;
+	background-color: ${colors.second_card};
+	color: ${colors.primary_text};
 	border-radius: 8px;
 }
 
@@ -42,6 +46,7 @@ p {
 	background: none;
 	border: none;
 	color: blue;
+	color: ${colors.btn_default};
 	cursor: pointer;
 	padding: 0;
 	font: inherit;
@@ -60,6 +65,49 @@ p {
 .code-invalid {
 	border: 2px solid #dc3545;
 }
+
+
+.form-control {
+	border-radius: 5px;
+	border-style: hidden;
+	background-color: ${colors.input_background};
+	color: ${colors.second_text};
+}
+
+.form-control::placeholder {
+	color: ${colors.second_text};
+}
+
+.form-control:focus {
+	background-color: ${colors.input_background};
+	color: ${colors.second_text};
+}
+
+.search input {
+	padding-left: 30px;
+	color:  ${colors.second_text};
+}
+
+.form-control + input:focus {
+	color:  ${colors.second_text};
+}
+
+.btn-primary:not(disabled) {
+	background-color: ${colors.btn_default};
+	color: ${colors.primary_text};
+}
+
+.btn-primary:not(:disabled):hover {
+	background-color: ${colors.btn_hover};
+	color: ${colors.second_text};
+}
+
+.btn-primary:disabled {
+	background-color: ${colors.main_card};
+	cursor: not-allowed;
+	border-style: hidden;
+}
+
 `;
 
 const QRCODE_METHOD = "qr_code";

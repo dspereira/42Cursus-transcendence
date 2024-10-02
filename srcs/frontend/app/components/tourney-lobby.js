@@ -311,8 +311,6 @@ export default class TourneyLobby extends HTMLElement {
 			this.styles.textContent = this.#styles();
 			this.html.classList.add(`${this.elmtId}`);
 		}
-
-
 	}
 
 	#styles() {
@@ -332,7 +330,6 @@ export default class TourneyLobby extends HTMLElement {
 	}
 
 	#scripts() {
-		this.#toggleStartButton(true);
 		this.#joinedPlayersCall();
 		this.#joinedPlayersPolling();
 		this.#setCancelTournamentEvent();
@@ -423,10 +420,6 @@ export default class TourneyLobby extends HTMLElement {
 		callAPI("GET", `http://127.0.0.1:8000/api/tournament/players/?id=${this.data.tournamentId}`, null, (res, data) => {
 			if (res.ok) {
 				if (data.players) {
-					if (data.players.length == 4)
-						this.#toggleStartButton(false);
-					else
-						this.#toggleStartButton(true);
 					this.#updatePlayers(data.players);
 					this.joinedPlayersNbr = data.players.length;
 				}
@@ -480,8 +473,7 @@ export default class TourneyLobby extends HTMLElement {
 			return ;
 		btn.addEventListener("click", () => {
 			callAPI("DELETE", `http://127.0.0.1:8000/api/tournament/players/?id=${this.data.tournamentId}`, null, (res, data) => {
-				if (res.ok) {
-					stateManager.setState("tournamentId", null);
+				if (res.ok)
 					stateManager.setState("isTournamentChanged", true);
 				else
 					stateManager.setState("errorMsg", "Couldn't leave tournament");
@@ -496,7 +488,6 @@ export default class TourneyLobby extends HTMLElement {
 		if (!btn)
 			return ;
 		btn.addEventListener("click", () => {
-			this.#toggleStartButton(true);
 			callAPI("POST", `http://127.0.0.1:8000/api/tournament/start/`, {id: this.data.tournamentId}, (res, data) => {
 				if (res.ok)
 					stateManager.setState("isTournamentChanged", true);
@@ -515,6 +506,9 @@ export default class TourneyLobby extends HTMLElement {
 		btn.addEventListener("click", () => {
 			const name = nameInput.value.trim();
 			callAPI("PATCH", `http://127.0.0.1:8000/api/tournament/`, {id: this.data.tournamentId, new_name: name}, (res, data) => {
+				console.log(res);
+				console.log(data);
+				
 				if (res.status == 409)
 				{
 					nameInput.value = data.tournament_name;
@@ -564,13 +558,6 @@ export default class TourneyLobby extends HTMLElement {
 			popup.style.display = 'none'
 			profilePhoto.removeEventListener('mousemove', movePopup);
 		});
-	}
-
-	#toggleStartButton(disabledValue) {
-		const btn = this.html.querySelector(".btn-start");
-		if (!btn)
-			return ;
-		btn.disabled = disabledValue;
 	}
 }
 

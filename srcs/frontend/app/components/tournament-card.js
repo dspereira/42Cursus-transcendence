@@ -1,5 +1,6 @@
 import { callAPI } from "../utils/callApiUtils.js";
 import { redirect } from "../js/router.js";
+import { colors } from "../js/globalStyles.js";
 
 const styles = `
 	.game-grid-container {
@@ -7,9 +8,10 @@ const styles = `
 		justify-content: space-between;
 		align-items: center;
 		border-radius: 10px;
-		width; 100%;
-		padding: 10px 15px 10px 15px;
+		width: 100%;
+		padding: 5px 15px 5px 15px;
 		margin-bottom: 20px;
+		color: ${colors.primary_text};
 	}
 
 	.left {
@@ -34,13 +36,11 @@ const styles = `
 	}
 
 	.tournament-win {
-		border: 3px solid blue;
-		background-color: #00CCCC;
+		border: 3px solid ${colors.game_win};
 	}
 
 	.tournament-loss {
-		border: 3px solid red;
-		background-color: #FF6666;
+		border: 3px solid ${colors.game_loss};
 	}
 `;
 

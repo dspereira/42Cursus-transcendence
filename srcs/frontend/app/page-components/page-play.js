@@ -1,10 +1,7 @@
 import { adjustContent } from "../utils/adjustContent.js";
 import stateManager from "../js/StateManager.js";
-<<<<<<< HEAD
 import { colors } from "../js/globalStyles.js";
-=======
 import { callAPI } from "../utils/callApiUtils.js";
->>>>>>> main
 
 const styles = `
 	.invite-game {
@@ -144,13 +141,9 @@ export default class PagePlay extends HTMLElement {
 
 	#scripts() {
 		adjustContent(this.html.querySelector(".content"));
-<<<<<<< HEAD
 		this.#setInviteToGameEvent()
 		this.#errorMsgEvents();
-=======
-		this.#setInviteToGameEvent();
 		this.#inviteToPlayAndRedirectToLobby();
->>>>>>> main
 	}
 
 	#setInviteToGameEvent() {
@@ -165,7 +158,6 @@ export default class PagePlay extends HTMLElement {
 		});
 	}
 
-<<<<<<< HEAD
 	#errorMsgEvents() {
 		stateManager.addEvent("errorMsg", (msg) => {
 			if (msg) {
@@ -186,7 +178,10 @@ export default class PagePlay extends HTMLElement {
 						<div class=alert-bar></div>
 					`;
 				mainDiv.insertBefore(alertCard, insertElement);
-=======
+			}
+		});
+	}
+
 	#inviteToPlayAndRedirectToLobby() {
 		const friendId = stateManager.getState("friendIdInvitedFromChat");
 		if (!friendId)
@@ -205,10 +200,8 @@ export default class PagePlay extends HTMLElement {
 					lobby-id="${stateManager.getState("userId")}"
 				></app-lobby>
 				`;
->>>>>>> main
 			}
 		});
 	}
 }
-
 customElements.define(PagePlay.componentName, PagePlay);
