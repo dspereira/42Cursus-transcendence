@@ -1,5 +1,6 @@
 import {redirect} from "../js/router.js";
 import stateManager from "../js/StateManager.js";
+import { callAPI } from "../utils/callApiUtils.js";
 
 
 const styles = `
@@ -284,9 +285,18 @@ export default class SidePanel extends HTMLElement {
 	}
 
 	#scripts() {
+		this.#test();
 		this.#openClosePanel();
 		this.#setupNavigationEvents();
 
+	}
+
+	#test() {
+		callAPI("GET", `http://127.0.0.1:8000/api/friends/number_friend_requests/`, null, (res, data) => {
+			if (res.ok && data) {
+				console.log("Number of friend requests: ", data.number_friend_requests);
+			}
+		});
 	}
 
 	//btnOpenClose()

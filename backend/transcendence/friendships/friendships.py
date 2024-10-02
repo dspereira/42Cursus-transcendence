@@ -14,6 +14,13 @@ user_model = ModelManager(User)
 
 from custom_utils.auth_utils import is_username_bot_username
 
+def number_pending_game_requests(user):
+	request_list = get_friends_request_list(user, False)
+	n_requests = 0
+	if (request_list):
+		n_requests = len(request_list)
+	return n_requests
+
 def get_friend_list(user):
 	data = []
 	if user:

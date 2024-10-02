@@ -14,11 +14,21 @@ from friendships.friendships import check_if_friend_request
 from friendships.friendships import remove_users_with_friends_request
 from friendships.friendships import get_users_info
 from friendships.friendships import is_already_friend
+from friendships.friendships import number_pending_game_requests
 
 user_profile_info_model = ModelManager(UserProfileInfo)
 friend_requests_model = ModelManager(FriendRequests)
 friend_list_model = ModelManager(FriendList)
 user_model = ModelManager(User)
+
+@login_required
+@accepted_methods(["GET"])
+def number_friend_requests(request):
+	user = user_model.get(id=request.access_data.sub)
+	if user:
+		n_requests = number_pending_game_requests(user)
+		return JsonResponse({"message": "Number pending friend requests returned with success.", "number_friend_requests": n_requests}, status=200)
+	return JsonResponse({"message": "Error: Invalid User"}, status=401)
 
 @login_required
 @accepted_methods(["GET"])
