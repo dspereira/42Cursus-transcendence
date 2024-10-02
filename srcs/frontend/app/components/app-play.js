@@ -3,6 +3,8 @@ import gameWebSocket from "../js/GameWebSocket.js";
 import { callAPI } from "../utils/callApiUtils.js";
 import stateManager from "../js/StateManager.js";
 import { redirect } from "../js/router.js";
+import updateLoggedInStatus from "../utils/updateLoggedInUtils.js";
+import checkUserLoginState from "../utils/checkUserLoginState.js";
 
 const styles = `
 .profile-photo {
@@ -289,14 +291,34 @@ export default class AppPlay extends HTMLElement {
 		gameWebSocket.open(this.data.lobbyId);
 	}
 
+	
+	/*
 	#onSocketCloseEvent() {
 		stateManager.addEvent("gameSocket", (state) => {
 			if (state == "closed") {
 				callAPI("GET", "http://127.0.0.1:8000/api/auth/login_status", null, (res, data) => {
-					if (res.ok && data && !this.isGameFinished)
+					if (res.ok && data && data.logged_in && !this.isGameFinished) {
+						console.log(res.ok);
+						console.log(data);
+
+
+						console.log("Entra aqui onSocketCloseEvent");
 						this.#openSocket();
+					}
+
 				});
 			}
+		});
+	}
+	*/
+
+	#onSocketCloseEvent() {
+		stateManager.addEvent("gameSocket", (state) => {
+			checkUserLoginState((state) => {
+				if (state && !this.isGameFinished)
+					this.#openSocket();
+				updateLoggedInStatus(state);
+			});
 		});
 	}
 

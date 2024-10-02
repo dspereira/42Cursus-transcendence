@@ -1,9 +1,11 @@
 import { callAPI } from "./callApiUtils.js";
 import stateManager from "../js/StateManager.js";
 
+
+// melhorar esta funcao na condição de if (!data || !res.ok) chamar callback com false
 const checkUserLoginState = function(callback) {
 	callAPI("GET", "http://127.0.0.1:8000/api/auth/login_status", null, (res, data) => {
-		if (!data || !res.ok)
+		if (!data || !res.ok) 
 			return ;
 		stateManager.setState("userId", data.id);
 		stateManager.setState("username", data.username);
