@@ -7,7 +7,6 @@ from user_settings.models import UserSettings
 import json
 
 from .utils import has_user_pending_game_requests
-from .utils import number_pending_game_requests
 from .utils import get_games_list
 
 from friendships.friendships import get_friends_users_list
@@ -84,16 +83,6 @@ def get_games(request):
 		return JsonResponse({"message": f"Game request list retrieved with success.", "games_list": games_list}, status=200)
 	else:
 		return JsonResponse({"message": "Error: User not found!"}, status=404)
-
-@login_required
-@accepted_methods(["GET"])
-def number_game_requests(request):
-	user = user_model.get(id=request.access_data.sub)
-	if user:
-		n_requests = number_pending_game_requests(user)
-		return JsonResponse({"message": f"Number pending game requests returned with success.", "number_game_requests": n_requests}, status=200)
-	else:
-		return JsonResponse({"message": "Error: Invalid User!"}, status=400)
 
 @login_required
 @accepted_methods(["GET"])

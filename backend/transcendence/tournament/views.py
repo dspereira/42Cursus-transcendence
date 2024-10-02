@@ -25,23 +25,12 @@ from .utils import get_game_info
 from .utils import get_all_tournament_info
 from .utils import get_tournament_info
 from .utils import send_games_notifications
-from .utils import number_pending_tournament_requests
 from .consts import TOURNAMENT_STATUS_ACTIVE
 
 tournament_requests_model = ModelManager(TournamentRequests)
 tournament_players_model = ModelManager(TournamentPlayers)
 tournament_model = ModelManager(Tournament)
 user_model = ModelManager(User)
-
-@login_required
-@accepted_methods(["GET"])
-def number_tournament_requests(request):
-	user = user_model.get(id=request.access_data.sub)
-	if user:
-		n_requests = number_pending_tournament_requests(user)
-		return JsonResponse({"message": f"Number pending tournament requests returned with success.", "number_tournament_requests": n_requests}, status=200)
-	else:
-		return JsonResponse({"message": "Error: Invalid User!"}, status=400)
 
 @login_required
 @accepted_methods(["GET"])

@@ -336,26 +336,21 @@ export default class SidePanel extends HTMLElement {
 	}
 
 	#getNumberRequestsCallApi(){
-		callAPI("GET", "http://127.0.0.1:8000/api/game/number_game_requests/", null, (res, data) => {
+		callAPI("GET", "http://127.0.0.1:8000/api/notifications/requests-notifications/", null, (res, data) => {
 			if (res.ok && data) {
-				console.log("Games:", data.number_game_requests);
 				if (data.number_game_requests) {
 					this.gameNotifications.classList.remove("hide");
 					this.gameNotifications.innerHTML = `${data.number_game_requests}`;
 				}
 				else
 					this.gameNotifications.classList.add("hide");
-			}
-		});
-		callAPI("GET", "http://127.0.0.1:8000/api/tournament/number_tournament_requests/", null, (res, data) => {
-			if (res.ok && data) {
-				console.log("Tournaments:", data.number_tournament_requests);
+
 				if (data.number_tournament_requests) {
-					this.tournamentNotifications.classList.remove("hide");
-					this.tournamentNotifications.innerHTML = `${data.number_tournament_requests}`
-				}
+						this.tournamentNotifications.classList.remove("hide");
+						this.tournamentNotifications.innerHTML = `${data.number_tournament_requests}`
+					}
 				else
-					this.tournamentNotifications.classList.add("hide");
+						this.tournamentNotifications.classList.add("hide");
 			}
 		});
 	}
