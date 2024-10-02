@@ -121,7 +121,8 @@ def number_pending_game_requests(user):
 	number_requests = 0
 	if game_requests:
 		valid_requests = get_valid_game_requests_list(game_requests)
-		number_requests = len(valid_requests)
+		if valid_requests:
+			number_requests = len(valid_requests)
 	return number_requests
 
 def has_user_pending_game_requests(user):

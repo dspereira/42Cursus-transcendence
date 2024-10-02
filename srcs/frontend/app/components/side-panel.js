@@ -73,10 +73,11 @@ const styles = `
 	}
 
 	.notification {
-		padding: 5px 10px;
+		padding: 0px 5px;
 		border-radius: 50%;
 		background: red;
 		color: white;
+		font-size: 12px;
 	}
 
 	/*** OPEN ***/
@@ -105,6 +106,18 @@ const styles = `
 		background-color: #dbd9d7;
 		border-radius: 6px;
 		width: 200px;
+	}
+
+	.open .game-notifications {
+		position: relative;
+		top: -10px;
+		right: 61%;
+	}
+
+	.open .tournaments-notifications {
+		position: relative;
+		top: -10px;
+		right: 73%;
 	}
 
 	/*** CLOSE ***/
@@ -139,6 +152,12 @@ const styles = `
 	.close .link-btn .icon:hover {
 		background-color: #dbd9d7;
 		border-radius: 3px;
+	}
+
+	.close .notification {
+		position: relative;
+		top: -10px;
+		right: 42%;
 	}
 `;
 
@@ -177,8 +196,8 @@ const getHtml = function(data) {
 					<button id="tournaments">
 						<span>
 							<i class="icon bi bi-trophy"></i>
-							<span class="tournaments-notifications notification">11</span>
 							<span class="icon-text">Tournaments</span>
+							<span class="tournaments-notifications notification"></span>
 						</span>
 					</button>
 					<button id="friends">
@@ -190,8 +209,8 @@ const getHtml = function(data) {
 					<button id="play">
 						<span>
 							<i class="icon bi bi-dpad"></i>
-							<span class="game-notifications notification">22</span>
 							<span class="icon-text">Play</span>
+							<span class="game-notifications notification"></span>
 						</span>
 					</button>
 					<div class="bottom-buttons">
@@ -305,13 +324,14 @@ export default class SidePanel extends HTMLElement {
 	#scripts() {
 		this.#openClosePanel();
 		this.#setupNavigationEvents();
+		this.#getNumberRequestsCallApi()
 		this.#startInvitesPolling();
 	}
 
 	#startInvitesPolling(){
 		this.intervalID = setInterval(() => {
 			this.#getNumberRequestsCallApi()
-		}, 15000);
+		}, 5000);
 	}
 
 	#getNumberRequestsCallApi(){
@@ -330,7 +350,7 @@ export default class SidePanel extends HTMLElement {
 			if (res.ok && data) {
 				console.log("Tournaments:", data.number_tournament_requests);
 				if (data.number_tournament_requests) {
-					this.gameNotifications.classList.remove("hide");
+					this.tournamentNotifications.classList.remove("hide");
 					this.tournamentNotifications.innerHTML = `${data.number_tournament_requests}`
 				}
 				else

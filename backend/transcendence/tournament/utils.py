@@ -51,7 +51,9 @@ def get_valid_tournament_requests_list(tournament_requests):
 
 def number_pending_tournament_requests(user):
 	tournament_requests = get_tournament_requests_list(user)
-	number_requests = len(tournament_requests)
+	number_requests = 0
+	if tournament_requests:
+		number_requests = len(tournament_requests)
 	return number_requests
 
 def get_tournament_requests_list(user):
