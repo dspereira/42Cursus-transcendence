@@ -15,6 +15,8 @@ from .auth_utils import create_user_profile_info
 from .auth_utils import create_user_settings
 from .auth_utils import add_bot_as_friend
 from .auth_utils import is_email_verified
+from .auth_utils import is_valid_password
+from .auth_utils import is_valid_email
 from .auth_utils import get_new_email_wait_time
 from custom_utils.auth_utils import is_valid_username
 from custom_utils.auth_utils import is_username_bot_username
@@ -43,18 +45,23 @@ def register(request):
 			email = req_data.get('email')
 			username = req_data.get('username')
 			password = req_data.get('password')
-		if not email:
-			return JsonResponse({"message": "Email field cannot be empty"}, status=400)
+		if not is_valid_email(email):
+			return JsonResponse({"message": "Invalid Email"}, status=400)
 		if not username:
 			return JsonResponse({"message": "Username field cannot be empty"}, status=400)
 		if not password:
 			return JsonResponse({"message": "Password field cannot be empty"}, status=400)
+		password = password.strip()
 		if not is_valid_username(username=username):
 			return JsonResponse({"message": "Invalid Username"}, status=409)
 		if user_model.filter(username=username) or is_username_bot_username(username):
 			return JsonResponse({"message": "Username already exists"}, status=409)
 		if user_model.filter(email=email):
 			return JsonResponse({"message": "Email already exists"}, status=409)
+		if not DEBUG:
+			invalid_password = is_valid_password(password)
+			if invalid_password:
+				return JsonResponse({"message": f"Invalid Password.", "requirements": invalid_password}, status=409)
 		user = user_model.create(username=username, email=email, password=password)
 		if not user:
 			return JsonResponse({"message": "Error creating user"}, status=409)
@@ -77,6 +84,8 @@ def register(request):
 		send_custom_bot_message(user, generate_welcome_message(user.username))
 		setup_two_factor_auth(user)
 	return JsonResponse({"message": "success"})
+
+# averylongemailaddressforanexamplethatwillfitwithinthecharacterlimitbutstillseemslongbecauseitisdesignedtoillustratethisparticularemailvalidationrule@thisisareallylongdomainnamewithmanycharactersthatservesthepurposeofmakingthewholeemailcharactersong.com
 
 @accepted_methods(["POST"])
 def login(request):

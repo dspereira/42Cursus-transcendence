@@ -83,12 +83,13 @@ class SettingsManager:
 	def update_image_seed(self, new_image_seed):
 		if new_image_seed is not None:
 			image_seed = str(new_image_seed).strip()  if new_image_seed else None
-			if image_seed:
+			image_seed_len = len(image_seed)
+			if image_seed and image_seed_len >= 1 and image_seed_len <= 50:
 				self.__remove_image_from_profile()
 				if image_seed != self.user_profile.default_image_seed:
 					self.user_profile.default_image_seed = image_seed
 					self.user_profile.save()
-			return True
+				return True
 		return False
 
 	def update_image(self, image_file):

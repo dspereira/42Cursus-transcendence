@@ -8,6 +8,7 @@ from live_chat.models import ChatRoom
 from django.utils import timezone
 from datetime import datetime
 import math
+import re
 
 from two_factor_auth.models import OtpUserOptions
 from user_profile.models import UserProfileInfo
@@ -38,7 +39,7 @@ def logout(response):
 
 def refresh_token(response, user_id):
 	response.delete_cookie("access", path="/")
-	response.delete_cookie("refresh", path="/")
+	response.delete_cookie("refresh", path="/api/auth")
 	_set_cookies(response, _generate_tokens(user_id))
 	return response
 
@@ -127,6 +128,44 @@ def get_new_email_wait_time(user):
 					wait_time_str = f"{math.floor(new_wait_time) + 1} minute(s)"
 	return wait_time_str
 
+def is_valid_password(password: str):
+	password_requirements = {
+		"length": False,
+		"lower_character": False,
+		"upper_character": False,
+		"special_character": False,
+		"digit": False,
+		"white_character": False
+	}
+	if not password:
+		return password_requirements
+	password_len = len(password)
+	if password_len >= 8 and password_len <= 25:
+		password_requirements["length"] = True
+	if re.search(r'[a-z]', password):
+		password_requirements["lower_character"] = True
+	if re.search(r'[A-Z]', password):
+		password_requirements["upper_character"] = True
+	if re.search(r'[!@#$%^&*(),.?":{}|<>]', password):
+		password_requirements["special_character"] = True
+	if re.search(r'[0-9]', password):
+		password_requirements["digit"] = True
+	if not re.search(r'\s', password):
+		password_requirements["white_character"] = True
+	for req in password_requirements:
+		if not password_requirements[req]:
+			return password_requirements
+	return None
+
+def is_valid_email(email: str):
+	if email:
+		email_len = len(email)
+		if email_len >= 5 and email_len <= 254:
+			print("\nHere\n")
+			if re.match(r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{1,}$', email):
+				return True
+	return False
+
 def _generate_tokens(user_id):
 	token_gen = TokenGenerator(user_id)
 	token_gen.generate_tokens()
@@ -157,7 +196,7 @@ def _set_cookies(response, token_gen):
 		httponly=True,
 		expires=token_gen.get_refresh_token_exp(),
 		samesite="Lax",
-		path="/"
+		path="/api/auth"
 	)
 
 def _set_tfa_cookie(response, token):
