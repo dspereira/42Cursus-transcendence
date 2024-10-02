@@ -53,6 +53,7 @@ import TfaForm from "../components/tfa-form.js";
 import stateManager from "./StateManager.js";
 import checkUserLoginState from "../utils/checkUserLoginState.js";
 import { getHtmlElm } from "../utils/getHtmlElmUtils.js";
+import updateLoggedInStatus from "../utils/updateLoggedInUtils.js";
 
 const routes = {
 	"/initial"			: getHtmlElm(PageInitial),
@@ -133,9 +134,7 @@ const getDynamicRoute = function(route) {
 const updateIsLoggedInState = function(state) {
 	if (state === undefined || state === null)
 		return ;
-	if (state != stateManager.getState("isLoggedIn")) {
-		stateManager.setState("isLoggedIn", state);
-	}
+	updateLoggedInStatus(state);
 }
 
 const getRouteInfo = function(route, isLoggedIn) {	

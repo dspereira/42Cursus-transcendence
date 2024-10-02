@@ -2,6 +2,8 @@ import { callAPI } from "../utils/callApiUtils.js";
 import gameWebSocket from "../js/GameWebSocket.js";
 import stateManager from "../js/StateManager.js";
 import { redirect } from "../js/router.js";
+import checkUserLoginState from "../utils/checkUserLoginState.js";
+import updateLoggedInStatus from "../utils/updateLoggedInUtils.js";
 
 const styles = `
 	.lobby {
@@ -178,7 +180,11 @@ export default class AppLobby extends HTMLElement {
 
 	#setReadyBtnEvent() {
 		this.readyBtn.addEventListener("click", () => {
-			gameWebSocket.updateReadyStatus();
+			checkUserLoginState((state) => {
+				if (state)
+					gameWebSocket.updateReadyStatus();
+				updateLoggedInStatus(state);
+			});
 		});
 	}
 
@@ -253,6 +259,7 @@ export default class AppLobby extends HTMLElement {
 		});
 	}
 
+	/*
 	#onSocketCloseEvent() {
 		stateManager.addEvent("gameSocket", (state) => {
 			if (state == "closed") {
@@ -261,6 +268,17 @@ export default class AppLobby extends HTMLElement {
 						this.#openSocket();
 				});
 			}
+		});
+	}
+	*/
+
+	#onSocketCloseEvent() {
+		stateManager.addEvent("gameSocket", (state) => {
+			checkUserLoginState((state) => {
+				if (state && !this.isGameFinished)
+					this.#openSocket();
+				updateLoggedInStatus(state);
+			});
 		});
 	}
 }

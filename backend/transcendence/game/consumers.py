@@ -326,7 +326,8 @@ class Game(AsyncWebsocketConsumer):
 
 	async def __check_authentication(self):
 		if not await sync_to_async(is_authenticated)(self.access_data):
-			self.refresh_token_status = True
+			if await self.__is_already_ready():
+				self.refresh_token_status = True
 			await self.close(4000)
 			return
 
