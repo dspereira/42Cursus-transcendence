@@ -275,13 +275,14 @@ export default class SidePanel extends HTMLElement {
 		super()
 		this.#initComponent();
 		this.#render();
-		this.#scripts();
 		this.intervalID = null;
+		this.#scripts();
 	}
 
 	disconnectedCallback() {
-		if (this.intervalID)
+		if (this.intervalID) {
 			clearInterval(this.intervalID);
+		}
 	}
 
 	attributeChangedCallback(name, oldValue, newValue) {
