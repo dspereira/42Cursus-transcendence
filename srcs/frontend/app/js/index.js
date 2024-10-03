@@ -2,6 +2,7 @@ import { router, setHistoryEvents } from "./router.js"
 import stateManager from "./StateManager.js";
 import chatWebSocket from "./ChatWebSocket.js";
 import checkUserLoginState from "../utils/checkUserLoginState.js";
+import updateLoggedInStatus from "../utils/updateLoggedInUtils.js";
 
 stateManager.addEvent("isLoggedIn", (stateValue) => {
 	if (stateValue) {
@@ -40,10 +41,7 @@ const setupLoginStateChecker  = function(intervalSeconds) {
 	setInterval(() => {
 		if (!stateManager.getState("isLoggedIn"))
 			return ;
-		checkUserLoginState((state) => {
-			if (state != stateManager.getState("isLoggedIn"))
-				stateManager.setState("isLoggedIn", state);
-		});
+		checkUserLoginState();
 	}, intervalSeconds * 1000);
 }
 

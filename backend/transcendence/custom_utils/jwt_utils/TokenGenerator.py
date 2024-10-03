@@ -95,7 +95,7 @@ class TokenGenerator:
 					"jti": uuid7str()
 				},
 				"your-256-bit-secret",
-				algorithm='HS256'
+				algorithm="HS256"
 			)
 		except Exception as e:
 			print()
