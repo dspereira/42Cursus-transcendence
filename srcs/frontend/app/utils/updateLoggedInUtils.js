@@ -6,5 +6,3 @@ const updateLoggedInStatus = function(state) {
 } 
 
 export default updateLoggedInStatus;
-
-

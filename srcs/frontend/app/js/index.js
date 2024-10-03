@@ -41,9 +41,7 @@ const setupLoginStateChecker  = function(intervalSeconds) {
 	setInterval(() => {
 		if (!stateManager.getState("isLoggedIn"))
 			return ;
-		checkUserLoginState((state) => {
-			updateLoggedInStatus(state);
-		});
+		checkUserLoginState();
 	}, intervalSeconds * 1000);
 }
 

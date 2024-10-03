@@ -131,12 +131,6 @@ const getDynamicRoute = function(route) {
 	}
 } 
 
-const updateIsLoggedInState = function(state) {
-	if (state === undefined || state === null)
-		return ;
-	updateLoggedInStatus(state);
-}
-
 const getRouteInfo = function(route, isLoggedIn) {	
 	let isNotFound = false;
 	let accessLevel = null;
@@ -230,7 +224,6 @@ export const router = function(route, isHistoryNavigation) {
 			pushNewRoute(normalizeRouteForHistory(authorizedRoute));
 
 		render(htmlPage);
-		updateIsLoggedInState(isLoggedIn);
 		init = false;
 		isRouting = false;
 	});

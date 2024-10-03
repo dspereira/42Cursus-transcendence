@@ -183,7 +183,7 @@ export default class AppLobby extends HTMLElement {
 			checkUserLoginState((state) => {
 				if (state)
 					gameWebSocket.updateReadyStatus();
-				updateLoggedInStatus(state);
+				//updateLoggedInStatus(state);
 			});
 		});
 	}
@@ -258,19 +258,6 @@ export default class AppLobby extends HTMLElement {
 			}
 		});
 	}
-
-	/*
-	#onSocketCloseEvent() {
-		stateManager.addEvent("gameSocket", (state) => {
-			if (state == "closed") {
-				callAPI("GET", "http://127.0.0.1:8000/api/auth/login_status", null, (res, data) => {
-					if (res.ok || data)
-						this.#openSocket();
-				});
-			}
-		});
-	}
-	*/
 
 	#onSocketCloseEvent() {
 		stateManager.addEvent("gameSocket", (state) => {

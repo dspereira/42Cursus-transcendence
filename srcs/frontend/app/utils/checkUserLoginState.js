@@ -1,16 +1,25 @@
 import { callAPI } from "./callApiUtils.js";
 import stateManager from "../js/StateManager.js";
 
+const updateUserStates = function(data) {
+	let id = null;
+	let username = null;
 
-// melhorar esta funcao na condição de if (!data || !res.ok) chamar callback com false
+	if (data && data.id)
+		id = data.id;
+	if (data && data.username)
+		username = data.username;
+	stateManager.setState("userId", id);
+	stateManager.setState("username", username);
+}
+
 const checkUserLoginState = function(callback) {
 	callAPI("GET", "http://127.0.0.1:8000/api/auth/login_status", null, (res, data) => {
-		if (!data || !res.ok) 
-			return ;
-		stateManager.setState("userId", data.id);
-		stateManager.setState("username", data.username);
-		if (callback)
+		updateUserStates(data);
+		if (callback && res && res.ok && data)
 			callback(data.logged_in);
+		else if (callback)
+			callback(false);
 	});
 }
 

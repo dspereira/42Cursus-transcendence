@@ -245,6 +245,7 @@ def get_user_email(request):
 	return JsonResponse(res_data)
 
 @accepted_methods(["GET"])
+@login_required
 def check_login_status(request):
 	if request.access_data:
 		is_logged_in = True

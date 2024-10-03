@@ -9,7 +9,7 @@ export const callAPI = async function (method, url, data, callback_sucess, callb
 	let resApi = await fetchApi(method, url, data);
 
 	if (!resApi.error && resApi.data && resApi.res) {
-		if (resApi.res.status == 401 || (resApi.data && "logged_in" in resApi.data && resApi.data.logged_in == false)) {
+		if (resApi.res.status == 401) {
 			let resRefresh = await fetchApi(refreshMethod, refreshUrl, null);
 			if (resRefresh && resRefresh.res && resRefresh.res.ok) {
 				stateManager.setState("hasRefreshToken", true);
@@ -23,6 +23,8 @@ export const callAPI = async function (method, url, data, callback_sucess, callb
 		callback_sucess(resApi.res, resApi.data);
 		if (resApi.res && resApi.res.status == 401)
 			updateLoggedInStatus(false);
+		else if (resApi.res && resApi.res.ok)
+			updateLoggedInStatus(true);
 	}
 	else if (resApi && resApi.error) {
 		if (callback_error)
