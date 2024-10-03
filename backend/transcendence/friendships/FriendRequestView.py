@@ -3,6 +3,7 @@ from custom_utils.models_utils import ModelManager
 from user_profile.models import UserProfileInfo
 from friendships.models import FriendRequests
 from custom_decorators import login_required
+from custom_decorators import check_request_body
 from user_profile.aux import get_image_url
 from django.http import JsonResponse
 from user_auth.models import User
@@ -44,6 +45,7 @@ class FriendRequestView(View):
 			return JsonResponse({"message": "Error: Invalid User!"}, status=400)
 
 	@method_decorator(login_required)
+	@method_decorator(check_request_body(["requested_user"]))
 	def post(self, request):
 		if request.body:
 			req_data = json.loads(request.body)
@@ -65,6 +67,7 @@ class FriendRequestView(View):
 			return JsonResponse({"message": "Error: Empty Body!"}, status=400)
 
 	@method_decorator(login_required)
+	@method_decorator(check_request_body(["request_id"]))
 	def delete(self, request):
 		if request.body:
 			req_data = json.loads(request.body)
