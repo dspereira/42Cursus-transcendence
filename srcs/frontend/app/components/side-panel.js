@@ -1,6 +1,6 @@
 import {redirect} from "../js/router.js";
 import stateManager from "../js/StateManager.js";
-import { callAPI } from "../utils/callApiUtils.js";
+import {callAPI} from "../utils/callApiUtils.js";
 
 
 const styles = `
@@ -72,6 +72,22 @@ const styles = `
 		gap: 15px;
 	}
 
+	.notification {	
+		background: red;
+		color: white;
+		font-size: 12px;
+	}
+	
+	.notification-circle {
+		padding: 0px 6px;
+		border-radius: 50%;
+	}
+
+	.notification-square {
+		padding: 0px 3px;
+		border-radius: 3px;
+	}
+
 	/*** OPEN ***/
 	.open .side-panel {
 		width: 70px;
@@ -98,6 +114,24 @@ const styles = `
 		background-color: #dbd9d7;
 		border-radius: 6px;
 		width: 200px;
+	}
+
+	.open .game-notifications {
+		position: relative;
+		top: -10px;
+		right: 61%;
+	}
+
+	.open .tournaments-notifications {
+		position: relative;
+		top: -10px;
+		right: 73%;
+	}
+
+	.open .friends-notifications {
+		position: relative;
+		top: -10px;
+		right: 66%;
 	}
 
 	/*** CLOSE ***/
@@ -132,6 +166,12 @@ const styles = `
 	.close .link-btn .icon:hover {
 		background-color: #dbd9d7;
 		border-radius: 3px;
+	}
+
+	.close .notification {
+		position: relative;
+		top: -10px;
+		right: 42%;
 	}
 `;
 
@@ -171,18 +211,21 @@ const getHtml = function(data) {
 						<span>
 							<i class="icon bi bi-trophy"></i>
 							<span class="icon-text">Tournaments</span>
+							<span class="tournaments-notifications notification"></span>
 						</span>
 					</button>
 					<button id="friends">
 						<span>
 							<i class="icon bi bi-people"></i>
 							<span class="icon-text">Friends</span>
+							<span class="friends-notifications notification"></span>
 						</span>
 					</button>
 					<button id="play">
 						<span>
 							<i class="icon bi bi-dpad"></i>
 							<span class="icon-text">Play</span>
+							<span class="game-notifications notification"></span>
 						</span>
 					</button>
 					<div class="bottom-buttons">
@@ -247,7 +290,14 @@ export default class SidePanel extends HTMLElement {
 		super()
 		this.#initComponent();
 		this.#render();
+		this.intervalID = null;
 		this.#scripts();
+	}
+
+	disconnectedCallback() {
+		if (this.intervalID) {
+			clearInterval(this.intervalID);
+		}
 	}
 
 	attributeChangedCallback(name, oldValue, newValue) {
@@ -266,6 +316,10 @@ export default class SidePanel extends HTMLElement {
 			this.styles.textContent = this.#styles();
 			this.html.classList.add(`${this.elmtId}`);
 		}
+
+		this.gameNotifications = this.html.querySelector(".game-notifications");
+		this.tournamentNotifications = this.html.querySelector(".tournaments-notifications");
+		this.friendsNotifications = this.html.querySelector(".friends-notifications");
 	}
 
 	#styles() {
@@ -285,18 +339,41 @@ export default class SidePanel extends HTMLElement {
 	}
 
 	#scripts() {
-		this.#test();
 		this.#openClosePanel();
 		this.#setupNavigationEvents();
-
+		this.#getNumberRequestsCallApi()
+		this.#startInvitesPolling();
 	}
 
-	#test() {
-		callAPI("GET", `http://127.0.0.1:8000/api/friends/number_friend_requests/`, null, (res, data) => {
+	#startInvitesPolling(){
+		this.intervalID = setInterval(() => {
+			this.#getNumberRequestsCallApi()
+		}, 5000);
+	}
+
+	#getNumberRequestsCallApi(){
+		callAPI("GET", "http://127.0.0.1:8000/api/notifications/requests-notifications/", null, (res, data) => {
 			if (res.ok && data) {
-				console.log("Number of friend requests: ", data.number_friend_requests);
+				this.#updateNotifications(this.gameNotifications, data.number_game_requests);
+				this.#updateNotifications(this.tournamentNotifications, data.number_tournament_requests);
+				this.#updateNotifications(this.friendsNotifications, data.number_friend_requests);
 			}
 		});
+	}
+
+	#updateNotifications(elm, nbr_notifications) {
+		elm.innerHTML = `${nbr_notifications}`;
+		if (nbr_notifications) {
+			elm.classList.remove("hide");
+			elm.classList.remove("notification-circle");
+			elm.classList.remove("notification-square");
+			if (nbr_notifications <= 9)
+				elm.classList.add("notification-circle");
+			else
+				elm.classList.add("notification-square");
+		}
+		else
+			elm.classList.add("hide");
 	}
 
 	//btnOpenClose()
