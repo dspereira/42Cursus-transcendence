@@ -298,13 +298,23 @@ export default class ChatSection extends HTMLElement {
 	#setSubmitEvents() {
 		this.sendIcon.addEventListener("click", (event) => {
 			event.preventDefault();
-			this.html.querySelector("#msg-submit").requestSubmit();
+			this.#isFriend(this.data.userId, (status) => {
+				if (status)
+					this.html.querySelector("#msg-submit").requestSubmit();
+				else 
+					stateManager.setState("removeFriendIdFromChat", this.data.userId);
+			});
 		});
 
 		this.textArea.addEventListener("keydown", (event) => {
 			if (event.key === "Enter" && !event.shiftKey) {
 				event.preventDefault();
-				this.html.querySelector("#msg-submit").requestSubmit();
+				this.#isFriend(this.data.userId, (status) => {
+					if (status)
+						this.html.querySelector("#msg-submit").requestSubmit();
+					else 
+						stateManager.setState("removeFriendIdFromChat", this.data.userId);
+				});
 			}
 		});
 	}
@@ -454,13 +464,17 @@ export default class ChatSection extends HTMLElement {
 				else 
 					stateManager.setState("removeFriendIdFromChat", this.data.userId);
 			});
-
 		});
 	}
 
 	#setBtnUnblockEvent() {
 		this.btnUnblock .addEventListener("click", () => {
-			this.#blockStatusCall("POST", this.data.userId, "unblock");
+			this.#isFriend(this.data.userId, (status) => {
+				if (status)
+					this.#blockStatusCall("POST", this.data.userId, "unblock");
+				else 
+					stateManager.setState("removeFriendIdFromChat", this.data.userId);
+			});			
 		});
 	}
 
@@ -522,8 +536,14 @@ export default class ChatSection extends HTMLElement {
 
 	#inviteToGameEvent() {
 		this.btnPlay.addEventListener("click", () => {
-			stateManager.setState("friendIdInvitedFromChat", this.data.userId);
-			redirect("/play");
+			this.#isFriend(this.data.userId, (status) => {
+				if (status) {
+					stateManager.setState("friendIdInvitedFromChat", this.data.userId);
+					redirect("/play");
+				}
+				else 
+					stateManager.setState("removeFriendIdFromChat", this.data.userId);
+			});
 		});
 	}
 
