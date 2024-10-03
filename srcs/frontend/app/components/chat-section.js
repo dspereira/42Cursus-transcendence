@@ -448,7 +448,13 @@ export default class ChatSection extends HTMLElement {
 
 	#setBtnBlockEvent() {
 		this.btnBlock.addEventListener("click", () => {
-			this.#blockStatusCall("POST", this.data.userId, "block");
+			this.#isFriend(this.data.userId, (status) => {
+				if (status)
+					this.#blockStatusCall("POST", this.data.userId, "block");
+				else 
+					stateManager.setState("removeFriendIdFromChat", this.data.userId);
+			});
+
 		});
 	}
 
@@ -525,6 +531,13 @@ export default class ChatSection extends HTMLElement {
 		this.btnPlay.disabled = true;
 		this.btnBlock.disabled = true;
 		this.#disableMessageInput();
+	}
+
+	#isFriend(friendId, callback) {
+		callAPI("GET", `http://127.0.0.1:8000/api/friends/is-friend/?friend_id=${friendId}`, null, (res, data) => {
+			if (res.ok && data)
+				callback(data.friend_status)
+		});
 	}
 }
 
