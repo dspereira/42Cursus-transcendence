@@ -1,5 +1,6 @@
 import chatWebSocket from "../js/ChatWebSocket.js";
 import stateManager from "../js/StateManager.js";
+import updateLoggedInStatus from "./updateLoggedInUtils.js";
 
 const refreshUrl = "http://127.0.0.1:8000/api/auth/refresh_token";
 const refreshMethod = "POST";
@@ -18,8 +19,11 @@ export const callAPI = async function (method, url, data, callback_sucess, callb
 			}
 		}
 	}
-	if (resApi && !resApi.error && callback_sucess)
+	if (resApi && !resApi.error && callback_sucess) {
 		callback_sucess(resApi.res, resApi.data);
+		if (resApi.res && resApi.res.status == 401)
+			updateLoggedInStatus(false);
+	}
 	else if (resApi && resApi.error) {
 		if (callback_error)
 			callback_error(resApi.error);
