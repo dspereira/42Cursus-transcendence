@@ -157,7 +157,7 @@ const getHtml = function(data) {
 		<div class="main-container">
 			<div class="second-container">
 				<div class="logo-container">
-					<img src="/img/Pong.png" class="logo-img" alt="logo">
+					<img src="/img/pong-1k.png" class="logo-img" alt="logo">
 				</div>
 				<div class="highlight-text">Sign in</div>
 				<form id="login-form">

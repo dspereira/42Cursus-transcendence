@@ -12,6 +12,7 @@ const styles = `
 
 .main-container {
 	display: flex;
+	min-width: 460px;
 	flex-direction: column;
 	align-items: center;
 }
@@ -26,7 +27,16 @@ const styles = `
 }
 
 .methods {
-	width: 100%;
+	width: 400px;
+	display: flex;
+	justify-content: space-between;
+	flex-direction: row;
+	gap: 40px;
+	margin-top: 15px;
+}
+
+.methods > :not(.hide):nth-child(2):nth-last-child(2) {
+	margin: 0 auto;
 }
 
 .hide {
@@ -47,14 +57,20 @@ const styles = `
 
 .list-group-item {
 	background-color: ${colors.btn_default};
-	color: ${colors.second_text};
+	color: ${colors.primary_text};
 	border-radius: 5px;
 	border-style: hidden;
+	max-width: 200px;
+	text-align: center;
 }
 
 .list-group-item:hover {
 	background-color: ${colors.btn_hover};
-	color: ${colors.primary_text};
+	color: ${colors.second_text};
+}
+
+.message {
+	margin-top: 15px;
 }
 
 `;
@@ -62,7 +78,7 @@ const styles = `
 const getHtml = function(data) {
 	const html = `
 	<div class=main-container>
-		<img src="../img/Pong.png" class=logo-img>
+		<img src="../img/pong-1k.png" class=logo-img>
 		<div class="main-text">2FA</div>
 		<div class="option-2fa"></div>
 		<div class="tfa-methods">

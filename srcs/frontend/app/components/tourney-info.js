@@ -115,8 +115,12 @@ const styles = `
 	.tournament-container {
 		display: flex;
 		flex-direction: column;
-		height: 300px;
+		height: auto;
 		min-width: 460px;
+		border-radius: 10px;
+		border-style: hidden;
+		background-color: ${colors.second_card};
+		margin-bottom: 30px;
 	}
 
 	.brackets-container {
@@ -124,8 +128,9 @@ const styles = `
 		flex-direction: row;
 		justify-content: center;
 		align-items: center;
-		height: 180px;
+		height: 250px;
 		width: 100%;
+		padding: 30px 5% 10px 5%;
 	}
 
 	.players-container {
@@ -145,7 +150,7 @@ const styles = `
 	}
 
 	.left-fork, .right-fork {
-		border: 2px solid red;
+		border: 2px solid ${colors.btn_default};
 		height: 90px;
 		min-width: 15px;
 		width: 100%;
@@ -165,7 +170,7 @@ const styles = `
 		width: 100%;
 		min-width: 15px;
 		height: 2px;
-		background-color: red;
+		background-color: ${colors.btn_default};
 	}
 
 	.trophy-container {
@@ -179,8 +184,18 @@ const styles = `
 
 	.winner-container {
 		display: flex;
-		flex-direction: row;
+		flex-direction: column;
 		justify-content: center;
+		align-items: center;
+		color: ${colors.primary_text};
+		padding-bottom: 30px;
+	}
+
+	.tournament-name {
+		font-size: 24px;
+		color: ${colors.primary_text};
+		text-align: center;
+		margin-bottom: 10px;
 	}
 
 
@@ -195,7 +210,7 @@ const getHtml = function(data) {
 	const game_2 = data.info.games[2]; 
 	
 	const html = `
-		<h1>${data.info.name}</h1>
+		<div class="tournament-name">${data.info.name}</div>
 
 		<div class="tournament-container">
 			<div class=brackets-container>
@@ -220,91 +235,10 @@ const getHtml = function(data) {
 				</div>
 			</div>
 			<div class="winner-container">
-				<div>
 					<img src="${data.info.games[2].winner.image}" class="profile-photo-winner" alt="profile photo"/>
-				</div>
-			</div>
-		</div>
-
-
-
-
-		<div class="container-bracket">
-			<div class="bracket">
-				<div class="game">
-					<div class="player">
-						<div><img src="${game_0.player1.image}" class="profile-photo" alt="profile photo"/></div>
-						<div class="border-container-1">
-							<div class="elm">&nbsp;</div>
-							<div class="elm border-t border-r">&nbsp;</div>
-						</div>
-						<div class="border-container-2">
-							<div class="elm">&nbsp;</div>
-							<div class="elm border-b">&nbsp;</div>
-						</div>
-					</div>
-					<div class="player">
-						<img src="${game_0.player2.image}" class="profile-photo" alt="profile photo"/>
-						<div class="border-container-1">
-							<div class="elm border-b border-r">&nbsp;</div>
-							<div class="elm">&nbsp;</div>
-						</div>
-						<div class="border-container-2"></div>
-					</div>
-				</div>
-
-
-				<div class="game-center">
-					<div class="players-center">
-						<div>
-							<img src="${game_2.player1.image}" class="profile-photo" alt="profile photo"/>
-						</div>
-						<div><img src="/img/trophy-icon.png" class="trophy" alt="trophy"></div>
-						<div>
-							<img src="${game_2.player2.image}" class="profile-photo" alt="profile photo"/>
-						</div>
-					</div>
-				</div>
-
-				<div class="game">
-					<div class="player">
-						<div class="border-container-2">
-							<div class="elm">&nbsp;</div>
-							<div class="elm border-b">&nbsp;</div>
-						</div>
-						<div class="border-container-1">
-							<div class="elm">&nbsp;</div>
-							<div class="elm border-t border-l">&nbsp;</div>
-						</div>
-						<div><img src="${game_1.player1.image}" class="profile-photo" alt="profile photo"/></div>
-					</div>
-					<div class="player">
-						<div class="border-container-2">
-							<div class="elm">&nbsp;</div>
-							<div class="elm">&nbsp;</div>
-						</div>
-						<div class="border-container-1">
-							<div class="elm border-l">&nbsp;</div>
-							<div class="elm border-t ">&nbsp;</div>
-						</div>
-						<div><img src="${game_1.player2.image}" class="profile-photo" alt="profile photo"/></div>
-					</div>
-				</div>
-			</div>
-			
-			<div class="winner">
-				<div>
-					<img src="${data.info.games[2].winner.image}" class="profile-photo-winner" alt="profile photo"/>
-				</div>
-				<div>
 					WINNER
-				</div>
 			</div>
-
 		</div>
-
-		<br></br> <!--USAR MARGIN EM VEZ DE BR-->
-
 		<game-card
 			player1="${game_0.player1.username}"
 			player1-image="${game_0.player1.image}"

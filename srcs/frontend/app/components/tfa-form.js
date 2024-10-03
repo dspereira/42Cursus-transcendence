@@ -5,6 +5,7 @@ import { colors } from "../js/globalStyles.js";
 const styles = `
 .tfa-container {
 	width: 100%;
+	min-width: 460px;
 	display: flex;
 	flex-direction: column;
 	align-items: center;
@@ -58,8 +59,8 @@ p {
 .submit-container {
 	width: 100%;
 	display: flex;
-	justify-content: flex-end;
-	margin-top: 10px;
+	justify-content: center;
+	margin-top: 30px;
 }
 
 .code-invalid {
@@ -108,6 +109,13 @@ p {
 	border-style: hidden;
 }
 
+.btn-submit {
+	width: 70%;
+}
+
+.2fa-text {
+}
+
 `;
 
 const QRCODE_METHOD = "qr_code";
@@ -124,7 +132,7 @@ const getHtml = function(data) {
 	const html = `
 		<div class="tfa-container">
 			<div class="tfa-elements">
-				<p>${infoMsg}</p>
+				<div class="2fa-text">${infoMsg}</div>
 				<form id="tfa-code">
 					<div class="form-group">
 						<div class="code-container">
@@ -212,7 +220,7 @@ export default class TfaForm extends HTMLElement {
 	#sendTwoFactorCode(destination) {
 		console.log(destination);
 
-		callAPI("POST", `http://127.0.0.1:8000/api/two-factor-auth/request-${destination}/`, {}, (res, data) => {		
+		callAPI("POST", `http://127.0.0.1:8000/api/two-factor-auth/request-${destination}/`, {}, (res, data) => {
 			console.log(res);
 			console.log(data);
 		});

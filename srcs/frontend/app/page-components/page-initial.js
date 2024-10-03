@@ -128,7 +128,7 @@ const getHtml = function(data) {
 	<div class=main-container>
 	<div class=second-container>
 			<div class=title-container>
-				<img src="../img/Pong.png" class=logo-img>
+				<img src="../img/pong-2k.png" class=logo-img>
 			</div>
 			<div class=button-container>
 				<button type="button" class="btn btn-primary" id="login">Login</button>

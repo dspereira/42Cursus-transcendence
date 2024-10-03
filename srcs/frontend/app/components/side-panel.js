@@ -296,7 +296,7 @@ const getHtml = function(data) {
 					</button>
 				</div>
 				<div class= "logo">
-					<img src="/img/Pong.png" class="logo-img" alt="logo">
+					<img src="/img/pong-150.png" class="logo-img" alt="logo">
 					<span class="logo-text"><strong></strong></span>
 				</div>
 				<div class="btn-container">
