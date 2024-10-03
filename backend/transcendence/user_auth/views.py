@@ -184,17 +184,21 @@ def resend_email_validation(request):
 @accepted_methods(["GET"])
 @login_required
 def check_login_status(request):
-	if request.access_data:
+	is_logged_in = False
+	user_id = None
+	username = None
+	user = None
+	if request.access_data and request.access_data.sub:
+		user = user_model.get(id=request.access_data.sub)
+	if user:
 		is_logged_in = True
-		user_id = request.access_data.sub
-		user = user_model.get(id=user_id)
-		if user:
-			username = user.username
-	else:
-		is_logged_in = False
-		user_id = None
-		username = None
-	return JsonResponse({"logged_in": is_logged_in, "id": user_id, "username": username})
+		user_id = user.id
+		username = user.username
+	response = JsonResponse({"logged_in": is_logged_in, "id": user_id, "username": username}, status=200)
+	if not user:
+		user_logout(response)
+		update_blacklist(request.access_data, request.refresh_data)
+	return response
 
 """
 --------------------------------------------------------------
