@@ -72,12 +72,20 @@ const styles = `
 		gap: 15px;
 	}
 
-	.notification {
-		padding: 0px 5px;
-		border-radius: 50%;
+	.notification {	
 		background: red;
 		color: white;
 		font-size: 12px;
+	}
+	
+	.notification-circle {
+		padding: 0px 6px;
+		border-radius: 50%;
+	}
+
+	.notification-square {
+		padding: 0px 3px;
+		border-radius: 3px;
 	}
 
 	/*** OPEN ***/
@@ -338,21 +346,25 @@ export default class SidePanel extends HTMLElement {
 	#getNumberRequestsCallApi(){
 		callAPI("GET", "http://127.0.0.1:8000/api/notifications/requests-notifications/", null, (res, data) => {
 			if (res.ok && data) {
-				if (data.number_game_requests) {
-					this.gameNotifications.classList.remove("hide");
-					this.gameNotifications.innerHTML = `${data.number_game_requests}`;
-				}
-				else
-					this.gameNotifications.classList.add("hide");
-
-				if (data.number_tournament_requests) {
-						this.tournamentNotifications.classList.remove("hide");
-						this.tournamentNotifications.innerHTML = `${data.number_tournament_requests}`
-					}
-				else
-						this.tournamentNotifications.classList.add("hide");
+				this.#updateNotifications(this.gameNotifications, data.number_game_requests);
+				this.#updateNotifications(this.tournamentNotifications, data.number_tournament_requests);
 			}
 		});
+	}
+
+	#updateNotifications(elm, nbr_notifications) {
+		elm.innerHTML = `${nbr_notifications}`;
+		if (nbr_notifications) {
+			elm.classList.remove("hide");
+			elm.classList.remove("notification-circle");
+			elm.classList.remove("notification-square");
+			if (nbr_notifications <= 9)
+				elm.classList.add("notification-circle");
+			else
+				elm.classList.add("notification-square");
+		}
+		else
+			elm.classList.add("hide");
 	}
 
 	//btnOpenClose()
