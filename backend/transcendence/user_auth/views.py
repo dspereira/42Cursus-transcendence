@@ -182,6 +182,7 @@ def resend_email_validation(request):
 	return JsonResponse({"message": "Error: Empty Body"}, status=400)
 
 @accepted_methods(["GET"])
+@login_required
 def check_login_status(request):
 	if request.access_data:
 		is_logged_in = True
