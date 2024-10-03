@@ -1,6 +1,6 @@
 from django.utils.decorators import method_decorator
 from custom_utils.models_utils import ModelManager
-from custom_decorators import login_required
+from custom_decorators import login_required, check_request_body
 from user_profile.forms import ImageForm
 from django.http import JsonResponse
 from user_auth.models import User
@@ -28,6 +28,7 @@ class SettingsView(View):
 			return JsonResponse({"message": "Invalid User!"}, status=400)
 
 	@method_decorator(login_required)
+	@method_decorator(check_request_body(["username", "image_seed", "tfa", "bio", "language", "game_theme"]))
 	def post(self, request):
 		if not request.body:
 			return JsonResponse({"message": "Empty Body!"}, status=400)
