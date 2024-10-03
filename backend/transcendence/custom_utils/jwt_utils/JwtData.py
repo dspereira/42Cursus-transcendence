@@ -10,7 +10,7 @@ class JwtData:
 
 	def __decode_token(self):
 		try:
-			self.__token_data = jwt.decode(self.__token, "your-256-bit-secret", algorithms="HS256")
+			self.__token_data = jwt.decode(self.__token, "your-256-bit-secret", algorithms=["HS256"])
 		except Exception:
 			self.__token_data = None
 
