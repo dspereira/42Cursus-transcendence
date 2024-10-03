@@ -71,7 +71,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
 			if not await sync_to_async(is_bot_user)(data_json['friend_id']):
 				if not await self.__get_block_status(friend_id=data_json['friend_id']):
 					valid_message = input_checker.get_valid_chat_input(data_json['message'].strip())
-					if valid_message:
+					if valid_message and (len(valid_message) >= 1 and len(valid_message) <= 2000):
 						new_message = await self.__save_message(valid_message)
 						await self.__send_message(new_message)
 		elif data_type == "update_block_status":

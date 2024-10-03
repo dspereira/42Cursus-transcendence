@@ -234,6 +234,7 @@ export default class ChatFriendsList extends HTMLElement {
 		this.#pushFriendToTopOnMessage();
 		this.#setSearchEvent();
 		this.#changeOnlineStatus();
+		this.#removeFriendFromChatEvent();
 	}
 
 	#getChatFriendListToApi() {
@@ -285,19 +286,46 @@ export default class ChatFriendsList extends HTMLElement {
 	#setFriendClickEventHandler(friend) {
 		friend.addEventListener("click", () => {
 			this.#removeAllSelectedFriends();
-			const id = friend.id.substring(3);
-
-			let data = this.friendListData.find(user => user.id == id);
-			if (!data)
-				data = this.seaechListData.find(user => user.id == id);
-			if (data)
-				stateManager.setState("chatUserData", data);
-
-			if (stateManager.getState("friendChatId") != id) {
-				stateManager.setState("friendChatId", id);
-			}
-			friend.classList.add("friend-selected");
+			const friendId = friend.id.substring(3);
+			this.#isFriend(friendId, (status) => {
+				if (status)
+					this.#selectFriendToChat(friend, friendId);
+				else
+					this.#removeFriendFromChat(friend, friendId);
+			});
 		});
+	}
+
+	#selectFriendToChat(friendElm, friendId) {
+		this.#removeAllSelectedFriends();
+		let data = this.friendListData.find(user => user.id == friendId);
+		if (!data)
+			data = this.searchListData.find(user => user.id == friendId);
+		if (data)
+			stateManager.setState("chatUserData", data);
+
+		if (stateManager.getState("friendChatId") != friendId) {
+			stateManager.setState("friendChatId", friendId);
+		}
+		friendElm.classList.add("friend-selected");
+	}
+
+	#removeFriendFromList(list, friendId) {
+		if (!list || !friendId)
+			return ;
+		let idx = list.findIndex(user => user.id == friendId);
+		if (idx >= 0)
+			list.splice(idx, 1);
+	}
+
+	#removeFriendFromChat(friendElm, friendId) {
+		this.#removeFriendFromList(this.friendListData, friendId);
+		this.#removeFriendFromList(this.searchListData, friendId);
+		friendElm.classList.remove("friend-selected");
+		friendElm.remove();
+		if (stateManager.getState("friendChatId") == friendId) {
+			stateManager.setState("friendChatId", null);
+		}
 	}
 
 	#setSearchListFriendClickEventHandler(friend) {
@@ -309,7 +337,7 @@ export default class ChatFriendsList extends HTMLElement {
 			
 			let data = this.friendListData.find(user => user.id == id);
 			if (!data)
-				data = this.seaechListData.find(user => user.id == id);
+				data = this.searchListData.find(user => user.id == id);
 			if (data)
 				stateManager.setState("chatUserData", data);
 
@@ -388,7 +416,7 @@ export default class ChatFriendsList extends HTMLElement {
 				this.searchListHtml.innerHTML = "";
 				this.#friendsListVisibility("hide");
 				this.#searchListVisibility("show");
-				this.seaechListData = data.friends;
+				this.searchListData = data.friends;
 				if (data.friends) {
 					data.friends.forEach(elm => {
 						this.#insertFriendToList(elm, "search");
@@ -428,7 +456,6 @@ export default class ChatFriendsList extends HTMLElement {
 		this.searchListHtml.innerHTML = "";
 	}
 
-
 	#changeOnlineStatus() {
 		stateManager.addEvent("onlineStatus", (value) => {
 			this.#updateUserOnlineStatusHtml(value);
@@ -463,6 +490,24 @@ export default class ChatFriendsList extends HTMLElement {
 		let data = this.friendListData.find(user => user.id == value.id);
 		if (data)
 			data.online = value.online;
+	}
+
+	#isFriend(friendId, callback) {
+		callAPI("GET", `http://127.0.0.1:8000/api/friends/is-friend/?friend_id=${friendId}`, null, (res, data) => {
+			if (res.ok && data)
+				callback(data.friend_status)
+		});
+	}
+
+	#removeFriendFromChatEvent() {
+		stateManager.addEvent("removeFriendIdFromChat", (status) => {
+			if (status) {
+				const friendId = status;
+				const friend = this.html.querySelector(`#id-${friendId}`);
+				this.#removeFriendFromChat(friend, friendId);
+				stateManager.setState("removeFriendIdFromChat", null);
+			}
+		});
 	}
 }
 

@@ -1,7 +1,8 @@
 import {redirect} from "../js/router.js";
 import stateManager from "../js/StateManager.js";
 import {colors} from "../js/globalStyles.js"
-import { callAPI } from "../utils/callApiUtils.js";
+import { callAPI } from "../utils/callApiUtils.js";import {callAPI} from "../utils/callApiUtils.js";
+
 
 const styles = `
 
@@ -79,6 +80,22 @@ button {
 	gap: 15px;
 }
 
+	.notification {	
+		background: red;
+		color: white;
+		font-size: 12px;
+	}
+	
+	.notification-circle {
+		padding: 0px 6px;
+		border-radius: 50%;
+	}
+
+	.notification-square {
+		padding: 0px 3px;
+		border-radius: 3px;
+	}
+
 /*** OPEN ***/
 .open .side-panel {
 	width: 210px;
@@ -111,6 +128,18 @@ button {
 .icon {
 	color: ${colors.primary_text};
 }
+
+	.open .game-notifications {
+		position: relative;
+		top: -10px;
+		right: 61%;
+	}
+
+	.open .tournaments-notifications {
+		position: relative;
+		top: -10px;
+		right: 73%;
+	}
 
 	/*** CLOSE ***/
 
@@ -272,6 +301,12 @@ button {
 	}
 }
 
+
+	.close .notification {
+		position: relative;
+		top: -10px;
+		right: 42%;
+	}
 `;
 
 const getHtml = function(data) {
@@ -323,7 +358,8 @@ const getHtml = function(data) {
 							<span>
 								<i class="icon bi bi-trophy"></i>
 								<span class="icon-text">Tournaments</span>
-							</span>
+								<span class="tournaments-notifications notification"></span>
+						</span>
 						</button>
 						<button id="friends">
 							<span>
@@ -335,7 +371,8 @@ const getHtml = function(data) {
 							<span>
 								<i class="icon bi bi-dpad"></i>
 								<span class="icon-text">Play</span>
-							</span>
+								<span class="game-notifications notification"></span>
+						</span>
 						</button>
 						<div class="bottom-buttons">
 							<button id="logout">
@@ -400,6 +437,7 @@ export default class SidePanel extends HTMLElement {
 		super()
 		this.#initComponent();
 		this.#render();
+		this.intervalID = null;
 		this.#scripts();
 		this.lastState = "open";
 		this.escClose = () => {
@@ -409,6 +447,18 @@ export default class SidePanel extends HTMLElement {
 			console.log("ESC!!!");
 			document.removeEventListener('keydown', this.escClose);
 		};
+	}
+
+	disconnectedCallback() {
+		if (this.intervalID) {
+			clearInterval(this.intervalID);
+		}
+	}
+
+	disconnectedCallback() {
+		if (this.intervalID) {
+			clearInterval(this.intervalID);
+		}
 	}
 
 	attributeChangedCallback(name, oldValue, newValue) {
@@ -427,6 +477,9 @@ export default class SidePanel extends HTMLElement {
 			this.styles.textContent = this.#styles();
 			this.html.classList.add(`${this.elmtId}`);
 		}
+
+		this.gameNotifications = this.html.querySelector(".game-notifications");
+		this.tournamentNotifications = this.html.querySelector(".tournaments-notifications");
 	}
 
 	#styles() {
@@ -449,7 +502,38 @@ export default class SidePanel extends HTMLElement {
 		this.#openClosePanel();
 		this.#setupNavigationEvents();
 		this.#addPageRedirection("profile", "logo");
-		this.#responsiveSidePanel();
+		this.#responsiveSidePanel();		this.#getNumberRequestsCallApi()
+		this.#startInvitesPolling();
+	}
+
+	#startInvitesPolling(){
+		this.intervalID = setInterval(() => {
+			this.#getNumberRequestsCallApi()
+		}, 5000);
+	}
+
+	#getNumberRequestsCallApi(){
+		callAPI("GET", "http://127.0.0.1:8000/api/notifications/requests-notifications/", null, (res, data) => {
+			if (res.ok && data) {
+				this.#updateNotifications(this.gameNotifications, data.number_game_requests);
+				this.#updateNotifications(this.tournamentNotifications, data.number_tournament_requests);
+			}
+		});
+	}
+
+	#updateNotifications(elm, nbr_notifications) {
+		elm.innerHTML = `${nbr_notifications}`;
+		if (nbr_notifications) {
+			elm.classList.remove("hide");
+			elm.classList.remove("notification-circle");
+			elm.classList.remove("notification-square");
+			if (nbr_notifications <= 9)
+				elm.classList.add("notification-circle");
+			else
+				elm.classList.add("notification-square");
+		}
+		else
+			elm.classList.add("hide");
 	}
 
 	//btnOpenClose()

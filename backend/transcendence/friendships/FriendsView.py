@@ -1,7 +1,7 @@
 from friendships.models import FriendList, FriendRequests
 from django.utils.decorators import method_decorator
 from custom_utils.models_utils import ModelManager
-from custom_decorators import login_required
+from custom_decorators import login_required, check_request_body
 from live_chat.models import ChatRoom
 from django.http import JsonResponse
 from user_auth.models import User
@@ -33,7 +33,7 @@ class FriendsView(View):
 				if not search_username or search_username == "" or search_username == '""':
 					friends_values = sorted(friends_list, key=lambda x: x["username"])
 				elif len(search_username) > 15:
-					friends_values = []
+					friends_values = None
 				else:
 					searched_friends = [friend for friend in friends_list if friend["username"].lower().startswith(search_username.lower())]
 					if searched_friends:
@@ -44,6 +44,7 @@ class FriendsView(View):
 		return JsonResponse({"message": "Error: Invalid User"}, status=401)
 
 	@method_decorator(login_required)
+	@method_decorator(check_request_body(["request_id"]))
 	def post(self, request):
 		if request.body:
 			req_data = json.loads(request.body)
@@ -68,6 +69,7 @@ class FriendsView(View):
 			return JsonResponse({"message": "Error: No request_id"}, status=409)
 
 	@method_decorator(login_required)
+	@method_decorator(check_request_body(["friend_id"]))
 	def delete(self, request):
 		if request.body:
 			req_data = json.loads(request.body)

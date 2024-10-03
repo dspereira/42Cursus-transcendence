@@ -99,10 +99,7 @@ class Game(AsyncWebsocketConsumer):
 	async def disconnect(self, close_code):
 		if not self.refresh_token_status:
 			if not self.lobby:
-				await sync_to_async(print)("-----------------------")
-				await sync_to_async(print)("NAO TEM LOBBY")
-				await sync_to_async(print)("-----------------------")
-
+				await sync_to_async(print)("\n--------------------------\nNAO TEM LOBBY\n--------------------------\n")
 				raise StopConsumer()
 			if not self.game:
 				if self.user.id == self.lobby.get_host_id():
@@ -326,7 +323,8 @@ class Game(AsyncWebsocketConsumer):
 
 	async def __check_authentication(self):
 		if not await sync_to_async(is_authenticated)(self.access_data):
-			self.refresh_token_status = True
+			if await self.__is_already_ready() and self.game and await sync_to_async(self.game.get_status)() == GAME_STATUS_PLAYING:
+				self.refresh_token_status = True
 			await self.close(4000)
 			return
 

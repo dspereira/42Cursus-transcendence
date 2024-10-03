@@ -18,26 +18,6 @@ user_profile_info_model = ModelManager(UserProfileInfo)
 import os
 
 @login_required
-@accepted_methods(["POST"])
-def set_new_configs(request):
-	user_to_alter = user_profile_info_model.get(user_id=request.access_data.sub)
-	if	user_to_alter:
-		if request.body:
-			req_data = json.loads(request.body.decode('utf-8'))
-			if req_data.get("newUsername"):
-				if not set_new_username(user_model.get(id=request.access_data.sub), req_data.get("newUsername")):
-					return JsonResponse({"message": "Username already exists"}, status=409)
-			if req_data.get("newBio"):
-				set_new_bio(user_to_alter, req_data.get("newBio"))
-			if req_data.get("newSeed"):
-				set_new_default_seed(user_to_alter, req_data.get("newSeed"))
-			return JsonResponse({"message": "success"})
-		else:
-			return JsonResponse({"message": "Bad Request: Request body is required"}, status=400)
-	else:
-		return JsonResponse({"message": "User not found"}, status=404)
-
-@login_required
 @accepted_methods(["GET"])
 def get_profile_data(request):
 	username = request.GET.get('username')
@@ -59,43 +39,6 @@ def get_image(request):
 		return JsonResponse({"image": image_url})
 	else:
 		return JsonResponse({"message": "User not found"}, status=404)
-
-@login_required
-@accepted_methods(["POST"])
-def set_profile_picture(request):
-
-	print("---------------")
-	print("POST")
-	print(request.POST)
-	print("---------------")
-	print("FILES")
-	print(request.FILES)
-	print("---------------")
-
-	user_to_alter = user_profile_info_model.get(user_id=request.access_data.sub)
-	form = ImageForm(request.POST, request.FILES)
-	if form.is_valid():
-		file = request.FILES['image']
-		new_image_data = file.read()
-		if user_to_alter:
-			user_to_alter.profile_image = new_image_data
-
-			nome_arquivo, extensao = os.path.splitext(file.name)
-			print()
-			print("Image:")
-			print(request.FILES['image'])
-			print("Extenção:", extensao)
-			print()
-
-			image = Image.open(BytesIO(new_image_data))
-			output = BytesIO()
-			image.save(output, format='JPEG', quality=25) #quality goes from 1 up to 95 (the lower the number the lighter and lower quality the image)
-			compressed_image_data = output.getvalue()
-			user_to_alter.compressed_profile_image = compressed_image_data
-			user_to_alter.save()
-		else:
-			return JsonResponse({"message": "User not found"}, status=404)
-	return JsonResponse({"message": "success"})
 
 @login_required
 @accepted_methods(["GET"])

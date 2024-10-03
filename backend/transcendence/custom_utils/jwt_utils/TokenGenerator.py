@@ -6,9 +6,9 @@ ACCESS_TOKEN = "access"
 REFRESH_TOKEN = "refresh"
 EMAIL_VERIFICATION_TOKEN = "email_verification"
 TFA_TOKEN = "two_factor_auth"
-ACCESS_TOKEN_EXP_MIN = 1
+ACCESS_TOKEN_EXP_MIN = 20
 REFRESH_TOKEN_EXP_DAY = 1
-EMAIL_VERIFICATION_TOKEN_EXP_MIN = 5
+EMAIL_VERIFICATION_TOKEN_EXP_DAY = 1
 TFA_TOKEN_EXP_MIN = 1
 
 class TokenGenerator:
@@ -80,7 +80,7 @@ class TokenGenerator:
 			exp = iat + timedelta(days=REFRESH_TOKEN_EXP_DAY)
 			self.__refresh_exp = exp
 		elif token_type == EMAIL_VERIFICATION_TOKEN:
-			exp = iat + timedelta(minutes=EMAIL_VERIFICATION_TOKEN_EXP_MIN)
+			exp = iat + timedelta(days=EMAIL_VERIFICATION_TOKEN_EXP_DAY)
 			self.__email_verification_exp = exp
 		else:
 			exp = iat + timedelta(minutes=TFA_TOKEN_EXP_MIN)
@@ -95,7 +95,7 @@ class TokenGenerator:
 					"jti": uuid7str()
 				},
 				"your-256-bit-secret",
-				algorithm='HS256'
+				algorithm="HS256"
 			)
 		except Exception as e:
 			print()

@@ -166,12 +166,12 @@ const getHtml = function(data) {
 					</div>
 					<div class="form-group">
 						<i class="icon left-icon bi-person"></i>
-						<input type="text" class="input-padding form-control form-control-lg card-background" id="email" placeholder="Email / Username" maxlength="100">
+						<input type="text" class="input-padding form-control form-control-lg card-background" id="email" placeholder="Email / Username" maxlength="254">
 					</div>
 					<div class="form-group">
 						<i class="icon left-icon bi bi-key"></i>
 						<i class="icon right-icon bi bi-eye-slash eye-icon"></i>
-						<input type="password" class="input-padding form-control form-control-lg card-background" id="password" placeholder="Password" maxlength="128">
+						<input type="password" class="input-padding form-control form-control-lg card-background" id="password" placeholder="Password" maxlength="25">
 					</div>
 					<div>
 						<button type="submit" class="btn btn-primary btn-submit">Sign In</button>

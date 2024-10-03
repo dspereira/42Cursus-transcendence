@@ -5,6 +5,8 @@ import stateManager from "../js/StateManager.js";
 import { redirect } from "../js/router.js";
 import { colors } from "../js/globalStyles.js";
 import { pfpStyle } from "../utils/stylingFunctions.js";
+import updateLoggedInStatus from "../utils/updateLoggedInUtils.js";
+import checkUserLoginState from "../utils/checkUserLoginState.js";
 
 const styles = `
 
@@ -294,12 +296,10 @@ export default class AppPlay extends HTMLElement {
 
 	#onSocketCloseEvent() {
 		stateManager.addEvent("gameSocket", (state) => {
-			if (state == "closed") {
-				callAPI("GET", "http://127.0.0.1:8000/api/auth/login_status", null, (res, data) => {
-					if (res.ok && data && !this.isGameFinished)
-						this.#openSocket();
-				});
-			}
+			checkUserLoginState((state) => {
+				if (state && !this.isGameFinished)
+					this.#openSocket();
+			});
 		});
 	}
 

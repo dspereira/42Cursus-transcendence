@@ -218,11 +218,9 @@ export default class TfaForm extends HTMLElement {
 	}
 
 	#sendTwoFactorCode(destination) {
-		console.log(destination);
-
-		callAPI("POST", `http://127.0.0.1:8000/api/two-factor-auth/request-${destination}/`, {}, (res, data) => {
-			console.log(res);
-			console.log(data);
+		callAPI("POST", `http://127.0.0.1:8000/api/two-factor-auth/request-${destination}/`, {}, (res, data) => {		
+			if (!res.ok)
+				console.log(data.message); // Esta mensagem deve ser apresentada no frontend
 		});
 	}
 
@@ -288,6 +286,9 @@ export default class TfaForm extends HTMLElement {
 				callAPI("POST", "http://127.0.0.1:8000/api/two-factor-auth/validate-otp/", formData, (res, data) => {		
 					if (res.ok)
 						redirect("/");
+					else if (res.status == 401)
+						redirect("/");
+					// caso dê 401 colocar mensagem no frontend
 					this.#updateInvalidCodeStyle(true);
 				});
 			}

@@ -92,6 +92,7 @@ export default class AppChat extends HTMLElement {
 			this.styles.textContent = this.#styles();
 			this.html.classList.add(`${this.elmtId}`);
 		}
+		this.chatSection = this.html.querySelector(".chat-area");
 	}
 
 	#styles() {
@@ -113,6 +114,7 @@ export default class AppChat extends HTMLElement {
 	#scripts() {
 		this.#setStateEvent();
 		this.#setupFriendsPageRedirect();
+		this.#addfriendChatIdStateEvent();
 	}
 
 	#setStateEvent() {
@@ -126,13 +128,8 @@ export default class AppChat extends HTMLElement {
 	}
 
 	#insertChatSection() {
-		const chatSection = this.html.querySelector(".chat-area");
 		const userData = stateManager.getState("chatUserData");
-
-		if (!chatSection)
-			return ;
-
-		chatSection.innerHTML = `
+		this.chatSection.innerHTML = `
 			<chat-section
 				user-id="${userData.id}"
 				username="${userData.username}"
@@ -148,6 +145,17 @@ export default class AppChat extends HTMLElement {
 			return ;
 		link.addEventListener("click", () => {
 			redirect("/friends");
+		});
+	}
+
+	#addfriendChatIdStateEvent() {
+		stateManager.addEvent("friendChatId", (state) => {
+			if (!state) {
+				this.chatSection.innerHTML = `
+				<div class="no-friends-selected-msg">
+					<span>You have no friend selected. Please select a friend to start a chat.</span>
+				</div>`;
+			}
 		});
 	}
 }
