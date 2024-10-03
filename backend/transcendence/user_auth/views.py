@@ -1,4 +1,5 @@
 from custom_decorators import login_required, accepted_methods
+from custom_decorators import check_request_body
 from user_auth.models import User, BlacklistToken
 from django.contrib.auth import authenticate
 from django.http import JsonResponse
@@ -38,6 +39,7 @@ otp_user_opt_model = ModelManager(OtpUserOptions)
 user_model = ModelManager(User)
 
 @accepted_methods(["POST"])
+@check_request_body(["email", "username", "password"])
 def register(request):
 	if request.body:
 		req_data = json.loads(request.body)
@@ -86,6 +88,7 @@ def register(request):
 	return JsonResponse({"message": "success"})
 
 @accepted_methods(["POST"])
+@check_request_body(["username", "password"])
 def login(request):
 	if request.body:
 		req_data = json.loads(request.body)
@@ -107,6 +110,7 @@ def login(request):
 	return JsonResponse({"message": "Empty request body"}, status=400)
 
 @accepted_methods(["POST"])
+@check_request_body()
 def logout(request):
 	if request.access_data:
 		response = JsonResponse({"message": "success"})
@@ -117,6 +121,7 @@ def logout(request):
 	return JsonResponse({"message": "Unauthorized: Logout failed."}, status=401)
 
 @accepted_methods(["POST"])
+@check_request_body()
 def refresh_token(request):
 	if request.refresh_data:
 		response = JsonResponse({"message": "success"})
@@ -127,6 +132,7 @@ def refresh_token(request):
 	return JsonResponse({"message": "Invalid refresh token. Please authenticate again."}, status=401)
 
 @accepted_methods(["POST"])
+@check_request_body(["email_token"])
 def validate_email(request):
 	if request and request.body:
 		req_data = json.loads(request.body.decode('utf-8'))
@@ -154,6 +160,7 @@ def validate_email(request):
 	return JsonResponse({"message": "Error: Empty Body"}, status=400)
 
 @accepted_methods(["POST"])
+@check_request_body(["info"])
 def resend_email_validation(request):
 	if request and request.body:
 		req_data = json.loads(request.body.decode('utf-8'))
@@ -282,40 +289,3 @@ def get_user_email(request):
 		"email": email
 	}
 	return JsonResponse(res_data)
-
-# Just for test, needs to be removed
-import os
-
-@accepted_methods(["POST"])
-def apiTest(request):
-
-	os.system("clear")
-
-	print()
-	print(f"Content Type -> {request.content_type}")
-	print()
-
-	if request.content_type != 'application/json':
-		return JsonResponse({"message": "Error: Invalid content type."}, status=409)
-
-	if not request.body:
-		return JsonResponse({"message": "Error: Empty Body"}, status=409)
-
-	body_unicode = request.body.decode('utf-8')
-	req_data = json.loads(body_unicode)
-
-	username = req_data.get('username')
-
-	if not username or not is_valid_username(username):
-		return JsonResponse({"message": "Error: Username is not valid."}, status=409)
-
-	user = user_model.get(username=username)
-	if not user:
-		return JsonResponse({"message": "Error: User not Found"}, status=409)
-
-	user_info = {
-		'id': user.id,
-		'username': user.username
-	}
-
-	return JsonResponse({"message": "User info returned.", "user_info": user_info}, status=200)
