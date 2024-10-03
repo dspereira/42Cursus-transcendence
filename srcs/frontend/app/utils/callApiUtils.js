@@ -15,8 +15,8 @@ export const callAPI = async function (method, url, data, callback_sucess, callb
 				stateManager.setState("hasRefreshToken", true);
 				stateManager.setState("hasRefreshToken", false);
 				chatWebSocket.close();
-				resApi = await fetchApi(method, url, data);
 			}
+			resApi = await fetchApi(method, url, data);
 		}
 	}
 	if (resApi && !resApi.error && callback_sucess) {
