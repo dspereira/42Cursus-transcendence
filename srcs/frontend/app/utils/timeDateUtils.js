@@ -1,11 +1,14 @@
+const formatWithLeadingZero = function(value) {
+	return value < 10 ? `0${value}` : `${value}`;
+} 
+
 const parseDate = function(date) {
-    const dmPart = date.split("T")[0]; //get the part with the day and month
-    const hmPart = date.split("T")[1]; //get the part with the hour and minute
-    const day = dmPart.split("-")[2];
-    const month = dmPart.split("-")[1];
-    const year = dmPart.split("-")[0];
-    const hour = hmPart.split(":")[0];
-    const minute = hmPart.split(":")[1];
-    return `${day}/${month}/${year} ${hour}:${minute}`;
+	const timeDate = new Date(date * 1000);
+	const dayStr = formatWithLeadingZero(timeDate.getDate()); 
+	const monthStr = formatWithLeadingZero(timeDate.getMonth() + 1); 
+	const hoursStr = formatWithLeadingZero(timeDate.getHours()); 
+	const minutesStr = formatWithLeadingZero(timeDate.getMinutes());
+	return `${dayStr}/${monthStr}/${timeDate.getFullYear()} ${hoursStr}:${minutesStr}`;
 }
+
 export default parseDate;

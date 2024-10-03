@@ -204,8 +204,6 @@ export default class UserProfile extends HTMLElement {
 	}
 
 	#updateStats(stats) {
-		console.log(stats);
-
 		this.totalGames.innerHTML = `Total games: ${stats.totalGames}`;
 		this.gameWinRate.innerHTML = `Games win rate: ${stats.gamesWinRate}`;
 
