@@ -168,8 +168,6 @@ export default class TourneyLobby extends HTMLElement {
 			this.styles.textContent = this.#styles();
 			this.html.classList.add(`${this.elmtId}`);
 		}
-
-
 	}
 
 	#styles() {
@@ -196,6 +194,7 @@ export default class TourneyLobby extends HTMLElement {
 		this.#setLeaveTournamentEvent();
 		this.#setStartTournamentEvent();
 		this.#updateTournamentNameBtn();
+		this.#inputNameEvent();
 	}
 
 	#isFriendExistsInList(list, playerId) {
@@ -362,10 +361,12 @@ export default class TourneyLobby extends HTMLElement {
 			return ;
 
 		btn.addEventListener("click", () => {
+			btn.disabled = true;
 			const name = nameInput.value.trim();
 			callAPI("PATCH", `http://127.0.0.1:8000/api/tournament/`, {id: this.data.tournamentId, new_name: name}, (res, data) => {
 				if (res.status == 409)
-					nameInput.value = data.tournament_name;	
+					nameInput.value = data.tournament_name;
+				btn.disabled = false;
 			});
 		});
 	}
@@ -375,6 +376,21 @@ export default class TourneyLobby extends HTMLElement {
 		if (!btn)
 			return ;
 		btn.disabled = disabledValue;
+	}
+
+
+	#inputNameEvent() {
+		const inp = this.html.querySelector(".name-input");
+		const btn = this.html.querySelector(".btn-update");
+		
+		if (!inp || !btn)
+			return ;
+		inp.addEventListener("input", () => {
+			if (inp.value)
+				btn.disabled = false;
+			else
+				btn.disabled = true;
+		});
 	}
 }
 
