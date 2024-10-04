@@ -1,7 +1,7 @@
 import {redirect} from "../js/router.js";
 import stateManager from "../js/StateManager.js";
 import {colors} from "../js/globalStyles.js"
-import { callAPI } from "../utils/callApiUtils.js";import {callAPI} from "../utils/callApiUtils.js";
+import { callAPI } from "../utils/callApiUtils.js";
 
 
 const styles = `

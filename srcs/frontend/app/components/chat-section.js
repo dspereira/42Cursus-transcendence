@@ -87,12 +87,25 @@ const styles = `
 	background-color: ${chatColors.header};
 }
 
+button .btn-success:disabled {
+	cursor: not-allowed;
+}
+
 form {
 	position: relative;
 }
 
 .text-area {
 	padding-right: 50px;
+}
+
+.form-control:disabled {
+	background-color: ${chatColors.header};
+	cursor: not-allowed;
+}
+
+.form-control:disabled::placeholder {
+	color: ${chatColors.main_card_light};
 }
 
 .icon {

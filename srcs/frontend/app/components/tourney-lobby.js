@@ -584,21 +584,5 @@ export default class TourneyLobby extends HTMLElement {
 				btn.disabled = true;
 		});
 	}
-
-
-	#inputNameEvent() {
-		const inp = this.html.querySelector(".name-input");
-		const btn = this.html.querySelector(".btn-update");
-		
-		if (!inp || !btn)
-			return ;
-		inp.addEventListener("input", () => {
-			if (inp.value)
-				btn.disabled = false;
-			else
-				btn.disabled = true;
-		});
-	}
 }
-
 customElements.define("tourney-lobby", TourneyLobby);

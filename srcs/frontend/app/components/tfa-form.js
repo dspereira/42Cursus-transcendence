@@ -1,6 +1,7 @@
 import {callAPI} from "../utils/callApiUtils.js";
 import { redirect } from "../js/router.js";
 import { colors } from "../js/globalStyles.js";
+import stateManager from "../js/StateManager.js";
 
 const styles = `
 .tfa-container {
@@ -287,7 +288,12 @@ export default class TfaForm extends HTMLElement {
 					if (res.ok)
 						redirect("/");
 					else if (res.status == 401)
+					{
 						redirect("/");
+						setTimeout( () => {
+							stateManager.setState("errorMsg", data.message);
+						}, 200);
+					}
 					// caso dê 401 colocar mensagem no frontend
 					this.#updateInvalidCodeStyle(true);
 				});
