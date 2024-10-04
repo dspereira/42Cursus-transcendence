@@ -1,11 +1,8 @@
 from django.http import HttpResponse
+from transcendence.settings import ALLOWED_HOSTS, ALLOWED_PORT
 
 # Configurations of cors headers
 origin_name = "Access-Control-Allow-Origin"
-origin_data = [
-	"http://127.0.0.1:8080",
-	"http://localhost:8080",
-]
 
 headers_name = "Access-Control-Allow-Headers"
 headers_data = [
@@ -42,6 +39,7 @@ class CorsMiddleware:
 
 	def process_response(self, response, request):
 		origin = request.headers.get("Origin")
+		origin_data = self.__get_allowed_origins()
 		if origin in origin_data:
 			self.add_new_header(response, origin_name, [origin])
 			self.add_new_header(response, headers_name, headers_data)
@@ -51,3 +49,16 @@ class CorsMiddleware:
 
 	def add_new_header(self, response, name, data):
 		response[name] = ", ".join(data)
+
+	# ALLOWED_HOSTS and ALLOWED_PORT are defined in transcendence/settings.py
+	def __get_allowed_origins(self):
+		origins = []
+		if ALLOWED_HOSTS:
+			for origin in ALLOWED_HOSTS:
+				origins.append(f"http://{origin}:{ALLOWED_PORT}")
+		else:
+			origins = [
+				"http://127.0.0.1:8080",
+				"http://localhost:8080"
+			]
+		return origins
