@@ -128,6 +128,12 @@ const styles = `
 		right: 73%;
 	}
 
+	.open .friends-notifications {
+		position: relative;
+		top: -10px;
+		right: 66%;
+	}
+
 	/*** CLOSE ***/
 
 	.close .side-panel {
@@ -212,6 +218,7 @@ const getHtml = function(data) {
 						<span>
 							<i class="icon bi bi-people"></i>
 							<span class="icon-text">Friends</span>
+							<span class="friends-notifications notification"></span>
 						</span>
 					</button>
 					<button id="play">
@@ -312,6 +319,7 @@ export default class SidePanel extends HTMLElement {
 
 		this.gameNotifications = this.html.querySelector(".game-notifications");
 		this.tournamentNotifications = this.html.querySelector(".tournaments-notifications");
+		this.friendsNotifications = this.html.querySelector(".friends-notifications");
 	}
 
 	#styles() {
@@ -333,7 +341,7 @@ export default class SidePanel extends HTMLElement {
 	#scripts() {
 		this.#openClosePanel();
 		this.#setupNavigationEvents();
-		this.#getNumberRequestsCallApi()
+		this.#getNumberRequestsCallApi();
 		this.#startInvitesPolling();
 	}
 
@@ -348,6 +356,8 @@ export default class SidePanel extends HTMLElement {
 			if (res.ok && data) {
 				this.#updateNotifications(this.gameNotifications, data.number_game_requests);
 				this.#updateNotifications(this.tournamentNotifications, data.number_tournament_requests);
+				this.#updateNotifications(this.friendsNotifications, data.number_friend_requests);
+				stateManager.setState("hasFriendInvite", data.number_friend_requests);
 			}
 		});
 	}

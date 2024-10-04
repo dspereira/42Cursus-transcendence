@@ -35,6 +35,7 @@ class StateManager {
 			tournamentId: null,
 			isChatMsgReadyToSend: null,
 			friendIdInvitedFromChat: null,
+			hasFriendInvite: null,
 			removeFriendIdFromChat: null,
 		}
 		this.stateEvents = {
@@ -66,6 +67,7 @@ class StateManager {
 			tournamentId: [],
 			isChatMsgReadyToSend: [],
 			friendIdInvitedFromChat: [],
+			hasFriendInvite: [],
 			removeFriendIdFromChat: [],
 		}
 
