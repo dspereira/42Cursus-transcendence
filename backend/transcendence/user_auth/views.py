@@ -13,12 +13,16 @@ from .auth_utils import get_jwt_data
 from .auth_utils import add_email_token_to_blacklist
 from .auth_utils import create_user_profile_info
 from .auth_utils import create_user_settings
+from .auth_utils import add_bot_as_friend
+from custom_utils.auth_utils import is_username_bot_username
 
 from two_factor_auth.two_factor import setup_default_tfa_configs
 from two_factor_auth.two_factor import initiate_two_factor_authentication
 from user_profile.models import UserProfileInfo
 
 from custom_utils.models_utils import ModelManager
+from custom_utils.blitzpong_bot_utils import send_custom_bot_message
+from custom_utils.blitzpong_bot_utils import generate_welcome_message
 
 from django.middleware.csrf import get_token, rotate_token
 from django.views.decorators.csrf import csrf_exempt
@@ -40,19 +44,21 @@ def register(request):
 			return JsonResponse({"message": "Username field cannot be empty"}, status=400)
 		if not password:
 			return JsonResponse({"message": "Password field cannot be empty"}, status=400)
-		if user_model.filter(username=username):
+		if user_model.filter(username=username) or is_username_bot_username(username):
 			return JsonResponse({"message": "Username already exists"}, status=409)
 		if user_model.filter(email=email):
 			return JsonResponse({"message": "Email already exists"}, status=409)
 		user = user_model.create(username=username, email=email, password=password)
 		if not user:
-			return JsonResponse({"message": "Error creating user"}, status=500)
+			return JsonResponse({"message": "Error creating user"}, status=409)
 		send_email_verification(user)
 		if not create_user_profile_info(user=user):
-			return JsonResponse({"message": "Error creating user profile"}, status=500)
+			return JsonResponse({"message": "Error creating user profile"}, status=409)
 		if not create_user_settings(user=user):
-			return JsonResponse({"message": "Error creating user settings"}, status=500)
-
+			return JsonResponse({"message": "Error creating user settings"}, status=409)
+		if not add_bot_as_friend(user=user):
+			return JsonResponse({"message": "Error adding bot user as friend"}, status=409)
+		send_custom_bot_message(user, generate_welcome_message(user.username))
 	return JsonResponse({"message": "success"})
 
 @csrf_exempt
@@ -62,6 +68,8 @@ def login(request):
 		req_data = json.loads(request.body)
 		username = req_data.get("username")
 		password = req_data.get("password")
+		if is_username_bot_username(username):
+			return JsonResponse({"message": "Invalid credentials. Please check your username or password."}, status=401)
 		if not username:
 			return JsonResponse({"message": "Username field cannot be empty"}, status=400)
 		if not password:

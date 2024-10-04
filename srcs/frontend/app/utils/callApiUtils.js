@@ -10,9 +10,9 @@ export const callAPI = async function (method, url, data, callback_sucess, callb
 	if (!resApi.error && resApi.data && resApi.res) {
 		if (resApi.res.status == 401 || ("logged_in" in resApi.data && resApi.data.logged_in == false)) {
 			let resRefresh = await fetchApi(refreshMethod, refreshUrl, null, csrf_token);
-			if (!resRefresh.res.ok || resRefresh.error)
+			if (resRefresh && resRefresh.ok && !resRefresh.res.ok || resRefresh.error)
 				resRefresh = await fetchApi(refreshMethod, refreshUrl, null, csrf_token);
-			if (resRefresh.data && resRefresh.data.message == "success") {
+			if (resRefresh && resRefresh.data && resRefresh.data.message == "success") {
 				stateManager.setState("hasRefreshToken", true);
 				stateManager.setState("hasRefreshToken", false);
 				chatWebSocket.close();
@@ -60,25 +60,20 @@ const getReqHeader = function(method, data, csrf_token) {
 	else
 		obj.method = "GET";
 	if (data) {
-		if (isFormData) {
+		if (isFormData)
 			obj.body = data;
-			obj.headers = {
-				'X-CSRFToken': csrf_token
-			};
-		}
 		else {
 			obj.headers = {
-				"Content-Type": "application/json",
-				'X-CSRFToken': csrf_token
+				"Content-Type": "application/json"
 			};
 			obj.body = JSON.stringify(data);
 		}
 	}
-	else {
-		obj.headers = {
-			'X-CSRFToken': csrf_token
-		};
+	if (obj.method != "GET" && csrf_token) {
+		if (obj.headers)
+			obj.headers["X-CSRFToken"] = csrf_token;
+		else
+			obj.headers = {"X-CSRFToken" : csrf_token};
 	}
-
 	return obj;
 }
