@@ -544,7 +544,7 @@ export default class AppConfigs extends HTMLElement {
 					this.qrcodeImg.classList.remove("hide");
 					this.qrcodeImg.setAttribute("src", 'data:image/png;base64,' + data.qr_code);
 				}
-			});
+			}, null, this.data.csrfToken);
 		});
 	}
 
