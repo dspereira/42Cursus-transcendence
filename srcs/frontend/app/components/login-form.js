@@ -192,7 +192,7 @@ export default class LoginForm extends HTMLElement {
 	}
 
 	#csrfTokeGET() {
-		callAPI("GET", "http://127.0.0.1:8000/api/auth/csrf_token", null, (res, data) => {
+		callAPI("GET", "http://127.0.0.1:8000/api/auth/get-csrf-token", null, (res, data) => {
 			if (res.ok)
 			{
 				if (document.cookie && document.cookie !== '') {

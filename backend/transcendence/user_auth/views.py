@@ -55,6 +55,7 @@ def register(request):
 
 	return JsonResponse({"message": "success"})
 
+@csrf_exempt
 @accepted_methods(["POST"])
 def login(request):
 	if request.body:
@@ -92,11 +93,14 @@ def refresh_token(request):
 	return JsonResponse({"message": "Invalid refresh token. Please authenticate again."}, status=401)
 
 @accepted_methods(["GET"])
-def csrf_token(request):
-	rotate_token(request) # aqui ele vai dar refresh ao token para garantir que não estamos a reutilizar tokens
+def get_csrf_token(request):
+	rotate_token(request)
 	csrf_token = get_token(request)
-	response = JsonResponse({'csrfToken': csrf_token})
-	response.set_cookie('csrftoken', csrf_token) #adicionamos o CSRF Token as cookies pois o middleware procura por ele nas cookies
+	if (csrf_token):
+		response = JsonResponse({"message": "CSRF Token was got with success."})
+		response.set_cookie('csrftoken', csrf_token)
+	else:
+		response = JsonResponse({"message": "Could not get CSRF Token."}, status=409)
 	return response
 
 # Route test, remove in production
