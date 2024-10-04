@@ -1,6 +1,6 @@
 from django.utils.decorators import method_decorator
 from custom_utils.models_utils import ModelManager
-from custom_decorators import login_required
+from custom_decorators import login_required, check_request_body
 from django.http import JsonResponse
 from user_auth.models import User
 from .models import TournamentRequests, Tournament, TournamentPlayers
@@ -43,6 +43,7 @@ class TournamentView(View):
 			return JsonResponse({"message": "Error: Invalid User!"}, status=400)
 
 	@method_decorator(login_required)
+	@method_decorator(check_request_body())
 	def post(self, request):
 		user = user_model.get(id=request.access_data.sub)
 		if user:
@@ -78,6 +79,7 @@ class TournamentView(View):
 		return JsonResponse({"message": "Error: Invalid Tournament ID!"}, status=409)
 
 	@method_decorator(login_required)
+	@method_decorator(check_request_body(["new_name", "id"]))
 	def patch(self, request):
 		if request.body:
 			req_data = json.loads(request.body)

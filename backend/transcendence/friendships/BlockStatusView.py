@@ -1,6 +1,6 @@
 from django.utils.decorators import method_decorator
 from custom_utils.models_utils import ModelManager
-from custom_decorators import login_required
+from custom_decorators import login_required, check_request_body
 from django.http import JsonResponse
 from user_auth.models import User
 from django.views import View
@@ -37,6 +37,7 @@ class BlockStatusView(View):
 			return JsonResponse({"message": "Error: Invalid User!"}, status=400)
 
 	@method_decorator(login_required)
+	@method_decorator(check_request_body(["id", "status"]))
 	def post(self, request):
 		if request.body:
 			req_data = json.loads(request.body)

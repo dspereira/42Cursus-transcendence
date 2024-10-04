@@ -10,4 +10,5 @@ urlpatterns = [
 	path('request/', FriendRequestView.as_view(), name='request'),
 	path('chat-list/', views.chat_list, name='chat_list'),
 	path('block/', BlockStatusView.as_view(), name='block'),
+	path('is-friend/', views.is_friend, name='is-friend'),
 ]
