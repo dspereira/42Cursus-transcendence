@@ -34,7 +34,9 @@ class StateManager {
 			tournamentGameLobby: null,
 			tournamentId: null,
 			isChatMsgReadyToSend: null,
-			friendIdInvitedFromChat: null
+			friendIdInvitedFromChat: null,
+			hasFriendInvite: null,
+			removeFriendIdFromChat: null,
 		}
 		this.stateEvents = {
 			sidePanel: [],
@@ -64,7 +66,9 @@ class StateManager {
 			finishedTournament: [],
 			tournamentId: [],
 			isChatMsgReadyToSend: [],
-			friendIdInvitedFromChat: []
+			friendIdInvitedFromChat: [],
+			hasFriendInvite: [],
+			removeFriendIdFromChat: [],
 		}
 
 		StateManager.instance = this;

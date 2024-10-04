@@ -172,4 +172,9 @@ EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_HOST_USER = 'blitzpong42@gmail.com'
-EMAIL_HOST_PASSWORD ="jchr ccsy sefv cvxh" 
+EMAIL_HOST_PASSWORD ="wtwh qazr hspk zpkn" 
+
+# Phone Related
+TWILIO_ACCOUNT_SID = "ACefa750c5cb26dc930dbf052f50226199"
+TWILIO_AUTH_TOKEN = "2be82d5d6d7a7d0888fedc1b4bfa5770"
+TWILIO_PHONE_NUMBER = "+12673102395"

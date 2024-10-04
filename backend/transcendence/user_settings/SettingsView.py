@@ -1,6 +1,6 @@
 from django.utils.decorators import method_decorator
 from custom_utils.models_utils import ModelManager
-from custom_decorators import login_required
+from custom_decorators import login_required, check_request_body
 from user_profile.forms import ImageForm
 from django.http import JsonResponse
 from user_auth.models import User
@@ -28,6 +28,7 @@ class SettingsView(View):
 			return JsonResponse({"message": "Invalid User!"}, status=400)
 
 	@method_decorator(login_required)
+	@method_decorator(check_request_body(["username", "image_seed", "tfa", "bio", "language", "game_theme"]))
 	def post(self, request):
 		if not request.body:
 			return JsonResponse({"message": "Empty Body!"}, status=400)
@@ -46,6 +47,10 @@ class SettingsView(View):
 					if req_data.get('image_seed'):
 						if not user_settings_manager.update_image_seed(req_data['image_seed']):
 							return JsonResponse({"message": f"Invalid image seed!", "field": "image_seed"}, status=409)
+					if req_data.get('tfa'):
+						tfa_update = user_settings_manager.update_tfa(req_data['tfa'])
+						if tfa_update:
+							return JsonResponse({"message": f"Invalid {tfa_update}!", "field": "tfa"}, status=409)
 					fields_to_update = {
 						'bio': user_settings_manager.update_bio,
 						'language': user_settings_manager.update_language,

@@ -1,3 +1,4 @@
+import stateManager from "../js/StateManager.js";
 import { callAPI } from "../utils/callApiUtils.js";
 
 const styles = `
@@ -81,6 +82,16 @@ user-card {
 	border-radius: 8px;
 }
 
+.notification {	
+	background: red;
+	border-radius: 50%;
+	padding: 7px 7px;
+}
+
+.hide {
+	display: none;
+}
+
 `;
 
 const getHtml = function(data) {
@@ -109,6 +120,7 @@ const getHtml = function(data) {
 						<span>
 							<i class="icon bi bi-person-plus"></i>
 							<span class="icon-text">Requests</span>
+							<span class="notification hide"></span>
 						</span>
 					</button>
 				</div>
@@ -117,7 +129,7 @@ const getHtml = function(data) {
 				<div class="search-bar">
 					<div class="form-group">
 						<i class="search-icon bi bi-search"></i>
-						<input type="text" class="form-control form-control-md" id="search" placeholder="Search friends..." maxlength="50">
+						<input type="text" class="form-control form-control-md" id="search" placeholder="Search friends..." maxlength="15">
 					</div>
 				</div>
 				<div class="user-list"></div>
@@ -153,6 +165,8 @@ export default class AppFriends extends HTMLElement {
 			this.styles = document.createElement("style");
 			this.styles.textContent = this.#styles();
 			this.html.classList.add(`${this.elmtId}`);
+
+			this.notificationDot = this.html.querySelector(".notification");
 		}
 	}
 
@@ -177,6 +191,21 @@ export default class AppFriends extends HTMLElement {
 		this.#setSearchButtonEvent();
 		this.#setFriendsButtonEvent();
 		this.#setRequestsButtonEvent();
+		this.#notificationEvent();
+		this.#updateNotificationStyle(stateManager.getState("hasFriendInvite"));
+	}
+
+	#updateNotificationStyle(state) {
+		if (state)
+			this.notificationDot.classList.remove("hide");
+		else
+			this.notificationDot.classList.add("hide");
+	}
+
+	#notificationEvent() {
+		stateManager.addEvent("hasFriendInvite", (status) => {
+			this.#updateNotificationStyle(status);
+		});
 	}
 
 	#setSearchButtonEvent() {
@@ -340,7 +369,7 @@ export default class AppFriends extends HTMLElement {
 		searchBar.innerHTML = `
 		<div class="form-group">
 			<i class="search-icon bi bi-search"></i>
-			<input type="text" class="form-control form-control-md" id="search" placeholder="${placeholder}" maxlength="50">
+			<input type="text" class="form-control form-control-md" id="search" placeholder="${placeholder}" maxlength="15">
 		</div>`;
 
 		const inp = searchBar.querySelector("input");
@@ -368,14 +397,12 @@ export default class AppFriends extends HTMLElement {
 
 		callAPI("GET", `http://127.0.0.1:8000${path}?key=${value}`, null, (res, data) => {
 			if (res.ok) {
-				console.log(data);
 				if (type=="search" && data.users)
 					this.#insertUsersCards(data.users, "search");
 				else if (type=="friends" && data.friends)
 					this.#insertUsersCards(data.friends, "friends");
-				else {
+				else
 					userList.innerHTML = "<h1>Username not Found!</h1>";
-				}
 			}
 		});
 	}

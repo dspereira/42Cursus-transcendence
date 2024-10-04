@@ -71,13 +71,10 @@ export default class PageLogout extends HTMLElement {
 	}
 
 	#apiResHandlerCalback(res, data) {
-		if (data.ok && res.message === "success") {
-			if (stateManager.getState("isLoggedIn", true))
-				stateManager.setState("isLoggedIn", false);
-		}
-		else {
+		if (data.ok && res.message === "success")
+			updateLoggedInStatus(false);
+		else
 			redirect("/");
-		}
 	}
 
 	#logoutEvent() {

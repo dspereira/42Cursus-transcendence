@@ -2,6 +2,7 @@ import { router, setHistoryEvents } from "./router.js"
 import stateManager from "./StateManager.js";
 import chatWebSocket from "./ChatWebSocket.js";
 import checkUserLoginState from "../utils/checkUserLoginState.js";
+import updateLoggedInStatus from "../utils/updateLoggedInUtils.js";
 
 stateManager.addEvent("isLoggedIn", (stateValue) => {
 	if (stateValue) {
@@ -34,15 +35,13 @@ stateManager.addEvent("chatSocket", (stateValue) => {
 	}
 });
 
-
 // Verify if the user is logged in, but if the refresh token has expired, refresh the access token.
 // The user's logged-in state should not change because of the expired refresh token.
 const setupLoginStateChecker  = function(intervalSeconds) {
 	setInterval(() => {
-		checkUserLoginState((state) => {
-			if (state != stateManager.getState("isLoggedIn"))
-				stateManager.setState("isLoggedIn", state);
-		});
+		if (!stateManager.getState("isLoggedIn"))
+			return ;
+		checkUserLoginState();
 	}, intervalSeconds * 1000);
 }
 

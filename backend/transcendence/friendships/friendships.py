@@ -12,7 +12,6 @@ friend_list_model = ModelManager(FriendList)
 chatroom_model = ModelManager(ChatRoom)
 user_model = ModelManager(User)
 
-
 from custom_utils.auth_utils import is_username_bot_username
 
 def get_friend_list(user):
@@ -24,18 +23,20 @@ def get_friend_list(user):
 			data = list(filtered_list)
 	return data
 
-def get_friends_users_list(friends, user_id, include_bot):
+def get_friends_users_list(friends, user_id, include_bot, include_blocked):
 	friends_users_list = []
 	if friends:
 		for friend in friends:
 			if friend.user1.id == user_id:
 				is_username_bot = is_username_bot_username(friend.user2.username)
 				if not is_username_bot or (is_username_bot and include_bot):
-					friends_users_list.append(get_single_user_info(user_profile_info_model.get(user=friend.user2.id)))
+					if include_blocked or not is_friend_blocked(friend.user1, friend.user2):
+						friends_users_list.append(get_single_user_info(user_profile_info_model.get(user=friend.user2.id)))
 			else:
 				is_username_bot = is_username_bot_username(friend.user1.username)
 				if not is_username_bot or (is_username_bot and include_bot):
-					friends_users_list.append(get_single_user_info(user_profile_info_model.get(user=friend.user1.id)))
+					if include_blocked or not is_friend_blocked(friend.user1, friend.user2):
+						friends_users_list.append(get_single_user_info(user_profile_info_model.get(user=friend.user1.id)))
 	return friends_users_list
 
 def is_already_friend(user1, user2):
@@ -56,7 +57,7 @@ def is_request_already_maded(user1, user2):
 
 def remove_user_and_friends_from_users_list(user_id, users_list):
 	user = user_model.get(id=user_id)
-	friends_list = get_friends_users_list(friends=get_friend_list(user=user), user_id=user.id, include_bot=True)
+	friends_list = get_friends_users_list(friends=get_friend_list(user=user), user_id=user.id, include_bot=True, include_blocked=True)
 	friends_ids = {friend['id'] for friend in friends_list}
 	friends_ids.add(user_id)
 	result_users = [user for user in users_list if user['id'] not in friends_ids]

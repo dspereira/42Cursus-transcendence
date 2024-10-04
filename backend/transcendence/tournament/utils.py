@@ -5,6 +5,7 @@ from datetime import datetime
 from django.db.models import Q
 from asgiref.sync import async_to_sync
 from live_chat.models import ChatRoom, Message
+from django.db.models import Q
 import random
 import math
 import re
@@ -107,7 +108,7 @@ def get_tournament_list(user):
 					"id": current_tournament.id,
 					'name': current_tournament.name,
 					"is_winner": is_user_tournament_winner(user.id, winner['id'] if winner else 0),
-					"creation_date": current_tournament.created
+					"creation_date": current_tournament.created.timestamp()
 				}
 				tournaments_list.append(tournament_info)
 		return tournaments_list
@@ -228,9 +229,11 @@ def create_tournament_games(tournament):
 
 def get_next_game(tournament, user):
 	tournament_games = games_model.filter(tournament=tournament)
-	for game in tournament_games:
-		if game.status == GAME_STATUS_CREATED and (game.user1 == user or game.user2 == user):
-			return game
+	if tournament_games:
+		for game in tournament_games:
+			if game.user1 and game.user2:
+				if game.status == GAME_STATUS_CREATED and (game.user1 == user or game.user2 == user):
+					return game
 	return None
 
 def is_tournament_finished(tournament):
@@ -239,7 +242,7 @@ def is_tournament_finished(tournament):
 		tournament_games = tournament_games.order_by('id')
 		tournament_games = list(tournament_games)
 		last_game = tournament_games[-1]
-		if last_game.status == GAME_STATUS_FINISHED:
+		if last_game.status == GAME_STATUS_FINISHED or last_game.status == GAME_STATUS_SURRENDER:
 			return last_game
 	return None
 

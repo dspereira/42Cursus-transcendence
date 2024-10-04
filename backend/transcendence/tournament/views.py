@@ -1,4 +1,4 @@
-from custom_decorators import accepted_methods, login_required
+from custom_decorators import accepted_methods, login_required, check_request_body
 from custom_utils.models_utils import ModelManager
 from django.http import JsonResponse
 from user_auth.models import User
@@ -84,7 +84,9 @@ def friend_list(request):
 	if not tournament or tournament.owner != user:
 		return JsonResponse({"message": "Error: User is not the host of an tournament!"}, status=400)
 	new_friend_list = []
-	friends_list = get_friends_users_list(get_friend_list(user), user.id, include_bot=False)
+	if search_username and len(search_username) > 15:
+		return JsonResponse({"message": f"Friend list returned with success!", "friends": new_friend_list}, status=200)
+	friends_list = get_friends_users_list(get_friend_list(user), user.id, include_bot=False, include_blocked=False)
 	tournament_requests = get_tournament_user_requests_list(tournament)
 	current_tournament_players = get_tournament_players(tournament)
 	for friend in friends_list:
@@ -110,29 +112,8 @@ def invited_users_to_tournament(request):
 	return JsonResponse({"message": f"Invited Users list returned with success!", "invited_users": invited_users}, status=200)
 
 @login_required
-@accepted_methods(["DELETE"])
-def cancel_invite(request):
-	if not request.body:
-		return JsonResponse({"message": "Error: Empty Body!"}, status=400)
-	req_data = json.loads(request.body)
-	if not req_data['id']:
-		return JsonResponse({"message": "Error: Invalid invite ID!"}, status=400)
-	invite = tournament_requests_model.get(id=req_data['id'])
-	if not invite:
-		return JsonResponse({"message": "Error: Tournament invite does not exist!"}, status=409)
-	user = user_model.get(id=request.access_data.sub)
-	if not user:
-		return JsonResponse({"message": "Error: Invalid User!"}, status=400)
-	tournament = has_active_tournament(user)
-	if not tournament or tournament.owner != user:
-		return JsonResponse({"message": "Error: User is not the host of an tournament!"}, status=409)
-	if invite.tournament != tournament:
-		return JsonResponse({"message": "Error: Tournament invite does not belong to your current Tournament!"}, status=409)
-	update_request_status(invite, REQ_STATUS_ABORTED)
-	return JsonResponse({"message": f"Invite canceled with success!"}, status=200)
-
-@login_required
 @accepted_methods(["POST"])
+@check_request_body(["id"])
 def start_tournament(request):
 	if not request.body:
 		return JsonResponse({"message": "Error: Empty Body!"}, status=400)
