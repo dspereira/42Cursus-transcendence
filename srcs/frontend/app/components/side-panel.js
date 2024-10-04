@@ -341,7 +341,7 @@ export default class SidePanel extends HTMLElement {
 	#scripts() {
 		this.#openClosePanel();
 		this.#setupNavigationEvents();
-		this.#getNumberRequestsCallApi()
+		this.#getNumberRequestsCallApi();
 		this.#startInvitesPolling();
 	}
 
@@ -357,6 +357,7 @@ export default class SidePanel extends HTMLElement {
 				this.#updateNotifications(this.gameNotifications, data.number_game_requests);
 				this.#updateNotifications(this.tournamentNotifications, data.number_tournament_requests);
 				this.#updateNotifications(this.friendsNotifications, data.number_friend_requests);
+				stateManager.setState("hasFriendInvite", data.number_friend_requests);
 			}
 		});
 	}
