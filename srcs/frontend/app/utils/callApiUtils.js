@@ -6,6 +6,7 @@ const refreshUrl = "http://127.0.0.1:8000/api/auth/refresh_token";
 const refreshMethod = "POST";
 
 export const callAPI = async function (method, url, data, callback_sucess, callback_error, csrf_token) {
+	//console.log(url, csrf_token);
 	let resApi = await fetchApi(method, url, data, csrf_token);
 
 	if (!resApi.error && resApi.data && resApi.res) {
