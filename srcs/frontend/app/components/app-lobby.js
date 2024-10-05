@@ -2,6 +2,8 @@ import { callAPI } from "../utils/callApiUtils.js";
 import gameWebSocket from "../js/GameWebSocket.js";
 import stateManager from "../js/StateManager.js";
 import { redirect } from "../js/router.js";
+import checkUserLoginState from "../utils/checkUserLoginState.js";
+import updateLoggedInStatus from "../utils/updateLoggedInUtils.js";
 import { enAppLobbyDict } from "../lang-dicts/enLangDict.js";
 import { ptAppLobbyDict } from "../lang-dicts/ptLangDict.js";
 import { esAppLobbyDict } from "../lang-dicts/esLangDict.js";
@@ -186,7 +188,11 @@ export default class AppLobby extends HTMLElement {
 
 	#setReadyBtnEvent() {
 		this.readyBtn.addEventListener("click", () => {
-			gameWebSocket.updateReadyStatus();
+			checkUserLoginState((state) => {
+				if (state)
+					gameWebSocket.updateReadyStatus();
+				//updateLoggedInStatus(state);
+			});
 		});
 	}
 
@@ -263,12 +269,11 @@ export default class AppLobby extends HTMLElement {
 
 	#onSocketCloseEvent() {
 		stateManager.addEvent("gameSocket", (state) => {
-			if (state == "closed") {
-				callAPI("GET", "http://127.0.0.1:8000/api/auth/login_status", null, (res, data) => {
-					if (res.ok || data)
-						this.#openSocket();
-				});
-			}
+			checkUserLoginState((state) => {
+				if (state && !this.isGameFinished)
+					this.#openSocket();
+				updateLoggedInStatus(state);
+			});
 		});
 	}
 }

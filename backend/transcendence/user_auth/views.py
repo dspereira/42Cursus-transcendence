@@ -1,4 +1,5 @@
 from custom_decorators import login_required, accepted_methods
+from custom_decorators import check_request_body
 from user_auth.models import User, BlacklistToken
 from django.contrib.auth import authenticate
 from django.http import JsonResponse
@@ -38,6 +39,7 @@ otp_user_opt_model = ModelManager(OtpUserOptions)
 user_model = ModelManager(User)
 
 @accepted_methods(["POST"])
+@check_request_body(["email", "username", "password"])
 def register(request):
 	if request.body:
 		req_data = json.loads(request.body)
@@ -85,9 +87,8 @@ def register(request):
 		setup_two_factor_auth(user)
 	return JsonResponse({"message": "success"})
 
-# averylongemailaddressforanexamplethatwillfitwithinthecharacterlimitbutstillseemslongbecauseitisdesignedtoillustratethisparticularemailvalidationrule@thisisareallylongdomainnamewithmanycharactersthatservesthepurposeofmakingthewholeemailcharactersong.com
-
 @accepted_methods(["POST"])
+@check_request_body(["username", "password"])
 def login(request):
 	if request.body:
 		req_data = json.loads(request.body)
@@ -109,6 +110,7 @@ def login(request):
 	return JsonResponse({"message": "Empty request body"}, status=400)
 
 @accepted_methods(["POST"])
+@check_request_body()
 def logout(request):
 	if request.access_data:
 		response = JsonResponse({"message": "success"})
@@ -119,6 +121,7 @@ def logout(request):
 	return JsonResponse({"message": "Unauthorized: Logout failed."}, status=401)
 
 @accepted_methods(["POST"])
+@check_request_body()
 def refresh_token(request):
 	if request.refresh_data:
 		response = JsonResponse({"message": "success"})
@@ -127,6 +130,84 @@ def refresh_token(request):
 			return JsonResponse({"message": "Failed to update blacklist tokens."}, status=409)
 		return response
 	return JsonResponse({"message": "Invalid refresh token. Please authenticate again."}, status=401)
+
+@accepted_methods(["POST"])
+@check_request_body(["email_token"])
+def validate_email(request):
+	if request and request.body:
+		req_data = json.loads(request.body.decode('utf-8'))
+		if req_data:
+			email_token = req_data.get("email_token")
+			if email_token:
+				email_token_data = get_jwt_data(email_token)
+				validation_status = "invalid"
+				if email_token_data:
+					if email_token_data.type == "email_verification":
+						user = user_model.get(id=email_token_data.sub)
+						if user:
+							if user.active:
+								validation_status = "active"
+							else:
+								user.active = True
+								user.save()
+								validation_status = "validated"
+								otp_options = otp_user_opt_model.get(user=user)
+								if otp_options:
+									EmailVerificationWaitManager().reset(otp_options)
+				else:
+					add_email_token_to_blacklist(email_token_data)
+				return JsonResponse({"message": "Email validation done!", "validation_status": validation_status}, status=200)
+	return JsonResponse({"message": "Error: Empty Body"}, status=400)
+
+@accepted_methods(["POST"])
+@check_request_body(["info"])
+def resend_email_validation(request):
+	if request and request.body:
+		req_data = json.loads(request.body.decode('utf-8'))
+		if req_data:
+			user_info = req_data.get("info")
+			if user_info:
+				user = user_model.get(email=user_info)
+				if not user:
+					user = user_model.get(username=user_info)
+					if not user:
+						return JsonResponse({"message": "Error: Doesn't exist user!"}, status=409)
+				if user.active:
+					return JsonResponse({"message": "Error: Email already verified!"}, status=409)
+				wait_time = get_new_email_wait_time(user)
+				if wait_time:
+					return JsonResponse({"message": f"Error: Please wait {wait_time} to resend a new email!"}, status=409)
+				send_email_verification(user)
+				return JsonResponse({"message": "Email verification sended!"}, status=200)
+	return JsonResponse({"message": "Error: Empty Body"}, status=400)
+
+@accepted_methods(["GET"])
+@login_required
+def check_login_status(request):
+	is_logged_in = False
+	user_id = None
+	username = None
+	user = None
+	if request.access_data and request.access_data.sub:
+		user = user_model.get(id=request.access_data.sub)
+	if user:
+		is_logged_in = True
+		user_id = user.id
+		username = user.username
+	response = JsonResponse({"logged_in": is_logged_in, "id": user_id, "username": username}, status=200)
+	if not user:
+		user_logout(response)
+		update_blacklist(request.access_data, request.refresh_data)
+	return response
+
+"""
+--------------------------------------------------------------
+---------------------- VERIFICAR DEPOIS ----------------------
+--------------------------------------------------------------
+
+\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/
+
+"""
 
 # Route test, remove in production
 @accepted_methods(["GET"])
@@ -157,36 +238,6 @@ def apiGetUserInfo(request):
 		"user": user.username,
 	}
 	return JsonResponse(res_data)
-
-# Just for test, needs to be removed
-@accepted_methods(["GET"])
-@login_required
-def apiGetUsersList(request):
-
-	#os.system("clear")
-
-	users_list = User.objects.all()
-	users_count = User.objects.count()
-
-	users_data = []
-	for user in users_list:
-		users_data.append({
-			'id': user.id,
-			'username': user.username,
-		})
-
-	result_print = "------------------------------------------\n"
-	if (users_count):
-		for user in users_data:
-			result_print += f'{user["id"]} | {user["username"]}\n'
-	else:
-		result_print += "There is no Users inside DataBase\n"
-	result_print += "------------------------------------------\n"
-
-	response = {"message": result_print, "users_count": users_count, "users_list": users_data}
-
-	return JsonResponse(response)
-
 
 # Test views
 @accepted_methods(["GET"])
@@ -243,67 +294,3 @@ def get_user_email(request):
 		"email": email
 	}
 	return JsonResponse(res_data)
-
-@accepted_methods(["GET"])
-def check_login_status(request):
-	if request.access_data:
-		is_logged_in = True
-		user_id = request.access_data.sub
-		user = user_model.get(id=user_id)
-		if user:
-			username = user.username
-		else:
-			username = None
-	else:
-		is_logged_in = False
-		user_id = None
-		username = None
-	return JsonResponse({"logged_in": is_logged_in, "id": user_id, "username": username})
-
-@accepted_methods(["POST"])
-def validate_email(request):
-	if request and request.body:
-		req_data = json.loads(request.body.decode('utf-8'))
-		if req_data:
-			email_token = req_data.get("email_token")
-			if email_token:
-				email_token_data = get_jwt_data(email_token)
-				validation_status = "invalid"
-				if email_token_data:
-					if email_token_data.type == "email_verification":
-						user = user_model.get(id=email_token_data.sub)
-						if user:
-							if user.active:
-								validation_status = "active"
-							else:
-								user.active = True
-								user.save()
-								validation_status = "validated"
-								otp_options = otp_user_opt_model.get(user=user)
-								if otp_options:
-									EmailVerificationWaitManager().reset(otp_options)
-				else:
-					add_email_token_to_blacklist(email_token_data)
-				return JsonResponse({"message": "Email validation done!", "validation_status": validation_status}, status=200)
-	return JsonResponse({"message": "Error: Empty Body"}, status=400)
-
-@accepted_methods(["POST"])
-def resend_email_validation(request):
-	if request and request.body:
-		req_data = json.loads(request.body.decode('utf-8'))
-		if req_data:
-			user_info = req_data.get("info")
-			if user_info:
-				user = user_model.get(email=user_info)
-				if not user:
-					user = user_model.get(username=user_info)
-					if not user:
-						return JsonResponse({"message": "Error: Doesn't exist user!"}, status=409)
-				if user.active:
-					return JsonResponse({"message": "Error: Email already verified!"}, status=409)
-				wait_time = get_new_email_wait_time(user)
-				if wait_time:
-					return JsonResponse({"message": f"Error: Please wait {wait_time} to resend a new email!"}, status=409)
-				send_email_verification(user)
-				return JsonResponse({"message": "Email verification sended!"}, status=200)
-	return JsonResponse({"message": "Error: Empty Body"}, status=400)

@@ -1,4 +1,4 @@
-from custom_decorators import accepted_methods, login_required, tfa_required
+from custom_decorators import accepted_methods, login_required, tfa_required, check_request_body
 from custom_utils.models_utils import ModelManager
 from django.http import JsonResponse
 from .models import OtpUserOptions
@@ -53,6 +53,7 @@ def configured_2fa(request):
 
 @login_required
 @accepted_methods(["POST"])
+@check_request_body()
 def generate_qr_code(request):
 	if request:
 		if request.access_data:
@@ -69,6 +70,7 @@ def generate_qr_code(request):
 
 @tfa_required
 @accepted_methods(["POST"])
+@check_request_body()
 def generate_user_phone_code(request):
 	if request:
 		if request.tfa_data:
@@ -87,6 +89,7 @@ def generate_user_phone_code(request):
 
 @tfa_required
 @accepted_methods(["POST"])
+@check_request_body()
 def generate_user_email_code(request):
 	if request:
 		if request.tfa_data:
@@ -105,6 +108,7 @@ def generate_user_email_code(request):
 
 @tfa_required
 @accepted_methods(["POST"])
+@check_request_body(["code", "method"])
 def validateOTP(request):
 	if request:
 		if request.tfa_data:

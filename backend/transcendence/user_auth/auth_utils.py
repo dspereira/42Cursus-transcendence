@@ -161,7 +161,6 @@ def is_valid_email(email: str):
 	if email:
 		email_len = len(email)
 		if email_len >= 5 and email_len <= 254:
-			print("\nHere\n")
 			if re.match(r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{1,}$', email):
 				return True
 	return False
