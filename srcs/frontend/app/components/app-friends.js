@@ -1,3 +1,4 @@
+import stateManager from "../js/StateManager.js";
 import { callAPI } from "../utils/callApiUtils.js";
 import {colors} from "../js/globalStyles.js"
 import stateManager from "../js/StateManager.js";
@@ -170,6 +171,26 @@ user-card {
 	overflow-y: auto;
 }
 
+.notification {	
+	background: red;
+	border-radius: 50%;
+	padding: 7px 7px;
+}
+
+.hide {
+	display: none;
+}
+
+.notification {
+	background: red;
+	border-radius: 50%;
+	padding: 7px 7px;
+}
+
+.hide {
+	display: none;
+}
+
 `;
 
 const getHtml = function(data) {
@@ -198,6 +219,7 @@ const getHtml = function(data) {
 						<span>
 							<i class="icon bi bi-person-plus"></i>
 							<span class="icon-text">Requests</span>
+							<span class="notification hide"></span>
 						</span>
 					</button>
 				</div>
@@ -242,6 +264,8 @@ export default class AppFriends extends HTMLElement {
 			this.styles = document.createElement("style");
 			this.styles.textContent = this.#styles();
 			this.html.classList.add(`${this.elmtId}`);
+
+			this.notificationDot = this.html.querySelector(".notification");
 		}
 	}
 
@@ -267,6 +291,21 @@ export default class AppFriends extends HTMLElement {
 		this.#setFriendsButtonEvent();
 		this.#setRequestsButtonEvent();
 		this.#errorMsgEvents();
+		this.#notificationEvent();
+		this.#updateNotificationStyle(stateManager.getState("hasFriendInvite"));
+	}
+
+	#updateNotificationStyle(state) {
+		if (state)
+			this.notificationDot.classList.remove("hide");
+		else
+			this.notificationDot.classList.add("hide");
+	}
+
+	#notificationEvent() {
+		stateManager.addEvent("hasFriendInvite", (status) => {
+			this.#updateNotificationStyle(status);
+		});
 	}
 
 	#setSearchButtonEvent() {
