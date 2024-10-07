@@ -52,8 +52,8 @@ const styles = `
 		font-size: 18px;
 		border-radius: 5px;
 		border-style: hidden;
-		margin: 25px 5px 0px 5px;
-		padding: 5px 0px 5px 0px;
+		margin: 25px 0px 0px 0px;
+		padding: 20px 0px 20px 0px;
 		background-color: ${colors.third_card};
 	}
 
@@ -124,7 +124,7 @@ const styles = `
 		.game-stats {
 			flex-direction: row;
 			gap: 10px;
-			padding: 10px;
+			padding: 20px;
 		}
 
 		.game-stats > .separator {
@@ -135,8 +135,8 @@ const styles = `
 		}
 	}
 
-	@media (max-width: 620px) {
-			.game-stats-container, .tournament-stats-container {
+	@media (max-width: 660px) {
+		.game-stats-container, .tournament-stats-container {
 			width: 100%;
 		}
 
@@ -187,6 +187,10 @@ const styles = `
 		display: none;
 	}
 
+	.small-margin {
+		margin-bottom: 10px;
+	}
+
 `;
 
 const getHtml = function(data) {
@@ -205,7 +209,7 @@ const getHtml = function(data) {
 				<div class="game-stats">
 					<!-- Total games tournaments included -->
 					<div class="game-stats-container">
-						<div class="total-games"></div>
+						<div class="total-games small-margin"></div>
 						<div class="games-win-rate"></div>
 						<div class="win-rate-bar game"></div>
 						<div class="wins-losses game">
@@ -216,7 +220,7 @@ const getHtml = function(data) {
 					<div class="separator"></div>
 					<div class="separator-v"></div>
 					<div class="tournament-stats-container">
-						<div class="total-tournaments"></div>
+						<div class="total-tournaments small-margin"></div>
 						<div class="tournaments-win-rate"></div>
 						<div class="win-rate-bar tournament"></div>
 						<div class="wins-losses tournament">
