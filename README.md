@@ -12,4 +12,4 @@
 - [x] Bootstrap
 - [x] Database
 - [ ] Multi language support
-- [ ] Multi screen support
+- [ ] Expanding Browser Compatibility
