@@ -199,40 +199,53 @@ export default class ChatFriendsList extends HTMLElement {
 			<div class="online-status ${visibility}"></div>
 		</div>
 		<span class="name">${friendObj.username}</span>`;
-		if (list == "friend") {
-			this.friendListHtml.appendChild(friendHtml);
-			this.#setFriendClickEventHandler(friendHtml);
-		}
-		else if (list == "search") {
-			this.searchListHtml.appendChild(friendHtml);
-			this.#setSearchListFriendClickEventHandler(friendHtml);
-		}
+		this.#appendChildToList(friendHtml, list);
+		this.#setFriendClickEventHandler(friendHtml, list);
 	}
 
-	#setFriendClickEventHandler(friend) {
+	#setFriendClickEventHandler(friend, listName) {
 		friend.addEventListener("click", () => {
 			this.#removeAllSelectedFriends();
 			const friendId = friend.id.substring(3);
 			this.#isFriend(friendId, (status) => {
 				if (status)
-					this.#selectFriendToChat(friend, friendId);
+					this.#selectFriendToChat(friend, friendId, listName);
 				else
-					this.#removeFriendFromChat(friend, friendId);
+					this.#removeFriendFromChat(friendId);
 			});
 		});
 	}
 
-	#selectFriendToChat(friendElm, friendId) {
+	#appendChildToList(elm, listName) {
+		if (listName == "friend")
+			this.friendListHtml.appendChild(elm);
+		else
+			this.searchListHtml.appendChild(elm);
+	}
+
+	#selectFriendToChat(friendElm, friendId, listName) {
 		this.#removeAllSelectedFriends();
-		let data = this.friendListData.find(user => user.id == friendId);
-		if (!data)
+		
+		let data;
+		if (listName == "search")
 			data = this.searchListData.find(user => user.id == friendId);
+		else
+			data = this.friendListData.find(user => user.id == friendId);
 		if (data)
 			stateManager.setState("chatUserData", data);
-
-		if (stateManager.getState("friendChatId") != friendId) {
+		if (stateManager.getState("friendChatId") != friendId)
 			stateManager.setState("friendChatId", friendId);
-		}
+		friendElm.classList.add("friend-selected");
+		if (listName == "search")
+			this.#selectFriendFromFriendList(friendId);
+	}
+
+	#selectFriendFromFriendList(id) {
+		let elmId = `#id-${id}`;
+
+		const friendElm = this.html.querySelector(elmId);
+		if (!friendElm)
+			return ;
 		friendElm.classList.add("friend-selected");
 	}
 
@@ -244,40 +257,19 @@ export default class ChatFriendsList extends HTMLElement {
 			list.splice(idx, 1);
 	}
 
-	#removeFriendFromChat(friendElm, friendId) {
+	#removeFriendFromChat(friendId) {
 		this.#removeFriendFromList(this.friendListData, friendId);
 		this.#removeFriendFromList(this.searchListData, friendId);
-		friendElm.classList.remove("friend-selected");
-		friendElm.remove();
-		if (stateManager.getState("friendChatId") == friendId) {
+
+		let elm = this.html.querySelector(`#id-${friendId}`);
+		if (elm)
+			elm.remove();
+		elm = this.html.querySelector(`#id_${friendId}`);
+		if (elm)
+			elm.remove();
+
+		if (stateManager.getState("friendChatId") == friendId)
 			stateManager.setState("friendChatId", null);
-		}
-	}
-
-	#setSearchListFriendClickEventHandler(friend) {
-		friend.addEventListener("click", () => {
-			this.#removeAllSelectedFriends();
-			const id = friend.id.substring(3);
-			const elmId = `id-${id}`;
-			const friendList = this.html.querySelectorAll(".friend-list .user");
-			
-			let data = this.friendListData.find(user => user.id == id);
-			if (!data)
-				data = this.searchListData.find(user => user.id == id);
-			if (data)
-				stateManager.setState("chatUserData", data);
-
-			if (stateManager.getState("friendChatId") != id) {
-				stateManager.setState("friendChatId", id);
-			}
-			friend.classList.add("friend-selected");
-			if (!friendList)
-				return ;
-			friendList.forEach((elm) => {
-				if (elm.id == elmId)
-					elm.classList.add("friend-selected");
-			});
-		});
 	}
 
 	#removeAllSelectedFriends() {
@@ -430,7 +422,7 @@ export default class ChatFriendsList extends HTMLElement {
 			if (status) {
 				const friendId = status;
 				const friend = this.html.querySelector(`#id-${friendId}`);
-				this.#removeFriendFromChat(friend, friendId);
+				this.#removeFriendFromChat(friendId);
 				stateManager.setState("removeFriendIdFromChat", null);
 			}
 		});
