@@ -60,7 +60,6 @@ const styles = `
 	margin-left: 10px;
 }
 
-
 .icon-play {
 	font-size: 16px;
 }

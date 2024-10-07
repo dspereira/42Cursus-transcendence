@@ -765,7 +765,7 @@ export default class AppConfigs extends HTMLElement {
 	#showQrcode() {
 		this.showQrcode.addEventListener("click", (event) => {
 			event.preventDefault();
-			callAPI("POST", "http://127.0.0.1:8000/api/two-factor-auth/request-qr-code/", {}, (res, data) => {
+			callAPI("POST", "http://127.0.0.1:8000/api/two-factor-auth/request-qr-code/", null, (res, data) => {
 				if (res.ok && data && data.qr_code) {
 					this.qrcodeImg.setAttribute("src", 'data:image/png;base64,' + data.qr_code);
 					console.log("here");

@@ -26,7 +26,7 @@ ${pfpStyle(".profile-photo", "50px", "auto")}
 .btn-leave-div {
 	display: flex;
 	justify-content: center;
-	margin-top: 50px;
+	margin-top: 30px;
 }
 
 .btn-leave {
@@ -51,6 +51,7 @@ ${pfpStyle(".profile-photo", "50px", "auto")}
 	display: flex;
 	justify-content: center;
 	width: 100%;
+	height: 80vh;
 }
 
 .board-2 {

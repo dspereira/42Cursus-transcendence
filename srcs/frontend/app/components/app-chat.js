@@ -13,7 +13,6 @@ const styles = `
 
 .chat-area {
 	width: 100%;
-	text-align: center;
 }
 
 .hide {
