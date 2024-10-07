@@ -61,11 +61,11 @@ export default class PagePlay extends HTMLElement {
 	}
 
 	async #loadInitialData() {
-		await callAPI("GET", "http://127.0.0.1:8000/api/settings/getlanguage", null, (res, data) => {
+		await callAPI("GET", "http://127.0.0.1:8000/api/settings/", null, (res, data) => {
 			if (res.ok) {
-				if (data && data.language){
-					this.data.language = data.language;
-					this.data.langDict = getLanguageDict(data.language, enPagePlayDict, ptPagePlayDict, esPagePlayDict);
+				if (data && data.settings.language){
+					this.data.language = data.settings.language;
+					this.data.langDict = getLanguageDict(this.data.language, enPagePlayDict, ptPagePlayDict, esPagePlayDict);
 				}
 		}
 		});

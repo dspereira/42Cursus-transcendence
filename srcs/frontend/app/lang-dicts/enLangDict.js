@@ -13,6 +13,7 @@ export const enAppConfigs = {
 	new_bio_label: "Change Bio",
 	new_bio_placeholder: "New Bio",
 	security_settings_header: "Security Settings",
+	security_settings_legend: "Choose where to receive your two-factor authentication:",
 	security_phone_label: "Phone",
 	game_settings_header: "Game Settings",
 	game_theme_label: "Choose the game theme:",
@@ -155,6 +156,7 @@ export const enTourneyLobbyDict = {
 	start_button: "Start",
 	cancel_button: "Cancel",
 	leave_button: "Leave",
+	update_name_button: "Update Name",
 
 	/* #setDefaultPhoto(elmHtml) */
 	player_username_placeholder: "waiting..."
@@ -165,5 +167,5 @@ export const enUserProfile = {
 	total_games: "Total Games:",
 	games_win_rate: "Games win rate:",
 	total_tournaments: "Total Tournaments:",
-	tournaments_win_rate: "Total Tournaments win rate:",
+	tournaments_win_rate: "Tournaments win rate:",
 }

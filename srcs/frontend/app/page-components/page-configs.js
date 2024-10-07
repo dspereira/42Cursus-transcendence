@@ -32,10 +32,10 @@ export default class PageConfigs extends HTMLElement {
 	}
 
 	async #loadInitialData() {
-		await callAPI("GET", "http://127.0.0.1:8000/api/settings/getlanguage", null, (res, data) => {
+		await callAPI("GET", "http://127.0.0.1:8000/api/settings/", null, (res, data) => {
 			if (res.ok) {
-				if (data && data.language){
-					this.data.language = data.language;
+				if (data && data.settings.language){
+					this.data.language = data.settings.language;
 				}
 		}
 		});

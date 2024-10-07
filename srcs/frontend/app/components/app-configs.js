@@ -119,7 +119,7 @@ const getHtml = function(data) {
 				<h2>${data.langDict.security_settings_header}</h2>
 				<hr>
 				<fieldset>
-					<legend>Choose where to receive your two-factor authentication:</legend>
+					<legend>${data.langDict.security_settings_legend}</legend>
 					<div class="form-check">
 						<input class="form-check-input" checked type="checkbox" value="email" id="email">
 						<label class="form-check-label" for="email">Email</label>

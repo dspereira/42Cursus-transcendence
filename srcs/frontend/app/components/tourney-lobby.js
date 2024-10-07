@@ -94,7 +94,7 @@ const getHtml = function(data) {
 			<input type="text" class="form-control form-control-md name-input" value="${data.tournamentName}" placeholder="Tournament Name" maxlength="50">
 		</div>
 		<div class="button-container">
-			<button type="button" class="btn btn-primary btn-update">Update Name</button>
+			<button type="button" class="btn btn-primary btn-update">${data.langDict.update_name_button}</button>
 		</div>
 	</div>`;
 

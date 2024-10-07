@@ -13,6 +13,7 @@ export const esAppConfigs = {
 	new_bio_label: "Cambiar Biografía",
 	new_bio_placeholder: "Nueva Biografía",
 	security_settings_header: "Configuración de Seguridad",
+	security_settings_legend: "Elige dónde recibir tu autenticación de dos factores:",
 	security_phone_label: "Teléfono",
 	game_settings_header: "Configuración del Juego",
 	game_theme_label: "Elige el tema del juego:",
@@ -155,6 +156,7 @@ export const esTourneyLobbyDict = {
 	start_button: "Iniciar",
 	cancel_button: "Cancelar",
 	leave_button: "Salir",
+	update_name_button: "Cambiar Nombre",
 
 	/* #setDefaultPhoto(elmHtml) */
 	player_username_placeholder: "esperando..."
@@ -163,7 +165,7 @@ export const esTourneyLobbyDict = {
 export const esUserProfile = {
 	/* #updateStats(stats) */
 	total_games: "Total de Juegos:",
-	games_win_rate: "Tasa de Ganancia de Juegos:",
+	games_win_rate: "Porcentaje de Victorias",
 	total_tournaments: "Total de Torneos:",
-	tournaments_win_rate: "Tasa de Ganancia de Torneos:",
+	tournaments_win_rate: "Porcentaje de Victorias de Torneos:",
 }

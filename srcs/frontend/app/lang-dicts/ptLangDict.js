@@ -13,6 +13,7 @@ export const ptAppConfigs = {
 	new_bio_label: "Mudar Bio",
 	new_bio_placeholder: "Nova Bio",
 	security_settings_header: "Configurações de Segurança",
+	security_settings_legend: "Escolha onde receber a sua autenticação de dois fatores:",
 	security_phone_label: "Telefone",
 	game_settings_header: "Configurações do Jogo",
 	game_theme_label: "Escolha o tema do jogo:",
@@ -155,6 +156,7 @@ export const ptTourneyLobbyDict = {
 	start_button: "Iniciar",
 	cancel_button: "Cancelar",
 	leave_button: "Sair",
+	update_name_button: "Mudar Nome",
 
 	/* #setDefaultPhoto(elmHtml) */
 	player_username_placeholder: "aguardando..."
@@ -165,5 +167,5 @@ export const ptUserProfile = {
 	total_games: "Total de Jogos:",
 	games_win_rate: "Percentagem de Vitórias:",
 	total_tournaments: "Total de Torneios:",
-	tournaments_win_rate: "Percentagem de Vitórias em Torneios:",
+	tournaments_win_rate: "Percentagem de Vitórias de Torneios:",
 }
