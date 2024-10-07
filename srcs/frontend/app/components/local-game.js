@@ -25,7 +25,6 @@ const styles = `
 		display: flex;
 		justify-content: center;
 		width: 100%;
-		height: 80vh;
 	}
 	
 	.board-2 {

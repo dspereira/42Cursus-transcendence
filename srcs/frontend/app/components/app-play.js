@@ -39,15 +39,18 @@ ${pfpStyle(".profile-photo", "50px", "auto")}
 }
 
 .game-board {
+	display: flex;
+	flex-direction: column;
 	width: 100%;
+	min-width: 460px;
 	height: 80vh;
+	gap: 20px;
 }
 
 .board {
 	display: flex;
 	justify-content: center;
 	width: 100%;
-	height: 80vh;
 }
 
 .board-2 {

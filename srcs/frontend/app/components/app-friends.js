@@ -1,7 +1,6 @@
 import stateManager from "../js/StateManager.js";
 import { callAPI } from "../utils/callApiUtils.js";
-import {colors} from "../js/globalStyles.js"
-import stateManager from "../js/StateManager.js";
+import {colors} from "../js/globalStyles.js" 	
 
 const styles = `
 .friends-section {
@@ -181,14 +180,10 @@ user-card {
 	display: none;
 }
 
-.notification {
-	background: red;
-	border-radius: 50%;
-	padding: 7px 7px;
-}
+.no-friends-text {
+	font-size: 16px;
+	text-align: center;
 
-.hide {
-	display: none;
 }
 
 `;
@@ -422,7 +417,7 @@ export default class AppFriends extends HTMLElement {
 				if (data.friends)
 					this.#insertUsersCards(data.friends, "friends");
 				else
-					listPanel.innerHTML = "<h1>Add friends to see them here!</h1>";
+					listPanel.innerHTML = `<div class="no-friends-text">Add friends to see them here!</div>`;
 			}
 		});	
 	}
@@ -510,7 +505,6 @@ export default class AppFriends extends HTMLElement {
 	#errorMsgEvents() {
 		stateManager.addEvent("errorMsg", (msg) => {
 			if (msg) {
-				console.log(msg);
 				stateManager.setState("errorMsg", null);
 				const alertBefore  = this.html.querySelector(".alert");
 				if (alertBefore)

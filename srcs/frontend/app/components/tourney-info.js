@@ -189,6 +189,7 @@ const styles = `
 		align-items: center;
 		color: ${colors.primary_text};
 		padding-bottom: 30px;
+		font-weight: bold;
 	}
 
 	.tournament-name {

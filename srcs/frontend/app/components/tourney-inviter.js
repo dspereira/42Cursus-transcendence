@@ -218,6 +218,10 @@ game-invite-card1 {
 	color: ${colors.second_text};
 }
 
+.no-friends-text {
+	color: ${colors.second_text};
+}
+
 `;
 
 const getHtml = function(data) {
@@ -319,8 +323,18 @@ export default class TourneyInviter extends HTMLElement {
 		const friendList = this.html.querySelector(".friends");
 		friendList.innerHTML = "";
 		let friendCard;
-		if (!friendList || !friends)
+		if (!friendList || !friends || !friends.length) {
+			console.log("no friends!");
+			if (friendList) {
+				const noFriendsMsg = document.createElement("div");
+				noFriendsMsg.classList.add("no-friends-text");
+				noFriendsMsg.innerHTML = `
+					No friends to be selected
+				`;
+				friendList.appendChild(noFriendsMsg);
+			}
 			return ;
+		}
 		friends.forEach(elm => {
 			friendCard = document.createElement("game-invite-card1");
 			friendCard.setAttribute("username", elm.username);

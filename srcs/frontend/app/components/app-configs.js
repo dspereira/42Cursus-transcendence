@@ -2,6 +2,7 @@ import { callAPI } from "../utils/callApiUtils.js";
 import isValidUsername from "../utils/usernameValidationUtils.js";
 import getCountryCodesOptions from "../utils/countryCodesUtils.js";
 import { colors } from "../js/globalStyles.js";
+import stateManager from "../js/StateManager.js";
 
 const styles = `
 
@@ -267,6 +268,51 @@ legend {
 	background-clip: content-box;
 }
 
+.alert-div {
+	display: flex;
+	margin: 30px auto;
+	width: 100%;
+	animation: disappear linear 5s forwards;
+	background-color: ${colors.alert};
+	z-index: 1001;
+}
+
+.alert-bar {
+	width: 95%;
+	height: 5px;
+	border-style: hidden;
+	border-radius: 2px;
+	background-color: ${colors.alert_bar};
+	position: absolute;
+	bottom: 2px;
+	animation: expire linear 5s forwards;
+}
+
+@keyframes expire {
+	from {
+		width: 95%;
+	}
+	to {
+		width: 0%;
+	}
+}
+
+@keyframes disappear {
+	0% {
+		visibility: visible;
+		opacity: 1;
+	}
+	99% {
+		visibility: visible;
+		opacity: 1;
+	}
+	100% {
+		visibility: hidden;
+		opacity: 0;
+		display: none;
+	}
+}
+
 `;
 
 const getHtml = function(data) {
@@ -478,6 +524,7 @@ export default class AppConfigs extends HTMLElement {
 		this.#disableEmailCheckbox();
 		this.#qrcodeSelectEvent();
 		this.#showQrcode();
+		this.#errorMsgEvents();
 	}
 
 	#submit() {
@@ -728,6 +775,8 @@ export default class AppConfigs extends HTMLElement {
 					document.addEventListener('keydown', this.escQrClose);
 					// this.qrcodeImg.classList.remove("hide");
 				}
+				else
+					stateManager.setState("errorMsg", "Error: couldn't get the QR code");
 			});
 		});
 	}
@@ -738,6 +787,27 @@ export default class AppConfigs extends HTMLElement {
 			if (event.target === popup) {
 				popup.style.display = 'none';
 				document.removeEventListener('keydown', this.escQrClose);
+			}
+		});
+	}
+
+	#errorMsgEvents() {
+		stateManager.addEvent("errorMsg", (msg) => {
+			if (msg) {
+				stateManager.setState("errorMsg", null);
+				const mainDiv = this.html.querySelector(".page-container");
+				const alertBefore  = this.html.querySelector(".alert");
+				if (alertBefore)
+					alertBefore.remove();
+				const insertElement = mainDiv.querySelector(".main-container"); 
+				var alertCard = document.createElement("div");
+				alertCard.className = "alert alert-danger hide from alert-div";
+				alertCard.role = "alert";
+				alertCard.innerHTML = `
+						${msg}
+						<div class=alert-bar></div>
+					`;
+				mainDiv.insertBefore(alertCard, insertElement);
 			}
 		});
 	}

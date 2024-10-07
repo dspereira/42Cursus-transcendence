@@ -73,6 +73,51 @@ const styles = `
 	margin-top: 15px;
 }
 
+.alert-div {
+	display: flex;
+	margin: 30px auto;
+	width: 80%;
+	animation: disappear linear 5s forwards;
+	background-color: ${colors.alert};
+	z-index: 1001;
+}
+
+.alert-bar {
+	width: 100%;
+	height: 5px;
+	border-style: hidden;
+	border-radius: 2px;
+	background-color: ${colors.alert_bar};
+	position: absolute;
+	bottom: 2px;
+	animation: expire linear 5s forwards;
+}
+
+@keyframes expire {
+	from {
+		width: 100%;
+	}
+	to {
+		width: 0%;
+	}
+}
+
+@keyframes disappear {
+	0% {
+		visibility: visible;
+		opacity: 1;
+	}
+	99% {
+		visibility: visible;
+		opacity: 1;
+	}
+	100% {
+		visibility: hidden;
+		opacity: 0;
+		display: none;
+	}
+}
+
 `;
 
 const getHtml = function(data) {
@@ -147,6 +192,7 @@ export default class Page2FA extends HTMLElement {
 		this.#get2faOption();
 		this.#selectAnAlternativeMsgEvent();
 		this.#setChooseMethodsBtnEvents();
+		this.#errorMsgEvents();
 	}
 
 	#get2faOption() {
@@ -214,6 +260,28 @@ export default class Page2FA extends HTMLElement {
 
 	#setAllowedMethods(methods) {
 		this.methodsObj = methods;
+	}
+
+	#errorMsgEvents() {
+		stateManager.addEvent("errorMsg", (msg) => {
+			if (msg) {
+				stateManager.setState("errorMsg", null);
+				const mainDiv = this.html.querySelector(".main-container");
+				const alertBefore  = this.html.querySelector(".alert");
+				if (alertBefore)
+					alertBefore.remove();
+				const insertElement = mainDiv.querySelector(".main-text");
+				console.log("html = ", insertElement.innerHTML);
+				var alertCard = document.createElement("div");
+				alertCard.className = "alert alert-danger hide from alert-div";
+				alertCard.role = "alert";
+				alertCard.innerHTML = `
+						${msg}
+						<div class=alert-bar></div>
+					`;
+				mainDiv.insertBefore(alertCard, insertElement);
+			}
+		});
 	}
 }
 

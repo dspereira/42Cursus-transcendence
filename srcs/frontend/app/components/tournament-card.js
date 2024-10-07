@@ -9,6 +9,8 @@ const styles = `
 		align-items: center;
 		border-radius: 10px;
 		width: 100%;
+		min-width: 460px;
+		min-height: 76px;
 		padding: 5px 15px 5px 15px;
 		margin-bottom: 20px;
 		color: ${colors.primary_text};

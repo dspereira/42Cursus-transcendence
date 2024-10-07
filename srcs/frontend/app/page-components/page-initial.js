@@ -257,8 +257,6 @@ export default class PageInitial extends HTMLElement {
 	#errorMsgEvents() {
 		stateManager.addEvent("errorMsg", (msg) => {
 			if (msg) {
-				console.log(msg);
-				console.log("this html = ", this.html);
 				stateManager.setState("errorMsg", null);
 				const mainDiv = this.html.querySelector(".main-container");
 				const alertBefore  = this.html.querySelector(".alert");

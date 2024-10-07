@@ -230,6 +230,10 @@ const styles = `
 		display: none;
 	}
 }
+
+.no-friends-text {
+	color: ${colors.second_text};
+}
 `;
 
 const getHtml = function(data) {
@@ -338,8 +342,17 @@ export default class GameInviteSend extends HTMLElement {
 		const friendList = this.html.querySelector(".friend-list");
 		friendList.innerHTML = "";
 		let friendCard;
-		if (!friendList || !friends)
+		if (!friendList || !friends || !friends.length) {
+			if (friendList) {
+				const noFriendsMsg = document.createElement("div");
+				noFriendsMsg.classList.add("no-friends-text");
+				noFriendsMsg.innerHTML = `
+					No friends to be selected
+				`;
+				friendList.appendChild(noFriendsMsg);
+			}
 			return ;
+		}
 		friends.forEach(elm => {
 			friendCard = document.createElement("game-invite-card1");
 			friendCard.setAttribute("username", elm.username);
@@ -452,7 +465,6 @@ export default class GameInviteSend extends HTMLElement {
 	#errorMsgEvents() {
 		stateManager.addEvent("errorMsg", (msg) => {
 			if (msg) {
-				console.log(msg);
 				stateManager.setState("errorMsg", null);
 				const alertBefore  = this.html.querySelector(".alert");
 				if (alertBefore)

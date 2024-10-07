@@ -161,8 +161,6 @@ export default class PagePlay extends HTMLElement {
 	#errorMsgEvents() {
 		stateManager.addEvent("errorMsg", (msg) => {
 			if (msg) {
-				console.log(msg);
-				console.log("this html = ", this.html);
 				stateManager.setState("errorMsg", null);
 				const mainDiv = this.html.querySelector(".page-1");
 				const alertBefore  = this.html.querySelector(".alert");

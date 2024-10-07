@@ -8,6 +8,7 @@ const styles = `
 		justify-content: space-between;
 		align-items: center;
 		border-radius: 10px;
+		min-width: 460px;
 		width: 100%;
 		padding: 5px 15px 5px 15px;
 		margin-bottom: 20px;
@@ -26,6 +27,7 @@ const styles = `
 		position: relative;
 		display: flex;
 		align-items: center;
+		flex-direction: row;
 		gap: 10px;
 	}
 
@@ -64,7 +66,6 @@ const styles = `
 	}
 	
 	.left {
-		display: flex;
 		justify-content: flex-start;
 		width: 33.33%;
 	}
@@ -76,7 +77,6 @@ const styles = `
 	}
 
 	.right {
-		display: flex;
 		justify-content: flex-end;
 		width: 33.33%;
 	}

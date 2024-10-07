@@ -80,8 +80,9 @@ button {
 	gap: 15px;
 }
 
-	.notification {	
+	.notification {
 		background: red;
+		background: ${colors.btn_alert};
 		color: white;
 		font-size: 12px;
 	}
@@ -129,24 +130,6 @@ button {
 	color: ${colors.primary_text};
 }
 
-	.open .game-notifications {
-		position: relative;
-		top: -10px;
-		right: 61%;
-	}
-
-	.open .tournaments-notifications {
-		position: relative;
-		top: -10px;
-		right: 73%;
-	}
-
-	.open .friends-notifications {
-		position: relative;
-		top: -10px;
-		right: 66%;
-	}
-
 	/*** CLOSE ***/
 
 .close .side-panel {
@@ -170,11 +153,15 @@ button {
 }
 
 .close .link-btn .icon-text {
+	font-size: 14px;
 	display: none;
 }
 
 .icon-text {
+	display: flex;
 	color: ${colors.primary_text};
+	height: 39px;
+	align-items: center;
 }
 
 .close .link-btn button:hover {
@@ -307,11 +294,20 @@ button {
 	}
 }
 
+	.icon {
+		position: relative;
+	}
+
+	.open .notification {
+		position: absolute;
+		top: -2px;
+		right: 0px;
+	}
 
 	.close .notification {
-		position: relative;
-		top: -10px;
-		right: 42%;
+		position: absolute;
+		top: -2px;
+		right: 0px;
 	}
 `;
 
@@ -362,24 +358,27 @@ const getHtml = function(data) {
 						</button>
 						<button id="tournaments">
 							<span>
-								<i class="icon bi bi-trophy"></i>
+								<i class="icon bi bi-trophy">
+									<span class="tournaments-notifications notification"></span>
+								</i>
 								<span class="icon-text">Tournaments</span>
-								<span class="tournaments-notifications notification"></span>
-						</span>
-					</button>
-					<button id="friends">
-						<span>
-							<i class="icon bi bi-people"></i>
-							<span class="icon-text">Friends</span>
-							<span class="friends-notifications notification"></span>
-						</span>
-					</button>
-					<button id="play">
-						<span>
-							<i class="icon bi bi-dpad"></i>
-							<span class="icon-text">Play</span>
-							<span class="game-notifications notification"></span>
-						</span>
+							</span>
+						</button>
+						<button id="friends">
+							<span>
+								<i class="icon bi bi-people">
+									<span class="friends-notifications notification"></span>
+								</i>
+								<span class="icon-text">Friends</span>
+							</span>
+						</button>
+						<button id="play">
+							<span>
+								<i class="icon bi bi-dpad">
+									<span class="game-notifications notification"></span>
+								</i>
+								<span class="icon-text">Play</span>
+							</span>
 						</button>
 						<div class="bottom-buttons">
 							<button id="logout">
