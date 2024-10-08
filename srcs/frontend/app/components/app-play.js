@@ -2,9 +2,11 @@ import Game from "../game/Game.js";
 import gameWebSocket from "../js/GameWebSocket.js";
 import { callAPI } from "../utils/callApiUtils.js";
 import stateManager from "../js/StateManager.js";
-import { redirect } from "../js/router.js";
+import { render } from "../js/router.js";
+import { getHtmlElm } from "../utils/getHtmlElmUtils.js";
 import updateLoggedInStatus from "../utils/updateLoggedInUtils.js";
 import checkUserLoginState from "../utils/checkUserLoginState.js";
+import PagePlay from "../page-components/page-play.js";
 
 const styles = `
 .profile-photo {
@@ -283,7 +285,7 @@ export default class AppPlay extends HTMLElement {
 			if (this.data.isTournament)
 				stateManager.setState("isTournamentChanged", true);
 			else
-				redirect("/play");
+				render(getHtmlElm(PagePlay));
 		});
 	}
 

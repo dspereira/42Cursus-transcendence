@@ -111,13 +111,10 @@ const styles = `
 `;
 
 const getHtml = function(data) {
-	
-	console.log(data);
-
 	const game_0 = data.info.games[0];
 	const game_1 = data.info.games[1]; 
-	const game_2 = data.info.games[2]; 
-	
+	const game_2 = data.info.games[2];
+
 	const html = `
 		<h1>${data.info.name}</h1>
 		<div class="container-bracket">
