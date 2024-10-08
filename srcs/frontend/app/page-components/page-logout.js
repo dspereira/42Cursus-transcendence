@@ -26,9 +26,11 @@ export default class PageLogout extends HTMLElement {
 
 	constructor() {
 		super()
+		this.data = {};
 		this.#initComponent();
 		this.#render();
 		this.#scripts();
+
 	}
 
 	static get componentName() {
@@ -77,7 +79,7 @@ export default class PageLogout extends HTMLElement {
 	#logoutEvent() {
 		const logout = this.html.querySelector("#logout-submit");
 		logout.addEventListener("click", (event) => {
-			callAPI("POST", "http://127.0.0.1:8000/api/auth/logout", null, this.#apiResHandlerCalback);
+			callAPI("POST", "http://127.0.0.1:8000/api/auth/logout", null, this.#apiResHandlerCalback, null, stateManager.getState("csrfToken"));
 		});
 	}
 }

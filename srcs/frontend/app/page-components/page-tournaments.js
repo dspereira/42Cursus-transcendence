@@ -58,9 +58,12 @@ export default class PageTournaments extends HTMLElement {
 
 	constructor() {
 		super()
+		this.data = {};
+
 		this.#initComponent();
 		this.#render();
 		this.#scripts();
+
 	}
 
 	static get componentName() {
@@ -110,7 +113,7 @@ export default class PageTournaments extends HTMLElement {
 	#createTournamentEvent() {
 		const btn = this.html.querySelector(".btn-create-tourney");
 		btn.addEventListener("click", () => {
-			callAPI("POST", `http://127.0.0.1:8000/api/tournament/`, null, (res, data) => {					
+			callAPI("POST", `http://127.0.0.1:8000/api/tournament/`, null, (res, data) => {
 				if (res.ok && data && data.tournament_info) {
 					const info = data.tournament_info;
 					stateManager.setState("tournamentId", info.id);
@@ -123,7 +126,7 @@ export default class PageTournaments extends HTMLElement {
 					></tourney-lobby>`;
 					this.invitesReceived.innerHTML = "";
 				}
-			});
+			}, null, stateManager.getState("csrfToken"));
 		});
 	}
 

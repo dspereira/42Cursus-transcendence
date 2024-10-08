@@ -15,4 +15,5 @@ urlpatterns = [
 	path("user_info", views.apiGetUserInfo, name="apiUserInfo"), # apenas debug (verificar)
 	path("username", views.get_username, name="username"),# apenas debug (verificar)
 	path("email", views.get_user_email, name="email"),# apenas debug (verificar)
+    path("get-csrf-token", views.get_csrf_token, name="get-csrf-token"),
 ]

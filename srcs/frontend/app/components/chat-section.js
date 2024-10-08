@@ -503,7 +503,7 @@ export default class ChatSection extends HTMLElement {
 				if (method == "POST")
 					chatWebSocket.updateBlockStatus(friendId);
 			}
-		});
+		}, null, stateManager.getState("csrfToken"));
 	}
 
 	#blockUserChat(status, user_has_blocked, friend_has_blocked) {

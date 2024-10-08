@@ -30,6 +30,9 @@ from custom_utils.models_utils import ModelManager
 from custom_utils.blitzpong_bot_utils import send_custom_bot_message
 from custom_utils.blitzpong_bot_utils import generate_welcome_message
 
+from django.middleware.csrf import get_token, rotate_token
+from django.views.decorators.csrf import csrf_exempt
+
 from .EmailVerificationWaitManager import EmailVerificationWaitManager
 from two_factor_auth.models import OtpUserOptions
 
@@ -38,6 +41,7 @@ from transcendence.settings import DEBUG
 otp_user_opt_model = ModelManager(OtpUserOptions)
 user_model = ModelManager(User)
 
+@csrf_exempt
 @accepted_methods(["POST"])
 @check_request_body(["email", "username", "password"])
 def register(request):
@@ -87,6 +91,7 @@ def register(request):
 		setup_two_factor_auth(user)
 	return JsonResponse({"message": "success"})
 
+@csrf_exempt
 @accepted_methods(["POST"])
 @check_request_body(["username", "password"])
 def login(request):
@@ -120,6 +125,7 @@ def logout(request):
 		return response
 	return JsonResponse({"message": "Unauthorized: Logout failed."}, status=401)
 
+@csrf_exempt
 @accepted_methods(["POST"])
 @check_request_body()
 def refresh_token(request):
@@ -130,6 +136,17 @@ def refresh_token(request):
 			return JsonResponse({"message": "Failed to update blacklist tokens."}, status=409)
 		return response
 	return JsonResponse({"message": "Invalid refresh token. Please authenticate again."}, status=401)
+
+@accepted_methods(["GET"])
+def get_csrf_token(request):
+	rotate_token(request)
+	csrf_token = get_token(request)
+	if (csrf_token):
+		response = JsonResponse({"message": "CSRF Token was got with success.", "csrfToken": csrf_token})
+		response.set_cookie(key='csrftoken', value=csrf_token, httponly=True, samesite="Lax", path="/")
+	else:
+		response = JsonResponse({"message": "Could not get CSRF Token."}, status=409)
+	return response
 
 @accepted_methods(["POST"])
 @check_request_body(["email_token"])

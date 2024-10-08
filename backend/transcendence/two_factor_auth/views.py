@@ -20,6 +20,8 @@ from .two_factor import initiate_two_factor_authentication
 from .two_factor import reset_wait_time_codes
 from user_auth.auth_utils import login as user_login
 
+from django.views.decorators.csrf import csrf_exempt
+
 from transcendence.settings import DEBUG
 
 otp_user_settings_model = ModelManager(OtpUserOptions)
@@ -68,6 +70,7 @@ def generate_qr_code(request):
 			return JsonResponse({"message": "QR Code sended with success!", "qr_code": qr_code}, status=200)
 	return JsonResponse({"message": "Error: Invalid Request!"}, status=400)
 
+@csrf_exempt
 @tfa_required
 @accepted_methods(["POST"])
 @check_request_body()
@@ -87,6 +90,7 @@ def generate_user_phone_code(request):
 			return JsonResponse({"message": "SMS sended with success!"}, status=200)
 	return JsonResponse({"message": "Error: Invalid Request!"}, status=400)
 
+@csrf_exempt
 @tfa_required
 @accepted_methods(["POST"])
 @check_request_body()
@@ -106,6 +110,7 @@ def generate_user_email_code(request):
 			return JsonResponse({"message": "Email sended with success!"}, status=200)
 	return JsonResponse({"message": "Error: Invalid Request!"}, status=400)
 
+@csrf_exempt
 @tfa_required
 @accepted_methods(["POST"])
 @check_request_body(["code", "method"])
