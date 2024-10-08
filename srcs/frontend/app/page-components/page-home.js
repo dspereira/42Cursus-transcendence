@@ -106,16 +106,17 @@ export default class PageHome extends HTMLElement {
 
 		// Arranjar maneira de configurar os pedidos à api numa estrutura e passar aqui
 
+		// Removidas as rotas que pegavam a informação do user
+		// Valores colocados manualmente
 		const data = await Promise.all([
-			this.#callAPI("GET", "http://127.0.0.1:8000/api/auth/id"),
-			this.#callAPI("GET", "http://127.0.0.1:8000/api/auth/username"),
-			this.#callAPI("GET", "http://127.0.0.1:8000/api/auth/email")
+			{'user_id': 0},
+			{"username": "Mr. Nobody"},
+			{"email": "mrnobody@irineu.com"}
 		]);
 		this.#handleApiData(data);
 		console.log(data);
 		this.#updateHtml();
 		this.#render();
-		
 	}
 
 	static get componentName() {
