@@ -8,6 +8,7 @@ const styles = `
 		width: 100%;
 		flex-direction: column;
 		gap: 20px;
+		height: 90vh;
 	}
 
 	.tab-select {

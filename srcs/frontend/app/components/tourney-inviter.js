@@ -324,7 +324,6 @@ export default class TourneyInviter extends HTMLElement {
 		friendList.innerHTML = "";
 		let friendCard;
 		if (!friendList || !friends || !friends.length) {
-			console.log("no friends!");
 			if (friendList) {
 				const noFriendsMsg = document.createElement("div");
 				noFriendsMsg.classList.add("no-friends-text");
@@ -400,7 +399,6 @@ export default class TourneyInviter extends HTMLElement {
 					return ;
 				elm.classList.add("player-invite-send");
 				elm.classList.add(`id-${invite.req_id}`);
-				console.log("invite: ", invite);
 				elm.innerHTML = `
 				<div class=invite-sep>
 					<span>${charLimiter(invite.username, charLimit)}</span>
@@ -434,8 +432,6 @@ export default class TourneyInviter extends HTMLElement {
 			queryParam = `?key=${key}`;
 
 		callAPI("GET", `http://127.0.0.1:8000/api/tournament/friend-list/${queryParam}`, null, (res, data) => {
-			console.log(res);
-			console.log(data);
 			if (res.ok) {
 				this.#createFriendsList(data.friends);
 				this.#selectFriendEvent();

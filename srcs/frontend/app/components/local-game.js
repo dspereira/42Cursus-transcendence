@@ -2,6 +2,7 @@ import Game from "../game/Game.js";
 import { GameLogic } from "../game/GameLogic.js";
 import { SCREEN_WIDTH, SCREEN_HEIGHT} from "../game/const_vars.js" ;
 import { redirect } from "../js/router.js";
+import { colors } from "../js/globalStyles.js";
 import stateManager from "../js/StateManager.js";
 
 const P1_name = "Player 1";
@@ -25,6 +26,7 @@ const styles = `
 		display: flex;
 		justify-content: center;
 		width: 100%;
+		height: 80vh;
 	}
 	
 	.board-2 {
@@ -51,6 +53,11 @@ const styles = `
 
 	.buttons-div {
 		display: flex;
+		position: fixed;
+		width: 100%;
+		left: 0;
+		top: -45px;
+		margin: 0 auto;
 		justify-content: center;
 		margin-top: 50px;
 		gap: 15px;
@@ -58,6 +65,28 @@ const styles = `
 
 	.hide {
 		display: none;
+	}
+
+	.btn-primary {
+		color: ${colors.primary_text};
+		background-color: ${colors.btn_default};
+	}
+
+	.btn-primary:hover {
+		background-color: ${colors.btn_hover};
+		color: ${colors.second_text};
+	}
+
+	.btn-secondary {
+		border: 2px solid ${colors.second_text};
+		color: ${colors.second_text};
+		background-color: rgba(0, 0, 0, 0);
+	}
+
+	.btn-secondary:hover {
+		border: 2px solid ${colors.btn_default};
+		background-color: ${colors.btn_default};
+		color: ${colors.primary_text};
 	}
 `;
 

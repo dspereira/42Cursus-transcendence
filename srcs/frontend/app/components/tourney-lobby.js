@@ -5,6 +5,7 @@ import { charLimiter } from "../utils/characterLimit.js";
 import charLimit from "../utils/characterLimit.js";
 import { pfpStyle } from "../utils/stylingFunctions.js";
 import { redirect } from "../js/router.js";
+import friendProfileRedirectionEvent from "../utils/profileRedirectionUtils.js";
 
 const styles = `
 
@@ -147,29 +148,27 @@ ${pfpStyle(".default-photo","50%","auto")}
 
 .alert-div {
 	display: flex;
-	width: 100%;
-	animation: disappear linear 10s forwards;
-	background-color: #FF6B6B;
-	color: ${colors.primary_text};
-	padding-left: 5%;
-	font-weight: bold;
+	margin: 30px auto;
+	width: 80%;
+	animation: disappear linear 5s forwards;
+	background-color: ${colors.alert};
+	z-index: 1001;
 }
 
 .alert-bar {
-	width: 90%;
+	width: 95%;
 	height: 5px;
 	border-style: hidden;
 	border-radius: 2px;
-	background-color: ${colors.second_card};
+	background-color: ${colors.alert_bar};
 	position: absolute;
 	bottom: 2px;
-	left: 5%;
-	animation: expire linear 10s forwards;
+	animation: expire linear 5s forwards;
 }
 
 @keyframes expire {
 	from {
-		width: 90%;
+		width: 95%;
 	}
 	to {
 		width: 0%;
@@ -557,9 +556,12 @@ export default class TourneyLobby extends HTMLElement {
 		const profilePhoto = elmHtml.querySelector(".profile-photo");
 		const popup = elmHtml.querySelector('.hover-popup');
 		popup.innerHTML = `${playerData.username}'s profile`;
-		profilePhoto.addEventListener("click", () => {
-			redirect(`profile/${playerData.username}`)
-		});
+		if (!profilePhoto || !popup)
+			return ;
+		friendProfileRedirectionEvent(elmHtml, ".profile-photo", playerData.id);
+		// profilePhoto.addEventListener("click", () => {
+		// 	redirect(`profile/${playerData.username}`)
+		// });
 		profilePhoto.addEventListener('mouseenter', () => {
 			popup.style.display = 'block'
 			profilePhoto.addEventListener('mousemove', movePopup);

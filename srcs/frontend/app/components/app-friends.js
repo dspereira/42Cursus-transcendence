@@ -10,6 +10,7 @@ const styles = `
 	justify-content: flex-start;
 	gap: 20px;
 	max-height: 90vh;
+	font-family: inherit;
 }
 
 .lateral-menu {
@@ -22,6 +23,7 @@ const styles = `
 	border-style: hidden;
 	background-color: ${colors.second_card};
 	padding: 10px 10px 10px 10px;
+	font-family: inherit;
 }
 
 .list-panel {
@@ -36,7 +38,6 @@ const styles = `
 	background : transparent;
 	border: 0;
 	padding: 0;
-	font-family: innherit;
 	text-align: left;
 	width: 100%;
 	/*margin-bottom: 16px;*/
@@ -51,6 +52,7 @@ const styles = `
 	font-size: 14px;
 	white-space: nowrap;
 	color: ${colors.primary_text};
+	font-family: inherit;
 }
 
 .lateral-menu button > span {
@@ -71,6 +73,7 @@ user-card {
 
 .options {
 	padding: 5px 10px 5px 10px;
+	font-family: inherit;
 }
 
 .options:hover {

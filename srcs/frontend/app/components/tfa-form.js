@@ -224,8 +224,10 @@ export default class TfaForm extends HTMLElement {
 	#sendTwoFactorCode(destination) {
 		callAPI("POST", `http://127.0.0.1:8000/api/two-factor-auth/request-${destination}/`, null, (res, data) => {		
 			if (!res.ok)
+			{
 				console.log(data.message); // Esta mensagem deve ser apresentada no frontend
-			stateManager.setState("errorMsg", data.message);
+				stateManager.setState("errorMsg", data.message);
+			}
 		});
 	}
 

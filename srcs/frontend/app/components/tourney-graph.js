@@ -5,6 +5,7 @@ import { charLimiter } from "../utils/characterLimit.js";
 import charLimit from "../utils/characterLimit.js";
 import { pfpStyle } from "../utils/stylingFunctions.js";
 import { redirect } from "../js/router.js";
+import friendProfileRedirectionEvent from "../utils/profileRedirectionUtils.js";
 
 const styles = `
 
@@ -494,9 +495,9 @@ export default class TourneyGraph extends HTMLElement {
 		const profilePhoto = elmHtml.querySelector(".profile-photo");
 		const popup = elmHtml.querySelector('.hover-popup');
 		popup.innerHTML = `${playerData.username}'s profile`;
-		profilePhoto.addEventListener("click", () => {
-			redirect(`profile/${playerData.username}`)
-		});
+		if (!profilePhoto || !popup)
+			return ;
+		friendProfileRedirectionEvent(elmHtml, ".profile-photo", playerData.id);
 		profilePhoto.addEventListener('mouseenter', () => {
 			popup.style.display = 'block'
 			profilePhoto.addEventListener('mousemove', movePopup);

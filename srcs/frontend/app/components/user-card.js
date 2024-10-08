@@ -3,6 +3,7 @@ import { colors } from "../js/globalStyles.js";
 import stateManager from "../js/StateManager.js";
 import { pfpStyle } from "../utils/stylingFunctions.js";
 import { redirect } from "../js/router.js";
+import friendProfileRedirectionEvent from "../utils/profileRedirectionUtils.js";
 
 const styles = `
 
@@ -39,46 +40,6 @@ button > i {
 
 button {
 	margin-left: 5px;
-}
-
-.alert-div {
-	animation: disappear linear 10s forwards;
-}
-
-.alert-bar {
-	width: 80%;
-	height: 5px;
-	border-style: hidden;
-	border-radius: 2px;
-	background-color: black;
-	position: absolute;
-	top: 20px;
-	animation: expire linear 10s forwards;
-}
-
-@keyframes expire {
-	from {
-		width: 80%;
-	}
-	to {
-		width: 0%;
-	}
-}
-
-@keyframes disappear {
-	0% {
-		visibility: visible;
-		opacity: 1;
-	}
-	99% {
-		visibility: visible;
-		opacity: 1;
-	}
-	100% {
-		visibility: hidden;
-		opacity: 0;
-		display: none;
-	}
 }
 
 .clickable {
@@ -342,9 +303,9 @@ export default class UserCard extends HTMLElement {
 		const userCard = this.html.querySelector(".user-card");
 		const profilePhoto = userCard.querySelector(".user-photo");
 		const popup = userCard.querySelector('.hover-popup');
-		profilePhoto.addEventListener("click", (event) => {
-			redirect(`profile/${this.data.username}`)
-		});
+		if (!userCard || !profilePhoto || !popup)
+			return ;
+		friendProfileRedirectionEvent(userCard, ".user-photo", this.data.userId);
 		profilePhoto.addEventListener('mouseenter', () => {
 			popup.style.display = 'block'
 			profilePhoto.addEventListener('mousemove', movePopup);

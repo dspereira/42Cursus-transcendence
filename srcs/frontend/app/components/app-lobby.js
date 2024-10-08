@@ -47,7 +47,14 @@ const styles = `
 		border-style: hidden;
 		border-radius: 5px;
 		background-color: ${colors.btn_default};
+		color: ${colors.primary_text};
 	}
+
+	.ready-btn:hover {
+		background-color: ${colors.btn_hover};
+		color: ${colors.second_text};
+	}
+
 `;
 
 const getHtml = function(data) {

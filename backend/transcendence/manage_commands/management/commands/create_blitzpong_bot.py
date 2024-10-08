@@ -67,7 +67,7 @@ class Command(BaseCommand):
 
 	def __set_bot_profile_settings(self, bot_user):
 		bot_settings_manager = SettingsManager(bot_user)
-		with open('../bot_images/logo-150.png', 'rb') as f:
+		with open('../bot_images/pong-150.png', 'rb') as f:
 			image_file = SimpleUploadedFile(name='imagem.png', content=f.read(), content_type='image/png')
 			if not bot_settings_manager.update_image(image_file):
 				return False

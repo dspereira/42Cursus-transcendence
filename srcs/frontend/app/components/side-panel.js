@@ -85,6 +85,8 @@ button {
 		background: ${colors.btn_alert};
 		color: white;
 		font-size: 12px;
+		font-famyly: inherit;
+		font-style: normal;
 	}
 	
 	.notification-circle {

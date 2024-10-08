@@ -26,12 +26,19 @@ ${pfpStyle(".profile-photo", "50px", "auto")}
 .btn-leave-div {
 	display: flex;
 	justify-content: center;
-	margin-top: 30px;
+	position: absolute;
 }
 
 .btn-leave {
 	width: 150px;
 	height: 50px;
+	color: ${colors.primary_text};
+	background-color: ${colors.btn_default};
+}
+
+.btn-leave:hover {
+	background-color: ${colors.btn_hover};
+	color: ${colors.second_text};
 }
 
 .hide {
@@ -101,14 +108,14 @@ const getHtml = function(data) {
 						<img src="${data.guestImage}" class="profile-photo" alt="profile photo chat">
 					</div>
 				</div>
-				<div class="container-canvas">	
+				<div class="container-canvas">
 					<button type="button" class="btn-full-screen"><i class="bi bi-fullscreen icon-full-screen"></i></button>
 					<canvas id="canvas"></canvas>
 				</div>
 			</div>
-		</div>
-		<div class="btn-leave-div">
-			<button type="button" class="btn btn-primary btn-leave hide">Leave</button>
+			<div class="btn-leave-div">
+				<button type="button" class="btn btn-primary btn-leave hide">Leave</button>
+			</div>
 		</div>
 	</div>
 	`;

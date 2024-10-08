@@ -24,7 +24,7 @@ const styles = `
 	border-style: hidden;
 }
 
-.btn-create-tourney:hover, btn-exit-tourney:hover {
+.btn-create-tourney:hover, .btn-exit-tourney:hover {
 	color: ${colors.hover_text};
 	background-color: ${colors.btn_hover};
 }

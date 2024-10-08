@@ -639,13 +639,11 @@ export default class ChatSection extends HTMLElement {
 			popup.style.left = event.clientX + 'px';
 			popup.style.top = event.clientY + 'px';
 		};
-
 		const chatElm = this.html.querySelector(".chat-section");
-		const profilePhoto = chatElm.querySelector(".profile-photo");
+		const profilePhoto = chatElm.querySelector(".friend-info");
 		const popup = chatElm.querySelector('.hover-popup');
-		profilePhoto.addEventListener("click", () => {
-			redirect(`profile/${this.data.username}`)
-		});
+		if (!chatElm || !profilePhoto || !popup)
+			return ;
 		profilePhoto.addEventListener('mouseenter', () => {
 			popup.style.display = 'block';
 			profilePhoto.addEventListener('mousemove', movePopup);
