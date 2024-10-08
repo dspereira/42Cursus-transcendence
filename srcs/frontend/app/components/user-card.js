@@ -116,7 +116,8 @@ export default class UserCard extends HTMLElement {
 		"friend-request-decline-btn",
 		"chat-btn",
 		"play-btn",
-		"remove-friend-btn"
+		"remove-friend-btn",
+		"csrf-token"
 	];
 
 	constructor() {
@@ -152,7 +153,9 @@ export default class UserCard extends HTMLElement {
 		else if (name == "play-btn")
 			name = "playBtn";
 		else if (name == "remove-friend-btn")
-			name= "removeFriendBtn"
+			name = "removeFriendBtn";
+		else if (name == "csrf-token")
+			name = "csrfToken";
 		this.data[name] = newValue;
 	}
 
@@ -184,7 +187,6 @@ export default class UserCard extends HTMLElement {
 	}
 
 	#scripts() {
-		getCsrfToken(this.data);
 		this.#setInviteAndDeclineEvent();
 		this.#setDeclineEvent();
 		this.#setAcceptEvent();
