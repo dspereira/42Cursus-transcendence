@@ -21,7 +21,7 @@ bash delete_all_migrations.sh -y || exit
 
 cd backend/transcendence || exit
 
-dirs=("live_chat/" "two_factor_auth/" "friendships/" "user_profile/" "notifications/" "user_auth/" "tournament/" "user_settings/" "game/")
+dirs=("live_chat/" "two_factor_auth/" "friendships/" "user_profile/" "user_auth/" "tournament/" "user_settings/" "game/")
 create_files_in_dirs "${dirs[@]}"
 
 pwd
