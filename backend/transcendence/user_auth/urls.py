@@ -9,4 +9,5 @@ urlpatterns = [
 	path("login_status", views.check_login_status, name="check_login_status"), # mudar rota para login-status
 	path("validate-email", views.validate_email, name="validate_email"),
 	path("resend-email-validation/", views.resend_email_validation, name="resend_email_validation"),
+  path("get-csrf-token", views.get_csrf_token, name="get-csrf-token"),
 ]
