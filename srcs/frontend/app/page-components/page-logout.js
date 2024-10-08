@@ -1,6 +1,7 @@
 import {redirect} from "../js/router.js";
 import stateManager from "../js/StateManager.js";
 import { callAPI } from "../utils/callApiUtils.js";
+import getCsrfToken from "../utils/getCsrfToken.js";
 
 const styles = ``;
 
@@ -26,11 +27,11 @@ export default class PageLogout extends HTMLElement {
 
 	constructor() {
 		super()
+		this.data = {};
 		this.#initComponent();
 		this.#render();
 		this.#scripts();
 
-		this.data = {};
 	}
 
 	static get componentName() {
@@ -66,7 +67,7 @@ export default class PageLogout extends HTMLElement {
 	}
 
 	#scripts() {
-		this.#csrfTokeGET();
+		getCsrfToken(this.data);
 		this.#logoutEvent();
 	}
 
@@ -82,25 +83,6 @@ export default class PageLogout extends HTMLElement {
 		logout.addEventListener("click", (event) => {
 			callAPI("POST", "http://127.0.0.1:8000/api/auth/logout", null, this.#apiResHandlerCalback, null, this.data.csrfToken);
 		});
-	}
-
-	#csrfTokeGET() {
-		callAPI("GET", "http://127.0.0.1:8000/api/auth/get-csrf-token", null, (res, data) => {
-			if (res.ok)
-			{
-				if (document.cookie && document.cookie !== '') {
-					const name = 'csrftoken';
-					const cookies = document.cookie.split(';');
-					for (let i = 0; i < cookies.length; i++) {
-						const cookie = cookies[i].trim();
-						if (cookie.substring(0, name.length + 1) === (name + '=')) {
-							this.data.csrfToken = decodeURIComponent(cookie.substring(name.length + 1));
-							break;
-						}
-					}
-				}
-			}
-		})
 	}
 }
 

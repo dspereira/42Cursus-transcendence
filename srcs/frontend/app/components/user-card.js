@@ -1,4 +1,5 @@
 import { callAPI } from "../utils/callApiUtils.js";
+import getCsrfToken from "../utils/getCsrfToken.js";
 
 const styles = `
 
@@ -183,7 +184,7 @@ export default class UserCard extends HTMLElement {
 	}
 
 	#scripts() {
-		this.#csrfTokeGET();
+		getCsrfToken(this.data);
 		this.#setInviteAndDeclineEvent();
 		this.#setDeclineEvent();
 		this.#setAcceptEvent();
@@ -265,25 +266,6 @@ export default class UserCard extends HTMLElement {
 				this.remove();
 			});
 		});
-	}
-
-	#csrfTokeGET() {
-		callAPI("GET", "http://127.0.0.1:8000/api/auth/get-csrf-token", null, (res, data) => {
-			if (res.ok)
-			{
-				if (document.cookie && document.cookie !== '') {
-					const name = 'csrftoken';
-					const cookies = document.cookie.split(';');
-					for (let i = 0; i < cookies.length; i++) {
-						const cookie = cookies[i].trim();
-						if (cookie.substring(0, name.length + 1) === (name + '=')) {
-							this.data.csrfToken = decodeURIComponent(cookie.substring(name.length + 1));
-							break;
-						}
-					}
-				}
-			}
-		})
 	}
 }
 

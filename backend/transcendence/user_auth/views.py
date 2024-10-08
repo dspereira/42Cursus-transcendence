@@ -142,8 +142,8 @@ def get_csrf_token(request):
 	rotate_token(request)
 	csrf_token = get_token(request)
 	if (csrf_token):
-		response = JsonResponse({"message": "CSRF Token was got with success."})
-		response.set_cookie('csrftoken', csrf_token)
+		response = JsonResponse({"message": "CSRF Token was got with success.", "csrfToken": csrf_token})
+		response.set_cookie(key='csrftoken', value=csrf_token, httponly=True, samesite="Lax", path="/")
 	else:
 		response = JsonResponse({"message": "Could not get CSRF Token."}, status=409)
 	return response

@@ -1,6 +1,7 @@
 import { adjustContent } from "../utils/adjustContent.js";
 import stateManager from "../js/StateManager.js";
 import { callAPI } from "../utils/callApiUtils.js";
+import getCsrfToken from "../utils/getCsrfToken.js";
 
 const styles = `
 .border-separation {
@@ -58,11 +59,12 @@ export default class PageTournaments extends HTMLElement {
 
 	constructor() {
 		super()
+		this.data = {};
+
 		this.#initComponent();
 		this.#render();
 		this.#scripts();
 
-		this.data = {};
 	}
 
 	static get componentName() {
@@ -102,7 +104,7 @@ export default class PageTournaments extends HTMLElement {
 	}
 
 	#scripts() {
-		this.#csrfTokeGET();
+		getCsrfToken(this.data);
 		adjustContent(this.html.querySelector(".content"));
 		this.#createTournamentEvent();
 		this.#checkActiveTournamentCall();
@@ -123,7 +125,6 @@ export default class PageTournaments extends HTMLElement {
 						tournament-id="${info.id}"
 						owner-id="${stateManager.getState("userId")}"
 						tournament-name="${info.name}"
-						csrf-token="${this.data.csrfToken}"
 					></tourney-lobby>`;
 					this.invitesReceived.innerHTML = "";
 				}
@@ -144,7 +145,6 @@ export default class PageTournaments extends HTMLElement {
 						tournament-id="${torneyData.id}"
 						owner-id="${torneyData.owner}"
 						tournament-name="${torneyData.name}"
-						csrf-token="${this.data.csrfToken}"
 					></tourney-lobby>`;
 					this.invitesReceived.innerHTML = "";
 				}
@@ -206,25 +206,6 @@ export default class PageTournaments extends HTMLElement {
 			stateManager.setState("tournamentId", null);
 			stateManager.setState("isTournamentChanged", true);
 		});
-	}
-
-	#csrfTokeGET() {
-		callAPI("GET", "http://127.0.0.1:8000/api/auth/get-csrf-token", null, (res, data) => {
-			if (res.ok)
-			{
-				if (document.cookie && document.cookie !== '') {
-					const name = 'csrftoken';
-					const cookies = document.cookie.split(';');
-					for (let i = 0; i < cookies.length; i++) {
-						const cookie = cookies[i].trim();
-						if (cookie.substring(0, name.length + 1) === (name + '=')) {
-							this.data.csrfToken = decodeURIComponent(cookie.substring(name.length + 1));
-							break;
-						}
-					}
-				}
-			}
-		})
 	}
 }
 

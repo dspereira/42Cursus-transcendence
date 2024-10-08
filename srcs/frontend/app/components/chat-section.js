@@ -3,6 +3,7 @@ import stateManager from "../js/StateManager.js";
 import { callAPI } from "../utils/callApiUtils.js";
 import friendProfileRedirectionEvent from "../utils/profileRedirectionUtils.js";
 import { redirect } from "../js/router.js";
+import getCsrfToken from "../utils/getCsrfToken.js";
 
 const styles = `
 /* Chat section */
@@ -245,7 +246,7 @@ export default class ChatSection extends HTMLElement {
 			this.#setChatToBlitzPongSystem();
 		else
 			this.#getUserBlockStatus();
-		this.#csrfTokeGET();
+		getCsrfToken(this.data);
 		stateManager.setState("chatMessagesCounter", 0);
 		this.#resizeMessageInput();
 		this.#setSubmitEvents();
@@ -533,25 +534,6 @@ export default class ChatSection extends HTMLElement {
 			if (stateValue == this.data.userId)
 				this.#getUserBlockStatus();
 		});
-	}
-
-	#csrfTokeGET() {
-		callAPI("GET", "http://127.0.0.1:8000/api/auth/get-csrf-token", null, (res, data) => {
-			if (res.ok)
-			{
-				if (document.cookie && document.cookie !== '') {
-					const name = 'csrftoken';
-					const cookies = document.cookie.split(';');
-					for (let i = 0; i < cookies.length; i++) {
-						const cookie = cookies[i].trim();
-						if (cookie.substring(0, name.length + 1) === (name + '=')) {
-							this.data.csrfToken = decodeURIComponent(cookie.substring(name.length + 1));
-							break;
-						}
-					}
-				}
-			}
-		})
 	}
 
 	#inviteToGameEvent() {

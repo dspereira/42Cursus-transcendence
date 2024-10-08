@@ -1,5 +1,6 @@
 import { callAPI } from "../utils/callApiUtils.js";
 import stateManager from "../js/StateManager.js";
+import getCsrfToken from "../utils/getCsrfToken.js";
 
 const styles = `
 .players {
@@ -156,8 +157,6 @@ export default class TourneyLobby extends HTMLElement {
 			name = "ownerId";
 			this.data.isOwner = stateManager.getState("userId") == newValue;
 		}
-		else if (name == "csrf-token")
-			this.data.csrfToken = newValue;
 		this.data[name] = newValue;
 	}
 
@@ -189,6 +188,7 @@ export default class TourneyLobby extends HTMLElement {
 	}
 
 	#scripts() {
+		getCsrfToken(this.data);
 		this.#toggleStartButton(true);
 		this.#joinedPlayersCall();
 		this.#joinedPlayersPolling();

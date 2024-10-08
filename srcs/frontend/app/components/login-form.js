@@ -4,7 +4,7 @@ import { render } from "../js/router.js";
 import PageEmailResend from "../page-components/page-email-resend.js";
 import { getDynamicHtmlElm, getHtmlElm } from "../utils/getHtmlElmUtils.js";
 import Page2FA from "../page-components/page-2fa.js";
-
+import getCsrfToken from "../utils/getCsrfToken.js"
 const EMAIL_NOT_VERIFIED_MSG = 'Email not verified. Please verify your email.';
 
 const styles = `
@@ -104,8 +104,6 @@ export default class LoginForm extends HTMLElement {
 		this.#initComponent();
 		this.#render();
 		this.#scripts();
-
-		this.data = {};
 	}
 
 	attributeChangedCallback(name, oldValue, newValue) {
@@ -143,7 +141,6 @@ export default class LoginForm extends HTMLElement {
 	}
 
 	#scripts() {
-		this.#csrfTokeGET();
 		this.#showHidePassword();
 		this.#submit();
 		this.#redirectToSignUpForm();
@@ -182,7 +179,9 @@ export default class LoginForm extends HTMLElement {
 				this.submitBtn.disabled = false;
 			}
 			else
-				callAPI("POST", "http://127.0.0.1:8000/api/auth/login", dataForm, this.#apiResHandlerCalback, null, this.data.csrfToken);
+			{
+				callAPI("POST", "http://127.0.0.1:8000/api/auth/login", dataForm, this.#apiResHandlerCalback);
+			}
 		});
 	}
 
@@ -214,25 +213,6 @@ export default class LoginForm extends HTMLElement {
 		}
 		if (message)
 			alert.innerHTML = message;
-	}
-
-	#csrfTokeGET() {
-		callAPI("GET", "http://127.0.0.1:8000/api/auth/get-csrf-token", null, (res, data) => {
-			if (res.ok)
-			{
-				if (document.cookie && document.cookie !== '') {
-					const name = 'csrftoken';
-					const cookies = document.cookie.split(';');
-					for (let i = 0; i < cookies.length; i++) {
-						const cookie = cookies[i].trim();
-						if (cookie.substring(0, name.length + 1) === (name + '=')) {
-							this.data.csrfToken = decodeURIComponent(cookie.substring(name.length + 1));
-							break;
-						}
-					}
-				}
-			}
-		})
 	}
 }
 

@@ -1,6 +1,7 @@
 import { callAPI } from "../utils/callApiUtils.js";
 import isValidUsername from "../utils/usernameValidationUtils.js";
 import getCountryCodesOptions from "../utils/countryCodesUtils.js";
+import getCsrfToken from "../utils/getCsrfToken.js";
 
 const styles = `
 .main-container {
@@ -231,11 +232,11 @@ export default class AppConfigs extends HTMLElement {
 		this.qrcodeConfigured = false;
 		this.imageSeed = "";
 		this.imageFile = "";
+		this.data = {};
+
 		this.#initComponent();
 		this.#render();
 		this.#scripts();
-
-		this.data = {};
 	}
 
 	attributeChangedCallback(name, oldValue, newValue) {
@@ -288,7 +289,7 @@ export default class AppConfigs extends HTMLElement {
 	}
 
 	#scripts() {
-		this.#csrfTokeGET();
+		getCsrfToken(this.data);
 		this.#submit();
 		this.#getUserSettings();
 		this.#newSeedBtn();
@@ -539,32 +540,13 @@ export default class AppConfigs extends HTMLElement {
 	#showQrcode() {
 		this.showQrcode.addEventListener("click", (event) => {
 			event.preventDefault();
-			callAPI("POST", "http://127.0.0.1:8000/api/two-factor-auth/request-qr-code/", {}, (res, data) => {
+			callAPI("POST", "http://127.0.0.1:8000/api/two-factor-auth/request-qr-code/", null, (res, data) => {
 				if (res.ok && data && data.qr_code) {
 					this.qrcodeImg.classList.remove("hide");
 					this.qrcodeImg.setAttribute("src", 'data:image/png;base64,' + data.qr_code);
 				}
 			}, null, this.data.csrfToken);
 		});
-	}
-
-	#csrfTokeGET() {
-		callAPI("GET", "http://127.0.0.1:8000/api/auth/get-csrf-token", null, (res, data) => {
-			if (res.ok)
-			{
-				if (document.cookie && document.cookie !== '') {
-					const name = 'csrftoken';
-					const cookies = document.cookie.split(';');
-					for (let i = 0; i < cookies.length; i++) {
-						const cookie = cookies[i].trim();
-						if (cookie.substring(0, name.length + 1) === (name + '=')) {
-							this.data.csrfToken = decodeURIComponent(cookie.substring(name.length + 1));
-							break;
-						}
-					}
-				}
-			}
-		})
 	}
 }
 
