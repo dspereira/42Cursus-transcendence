@@ -231,6 +231,7 @@ export default class AppConfigs extends HTMLElement {
 		this.qrcodeConfigured = false;
 		this.imageSeed = "";
 		this.imageFile = "";
+		this.savedImageUrl;
 		this.#initComponent();
 		this.#render();
 		this.#scripts();
@@ -238,6 +239,11 @@ export default class AppConfigs extends HTMLElement {
 
 	attributeChangedCallback(name, oldValue, newValue) {
 
+	}
+
+	disconnectedCallback() {
+		if (this.savedImageUrl)
+			URL.revokeObjectURL(this.savedImageUrl);
 	}
 
 	#initComponent() {
@@ -398,7 +404,10 @@ export default class AppConfigs extends HTMLElement {
 				this.#setErrorMessage(messages.imageType);
 				return ;
 			}
-			this.imagePreview.setAttribute("src", URL.createObjectURL(this.imageFile));
+			if (this.savedImageUrl)
+				URL.revokeObjectURL(this.savedImageUrl);
+			this.savedImageUrl = URL.createObjectURL(this.imageFile);
+			this.imagePreview.setAttribute("src", this.savedImageUrl);
 			this.imageSeed = "";
 		});
 	}
@@ -529,7 +538,6 @@ export default class AppConfigs extends HTMLElement {
 			}
 			else
 				this.showQrcode.classList.add("hide");
-
 		});
 	}
 
