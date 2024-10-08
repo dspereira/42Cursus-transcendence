@@ -108,7 +108,7 @@ export default class PagePlay extends HTMLElement {
 
 		stateManager.setState("friendIdInvitedFromChat", null);
 		const data = {
-			invites_list: [`${stateInfo.userdID}`]
+			invites_list: [`${stateInfo}`]
 		};
 
 		callAPI("POST", "http://127.0.0.1:8000/api/game/request/", data, (res, data) => {
@@ -120,7 +120,7 @@ export default class PagePlay extends HTMLElement {
 				></app-lobby>
 				`;
 			}
-		}, null, stateInfo.csrfToken);
+		}, null, stateManager.getState("csrfToken"));
 	}
 }
 

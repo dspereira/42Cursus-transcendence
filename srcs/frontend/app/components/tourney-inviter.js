@@ -1,4 +1,5 @@
 import { callAPI } from "../utils/callApiUtils.js";
+import stateManager from "../js/StateManager.js";
 
 const styles = `
 .invites-section {
@@ -295,7 +296,7 @@ export default class TourneyInviter extends HTMLElement {
 					});
 					this.selectedElm.length = 0; // clear array
 				}
-			}, null, this.data.csrfToken);
+			}, null, stateManager.getState("csrfToken"));
 		});
 	}
 
@@ -310,7 +311,7 @@ export default class TourneyInviter extends HTMLElement {
 			callAPI("DELETE", `http://127.0.0.1:8000/api/tournament/invite/?id=${inviteId}`, null, (res, data) => {
 				if (res.ok)
 					this.#removeInvitesSendFromList(inviteId);
-			}, null , this.data.csrfToken);
+			}, null , stateManager.getState("csrfToken"));
 		});
 	}
 

@@ -1,6 +1,5 @@
 import { callAPI } from "../utils/callApiUtils.js";
 import stateManager from "../js/StateManager.js";
-import getCsrfToken from "../utils/getCsrfToken.js";
 
 const styles = `
 .players {
@@ -188,7 +187,6 @@ export default class TourneyLobby extends HTMLElement {
 	}
 
 	#scripts() {
-		getCsrfToken(this.data);
 		this.#toggleStartButton(true);
 		this.#joinedPlayersCall();
 		this.#joinedPlayersPolling();
@@ -319,7 +317,7 @@ export default class TourneyLobby extends HTMLElement {
 			callAPI("DELETE", `http://127.0.0.1:8000/api/tournament/?id=${this.data.tournamentId}`, null, (res, data) => {
 				if (res.ok)
 					stateManager.setState("isTournamentChanged", true);
-			}, null, this.data.csrfToken);			
+			}, null, stateManager.getState("csrfToken"));			
 		});
 	}
 
@@ -335,7 +333,7 @@ export default class TourneyLobby extends HTMLElement {
 					stateManager.setState("tournamentId", null);
 					stateManager.setState("isTournamentChanged", true);
 				}
-			}, null, this.data.csrfToken);	
+			}, null, stateManager.getState("csrfToken"));	
 		});
 	}
 
@@ -352,7 +350,7 @@ export default class TourneyLobby extends HTMLElement {
 					stateManager.setState("isTournamentChanged", true);
 				else
 					this.#toggleStartButton(false);
-			}, null, this.data.csrfToken);
+			}, null, stateManager.getState("csrfToken"));
 		});
 	}
 
@@ -369,7 +367,7 @@ export default class TourneyLobby extends HTMLElement {
 				if (res.status == 409)
 					nameInput.value = data.tournament_name;
 				btn.disabled = false;
-			}, null, this.data.csrfToken);
+			}, null, stateManager.getState("csrfToken"));
 		});
 	}
 

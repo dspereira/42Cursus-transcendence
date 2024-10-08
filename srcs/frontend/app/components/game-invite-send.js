@@ -1,6 +1,6 @@
 import { callAPI } from "../utils/callApiUtils.js";
 import stateManager from "../js/StateManager.js";
-import getCsrfToken from "../utils/getCsrfToken.js";
+
 
 const styles = `
 	.search-icon {
@@ -141,7 +141,7 @@ export default class GameInviteSend extends HTMLElement {
 	}
 
 	#scripts() {
-		getCsrfToken(this.data);
+
 		this.#getFriendsCallApi();
 		this.#setFriendsSearchEvent();
 		this.#setInviteSubmitEvent();
@@ -271,7 +271,7 @@ export default class GameInviteSend extends HTMLElement {
 					></app-lobby>
 					`;
 				}
-			}, null, this.data.csrfToken);
+			}, null, stateManager.getState("csrfToken"));
 		});
 	}
 }

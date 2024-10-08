@@ -1,5 +1,4 @@
 import { callAPI } from "../utils/callApiUtils.js";
-import getCsrfToken from "../utils/getCsrfToken.js";
 
 const styles = `
 	h3 {
@@ -78,7 +77,6 @@ export default class GameInviteRequest extends HTMLElement {
 	}
 
 	#scripts() {
-		getCsrfToken(this.data);
 		this.#getInviteGamesCallApi();
 		this.#startGameInvitesPolling();
 	}

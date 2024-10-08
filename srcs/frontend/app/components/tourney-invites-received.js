@@ -88,7 +88,6 @@ export default class TourneyInvitesReceived extends HTMLElement {
 		requestCard.setAttribute("profile-photo", requestData.image);
 		requestCard.setAttribute("exp", requestData.exp);
 		requestCard.setAttribute("user-id", requestData.id);
-		requestCard.setAttribute("csrf-token", this.#getCSRFToken("csrftoken"));
 		this.reqListHtml.appendChild(requestCard);
 	}
 
@@ -114,18 +113,6 @@ export default class TourneyInvitesReceived extends HTMLElement {
 		this.intervalID = setInterval(() => {
 			this.#getInviteTournamentsCallApi();
 		}, 5000);
-	}
-
-	#getCSRFToken(name) {
-		if (document.cookie && document.cookie !== '') {
-			const cookies = document.cookie.split(';');
-			for (let i = 0; i < cookies.length; i++) {
-				const cookie = cookies[i].trim();
-				if (cookie.substring(0, name.length + 1) === (name + '=')) {
-					return decodeURIComponent(cookie.substring(name.length + 1));
-				}
-			}
-		}
 	}
 }
 

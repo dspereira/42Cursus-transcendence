@@ -1,5 +1,5 @@
 import { callAPI } from "../utils/callApiUtils.js";
-import getCsrfToken from "../utils/getCsrfToken.js";
+import stateManager from "../js/StateManager.js";
 
 const styles = `
 
@@ -197,14 +197,14 @@ export default class UserCard extends HTMLElement {
 		callAPI(method, "http://127.0.0.1:8000/api/friends/request/", body, (res, data) => {
 			if (res.ok)
 				callback(data);
-		}, null, this.data.csrfToken);
+		}, null, stateManager.getState("csrfToken"));
 	}
 
 	#friends(method, body, callback) {
 		callAPI(method, "http://127.0.0.1:8000/api/friends/friendships/", body, (res, data) => {
 			if (res.ok)
 				callback(data);
-		}, null, this.data.csrfToken);
+		}, null, stateManager.getState("csrfToken"));
 	}
 
 	#switchBtns(btn) {

@@ -4,7 +4,6 @@ import { render } from "../js/router.js";
 import PageEmailResend from "../page-components/page-email-resend.js";
 import { getDynamicHtmlElm, getHtmlElm } from "../utils/getHtmlElmUtils.js";
 import Page2FA from "../page-components/page-2fa.js";
-import getCsrfToken from "../utils/getCsrfToken.js"
 const EMAIL_NOT_VERIFIED_MSG = 'Email not verified. Please verify your email.';
 
 const styles = `

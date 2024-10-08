@@ -3,7 +3,6 @@ import stateManager from "../js/StateManager.js";
 import { callAPI } from "../utils/callApiUtils.js";
 import friendProfileRedirectionEvent from "../utils/profileRedirectionUtils.js";
 import { redirect } from "../js/router.js";
-import getCsrfToken from "../utils/getCsrfToken.js";
 
 const styles = `
 /* Chat section */
@@ -246,7 +245,6 @@ export default class ChatSection extends HTMLElement {
 			this.#setChatToBlitzPongSystem();
 		else
 			this.#getUserBlockStatus();
-		getCsrfToken(this.data);
 		stateManager.setState("chatMessagesCounter", 0);
 		this.#resizeMessageInput();
 		this.#setSubmitEvents();
@@ -505,7 +503,7 @@ export default class ChatSection extends HTMLElement {
 				if (method == "POST")
 					chatWebSocket.updateBlockStatus(friendId);
 			}
-		}, null, this.data.csrfToken);
+		}, null, stateManager.getState("csrfToken"));
 	}
 
 	#blockUserChat(status, user_has_blocked, friend_has_blocked) {
@@ -540,7 +538,7 @@ export default class ChatSection extends HTMLElement {
 		this.btnPlay.addEventListener("click", () => {
 			this.#isFriend(this.data.userId, (status) => {
 				if (status) {
-					stateManager.setState("friendIdInvitedFromChat", {"userdID": this.data.userId, "csrfToken": this.data.csrfToken});
+					stateManager.setState("friendIdInvitedFromChat", this.data.userId);
 					redirect("/play");
 				}
 				else 

@@ -1,5 +1,5 @@
 import { callAPI } from "../utils/callApiUtils.js";
-import getCsrfToken from "../utils/getCsrfToken.js";
+import stateManager from "../js/StateManager.js";
 
 const styles = `
 .card-container {
@@ -156,7 +156,7 @@ export default class GameInviteCard extends HTMLElement {
 						></app-lobby>
 					`;
 				}
-			}, null, this.data.csrfToken);
+			}, null, stateManager.getState("csrfToken"));
 		});
 	}
 
@@ -168,7 +168,7 @@ export default class GameInviteCard extends HTMLElement {
 			callAPI("DELETE", `http://127.0.0.1:8000/api/game/request/`, {id: this.data.inviteId}, (res, data) => {
 				if (res.ok)
 					this.remove();
-			}, null, this.data.csrfToken);
+			}, null, stateManager.getState("csrfToken"));
 		});
 	}
 

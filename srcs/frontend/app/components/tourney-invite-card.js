@@ -82,7 +82,7 @@ const getHtml = function(data) {
 }
 
 export default class TourneyInviteCard extends HTMLElement {
-	static observedAttributes = ["username", "profile-photo", "invite-id", "exp", "user-id", "csrf-token"];
+	static observedAttributes = ["username", "profile-photo", "invite-id", "exp", "user-id"];
 
 	constructor() {
 		super()
@@ -102,8 +102,6 @@ export default class TourneyInviteCard extends HTMLElement {
 			name = "inviteId";
 		else if (name == "user-id")
 			name = "userId";
-		else if (name == "csrf-token")
-			this.data.csrfToken = newValue;
 		this.data[name] = newValue;
 
 		if (name == "exp" && this.html)
@@ -150,7 +148,7 @@ export default class TourneyInviteCard extends HTMLElement {
 			callAPI("PUT", `http://127.0.0.1:8000/api/tournament/invite/`, {id: this.data.inviteId}, (res, data) => {
 				if (res.ok)
 					stateManager.setState("isTournamentChanged", true);
-			}, null, this.data.csrfToken);
+			}, null, stateManager.getState("csrfToken"));
 		});
 	}
 
@@ -162,7 +160,7 @@ export default class TourneyInviteCard extends HTMLElement {
 			callAPI("DELETE", `http://127.0.0.1:8000/api/tournament/invite/?id=${this.data.inviteId}`, null, (res, data) => {
 				if (res.ok)
 					this.remove();
-			}, null, this.data.csrfToken);
+			}, null, stateManager.getState("csrfToken"));
 		});
 	}
 

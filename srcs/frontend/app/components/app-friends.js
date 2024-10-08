@@ -1,6 +1,5 @@
 import stateManager from "../js/StateManager.js";
 import { callAPI } from "../utils/callApiUtils.js";
-import getCsrfToken from "../utils/getCsrfToken.js";
 
 const styles = `
 .friends-section {
@@ -188,7 +187,6 @@ export default class AppFriends extends HTMLElement {
 	}
 
 	#scripts() {
-		getCsrfToken(this.data);
 		this.#createSearchPage();
 		this.#setSearchButtonEvent();
 		this.#setFriendsButtonEvent();

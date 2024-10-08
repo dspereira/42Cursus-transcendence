@@ -1,7 +1,7 @@
 import { callAPI } from "../utils/callApiUtils.js";
 import isValidUsername from "../utils/usernameValidationUtils.js";
 import getCountryCodesOptions from "../utils/countryCodesUtils.js";
-import getCsrfToken from "../utils/getCsrfToken.js";
+import stateManager from "../js/StateManager.js";
 
 const styles = `
 .main-container {
@@ -289,7 +289,6 @@ export default class AppConfigs extends HTMLElement {
 	}
 
 	#scripts() {
-		getCsrfToken(this.data);
 		this.#submit();
 		this.#getUserSettings();
 		this.#newSeedBtn();
@@ -353,7 +352,7 @@ export default class AppConfigs extends HTMLElement {
 					this.#setErrorMessage(resData.message);
 				}
 				this.submitBtn.disabled = false;
-			}, null, this.data.csrfToken);
+			}, null, stateManager.getState("csrfToken"));
 		});
 	}
 
@@ -545,7 +544,7 @@ export default class AppConfigs extends HTMLElement {
 					this.qrcodeImg.classList.remove("hide");
 					this.qrcodeImg.setAttribute("src", 'data:image/png;base64,' + data.qr_code);
 				}
-			}, null, this.data.csrfToken);
+			}, null, stateManager.getState("csrfToken"));
 		});
 	}
 }

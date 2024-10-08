@@ -1,7 +1,6 @@
 import { adjustContent } from "../utils/adjustContent.js";
 import stateManager from "../js/StateManager.js";
 import { callAPI } from "../utils/callApiUtils.js";
-import getCsrfToken from "../utils/getCsrfToken.js";
 
 const styles = `
 .border-separation {
@@ -104,7 +103,6 @@ export default class PageTournaments extends HTMLElement {
 	}
 
 	#scripts() {
-		getCsrfToken(this.data);
 		adjustContent(this.html.querySelector(".content"));
 		this.#createTournamentEvent();
 		this.#checkActiveTournamentCall();
@@ -128,7 +126,7 @@ export default class PageTournaments extends HTMLElement {
 					></tourney-lobby>`;
 					this.invitesReceived.innerHTML = "";
 				}
-			}, null, this.data.csrfToken);
+			}, null, stateManager.getState("csrfToken"));
 		});
 	}
 
