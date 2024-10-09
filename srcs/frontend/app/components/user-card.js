@@ -266,8 +266,14 @@ export default class UserCard extends HTMLElement {
 		if (!btn)
 			return ;
 		btn.addEventListener("click", () => {
-			this.#friends("DELETE", {"friend_id": this.data.userId}, () => {
-				this.remove();
+			this.#isFriend(this.data.userId, (status) => {
+				if (status) {
+					this.#friends("DELETE", {"friend_id": this.data.userId}, () => {
+						this.remove();
+					});
+				}
+				else 
+					this.remove();
 			});
 		});
 	}
@@ -282,6 +288,8 @@ export default class UserCard extends HTMLElement {
 					stateManager.setState("inviteToPlayFriendID", this.data.userId);
 					redirect("/play");
 				}
+				else 
+					this.remove();
 			});
 		});
 	}
@@ -289,7 +297,7 @@ export default class UserCard extends HTMLElement {
 	#isFriend(friendId, callback) {
 		callAPI("GET", `http://127.0.0.1:8000/api/friends/is-friend/?friend_id=${friendId}`, null, (res, data) => {
 			if (res.ok && data)
-				callback(data.friend_status)
+				callback(data.friend_status);
 		});
 	}
 }
