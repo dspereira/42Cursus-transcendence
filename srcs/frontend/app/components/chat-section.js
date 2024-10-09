@@ -3,6 +3,7 @@ import stateManager from "../js/StateManager.js";
 import { callAPI } from "../utils/callApiUtils.js";
 import friendProfileRedirectionEvent from "../utils/profileRedirectionUtils.js";
 import { redirect } from "../js/router.js";
+import { getCsrfToken } from "../utils/csrfTokenUtils.js"
 
 const styles = `
 /* Chat section */
@@ -509,7 +510,7 @@ export default class ChatSection extends HTMLElement {
 				if (method == "POST")
 					chatWebSocket.updateBlockStatus(friendId);
 			}
-		}, null, stateManager.getState("csrfToken"));
+		}, null, getCsrfToken());
 	}
 
 	#blockUserChat(status, user_has_blocked, friend_has_blocked) {

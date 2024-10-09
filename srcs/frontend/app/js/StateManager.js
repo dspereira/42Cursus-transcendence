@@ -37,7 +37,6 @@ class StateManager {
 			inviteToPlayFriendID: null,
 			hasFriendInvite: null,
 			removeFriendIdFromChat: null,
-			csrfToken: null
 		}
 		this.stateEvents = {
 			sidePanel: [],
@@ -70,7 +69,6 @@ class StateManager {
 			inviteToPlayFriendID: [],
 			hasFriendInvite: [],
 			removeFriendIdFromChat: [],
-			csrfToken: []
 		}
 
 		StateManager.instance = this;

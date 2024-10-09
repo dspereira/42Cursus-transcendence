@@ -1,5 +1,5 @@
 import { callAPI } from "../utils/callApiUtils.js";
-import stateManager from "../js/StateManager.js";
+import { getCsrfToken } from "../utils/csrfTokenUtils.js"
 
 const styles = `
 .invites-section {
@@ -116,7 +116,7 @@ const getHtml = function(data) {
 }
 
 export default class TourneyInviter extends HTMLElement {
-	static observedAttributes = ["tournament-id", "csrf-token"];
+	static observedAttributes = ["tournament-id"];
 
 	constructor() {
 		super()
@@ -139,8 +139,6 @@ export default class TourneyInviter extends HTMLElement {
 	attributeChangedCallback(name, oldValue, newValue) {
 		if (name == "tournament-id")
 			name = "tournamentId";
-		else if (name == "csrf-token")
-			this.data.csrfToken = newValue;
 		this.data[name] = newValue;
 	}
 
@@ -310,7 +308,7 @@ export default class TourneyInviter extends HTMLElement {
 					this.selectedElm.length = 0; // clear array
 					this.inviteBtn.disabled = false;
 				}
-			}, null, stateManager.getState("csrfToken"));
+			}, null, getCsrfToken());
 		});
 	}
 
@@ -327,7 +325,7 @@ export default class TourneyInviter extends HTMLElement {
 				if (res.ok)
 					this.#removeInvitesSendFromList(inviteId);
 				btn.disabled = false;
-			}, null , stateManager.getState("csrfToken"));
+			}, null , getCsrfToken());
 		});
 	}
 

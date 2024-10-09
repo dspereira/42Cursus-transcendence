@@ -1,6 +1,7 @@
 import { adjustContent } from "../utils/adjustContent.js";
 import stateManager from "../js/StateManager.js";
 import { callAPI } from "../utils/callApiUtils.js";
+import { getCsrfToken } from "../utils/csrfTokenUtils.js"
 
 const styles = `
 .border-separation {
@@ -127,7 +128,7 @@ export default class PageTournaments extends HTMLElement {
 					this.invitesReceived.innerHTML = "";
 				}
 				this.btnCreateTourneySection.disabled = false;
-			}, null, stateManager.getState("csrfToken"));
+			}, null, getCsrfToken());
 		});
 	}
 

@@ -1,6 +1,7 @@
 import { callAPI } from "../utils/callApiUtils.js";
 import stateManager from "../js/StateManager.js";
 import { redirect } from "../js/router.js";
+import { getCsrfToken } from "../utils/csrfTokenUtils.js"
 
 const styles = `
 
@@ -118,7 +119,6 @@ export default class UserCard extends HTMLElement {
 		"chat-btn",
 		"play-btn",
 		"remove-friend-btn",
-		"csrf-token"
 	];
 
 	constructor() {
@@ -155,8 +155,6 @@ export default class UserCard extends HTMLElement {
 			name = "playBtn";
 		else if (name == "remove-friend-btn")
 			name = "removeFriendBtn";
-		else if (name == "csrf-token")
-			name = "csrfToken";
 		this.data[name] = newValue;
 	}
 
@@ -200,14 +198,14 @@ export default class UserCard extends HTMLElement {
 		callAPI(method, "http://127.0.0.1:8000/api/friends/request/", body, (res, data) => {
 			if (res.ok)
 				callback(data);
-		}, null, stateManager.getState("csrfToken"));
+		}, null, getCsrfToken());
 	}
 
 	#friends(method, body, callback) {
 		callAPI(method, "http://127.0.0.1:8000/api/friends/friendships/", body, (res, data) => {
 			if (res.ok)
 				callback(data);
-		}, null, stateManager.getState("csrfToken"));
+		}, null, getCsrfToken());
 	}
 
 	#switchBtns(btn) {

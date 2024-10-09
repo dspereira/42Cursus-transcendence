@@ -1,6 +1,7 @@
 import { adjustContent } from "../utils/adjustContent.js";
 import stateManager from "../js/StateManager.js";
 import { callAPI } from "../utils/callApiUtils.js";
+import { getCsrfToken } from "../utils/csrfTokenUtils.js"
 
 const styles = `
 	.invite-game {
@@ -120,7 +121,7 @@ export default class PagePlay extends HTMLElement {
 				></app-lobby>
 				`;
 			}
-		}, null, stateManager.getState("csrfToken"));
+		}, null, getCsrfToken());
 	}
 }
 

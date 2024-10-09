@@ -1,5 +1,5 @@
 import { callAPI } from "../utils/callApiUtils.js";
-import stateManager from "../js/StateManager.js";
+import { getCsrfToken } from "../utils/csrfTokenUtils.js"
 
 const styles = `
 .card-container {
@@ -155,7 +155,7 @@ export default class GameInviteCard extends HTMLElement {
 					`;
 				}
 				this.joinBtn.disabled = false;
-			}, null, stateManager.getState("csrfToken"));
+			}, null, getCsrfToken());
 		});
 	}
 
@@ -166,7 +166,7 @@ export default class GameInviteCard extends HTMLElement {
 				if (res.ok)
 					this.remove();
 				this.declineBtn.disabled = false;
-			}, null, stateManager.getState("csrfToken"));
+			}, null, getCsrfToken());
 		});
 	}
 

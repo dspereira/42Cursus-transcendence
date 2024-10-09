@@ -1,5 +1,6 @@
 import { callAPI } from "../utils/callApiUtils.js";
 import stateManager from "../js/StateManager.js";
+import { getCsrfToken } from "../utils/csrfTokenUtils.js"
 
 const styles = `
 .players {
@@ -78,7 +79,7 @@ const styles = `
 
 const getHtml = function(data) {
 	const tournamentInviterHtml = `<div class="border-separation"></div>
-	<tourney-inviter tournament-id="${data.tournamentId}" csrf-token="${data.csrfToken}"></tourney-inviter>`;
+	<tourney-inviter tournament-id="${data.tournamentId}"></tourney-inviter>`;
 
 	const ownerBtns = `<button type="button" class="btn btn-success btn-start">Start</button>
 			<button type="button" class="btn btn-danger btn-cancel">Cancel</button>`;
@@ -127,7 +128,7 @@ const getHtml = function(data) {
 }
 
 export default class TourneyLobby extends HTMLElement {
-	static observedAttributes = ["tournament-id", "owner-id", "tournament-name", "csrf-token"];
+	static observedAttributes = ["tournament-id", "owner-id", "tournament-name"];
 
 	constructor() {
 		super()
@@ -319,7 +320,7 @@ export default class TourneyLobby extends HTMLElement {
 				if (res.ok)
 					stateManager.setState("isTournamentChanged", true);
 				btn.disabled = false;
-			}, null, stateManager.getState("csrfToken"));			
+			}, null, getCsrfToken());			
 		});
 	}
 
@@ -337,7 +338,7 @@ export default class TourneyLobby extends HTMLElement {
 					stateManager.setState("isTournamentChanged", true);
 				}
 				btn.disabled = false;
-			}, null, stateManager.getState("csrfToken"));	
+			}, null, getCsrfToken());	
 		});
 	}
 
@@ -354,7 +355,7 @@ export default class TourneyLobby extends HTMLElement {
 					stateManager.setState("isTournamentChanged", true);
 				else
 					this.#toggleStartButton(false);
-			}, null, stateManager.getState("csrfToken"));
+			}, null, getCsrfToken());
 		});
 	}
 
@@ -371,7 +372,7 @@ export default class TourneyLobby extends HTMLElement {
 				if (res.status == 409)
 					nameInput.value = data.tournament_name;
 				btn.disabled = false;
-			}, null, stateManager.getState("csrfToken"));
+			}, null, getCsrfToken());
 		});
 	}
 

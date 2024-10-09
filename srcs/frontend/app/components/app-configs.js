@@ -1,7 +1,7 @@
 import { callAPI } from "../utils/callApiUtils.js";
 import isValidUsername from "../utils/usernameValidationUtils.js";
 import getCountryCodesOptions from "../utils/countryCodesUtils.js";
-import stateManager from "../js/StateManager.js";
+import { getCsrfToken } from "../utils/csrfTokenUtils.js"
 
 const styles = `
 .main-container {
@@ -356,7 +356,7 @@ export default class AppConfigs extends HTMLElement {
 					this.#setErrorMessage(resData.message);
 				}
 				this.submitBtn.disabled = false;
-			}, null, stateManager.getState("csrfToken"));
+			}, null, getCsrfToken());
 		});
 	}
 
@@ -560,7 +560,7 @@ export default class AppConfigs extends HTMLElement {
 					this.qrcodeImg.setAttribute("src", 'data:image/png;base64,' + data.qr_code);
 				}
 				this.showQrcode.disabled = false;
-			}, null, stateManager.getState("csrfToken"));
+			}, null, getCsrfToken());
 		});
 	}
 }

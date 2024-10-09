@@ -1,5 +1,6 @@
 import { callAPI } from "../utils/callApiUtils.js";
 import stateManager from "../js/StateManager.js";
+import { getCsrfToken } from "../utils/csrfTokenUtils.js"
 
 
 const styles = `
@@ -271,7 +272,7 @@ export default class GameInviteSend extends HTMLElement {
 					`;
 				}
 				this.inviteBtn.disabled = false;
-			}, null, stateManager.getState("csrfToken"));
+			}, null, getCsrfToken());
 		});
 	}
 }
