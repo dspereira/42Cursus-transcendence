@@ -176,6 +176,7 @@ def validate_email(request):
 				return JsonResponse({"message": "Email validation done!", "validation_status": validation_status}, status=200)
 	return JsonResponse({"message": "Error: Empty Body"}, status=400)
 
+@csrf_exempt
 @accepted_methods(["POST"])
 @check_request_body(["info"])
 def resend_email_validation(request):

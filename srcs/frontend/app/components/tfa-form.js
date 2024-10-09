@@ -165,6 +165,9 @@ export default class TfaForm extends HTMLElement {
 		callAPI("POST", `http://127.0.0.1:8000/api/two-factor-auth/request-${destination}/`, null, (res, data) => {		
 			if (!res.ok)
 				console.log(data.message); // Esta mensagem deve ser apresentada no frontend
+			const btn = this.html.querySelector(".btn-resend");
+			if(btn)
+				btn.disabled = false;
 		});
 	}
 
@@ -174,6 +177,7 @@ export default class TfaForm extends HTMLElement {
 			return ;
 		btn.addEventListener("click", (event) => {
 			event.preventDefault();
+			btn.disabled = true;
 			if (this.data.method != QRCODE_METHOD)
 				this.#sendTwoFactorCode(this.data.method);
 		});
@@ -217,6 +221,7 @@ export default class TfaForm extends HTMLElement {
 		const tfaForm = this.html.querySelector("#tfa-code");
 		tfaForm.addEventListener("submit", (event) => {
 			event.preventDefault();
+			this.submitBtn.disabled = true;
 			const formData = {
 				code: this.#getCodeValue(),
 				method: this.data.method
@@ -234,6 +239,7 @@ export default class TfaForm extends HTMLElement {
 						redirect("/");
 					// caso dê 401 colocar mensagem no frontend
 					this.#updateInvalidCodeStyle(true);
+					this.submitBtn.disabled = false;
 				});
 			}
 		});

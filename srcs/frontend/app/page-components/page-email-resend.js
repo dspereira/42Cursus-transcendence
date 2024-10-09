@@ -108,9 +108,11 @@ export default class PageEmailResend extends HTMLElement {
 		if (!btn)
 			return ;
 		btn.addEventListener("click", () => {
+			btn.disabled = true;
 			callAPI("POST", `http://127.0.0.1:8000/api/auth/resend-email-validation/`, {info: this.data.key}, (res, data) => {
-				if (res.ok)
+				if (res.ok) 
 					render(getHtmlElm(PageEmailSent));	
+				btn.disabled = false; 
 			});
 		});
 	}
