@@ -344,15 +344,14 @@ export default class TourneyGraph extends HTMLElement {
 	}
 
 	#setStartGameEvent() {
-		const btn = this.html.querySelector(".btn-start");
-		if (!btn)
-			return ;
-		btn.addEventListener("click", () => {
+		this.startGameBtn.addEventListener("click", () => {
+			this.startGameBtn.disabled = true;
 			callAPI("GET", `http://127.0.0.1:8000/api/tournament/next-game/?id=${this.data.tournamentId}`, null, (res, data) => {
 				if (res.ok) {
 					if (data && data.lobby_id)
 						stateManager.setState("tournamentGameLobby", data.lobby_id);
 				}
+				this.startGameBtn.disabled = false;
 			});
 			
 		});
