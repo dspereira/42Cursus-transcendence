@@ -314,9 +314,11 @@ export default class TourneyLobby extends HTMLElement {
 		if (!btn)
 			return ;
 		btn.addEventListener("click", () => {
+			btn.disabled = true;
 			callAPI("DELETE", `http://127.0.0.1:8000/api/tournament/?id=${this.data.tournamentId}`, null, (res, data) => {
 				if (res.ok)
 					stateManager.setState("isTournamentChanged", true);
+				btn.disabled = false;
 			}, null, stateManager.getState("csrfToken"));			
 		});
 	}
@@ -328,11 +330,13 @@ export default class TourneyLobby extends HTMLElement {
 		if (!btn)
 			return ;
 		btn.addEventListener("click", () => {
+			btn.disabled = true;
 			callAPI("DELETE", `http://127.0.0.1:8000/api/tournament/players/?id=${this.data.tournamentId}`, null, (res, data) => {
 				if (res.ok) {
 					stateManager.setState("tournamentId", null);
 					stateManager.setState("isTournamentChanged", true);
 				}
+				btn.disabled = false;
 			}, null, stateManager.getState("csrfToken"));	
 		});
 	}
