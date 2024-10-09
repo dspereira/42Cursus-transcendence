@@ -197,16 +197,20 @@ export default class GameHistory extends HTMLElement {
 	}
 
 	#getGameList() {
+		this.btnSoloGames.disbled = true;
 		callAPI("GET", `http://127.0.0.1:8000/api/game/get-games/?username=${this.data.username}`, null, (res, data) => {
 			if (res.ok && data)
 				this.#insertGames(data.games_list);
+			this.btnSoloGames.disbled = false;
 		});
 	};
 
 	#getTournamentList() {
+		this.btnTournamentGames.disbled = true;
 		callAPI("GET", `http://127.0.0.1:8000/api/tournament/?username=${this.data.username}`, null, (res, data) => {
 			if (res.ok && data)
 				this.#insertTournaments(data.tournaments_list);
+			this.btnTournamentGames.disbled = false;
 		});		
 	}
 

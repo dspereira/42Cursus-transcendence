@@ -543,7 +543,6 @@ export default class ChatSection extends HTMLElement {
 	#inviteToGameEvent() {
 		this.btnPlay.addEventListener("click", () => {
 			this.btnPlay.disabled = true;
-			console.log("disable");
 			this.#isFriend(this.data.userId, (status) => {
 				if (status) {
 					stateManager.setState("inviteToPlayFriendID", this.data.userId);
@@ -552,7 +551,6 @@ export default class ChatSection extends HTMLElement {
 				else 
 					stateManager.setState("removeFriendIdFromChat", this.data.userId);
 				this.btnPlay.disabled = true;
-				console.log("able");
 			});
 		});
 	}
