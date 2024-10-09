@@ -117,6 +117,9 @@ export default class TourneyInviteCard extends HTMLElement {
 			this.styles.textContent = this.#styles();
 			this.html.classList.add(`${this.elmtId}`);
 		}
+
+		this.joinBtn = this.html.querySelector(".join-btn");
+		this.declineBtn = this.html.querySelector(".decline-btn");
 	}
 
 	#styles() {
@@ -141,25 +144,23 @@ export default class TourneyInviteCard extends HTMLElement {
 	}
 
 	#setJoinBtnEvent() {
-		const btn = this.html.querySelector(".join-btn");
-		if(!btn)
-			return ;
-		btn.addEventListener("click", () => {
+		this.joinBtn.addEventListener("click", () => {
+			this.joinBtn.disabled = true;
 			callAPI("PUT", `http://127.0.0.1:8000/api/tournament/invite/`, {id: this.data.inviteId}, (res, data) => {
 				if (res.ok)
 					stateManager.setState("isTournamentChanged", true);
+				this.joinBtn.disabled = false;
 			}, null, stateManager.getState("csrfToken"));
 		});
 	}
 
 	#setDeclineBtnEvent() {
-		const btn = this.html.querySelector(".decline-btn");
-		if(!btn)
-			return ;
-		btn.addEventListener("click", () => {
+		this.declineBtn.addEventListener("click", () => {
+			this.declineBtn.disabled = true;
 			callAPI("DELETE", `http://127.0.0.1:8000/api/tournament/invite/?id=${this.data.inviteId}`, null, (res, data) => {
 				if (res.ok)
 					this.remove();
+				this.declineBtn.disabled = false;
 			}, null, stateManager.getState("csrfToken"));
 		});
 	}
