@@ -267,6 +267,7 @@ export default class AppFriends extends HTMLElement {
 				chat-btn="${cardButtons.chatBtn}"
 				play-btn="${cardButtons.playBtn}"
 				remove-friend-btn="${cardButtons.removeFriendBtn}"
+				csrf-token="${this.data.csrfToken}"
 			></user-card>`;
 			userListHtml.appendChild(userCard);
 		});

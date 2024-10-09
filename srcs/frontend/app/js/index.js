@@ -2,16 +2,18 @@ import { router, setHistoryEvents } from "./router.js"
 import stateManager from "./StateManager.js";
 import chatWebSocket from "./ChatWebSocket.js";
 import checkUserLoginState from "../utils/checkUserLoginState.js";
-import updateLoggedInStatus from "../utils/updateLoggedInUtils.js";
+import getCsrfToken from "../utils/getCsrfToken.js";
 
 stateManager.addEvent("isLoggedIn", (stateValue) => {
 	if (stateValue) {
 		stateManager.setState("idBrowser", Math.floor(Math.random() * 100000000));
 		chatWebSocket.open();
+		getCsrfToken();
 	}
 	else {
 		chatWebSocket.close();
 		stateManager.cleanAllStatesAndEvents();
+		stateManager.setState("csrfToken", null);
 	}
 });
 

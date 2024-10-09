@@ -154,7 +154,7 @@ export default class TourneyInviteCard extends HTMLElement {
 			callAPI("PUT", `http://127.0.0.1:8000/api/tournament/invite/`, {id: this.data.inviteId}, (res, data) => {
 				if (res.ok)
 					stateManager.setState("isTournamentChanged", true);
-			});
+			}, null, stateManager.getState("csrfToken"));
 		});
 	}
 
@@ -166,7 +166,7 @@ export default class TourneyInviteCard extends HTMLElement {
 			callAPI("DELETE", `http://127.0.0.1:8000/api/tournament/invite/?id=${this.data.inviteId}`, null, (res, data) => {
 				if (res.ok)
 					this.remove();
-			});
+			}, null, stateManager.getState("csrfToken"));
 		});
 	}
 

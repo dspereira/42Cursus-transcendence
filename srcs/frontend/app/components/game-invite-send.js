@@ -5,6 +5,7 @@ import { ptGameInviteSendDict } from "../lang-dicts/ptLangDict.js";
 import { esGameInviteSendDict } from "../lang-dicts/esLangDict.js";
 import getLanguageDict from "../utils/languageUtils.js";
 
+
 const styles = `
 	.search-icon {
 		position: absolute;
@@ -146,6 +147,7 @@ export default class GameInviteSend extends HTMLElement {
 	}
 
 	#scripts() {
+
 		this.#getFriendsCallApi();
 		this.#setFriendsSearchEvent();
 		this.#setInviteSubmitEvent();
@@ -276,7 +278,7 @@ export default class GameInviteSend extends HTMLElement {
 					></app-lobby>
 					`;
 				}
-			});
+			}, null, stateManager.getState("csrfToken"));
 		});
 	}
 }

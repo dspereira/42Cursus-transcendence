@@ -1,4 +1,5 @@
 import { callAPI } from "../utils/callApiUtils.js";
+import stateManager from "../js/StateManager.js";
 import { enGameInviteCardDict } from "../lang-dicts/enLangDict.js";
 import { ptGameInviteCardDict } from "../lang-dicts/ptLangDict.js";
 import { esGameInviteCardDict } from "../lang-dicts/esLangDict.js";
@@ -85,7 +86,7 @@ const getHtml = function(data) {
 }
 
 export default class GameInviteCard extends HTMLElement {
-	static observedAttributes = ["username", "profile-photo", "invite-id", "exp", "user-id", "language"];
+	static observedAttributes = ["username", "profile-photo", "invite-id", "exp", "user-id", "csrf-token", "language"];
 
 	constructor() {
 		super()
@@ -105,6 +106,8 @@ export default class GameInviteCard extends HTMLElement {
 			name = "inviteId";
 		else if (name == "user-id")
 			name = "userId";
+		else if (name == "csrf-token")
+			name = "csrfToken";
 		else if (name == "language")
 			this.data.langDict = getLanguageDict(newValue, enGameInviteCardDict, ptGameInviteCardDict, esGameInviteCardDict);
 		this.data[name] = newValue;
@@ -160,7 +163,7 @@ export default class GameInviteCard extends HTMLElement {
 						></app-lobby>
 					`;
 				}
-			});
+			}, null, stateManager.getState("csrfToken"));
 		});
 	}
 
@@ -172,7 +175,7 @@ export default class GameInviteCard extends HTMLElement {
 			callAPI("DELETE", `http://127.0.0.1:8000/api/game/request/`, {id: this.data.inviteId}, (res, data) => {
 				if (res.ok)
 					this.remove();
-			});
+			}, null, stateManager.getState("csrfToken"));
 		});
 	}
 

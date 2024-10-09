@@ -1,6 +1,7 @@
 import { callAPI } from "../utils/callApiUtils.js";
 import isValidUsername from "../utils/usernameValidationUtils.js";
 import getCountryCodesOptions from "../utils/countryCodesUtils.js";
+import stateManager from "../js/StateManager.js";
 import { enAppConfigs } from "../lang-dicts/enLangDict.js";
 import { ptAppConfigs } from "../lang-dicts/ptLangDict.js";
 import { esAppConfigs } from "../lang-dicts/esLangDict.js";
@@ -228,6 +229,8 @@ export default class AppConfigs extends HTMLElement {
 		this.qrcodeConfigured = false;
 		this.imageSeed = "";
 		this.imageFile = "";
+		this.data = {};
+
 	}
 
 	connectedCallback() {
@@ -345,7 +348,7 @@ export default class AppConfigs extends HTMLElement {
 				formData.append('json', data);
 			if (this.imageFile)
 				formData.append('image', this.imageFile);
-
+			
 			callAPI("POST", "http://127.0.0.1:8000/api/settings/", formData, (res, resData) => {
 				if (res.ok && resData) {
 					this.#loadData(resData.settings);
@@ -358,7 +361,7 @@ export default class AppConfigs extends HTMLElement {
 					this.#setErrorMessage(resData.message);
 				}
 				this.submitBtn.disabled = false;
-			});
+			}, null, stateManager.getState("csrfToken"));
 		});
 	}
 
@@ -545,12 +548,12 @@ export default class AppConfigs extends HTMLElement {
 	#showQrcode() {
 		this.showQrcode.addEventListener("click", (event) => {
 			event.preventDefault();
-			callAPI("POST", "http://127.0.0.1:8000/api/two-factor-auth/request-qr-code/", {}, (res, data) => {
+			callAPI("POST", "http://127.0.0.1:8000/api/two-factor-auth/request-qr-code/", null, (res, data) => {
 				if (res.ok && data && data.qr_code) {
 					this.qrcodeImg.classList.remove("hide");
 					this.qrcodeImg.setAttribute("src", 'data:image/png;base64,' + data.qr_code);
 				}
-			});
+			}, null, stateManager.getState("csrfToken"));
 		});
 	}
 }

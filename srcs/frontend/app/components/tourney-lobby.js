@@ -82,7 +82,7 @@ const styles = `
 
 const getHtml = function(data) {
 	const tournamentInviterHtml = `<div class="border-separation"></div>
-	<tourney-inviter tournament-id="${data.tournamentId}" language="${data.language}"></tourney-inviter>`;
+	<tourney-inviter tournament-id="${data.tournamentId}" csrf-token="${data.csrfToken}" language="${data.language}"></tourney-inviter>`;
 
 	const ownerBtns = `<button type="button" class="btn btn-success btn-start">${data.langDict.start_button}</button>
 			<button type="button" class="btn btn-danger btn-cancel">${data.langDict.cancel_button}</button>`;
@@ -131,7 +131,7 @@ const getHtml = function(data) {
 }
 
 export default class TourneyLobby extends HTMLElement {
-	static observedAttributes = ["tournament-id", "owner-id", "tournament-name", "language"];
+	static observedAttributes = ["tournament-id", "owner-id", "tournament-name", "csrf-token", "language"];
 
 	constructor() {
 		super()
@@ -324,7 +324,7 @@ export default class TourneyLobby extends HTMLElement {
 			callAPI("DELETE", `http://127.0.0.1:8000/api/tournament/?id=${this.data.tournamentId}`, null, (res, data) => {
 				if (res.ok)
 					stateManager.setState("isTournamentChanged", true);
-			});			
+			}, null, stateManager.getState("csrfToken"));			
 		});
 	}
 
@@ -340,7 +340,7 @@ export default class TourneyLobby extends HTMLElement {
 					stateManager.setState("tournamentId", null);
 					stateManager.setState("isTournamentChanged", true);
 				}
-			});	
+			}, null, stateManager.getState("csrfToken"));	
 		});
 	}
 
@@ -357,7 +357,7 @@ export default class TourneyLobby extends HTMLElement {
 					stateManager.setState("isTournamentChanged", true);
 				else
 					this.#toggleStartButton(false);
-			});
+			}, null, stateManager.getState("csrfToken"));
 		});
 	}
 
@@ -374,7 +374,7 @@ export default class TourneyLobby extends HTMLElement {
 				if (res.status == 409)
 					nameInput.value = data.tournament_name;
 				btn.disabled = false;
-			});
+			}, null, stateManager.getState("csrfToken"));
 		});
 	}
 

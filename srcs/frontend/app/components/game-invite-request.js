@@ -105,6 +105,7 @@ export default class GameInviteRequest extends HTMLElement {
 		requestCard.setAttribute("profile-photo", requestData.image);
 		requestCard.setAttribute("exp", requestData.exp);
 		requestCard.setAttribute("user-id", requestData.id);
+		requestCard.setAttribute("csrf-token", this.data.csrfToken);
 		requestCard.setAttribute("language", this.data.language);
 		this.reqListHtml.appendChild(requestCard);
 	}
