@@ -82,7 +82,7 @@ const getHtml = function(data) {
 }
 
 export default class GameInviteCard extends HTMLElement {
-	static observedAttributes = ["username", "profile-photo", "invite-id", "exp", "user-id", "csrf-token"];
+	static observedAttributes = ["username", "profile-photo", "invite-id", "exp", "user-id"];
 
 	constructor() {
 		super()
@@ -102,8 +102,6 @@ export default class GameInviteCard extends HTMLElement {
 			name = "inviteId";
 		else if (name == "user-id")
 			name = "userId";
-		else if (name == "csrf-token")
-			name = "csrfToken";
 		this.data[name] = newValue;
 
 		if (name == "exp" && this.html)
@@ -119,6 +117,8 @@ export default class GameInviteCard extends HTMLElement {
 			this.styles.textContent = this.#styles();
 			this.html.classList.add(`${this.elmtId}`);
 		}
+		this.joinBtn = this.html.querySelector(".join-btn");
+		this.declineBtn = this.html.querySelector(".decline-btn");
 	}
 
 	#styles() {
@@ -143,10 +143,8 @@ export default class GameInviteCard extends HTMLElement {
 	}
 
 	#setJoinBtnEvent() {
-		const btn = this.html.querySelector(".join-btn");
-		if(!btn)
-			return ;
-		btn.addEventListener("click", () => {
+		this.joinBtn.addEventListener("click", () => {
+			this.joinBtn.disabled = true;
 			callAPI("PUT", `http://127.0.0.1:8000/api/game/request/`, {id: this.data.inviteId}, (res, data) => {
 				if (res.ok) {
 					const contentElm = document.querySelector(".content");
@@ -156,18 +154,18 @@ export default class GameInviteCard extends HTMLElement {
 						></app-lobby>
 					`;
 				}
+				this.joinBtn.disabled = false;
 			}, null, stateManager.getState("csrfToken"));
 		});
 	}
 
 	#setDeclineBtnEvent() {
-		const btn = this.html.querySelector(".decline-btn");
-		if(!btn)
-			return ;
-		btn.addEventListener("click", () => {
+		this.declineBtn.addEventListener("click", () => {
+			this.declineBtn.disabled = true;
 			callAPI("DELETE", `http://127.0.0.1:8000/api/game/request/`, {id: this.data.inviteId}, (res, data) => {
 				if (res.ok)
 					this.remove();
+				this.declineBtn.disabled = false;
 			}, null, stateManager.getState("csrfToken"));
 		});
 	}
