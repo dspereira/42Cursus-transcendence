@@ -207,11 +207,13 @@ export default class ChatFriendsList extends HTMLElement {
 		friend.addEventListener("click", () => {
 			this.#removeAllSelectedFriends();
 			const friendId = friend.id.substring(3);
+			friend.disable = true;
 			this.#isFriend(friendId, (status) => {
 				if (status)
 					this.#selectFriendToChat(friend, friendId, listName);
 				else
 					this.#removeFriendFromChat(friendId);
+				friend.disable = false;
 			});
 		});
 	}
