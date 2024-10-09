@@ -180,10 +180,12 @@ export default class AppLobby extends HTMLElement {
 
 	#setReadyBtnEvent() {
 		this.readyBtn.addEventListener("click", () => {
+			this.readyBtn.disabled = true;
 			checkUserLoginState((state) => {
 				if (state)
 					gameWebSocket.updateReadyStatus();
 				//updateLoggedInStatus(state);
+				this.readyBtn.disabled = false;
 			});
 		});
 	}
