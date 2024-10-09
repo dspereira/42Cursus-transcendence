@@ -1,5 +1,6 @@
 import { callAPI } from "../utils/callApiUtils.js";
 import stateManager from "../js/StateManager.js";
+import { redirect } from "../js/router.js";
 
 const styles = `
 
@@ -191,6 +192,7 @@ export default class UserCard extends HTMLElement {
 		this.#setDeclineEvent();
 		this.#setAcceptEvent();
 		this.#setRemoveEvent();
+		this.#setPlayBtnEvent()
 	}
 
 	#friendRequest(method, body, callback) {
@@ -267,6 +269,29 @@ export default class UserCard extends HTMLElement {
 			this.#friends("DELETE", {"friend_id": this.data.userId}, () => {
 				this.remove();
 			});
+		});
+	}
+
+	#setPlayBtnEvent() {
+		let btn = this.html.querySelector(".play")
+		if (!btn)
+			return ;
+		btn.addEventListener("click", () => {
+			this.#isFriend(this.data.userId, (status) => {
+				if (status) {
+					stateManager.setState("friendIdInvitedFromChat", this.data.userId);
+					redirect("/play");
+				}
+				else 
+					stateManager.setState("removeFriendIdFromChat", this.data.userId);
+			});
+		});
+	}
+
+	#isFriend(friendId, callback) {
+		callAPI("GET", `http://127.0.0.1:8000/api/friends/is-friend/?friend_id=${friendId}`, null, (res, data) => {
+			if (res.ok && data)
+				callback(data.friend_status)
 		});
 	}
 }
