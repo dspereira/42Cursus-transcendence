@@ -122,6 +122,7 @@ export default class GameInviteSend extends HTMLElement {
 			this.html.classList.add(`${this.elmtId}`);
 		}
 		this.rightFriendListElm = this.html.querySelector(".selcted-list-section");
+		this.inviteBtn = this.html.querySelector("#submit-invite");
 	}
 
 	#styles() {
@@ -249,10 +250,7 @@ export default class GameInviteSend extends HTMLElement {
 	}
 
 	#setInviteSubmitEvent() {
-		const btn = this.html.querySelector("#submit-invite");
-		if (!btn)
-			return ;
-		btn.addEventListener("click", () => {
+		this.inviteBtn.addEventListener("click", () => {
 			const data = {
 				invites_list: []
 			};
@@ -262,6 +260,7 @@ export default class GameInviteSend extends HTMLElement {
 
 			console.log(data);
 
+			this.inviteBtn.disabled = true;
 			callAPI("POST", "http://127.0.0.1:8000/api/game/request/", data, (res, data) => {
 				if (res.ok) {
 					const contentElm = document.querySelector(".content");
@@ -271,6 +270,7 @@ export default class GameInviteSend extends HTMLElement {
 					></app-lobby>
 					`;
 				}
+				this.inviteBtn.disabled = false;
 			}, null, stateManager.getState("csrfToken"));
 		});
 	}
