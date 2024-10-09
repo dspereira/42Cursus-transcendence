@@ -552,12 +552,14 @@ export default class AppConfigs extends HTMLElement {
 
 	#showQrcode() {
 		this.showQrcode.addEventListener("click", (event) => {
+			this.showQrcode.disabled = true;
 			event.preventDefault();
 			callAPI("POST", "http://127.0.0.1:8000/api/two-factor-auth/request-qr-code/", null, (res, data) => {
 				if (res.ok && data && data.qr_code) {
 					this.qrcodeImg.classList.remove("hide");
 					this.qrcodeImg.setAttribute("src", 'data:image/png;base64,' + data.qr_code);
 				}
+				this.showQrcode.disabled = false;
 			}, null, stateManager.getState("csrfToken"));
 		});
 	}
