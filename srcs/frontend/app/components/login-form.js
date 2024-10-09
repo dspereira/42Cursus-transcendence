@@ -4,7 +4,6 @@ import { render } from "../js/router.js";
 import PageEmailResend from "../page-components/page-email-resend.js";
 import { getDynamicHtmlElm, getHtmlElm } from "../utils/getHtmlElmUtils.js";
 import Page2FA from "../page-components/page-2fa.js";
-
 const EMAIL_NOT_VERIFIED_MSG = 'Email not verified. Please verify your email.';
 
 const styles = `
@@ -179,7 +178,9 @@ export default class LoginForm extends HTMLElement {
 				this.submitBtn.disabled = false;
 			}
 			else
+			{
 				callAPI("POST", "http://127.0.0.1:8000/api/auth/login", dataForm, this.#apiResHandlerCalback);
+			}
 		});
 	}
 

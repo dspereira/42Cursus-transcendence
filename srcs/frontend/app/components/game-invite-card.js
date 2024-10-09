@@ -1,4 +1,5 @@
 import { callAPI } from "../utils/callApiUtils.js";
+import stateManager from "../js/StateManager.js";
 
 const styles = `
 .card-container {
@@ -81,7 +82,7 @@ const getHtml = function(data) {
 }
 
 export default class GameInviteCard extends HTMLElement {
-	static observedAttributes = ["username", "profile-photo", "invite-id", "exp", "user-id"];
+	static observedAttributes = ["username", "profile-photo", "invite-id", "exp", "user-id", "csrf-token"];
 
 	constructor() {
 		super()
@@ -101,6 +102,8 @@ export default class GameInviteCard extends HTMLElement {
 			name = "inviteId";
 		else if (name == "user-id")
 			name = "userId";
+		else if (name == "csrf-token")
+			name = "csrfToken";
 		this.data[name] = newValue;
 
 		if (name == "exp" && this.html)
@@ -153,7 +156,7 @@ export default class GameInviteCard extends HTMLElement {
 						></app-lobby>
 					`;
 				}
-			});
+			}, null, stateManager.getState("csrfToken"));
 		});
 	}
 
@@ -165,7 +168,7 @@ export default class GameInviteCard extends HTMLElement {
 			callAPI("DELETE", `http://127.0.0.1:8000/api/game/request/`, {id: this.data.inviteId}, (res, data) => {
 				if (res.ok)
 					this.remove();
-			});
+			}, null, stateManager.getState("csrfToken"));
 		});
 	}
 

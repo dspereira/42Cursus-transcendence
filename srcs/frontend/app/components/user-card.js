@@ -1,4 +1,5 @@
 import { callAPI } from "../utils/callApiUtils.js";
+import stateManager from "../js/StateManager.js";
 
 const styles = `
 
@@ -115,7 +116,8 @@ export default class UserCard extends HTMLElement {
 		"friend-request-decline-btn",
 		"chat-btn",
 		"play-btn",
-		"remove-friend-btn"
+		"remove-friend-btn",
+		"csrf-token"
 	];
 
 	constructor() {
@@ -151,7 +153,9 @@ export default class UserCard extends HTMLElement {
 		else if (name == "play-btn")
 			name = "playBtn";
 		else if (name == "remove-friend-btn")
-			name= "removeFriendBtn"
+			name = "removeFriendBtn";
+		else if (name == "csrf-token")
+			name = "csrfToken";
 		this.data[name] = newValue;
 	}
 
@@ -193,14 +197,14 @@ export default class UserCard extends HTMLElement {
 		callAPI(method, "http://127.0.0.1:8000/api/friends/request/", body, (res, data) => {
 			if (res.ok)
 				callback(data);
-		});
+		}, null, stateManager.getState("csrfToken"));
 	}
 
 	#friends(method, body, callback) {
 		callAPI(method, "http://127.0.0.1:8000/api/friends/friendships/", body, (res, data) => {
 			if (res.ok)
 				callback(data);
-		});
+		}, null, stateManager.getState("csrfToken"));
 	}
 
 	#switchBtns(btn) {
