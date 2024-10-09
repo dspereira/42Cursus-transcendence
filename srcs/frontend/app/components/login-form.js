@@ -178,9 +178,7 @@ export default class LoginForm extends HTMLElement {
 				this.submitBtn.disabled = false;
 			}
 			else
-			{
 				callAPI("POST", "http://127.0.0.1:8000/api/auth/login", dataForm, this.#apiResHandlerCalback);
-			}
 		});
 	}
 
@@ -188,14 +186,13 @@ export default class LoginForm extends HTMLElement {
 		const value = this.html.querySelector('#email').value.trim();
 		if (res.ok && data.message === "success")
 			render(getHtmlElm(Page2FA));
-			//redirect("/");
 		else if (res.status == 401 && data.message == EMAIL_NOT_VERIFIED_MSG)
 			render(getDynamicHtmlElm(PageEmailResend, value ,"key"));
 		else {
 			if (data && data.message)
 				this.#setLogInErrorStyles(data.message);
-			this.submitBtn.disabled = false;
 		}
+		this.submitBtn.disabled = false;
 	}
 
 	#setLogInErrorStyles(message) {

@@ -2,13 +2,28 @@ import chatWebSocket from "../js/ChatWebSocket.js";
 import stateManager from "../js/StateManager.js";
 import updateLoggedInStatus from "./updateLoggedInUtils.js";
 
+
+const API_ROUTE = "http://127.0.0.1:8000/api";
 const refreshUrl = "http://127.0.0.1:8000/api/auth/refresh_token";
 const refreshMethod = "POST";
+
+const publicRoutes = [
+	`${API_ROUTE}/auth/login`,
+	`${API_ROUTE}/auth/register`,
+	`${API_ROUTE}/auth/validate-email`,
+	`${API_ROUTE}/auth/resend-email-validation`,
+	`${API_ROUTE}/two-factor-auth/configured-2fa`,
+	`${API_ROUTE}/two-factor-auth/request-email`,
+	`${API_ROUTE}/two-factor-auth/request-phone`,
+	`${API_ROUTE}/two-factor-auth/validate-otp`,
+];
 
 export const callAPI = async function (method, url, data, callback_sucess, callback_error, csrf_token) {
 	let resApi = await fetchApi(method, url, data, csrf_token);
 
-	if (!resApi.error && resApi.data && resApi.res) {
+	console.log(url);
+
+	if (resApi && !resApi.error && resApi.data && resApi.res) {
 		if (resApi.res.status == 401) {
 			let resRefresh = await fetchApi(refreshMethod, refreshUrl, null, csrf_token);
 			if (resRefresh && resRefresh.res && resRefresh.res.ok) {
@@ -23,7 +38,7 @@ export const callAPI = async function (method, url, data, callback_sucess, callb
 		callback_sucess(resApi.res, resApi.data);
 		if (resApi.res && resApi.res.status == 401)
 			updateLoggedInStatus(false);
-		else if (resApi.res && resApi.res.ok)
+		else if (isLoginRequiredRoute(url))
 			updateLoggedInStatus(true);
 	}
 	else if (resApi && resApi.error) {
@@ -80,4 +95,14 @@ const getReqHeader = function(method, data, csrf_token) {
 			obj.headers = {"X-CSRFToken" : csrf_token};
 	}
 	return obj;
+}
+
+const isLoginRequiredRoute = function (url) {
+	const lastCharIdx = url.length - 1; 
+	if (url[lastCharIdx] == '/')
+		url = url.slice(0, lastCharIdx);
+
+	if (publicRoutes.includes(url))
+		return false;
+	return true;
 }
