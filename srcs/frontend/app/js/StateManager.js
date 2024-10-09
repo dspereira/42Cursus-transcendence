@@ -34,7 +34,7 @@ class StateManager {
 			tournamentGameLobby: null,
 			tournamentId: null,
 			isChatMsgReadyToSend: null,
-			friendIdInvitedFromChat: null,
+			inviteToPlayFriendID: null,
 			hasFriendInvite: null,
 			removeFriendIdFromChat: null,
 			csrfToken: null
@@ -67,7 +67,7 @@ class StateManager {
 			finishedTournament: [],
 			tournamentId: [],
 			isChatMsgReadyToSend: [],
-			friendIdInvitedFromChat: [],
+			inviteToPlayFriendID: [],
 			hasFriendInvite: [],
 			removeFriendIdFromChat: [],
 			csrfToken: []

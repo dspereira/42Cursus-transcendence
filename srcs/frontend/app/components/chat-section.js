@@ -538,7 +538,7 @@ export default class ChatSection extends HTMLElement {
 		this.btnPlay.addEventListener("click", () => {
 			this.#isFriend(this.data.userId, (status) => {
 				if (status) {
-					stateManager.setState("friendIdInvitedFromChat", this.data.userId);
+					stateManager.setState("inviteToPlayFriendID", this.data.userId);
 					redirect("/play");
 				}
 				else 

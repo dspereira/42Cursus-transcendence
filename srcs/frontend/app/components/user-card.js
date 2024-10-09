@@ -279,11 +279,9 @@ export default class UserCard extends HTMLElement {
 		btn.addEventListener("click", () => {
 			this.#isFriend(this.data.userId, (status) => {
 				if (status) {
-					stateManager.setState("friendIdInvitedFromChat", this.data.userId);
+					stateManager.setState("inviteToPlayFriendID", this.data.userId);
 					redirect("/play");
 				}
-				else 
-					stateManager.setState("removeFriendIdFromChat", this.data.userId);
 			});
 		});
 	}

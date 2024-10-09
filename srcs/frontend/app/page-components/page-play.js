@@ -102,11 +102,11 @@ export default class PagePlay extends HTMLElement {
 	}
 
 	#inviteToPlayAndRedirectToLobby() {
-		const stateInfo = stateManager.getState("friendIdInvitedFromChat");
-		if (!stateInfo)
+		const stateInfo = stateManager.getState("inviteToPlayFriendID");
+		if (!stateInfo) 
 			return ;
 
-		stateManager.setState("friendIdInvitedFromChat", null);
+		stateManager.setState("inviteToPlayFriendID", null);
 		const data = {
 			invites_list: [`${stateInfo}`]
 		};
