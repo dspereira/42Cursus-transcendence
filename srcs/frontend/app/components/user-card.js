@@ -192,7 +192,8 @@ export default class UserCard extends HTMLElement {
 		this.#setDeclineEvent();
 		this.#setAcceptEvent();
 		this.#setRemoveEvent();
-		this.#setPlayBtnEvent()
+		this.#setPlayBtnEvent();
+		this.#setChatBtnEvent();
 	}
 
 	#friendRequest(method, body, callback) {
@@ -293,6 +294,23 @@ export default class UserCard extends HTMLElement {
 			});
 		});
 	}
+
+	#setChatBtnEvent() {
+		let btn = this.html.querySelector(".chat")
+		if (!btn)
+			return ;
+		btn.addEventListener("click", () => {
+			this.#isFriend(this.data.userId, (status) => {
+				if (status) {
+					stateManager.setState("friendChatId", this.data.userId);
+					redirect("/chat");
+				}
+				else 
+					this.remove();
+			});
+		});		
+	}
+
 
 	#isFriend(friendId, callback) {
 		callAPI("GET", `http://127.0.0.1:8000/api/friends/is-friend/?friend_id=${friendId}`, null, (res, data) => {
