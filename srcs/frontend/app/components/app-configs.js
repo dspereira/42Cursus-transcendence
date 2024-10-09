@@ -398,11 +398,11 @@ export default class AppConfigs extends HTMLElement {
 			if (!this.imageFile)
 				return ;
 			if (this.imageFile.size > MAX_IMAGE_SIZE_BYTES) {
-				this.#setErrorMessage(messages.imageSize);
+				this.#handleImageError(messages.imageSize);
 				return ;
 			}
 			if (!isFalidFormat(this.imageFile.type)) {
-				this.#setErrorMessage(messages.imageType);
+				this.#handleImageError(messages.imageType);
 				return ;
 			}
 			if (this.savedImageUrl)
@@ -411,6 +411,12 @@ export default class AppConfigs extends HTMLElement {
 			this.imagePreview.setAttribute("src", this.savedImageUrl);
 			this.imageSeed = "";
 		});
+	}
+
+	#handleImageError(msg) {
+		this.#setErrorMessage(msg);
+		this.imageFile = "";
+		this.newImageInp.value = "";	
 	}
 
 	#setFieldInvalid(field) {
@@ -432,6 +438,7 @@ export default class AppConfigs extends HTMLElement {
 			return ;
 		this.errorAlert.classList.remove("hide");
 		this.errorAlert.innerHTML = message;
+		this.successAlert.classList.add("hide");
 	}
 
 	#setSuccessMessage(message) {
@@ -439,6 +446,7 @@ export default class AppConfigs extends HTMLElement {
 			return ;
 		this.successAlert.classList.remove("hide");
 		this.successAlert.innerHTML = message;
+		this.errorAlert.classList.add("hide");
 	}
 
 	#cleanSuccessMessage() {
