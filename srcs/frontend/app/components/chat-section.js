@@ -298,11 +298,13 @@ export default class ChatSection extends HTMLElement {
 	#setSubmitEvents() {
 		this.sendIcon.addEventListener("click", (event) => {
 			event.preventDefault();
+			this.sendIcon.disabled = true;
 			this.#isFriend(this.data.userId, (status) => {
 				if (status)
 					this.html.querySelector("#msg-submit").requestSubmit();
 				else 
 					stateManager.setState("removeFriendIdFromChat", this.data.userId);
+				this.sendIcon.disabled = false;
 			});
 		});
 
@@ -458,11 +460,13 @@ export default class ChatSection extends HTMLElement {
 
 	#setBtnBlockEvent() {
 		this.btnBlock.addEventListener("click", () => {
+			this.btnBlock.disabled = true;
 			this.#isFriend(this.data.userId, (status) => {
 				if (status)
 					this.#blockStatusCall("POST", this.data.userId, "block");
 				else 
 					stateManager.setState("removeFriendIdFromChat", this.data.userId);
+				this.btnBlock.disabled = false;
 			});
 		});
 	}
@@ -470,10 +474,12 @@ export default class ChatSection extends HTMLElement {
 	#setBtnUnblockEvent() {
 		this.btnUnblock .addEventListener("click", () => {
 			this.#isFriend(this.data.userId, (status) => {
+				this.btnUnblock.disabled = true;
 				if (status)
 					this.#blockStatusCall("POST", this.data.userId, "unblock");
 				else 
 					stateManager.setState("removeFriendIdFromChat", this.data.userId);
+				this.btnUnblock.disabled = false;
 			});			
 		});
 	}
@@ -536,6 +542,8 @@ export default class ChatSection extends HTMLElement {
 
 	#inviteToGameEvent() {
 		this.btnPlay.addEventListener("click", () => {
+			this.btnPlay.disabled = true;
+			console.log("disable");
 			this.#isFriend(this.data.userId, (status) => {
 				if (status) {
 					stateManager.setState("inviteToPlayFriendID", this.data.userId);
@@ -543,6 +551,8 @@ export default class ChatSection extends HTMLElement {
 				}
 				else 
 					stateManager.setState("removeFriendIdFromChat", this.data.userId);
+				this.btnPlay.disabled = true;
+				console.log("able");
 			});
 		});
 	}
