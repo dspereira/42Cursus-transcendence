@@ -227,14 +227,18 @@ export default class UserCard extends HTMLElement {
 			return ;
 		btn.addEventListener("click", () => {
 			if (btn.classList.contains("invite")) {
+				btn.disabled = true;
 				this.#friendRequest("POST", {"requested_user": this.data.userId}, (data) => {
 					this.data.requestId = data.request_id;
 					this.#switchBtns(btn);
+					btn.disabled = false;
 				});
 			}
 			else {
+				btn.disabled = true;
 				this.#friendRequest("DELETE", {"request_id": this.data.requestId}, () => {
 					this.#switchBtns(btn);
+					btn.disabled = false;
 				});
 			}
 		});
@@ -245,6 +249,7 @@ export default class UserCard extends HTMLElement {
 		if (!btn)
 			return ;
 		btn.addEventListener("click", () => {
+			btn.disabled = true;
 			this.#friendRequest("DELETE", {"request_id": this.data.requestId}, () => {
 				this.remove();
 			});
@@ -256,6 +261,7 @@ export default class UserCard extends HTMLElement {
 		if (!btn)
 			return ;
 		btn.addEventListener("click", () => {
+			btn.disabled = true;
 			this.#friends("POST", {"request_id": this.data.requestId}, () => {
 				this.remove();
 			});
@@ -267,6 +273,7 @@ export default class UserCard extends HTMLElement {
 		if (!btn)
 			return ;
 		btn.addEventListener("click", () => {
+			btn.disabled = true;
 			this.#isFriend(this.data.userId, (status) => {
 				if (status) {
 					this.#friends("DELETE", {"friend_id": this.data.userId}, () => {
@@ -284,10 +291,12 @@ export default class UserCard extends HTMLElement {
 		if (!btn)
 			return ;
 		btn.addEventListener("click", () => {
+			btn.disabled = true;
 			this.#isFriend(this.data.userId, (status) => {
 				if (status) {
 					stateManager.setState("inviteToPlayFriendID", this.data.userId);
 					redirect("/play");
+					btn.disabled = false;
 				}
 				else 
 					this.remove();
@@ -302,8 +311,10 @@ export default class UserCard extends HTMLElement {
 		btn.addEventListener("click", () => {
 			this.#isFriend(this.data.userId, (status) => {
 				if (status) {
+					btn.disabled = true;
 					stateManager.setState("friendChatId", this.data.userId);
 					redirect("/chat");
+					btn.disabled = false;
 				}
 				else 
 					this.remove();
