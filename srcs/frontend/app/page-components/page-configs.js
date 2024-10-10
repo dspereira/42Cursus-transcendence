@@ -1,4 +1,3 @@
-import stateManager from "../js/StateManager.js";
 import { adjustContent } from "../utils/adjustContent.js";
 import componentSetup from "../utils/componentSetupUtils.js";
 

@@ -1,5 +1,6 @@
 import stateManager from "../js/StateManager.js";
 import { callAPI } from "../utils/callApiUtils.js";
+import componentSetup from "../utils/componentSetupUtils.js";
 
 const styles = `
 .friends-section {
@@ -149,7 +150,6 @@ export default class AppFriends extends HTMLElement {
 
 	connectedCallback() {
 		this.#initComponent();
-		this.#render();
 		this.#scripts();
 	}
 
@@ -158,34 +158,12 @@ export default class AppFriends extends HTMLElement {
 	}
 
 	#initComponent() {
-		this.html = document.createElement("div");
-		this.html.innerHTML = this.#html(this.data);
-		if (styles) {
-			this.elmtId = `elmtId_${Math.floor(Math.random() * 100000000000)}`;
-			this.styles = document.createElement("style");
-			this.styles.textContent = this.#styles();
-			this.html.classList.add(`${this.elmtId}`);
-		}
+		this.html = componentSetup(this, getHtml(), styles);
+
 		this.notificationDot = this.html.querySelector(".notification");
 		this.searchMenuBtn = this.html.querySelector(".search-btn");
 		this.friendsMenuBtn = this.html.querySelector(".friends-btn");
 		this.requestsMenuBtn = this.html.querySelector(".requests-btn");
-	}
-
-	#styles() {
-			if (styles)
-				return `@scope (.${this.elmtId}) {${styles}}`;
-			return null;
-	}
-
-	#html(data){
-		return getHtml(data);
-	}
-
-	#render() {
-		if (styles)
-			this.appendChild(this.styles);
-		this.appendChild(this.html);
 	}
 
 	#scripts() {
