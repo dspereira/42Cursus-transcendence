@@ -1,4 +1,5 @@
 import {callAPI} from "../utils/callApiUtils.js";
+import onerrorEventImg from "../utils/imageErrorUtil.js";
 
 const styles = `
 	.game-grid-container {
@@ -149,7 +150,7 @@ export default class GameCard extends HTMLElement {
 	}
 
 	#scripts() {
-
+		onerrorEventImg(this.html);
 	}
 
 }

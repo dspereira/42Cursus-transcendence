@@ -1,5 +1,5 @@
 import {callAPI} from "../utils/callApiUtils.js";
-import stateManager from "../js/StateManager.js";
+import onerrorEventImg from "../utils/imageErrorUtil.js";
 
 const styles = `
 
@@ -168,6 +168,7 @@ export default class UserProfile extends HTMLElement {
 	}
 
 	#scripts() {
+		onerrorEventImg(this.html);
 		this.#getProfileInfo();
 	}
 
