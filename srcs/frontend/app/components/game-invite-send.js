@@ -138,7 +138,7 @@ export default class GameInviteSend extends HTMLElement {
 		if (key)
 			queryParam = `?key=${key}`;
 
-		callAPI("GET", `http://127.0.0.1:8000/api/game/friends/${queryParam}`, null, (res, data) => {
+		callAPI("GET", `/game/friends/${queryParam}`, null, (res, data) => {
 			if (res.ok) {
 				this.#createFriendsList(data.friends);
 				this.#selectFriendEvent();
@@ -240,7 +240,7 @@ export default class GameInviteSend extends HTMLElement {
 			console.log(data);
 
 			this.inviteBtn.disabled = true;
-			callAPI("POST", "http://127.0.0.1:8000/api/game/request/", data, (res, data) => {
+			callAPI("POST", "/game/request/", data, (res, data) => {
 				if (res.ok) {
 					const contentElm = document.querySelector(".content");
 					contentElm.innerHTML = `

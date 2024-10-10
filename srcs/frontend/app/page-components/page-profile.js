@@ -56,7 +56,7 @@ export default class PageProfile extends HTMLElement {
 			this.#start();
 		}
 		else {
-			callAPI("GET", `http://127.0.0.1:8000/api/profile/exists/?username=${this.data.username}`, null, (res, data) => {
+			callAPI("GET", `/profile/exists/?username=${this.data.username}`, null, (res, data) => {
 				if (res.ok && data && data.exists)
 					this.#start();
 				else

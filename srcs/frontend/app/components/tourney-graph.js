@@ -271,7 +271,7 @@ export default class TourneyGraph extends HTMLElement {
 	}
 
 	#getTournamentGamesData() {
-		callAPI("GET", `http://127.0.0.1:8000/api/tournament/games/?id=${this.data.tournamentId}`, null, (res, data) => {
+		callAPI("GET", `/tournament/games/?id=${this.data.tournamentId}`, null, (res, data) => {
 			if (res.ok) {
 				if (data && data.games && data.games.length)
 					this.#updateGames(data.games);
@@ -323,7 +323,7 @@ export default class TourneyGraph extends HTMLElement {
 	#setStartGameEvent() {
 		this.startGameBtn.addEventListener("click", () => {
 			this.startGameBtn.disabled = true;
-			callAPI("GET", `http://127.0.0.1:8000/api/tournament/next-game/?id=${this.data.tournamentId}`, null, (res, data) => {
+			callAPI("GET", `/tournament/next-game/?id=${this.data.tournamentId}`, null, (res, data) => {
 				if (res.ok) {
 					if (data && data.lobby_id)
 						stateManager.setState("tournamentGameLobby", data.lobby_id);
@@ -335,7 +335,7 @@ export default class TourneyGraph extends HTMLElement {
 	}
 
 	#getNextGame() {
-		callAPI("GET", `http://127.0.0.1:8000/api/tournament/has-game/?id=${this.data.tournamentId}`, null, (res, data) => {
+		callAPI("GET", `/tournament/has-game/?id=${this.data.tournamentId}`, null, (res, data) => {
 			if (res.ok) {
 				if (data && data.has_game)
 					this.startGameBtn.classList.remove("hide");
@@ -346,7 +346,7 @@ export default class TourneyGraph extends HTMLElement {
 	}
 
 	#checkTournamentFinished() {
-		callAPI("GET", `http://127.0.0.1:8000/api/tournament/is-finished/?id=${this.data.tournamentId}`, null, (res, data) => {
+		callAPI("GET", `/tournament/is-finished/?id=${this.data.tournamentId}`, null, (res, data) => {
 			if (res.ok && data && data.is_finished) {
 				const btn = document.querySelector(".exit-tourney");
 				if (!btn)

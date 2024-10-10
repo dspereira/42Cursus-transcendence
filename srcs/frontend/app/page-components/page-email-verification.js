@@ -93,7 +93,7 @@ export default class PageEmailVerification extends HTMLElement {
 			render("<page-404></page-404>");
 		else {
 			replaceCurrentRoute("/email-verification");
-			callAPI("POST", `http://127.0.0.1:8000/api/auth/validate-email`, {email_token: this.data.token}, (res, data) => {
+			callAPI("POST", `/auth/validate-email`, {email_token: this.data.token}, (res, data) => {
 				if (res.ok && data)
 					this.data["state"] = data.validation_status;
 				this.#start();

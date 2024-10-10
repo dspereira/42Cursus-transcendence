@@ -130,7 +130,7 @@ export default class AppHeader extends HTMLElement {
 	}
 
 	#getUserImage() {
-		callAPI("GET", "http://127.0.0.1:8000/api/profile/image", null, (res, data) => {
+		callAPI("GET", "/profile/image", null, (res, data) => {
 			if (res.ok) {
 				if (data && data.image) {
 					if (stateManager.getState("userImage") != data.image) {

@@ -252,7 +252,7 @@ export default class TourneyLobby extends HTMLElement {
 	}
 
 	#joinedPlayersCall() {
-		callAPI("GET", `http://127.0.0.1:8000/api/tournament/players/?id=${this.data.tournamentId}`, null, (res, data) => {
+		callAPI("GET", `/tournament/players/?id=${this.data.tournamentId}`, null, (res, data) => {
 			if (res.ok) {
 				if (data.players) {
 					if (data.players.length == 4)
@@ -266,7 +266,7 @@ export default class TourneyLobby extends HTMLElement {
 	}
 
 	#getTournamentStatusCall() {
-		callAPI("GET", `http://127.0.0.1:8000/api/tournament/active-tournament/`, null, (res, data) => {
+		callAPI("GET", `/tournament/active-tournament/`, null, (res, data) => {
 			if (res.ok) {
 				if (data) {
 					if (!data.tournament)
@@ -293,7 +293,7 @@ export default class TourneyLobby extends HTMLElement {
 			return ;
 		btn.addEventListener("click", () => {
 			btn.disabled = true;
-			callAPI("DELETE", `http://127.0.0.1:8000/api/tournament/?id=${this.data.tournamentId}`, null, (res, data) => {
+			callAPI("DELETE", `/tournament/?id=${this.data.tournamentId}`, null, (res, data) => {
 				if (res.ok)
 					stateManager.setState("isTournamentChanged", true);
 				btn.disabled = false;
@@ -309,7 +309,7 @@ export default class TourneyLobby extends HTMLElement {
 			return ;
 		btn.addEventListener("click", () => {
 			btn.disabled = true;
-			callAPI("DELETE", `http://127.0.0.1:8000/api/tournament/players/?id=${this.data.tournamentId}`, null, (res, data) => {
+			callAPI("DELETE", `/tournament/players/?id=${this.data.tournamentId}`, null, (res, data) => {
 				if (res.ok) {
 					stateManager.setState("tournamentId", null);
 					stateManager.setState("isTournamentChanged", true);
@@ -327,7 +327,7 @@ export default class TourneyLobby extends HTMLElement {
 			return ;
 		btn.addEventListener("click", () => {
 			this.#toggleStartButton(true);
-			callAPI("POST", `http://127.0.0.1:8000/api/tournament/start/`, {id: this.data.tournamentId}, (res, data) => {
+			callAPI("POST", `/tournament/start/`, {id: this.data.tournamentId}, (res, data) => {
 				if (res.ok)
 					stateManager.setState("isTournamentChanged", true);
 				else
@@ -345,7 +345,7 @@ export default class TourneyLobby extends HTMLElement {
 		btn.addEventListener("click", () => {
 			btn.disabled = true;
 			const name = nameInput.value.trim();
-			callAPI("PATCH", `http://127.0.0.1:8000/api/tournament/`, {id: this.data.tournamentId, new_name: name}, (res, data) => {
+			callAPI("PATCH", `/tournament/`, {id: this.data.tournamentId, new_name: name}, (res, data) => {
 				if (res.status == 409)
 					nameInput.value = data.tournament_name;
 				btn.disabled = false;

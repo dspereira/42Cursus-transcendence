@@ -321,7 +321,7 @@ export default class AppConfigs extends HTMLElement {
 			if (this.imageFile)
 				formData.append('image', this.imageFile);
 			
-			callAPI("POST", "http://127.0.0.1:8000/api/settings/", formData, (res, resData) => {
+			callAPI("POST", "/settings/", formData, (res, resData) => {
 				if (res.ok && resData) {
 					this.#loadData(resData.settings);
 					this.#cleanErrorStyles();
@@ -338,7 +338,7 @@ export default class AppConfigs extends HTMLElement {
 	}
 
 	#getUserSettings() {
-		callAPI("GET", "http://127.0.0.1:8000/api/settings/", null, (res, resData) => {
+		callAPI("GET", "/settings/", null, (res, resData) => {
 			if (res.ok && resData && resData.settings)
 				this.#loadData(resData.settings);
 		});
@@ -531,7 +531,7 @@ export default class AppConfigs extends HTMLElement {
 		this.showQrcode.addEventListener("click", (event) => {
 			this.showQrcode.disabled = true;
 			event.preventDefault();
-			callAPI("POST", "http://127.0.0.1:8000/api/two-factor-auth/request-qr-code/", null, (res, data) => {
+			callAPI("POST", "/two-factor-auth/request-qr-code/", null, (res, data) => {
 				if (res.ok && data && data.qr_code) {
 					this.qrcodeImg.classList.remove("hide");
 					this.qrcodeImg.setAttribute("src", 'data:image/png;base64,' + data.qr_code);

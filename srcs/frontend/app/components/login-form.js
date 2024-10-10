@@ -156,7 +156,7 @@ export default class LoginForm extends HTMLElement {
 				this.submitBtn.disabled = false;
 			}
 			else
-				callAPI("POST", "http://127.0.0.1:8000/api/auth/login", dataForm, this.#apiResHandlerCalback);
+				callAPI("POST", "/auth/login", dataForm, this.#apiResHandlerCalback);
 		});
 	}
 

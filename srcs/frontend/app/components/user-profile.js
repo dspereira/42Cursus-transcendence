@@ -149,7 +149,7 @@ export default class UserProfile extends HTMLElement {
 	}
 
 	#getProfileInfo() {
-		callAPI("GET", `http://127.0.0.1:8000/api/profile/?username=${this.data.username}`, null, (res, resData) => {
+		callAPI("GET", `/profile/?username=${this.data.username}`, null, (res, resData) => {
 			if (res.ok && resData && resData.data)
 				this.#updateProfile(resData.data);
 		});

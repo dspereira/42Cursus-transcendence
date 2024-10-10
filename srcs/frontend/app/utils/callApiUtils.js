@@ -5,9 +5,9 @@ import { render } from "../js/router.js";
 import { getHtmlElm } from "./getHtmlElmUtils.js";
 import PageError from "../page-components/page-error.js";
 
-const API_ROUTE = "http://127.0.0.1:8000/api";
-const refreshUrl = "http://127.0.0.1:8000/api/auth/refresh_token";
-const refreshMethod = "POST";
+const API_ROUTE 		= `http://127.0.0.1:8000/api`;
+const REFRESH_URL		= `${API_ROUTE}/auth/refresh_token`;
+const REFRESH_METHOD	= `POST`;
 
 const publicRoutes = [
 	`${API_ROUTE}/auth/login`,
@@ -21,10 +21,11 @@ const publicRoutes = [
 ];
 
 export const callAPI = async function (method, url, data, callback_sucess, callback_error, csrf_token) {
+	url = `${API_ROUTE}${url}`;
 	let resApi = await fetchApi(method, url, data, csrf_token);
 	if (resApi && !resApi.error && resApi.data && resApi.res) {
 		if (resApi.res.status == 401) {
-			let resRefresh = await fetchApi(refreshMethod, refreshUrl, null, csrf_token);
+			let resRefresh = await fetchApi(REFRESH_METHOD, REFRESH_URL, null, csrf_token);
 			if (resRefresh && resRefresh.res && resRefresh.res.ok) {
 				stateManager.setState("hasRefreshToken", true);
 				stateManager.setState("hasRefreshToken", false);

@@ -140,7 +140,7 @@ export default class TfaForm extends HTMLElement {
 	}
 
 	#sendTwoFactorCode(destination) {
-		callAPI("POST", `http://127.0.0.1:8000/api/two-factor-auth/request-${destination}/`, null, (res, data) => {		
+		callAPI("POST", `/two-factor-auth/request-${destination}/`, null, (res, data) => {		
 			if (!res.ok)
 				console.log(data.message); // Esta mensagem deve ser apresentada no frontend
 			const btn = this.html.querySelector(".btn-resend");
@@ -210,7 +210,7 @@ export default class TfaForm extends HTMLElement {
 				return ;
 			}
 			else {
-				callAPI("POST", "http://127.0.0.1:8000/api/two-factor-auth/validate-otp/", formData, (res, data) => {		
+				callAPI("POST", "/two-factor-auth/validate-otp/", formData, (res, data) => {		
 					if (res.ok)
 						redirect("/");
 					else if (res.status == 401)

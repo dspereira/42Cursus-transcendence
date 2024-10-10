@@ -123,7 +123,7 @@ export default class GameInviteCard extends HTMLElement {
 	#setJoinBtnEvent() {
 		this.joinBtn.addEventListener("click", () => {
 			this.joinBtn.disabled = true;
-			callAPI("PUT", `http://127.0.0.1:8000/api/game/request/`, {id: this.data.inviteId}, (res, data) => {
+			callAPI("PUT", `/game/request/`, {id: this.data.inviteId}, (res, data) => {
 				if (res.ok) {
 					const contentElm = document.querySelector(".content");
 					contentElm.innerHTML = `
@@ -140,7 +140,7 @@ export default class GameInviteCard extends HTMLElement {
 	#setDeclineBtnEvent() {
 		this.declineBtn.addEventListener("click", () => {
 			this.declineBtn.disabled = true;
-			callAPI("DELETE", `http://127.0.0.1:8000/api/game/request/`, {id: this.data.inviteId}, (res, data) => {
+			callAPI("DELETE", `/game/request/`, {id: this.data.inviteId}, (res, data) => {
 				if (res.ok)
 					this.remove();
 				this.declineBtn.disabled = false;

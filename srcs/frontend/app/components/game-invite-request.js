@@ -60,7 +60,7 @@ export default class GameInviteRequest extends HTMLElement {
 	}
 
 	#getInviteGamesCallApi() {
-		callAPI("GET", `http://127.0.0.1:8000/api/game/request/`, null, (res, data) => {
+		callAPI("GET", `/game/request/`, null, (res, data) => {
 			if (res.ok){
 				if (data)
 					this.#createRequestList(data.requests_list);

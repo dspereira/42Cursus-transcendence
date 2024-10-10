@@ -172,14 +172,14 @@ export default class UserCard extends HTMLElement {
 	}
 
 	#friendRequest(method, body, callback) {
-		callAPI(method, "http://127.0.0.1:8000/api/friends/request/", body, (res, data) => {
+		callAPI(method, "/friends/request/", body, (res, data) => {
 			if (res.ok)
 				callback(data);
 		}, null, getCsrfToken());
 	}
 
 	#friends(method, body, callback) {
-		callAPI(method, "http://127.0.0.1:8000/api/friends/friendships/", body, (res, data) => {
+		callAPI(method, "/friends/friendships/", body, (res, data) => {
 			if (res.ok)
 				callback(data);
 		}, null, getCsrfToken());
@@ -299,7 +299,7 @@ export default class UserCard extends HTMLElement {
 
 
 	#isFriend(friendId, callback) {
-		callAPI("GET", `http://127.0.0.1:8000/api/friends/is-friend/?friend_id=${friendId}`, null, (res, data) => {
+		callAPI("GET", `/friends/is-friend/?friend_id=${friendId}`, null, (res, data) => {
 			if (res.ok && data)
 				callback(data.friend_status);
 		});

@@ -248,7 +248,7 @@ export default class TourneyInviter extends HTMLElement {
 		if (key)
 			queryParam = `?key=${key}`;
 
-		callAPI("GET", `http://127.0.0.1:8000/api/tournament/friend-list/${queryParam}`, null, (res, data) => {
+		callAPI("GET", `/tournament/friend-list/${queryParam}`, null, (res, data) => {
 			if (res.ok) {
 				this.#createFriendsList(data.friends);
 				this.#selectFriendEvent();
@@ -258,7 +258,7 @@ export default class TourneyInviter extends HTMLElement {
 	}
 
 	#getListPendingInvites() {
-		callAPI("GET", `http://127.0.0.1:8000/api/tournament/invited-friends/`, null, (res, data) => {
+		callAPI("GET", `/tournament/invited-friends/`, null, (res, data) => {
 			if (res.ok && data)
 				this.#createInvitesSendList(data.invited_users);
 		});
@@ -277,7 +277,7 @@ export default class TourneyInviter extends HTMLElement {
 			});
 
 			this.inviteBtn.disabled = true;
-			callAPI("POST", `http://127.0.0.1:8000/api/tournament/invite/`, data, (res, data) => {
+			callAPI("POST", `/tournament/invite/`, data, (res, data) => {
 				if (res.ok) {
 					this.#getListPendingInvites();
 					this.selectedElm.forEach((elm) => {
@@ -299,7 +299,7 @@ export default class TourneyInviter extends HTMLElement {
 		btn.addEventListener("click", () => {
 			const inviteId = btn.id.substring(3);
 			btn.disabled = true;
-			callAPI("DELETE", `http://127.0.0.1:8000/api/tournament/invite/?id=${inviteId}`, null, (res, data) => {
+			callAPI("DELETE", `/tournament/invite/?id=${inviteId}`, null, (res, data) => {
 				if (res.ok)
 					this.#removeInvitesSendFromList(inviteId);
 				btn.disabled = false;

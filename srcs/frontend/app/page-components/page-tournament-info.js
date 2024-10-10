@@ -37,7 +37,7 @@ export default class PageTournamentInfo extends HTMLElement {
 			render("<page-404></page-404>");
 		}
 		else {
-			callAPI("GET", `http://127.0.0.1:8000/api/tournament/info/?id=${this.data.id}`, null, (res, data) => {
+			callAPI("GET", `/tournament/info/?id=${this.data.id}`, null, (res, data) => {
 				if (res.ok && data && data.info) {
 					this.data["info"] = data.info;
 					this.#start();

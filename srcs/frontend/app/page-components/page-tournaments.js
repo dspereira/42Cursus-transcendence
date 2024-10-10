@@ -93,7 +93,7 @@ export default class PageTournaments extends HTMLElement {
 	#createTournamentEvent() {
 		this.btnCreateTourneySection.addEventListener("click", () => {
 			this.btnCreateTourneySection.disabled = true;
-			callAPI("POST", `http://127.0.0.1:8000/api/tournament/`, null, (res, data) => {
+			callAPI("POST", `/tournament/`, null, (res, data) => {
 				if (res.ok && data && data.tournament_info) {
 					const info = data.tournament_info;
 					stateManager.setState("tournamentId", info.id);
@@ -112,7 +112,7 @@ export default class PageTournaments extends HTMLElement {
 	}
 
 	#checkActiveTournamentCall() {
-		callAPI("GET", `http://127.0.0.1:8000/api/tournament/active-tournament/`, null, (res, data) => {
+		callAPI("GET", `/tournament/active-tournament/`, null, (res, data) => {
 			if (res.ok && data && data.tournament) {
 				const torneyData = data.tournament;
 				stateManager.setState("tournamentId", torneyData.id);
@@ -167,7 +167,7 @@ export default class PageTournaments extends HTMLElement {
 	}
 
 	#checkTournamentFinished(tournamentId) {
-		callAPI("GET", `http://127.0.0.1:8000/api/tournament/is-finished/?id=${tournamentId}`, null, (res, data) => {
+		callAPI("GET", `/tournament/is-finished/?id=${tournamentId}`, null, (res, data) => {
 			if (res.ok && data && data.is_finished) {
 				this.btnCreateTourneySection.classList.add("hide");
 				this.tourneySection.innerHTML = `<tourney-graph tournament-id="${tournamentId}" tournament-name="${data.tournament_name}"></tourney-graph>`;

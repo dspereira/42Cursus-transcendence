@@ -143,7 +143,7 @@ export default class ChatFriendsList extends HTMLElement {
 	}
 
 	#getChatFriendListToApi() {
-		callAPI("GET", `http://127.0.0.1:8000/api/friends/chat-list/`, null, (res, data) => {
+		callAPI("GET", `/friends/chat-list/`, null, (res, data) => {
 			if (res.ok) {
 				if (data.friends) {
 					this.friendListData = data.friends;
@@ -310,7 +310,7 @@ export default class ChatFriendsList extends HTMLElement {
 			this.#restoreFriendsList();
 			return ;
 		}
-		callAPI("GET", `http://127.0.0.1:8000/api/friends/friendships/?key=${value}`, null, (res, data) => {
+		callAPI("GET", `/friends/friendships/?key=${value}`, null, (res, data) => {
 			if (res.ok) {
 				this.searchListHtml.innerHTML = "";
 				this.#friendsListVisibility("hide");
@@ -392,7 +392,7 @@ export default class ChatFriendsList extends HTMLElement {
 	}
 
 	#isFriend(friendId, callback) {
-		callAPI("GET", `http://127.0.0.1:8000/api/friends/is-friend/?friend_id=${friendId}`, null, (res, data) => {
+		callAPI("GET", `/friends/is-friend/?friend_id=${friendId}`, null, (res, data) => {
 			if (res.ok && data)
 				callback(data.friend_status)
 		});

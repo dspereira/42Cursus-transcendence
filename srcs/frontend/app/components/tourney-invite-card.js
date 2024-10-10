@@ -124,7 +124,7 @@ export default class TourneyInviteCard extends HTMLElement {
 	#setJoinBtnEvent() {
 		this.joinBtn.addEventListener("click", () => {
 			this.joinBtn.disabled = true;
-			callAPI("PUT", `http://127.0.0.1:8000/api/tournament/invite/`, {id: this.data.inviteId}, (res, data) => {
+			callAPI("PUT", `/tournament/invite/`, {id: this.data.inviteId}, (res, data) => {
 				if (res.ok)
 					stateManager.setState("isTournamentChanged", true);
 				this.joinBtn.disabled = false;
@@ -135,7 +135,7 @@ export default class TourneyInviteCard extends HTMLElement {
 	#setDeclineBtnEvent() {
 		this.declineBtn.addEventListener("click", () => {
 			this.declineBtn.disabled = true;
-			callAPI("DELETE", `http://127.0.0.1:8000/api/tournament/invite/?id=${this.data.inviteId}`, null, (res, data) => {
+			callAPI("DELETE", `/tournament/invite/?id=${this.data.inviteId}`, null, (res, data) => {
 				if (res.ok)
 					this.remove();
 				this.declineBtn.disabled = false;

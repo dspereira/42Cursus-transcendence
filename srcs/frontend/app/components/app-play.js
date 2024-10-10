@@ -225,7 +225,7 @@ export default class AppPlay extends HTMLElement {
 	}
 
 	#getGameColorPallet() {
-		callAPI("GET", `http://127.0.0.1:8000/api/game/color_pallet/`, null, (res, data) => {
+		callAPI("GET", `/game/color_pallet/`, null, (res, data) => {
 			if (res.ok) {
 				if (data && data.color_pallet)
 					this.game.setColorPallet(data.color_pallet);

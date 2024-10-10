@@ -482,7 +482,7 @@ export default class ChatSection extends HTMLElement {
 		else
 			return ;
 
-		callAPI(method, `http://127.0.0.1:8000/api/friends/block/${queryParam}`, data, (res, data) => {
+		callAPI(method, `/friends/block/${queryParam}`, data, (res, data) => {
 			if (res.ok) {
 				this.#blockUserChat(data.status, data.user_has_blocked, data.friend_has_blocked);
 				if (method == "POST")
@@ -541,7 +541,7 @@ export default class ChatSection extends HTMLElement {
 	}
 
 	#isFriend(friendId, callback) {
-		callAPI("GET", `http://127.0.0.1:8000/api/friends/is-friend/?friend_id=${friendId}`, null, (res, data) => {
+		callAPI("GET", `/friends/is-friend/?friend_id=${friendId}`, null, (res, data) => {
 			if (res.ok && data)
 				callback(data.friend_status)
 		});

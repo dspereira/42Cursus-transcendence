@@ -91,7 +91,7 @@ export default class PagePlay extends HTMLElement {
 			invites_list: [`${stateInfo}`]
 		};
 
-		callAPI("POST", "http://127.0.0.1:8000/api/game/request/", data, (res, data) => {
+		callAPI("POST", "/game/request/", data, (res, data) => {
 			if (res.ok) {
 				const contentElm = document.querySelector(".content");
 				contentElm.innerHTML = `

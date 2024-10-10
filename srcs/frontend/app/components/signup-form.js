@@ -241,7 +241,7 @@ export default class SignupForm extends HTMLElement {
 				this.submitBtn.disabled = false;
 			}
 			else
-				callAPI("POST", "http://127.0.0.1:8000/api/auth/register", dataForm, this.#apiResHandlerCalback);
+				callAPI("POST", "/auth/register", dataForm, this.#apiResHandlerCalback);
 		});
 	}
 

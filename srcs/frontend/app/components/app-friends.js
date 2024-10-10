@@ -279,7 +279,7 @@ export default class AppFriends extends HTMLElement {
 
 		this.#setOptionSelected("search");
 		this.searchMenuBtn.disabled = true;
-		callAPI("GET", `http://127.0.0.1:8000/api/friends/search_user_by_name/`, null, (res, data) => {
+		callAPI("GET", `/friends/search_user_by_name/`, null, (res, data) => {
 			if (res.ok) {
 				if (data.users)
 					this.#insertUsersCards(data.users, "search");
@@ -298,7 +298,7 @@ export default class AppFriends extends HTMLElement {
 
 		this.#setOptionSelected("friends");
 		this.friendsMenuBtn.disabled = true;
-		callAPI("GET", `http://127.0.0.1:8000/api/friends/friendships/`, null, (res, data) => {
+		callAPI("GET", `/friends/friendships/`, null, (res, data) => {
 			if (res.ok) {
 				if (data.friends)
 					this.#insertUsersCards(data.friends, "friends");
@@ -316,7 +316,7 @@ export default class AppFriends extends HTMLElement {
 
 		this.#setOptionSelected("requests");
 		this.requestsMenuBtn.disabled = true;
-		callAPI("GET", `http://127.0.0.1:8000/api/friends/request/`, null, (res, data) => {
+		callAPI("GET", `/friends/request/`, null, (res, data) => {
 			if (res.ok) {
 				if (data.friend_requests)
 					this.#insertUsersCards(data.friend_requests, "requests");

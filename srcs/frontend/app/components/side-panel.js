@@ -318,7 +318,7 @@ export default class SidePanel extends HTMLElement {
 	}
 
 	#getNumberRequestsCallApi(){
-		callAPI("GET", "http://127.0.0.1:8000/api/notifications/requests-notifications/", null, (res, data) => {
+		callAPI("GET", "/notifications/requests-notifications/", null, (res, data) => {
 			if (res.ok && data) {
 				this.#updateNotifications(this.gameNotifications, data.number_game_requests);
 				this.#updateNotifications(this.tournamentNotifications, data.number_tournament_requests);

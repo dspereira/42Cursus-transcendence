@@ -80,7 +80,7 @@ export default class Page2FA extends HTMLElement {
 	}
 
 	#get2faOption() {
-		callAPI("GET", `http://127.0.0.1:8000/api/two-factor-auth/configured-2fa/`, null, (res, data) => {	
+		callAPI("GET", `/two-factor-auth/configured-2fa/`, null, (res, data) => {	
 			if (res.ok && data) {
 				this.#setAllowedMethods(data.configured_methods);
 				this.#setChosenMethod(data.method);
