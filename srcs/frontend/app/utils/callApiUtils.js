@@ -1,7 +1,9 @@
 import chatWebSocket from "../js/ChatWebSocket.js";
 import stateManager from "../js/StateManager.js";
 import updateLoggedInStatus from "./updateLoggedInUtils.js";
-
+import { render } from "../js/router.js";
+import { getHtmlElm } from "./getHtmlElmUtils.js";
+import PageError from "../page-components/page-error.js";
 
 const API_ROUTE = "http://127.0.0.1:8000/api";
 const refreshUrl = "http://127.0.0.1:8000/api/auth/refresh_token";
@@ -41,8 +43,11 @@ export const callAPI = async function (method, url, data, callback_sucess, callb
 	else if (resApi && resApi.error) {
 		if (callback_error)
 			callback_error(resApi.error);
-		else
+		else {
 			console.log(`callAPI Error: ${resApi.error}`);
+			if (`${resApi.error}`.indexOf("Failed to fetch") > -1)
+				render(getHtmlElm(PageError));
+		}
 	}		
 }
 

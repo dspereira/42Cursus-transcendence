@@ -1,3 +1,4 @@
+
 import { adjustContent } from "../utils/adjustContent.js";
 import componentSetup from "../utils/componentSetupUtils.js";
 
@@ -5,25 +6,19 @@ const styles = ``;
 
 const getHtml = function(data) {
 	const html = `
-		<app-header></app-header>
-		<side-panel selected="configurations"></side-panel>
-		<div class="content content-small">
-			<app-configs></app-configs>
-		</div>
+		<h1>Server or network is down, please try again later</h1>
 	`;
 	return html;
 }
 
-const title = "BlitzPong - Configurations";
+const title = "BlitzPong - Error";
 
-export default class PageConfigs extends HTMLElement {
-	static #componentName = "page-configs";
+export default class PageError extends HTMLElement {
+	static #componentName = "page-error";
 
 	constructor() {
 		super()
-
 		document.title = title;
-		
 		this.#initComponent();
 		this.#scripts();
 	}
@@ -41,4 +36,4 @@ export default class PageConfigs extends HTMLElement {
 	}
 }
 
-customElements.define(PageConfigs.componentName, PageConfigs);
+customElements.define(PageError.componentName, PageError);
