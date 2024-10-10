@@ -9,7 +9,6 @@ class StateManager {
 
 		this.states = {
 			sidePanel: "open",
-			pageReady: false, // remover o page ready
 			isLoggedIn: false,   // realy change when user logout and not when chage refresh token
 			friendChatId: null,
 			newChatMessage: null,
@@ -41,7 +40,6 @@ class StateManager {
 
 		this.stateEvents = {
 			sidePanel: [],
-			pageReady: [],
 			isLoggedIn: [],
 			friendChatId: [],
 			newChatMessage: [],
@@ -122,7 +120,6 @@ class StateManager {
 			this.states[key] = null;
 		this.states.chatMessagesCounter = 0;
 		this.states.sidePanel = "open";
-		this.states.pageReady = false;
 		this.states.isLoggedIn = false;
 	}
 }
