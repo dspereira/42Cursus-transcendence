@@ -22,7 +22,7 @@ const styles = `
 const getHtml = function(data) {
 	const html = `
 		<app-header></app-header>
-		<side-panel selected="profile"></side-panel>
+		<side-panel></side-panel>
 		<div class="content content-small">
 			<div class="profile-container">
 				<div class="profile">

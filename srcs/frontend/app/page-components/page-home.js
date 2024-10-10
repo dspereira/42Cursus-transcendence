@@ -1,29 +1,40 @@
 import stateManager from "../js/StateManager.js";
 import { adjustContent } from "../utils/adjustContent.js";
 
-const styles = ``;
+const styles = `
+	.profile-container {
+		display: flex;
+		justify-content: flex-start;
+		gap: 50px;
+	}
 
-const html = `
+	.profile {
+		width: 30%;
+	}
 
-	<app-header></app-header>
-	<side-panel selected="home"></side-panel>
-
-	<div class="content content-small">
-
-		<h1 class="id"></h1>
-		<h1 class="username"></h1>
-		<h1 class="email"></h1>
-
-		<!--<h1>Page Home</h1>
-		<p>
-		Rump drumstick tri-tip alcatra. Flank ground round pastrami beef short ribs pork belly jowl. Spare ribs beef ribs andouille, frankfurter short loin shankle venison salami turducken. Beef ribs alcatra capicola shoulder pork loin sirloin biltong turkey pancetta flank pork andouille bacon. Doner hamburger shoulder tenderloin flank prosciutto corned beef. Chislic tongue doner porchetta pastrami sirloin filet mignon leberkas brisket ribeye pork chop shank cupim corned beef sausage.
-		</p>
-		<p>
-		Rump drumstick tri-tip alcatra. Flank ground round pastrami beef short ribs pork belly jowl. Spare ribs beef ribs andouille, frankfurter short loin shankle venison salami turducken. Beef ribs alcatra capicola shoulder pork loin sirloin biltong turkey pancetta flank pork andouille bacon. Doner hamburger shoulder tenderloin flank prosciutto corned beef. Chislic tongue doner porchetta pastrami sirloin filet mignon leberkas brisket ribeye pork chop shank cupim corned beef sausage.
-		</p>-->
-	</div>
-
+	.history {
+		width: 70%;
+	}
 `;
+
+const getHtml = function(data) {
+	const username = stateManager.getState("username");
+	const html = `
+		<app-header></app-header>
+		<side-panel selected="home"></side-panel>
+		<div class="content content-small">
+			<div class="profile-container">
+				<div class="profile">
+					<user-profile username="${username}"></user-profile>
+				</div>
+				<div class="history">
+					<game-history username="${username}"></game-history>
+				</div>
+			</div>
+		</div>
+	`;
+	return html;
+}
 
 const title = "Home Page";
 
@@ -32,10 +43,9 @@ export default class PageHome extends HTMLElement {
 
 	constructor() {
 		super()
-		this.#loadData();
 		this.#initComponent();
-		//this.#render();
-		adjustContent(this.html.querySelector(".content"));
+		this.#render();
+		this.#scripts();
 	}
 
 	#initComponent() {
@@ -48,76 +58,25 @@ export default class PageHome extends HTMLElement {
 	}
 
 	#styles() {
-		return `@scope (.${this.elmtId}) {${styles}}`;
+		if (styles)
+			return `@scope (.${this.elmtId}) {${styles}}`;
+		return null;
 	}
 
-	#html() {
-		return html;
+	#html(data) {
+		return getHtml(data);
 	}
 
 	#render() {
 		if (styles)
 			this.appendChild(this.styles);
 		this.appendChild(this.html);
-		stateManager.setState("pageReady", true);
 	}
 
-	#updateHtml() {
-		this.html.querySelector(".id").textContent = this.data['id'];
-		this.html.querySelector(".username").textContent = this.data['username'];
-		this.html.querySelector(".email").textContent = this.data['email'];
+	#scripts() {
+		adjustContent(this.html.querySelector(".content"));
 	}
 
-	#handleApiData(data) {
-		this.data = {
-			"id": data[0] ? data[0].user_id : null,
-			"username": data[1] ? data[1].username : null,
-			"email": data[2] ? data[2].email : null
-		}
-	}
-
-	#handleApiStatusCodeErrors(res, data) {
-		console.log(`Error: ${res.status} ${data["message"]}`);
-	}
-
-	async #callAPI(method, url) {
-		try {
-			const res = await fetch(url, {
-				credentials: 'include',
-				method: method
-			});
-			const data = await res.json();
-			if (res.ok) {
-				return data;
-			}
-			else {
-				this.#handleApiStatusCodeErrors(res, data);
-				return null;
-			}
-		}
-		catch {
-			// very what is the best way to handle this errors
-			console.log("Error: Call API");
-			return null;
-		}
-	}
-
-	async #loadData() {
-
-		// Arranjar maneira de configurar os pedidos à api numa estrutura e passar aqui
-
-		// Removidas as rotas que pegavam a informação do user
-		// Valores colocados manualmente
-		const data = await Promise.all([
-			{'user_id': 0},
-			{"username": "Mr. Nobody"},
-			{"email": "mrnobody@irineu.com"}
-		]);
-		this.#handleApiData(data);
-		console.log(data);
-		this.#updateHtml();
-		this.#render();
-	}
 
 	static get componentName() {
 		return this.#componentName;

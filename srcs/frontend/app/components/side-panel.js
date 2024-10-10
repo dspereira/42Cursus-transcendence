@@ -195,12 +195,6 @@ const getHtml = function(data) {
 							<span class="icon-text">Home</span>
 						</span>
 					</button>
-					<button id="profile">
-						<span>
-							<i class="icon bi bi-person"></i>
-							<span class="icon-text">Profile</span>
-						</span>
-					</button>
 					<button id="chat">
 						<span>
 							<i class="icon bi bi-chat"></i>
@@ -254,7 +248,6 @@ const getHtml = function(data) {
 // key -> id element   value -> pretended route
 const navigation = [
 	"home",
-	"profile",
 	"chat",
 	"tournaments",
 	"logout",
@@ -265,7 +258,6 @@ const navigation = [
 
 const selectedIcon  = {
 	home: "bi-house-door-fill",
-	profile: "bi-person-fill",
 	chat: "bi-chat-fill",
 	tournaments: "bi-trophy-fill",
 	configurations: "bi-gear-fill",
@@ -275,7 +267,6 @@ const selectedIcon  = {
 
 const deselectedIcon = {
 	home: "bi-house-door",
-	profile: "bi-person",
 	chat: "bi-chat",
 	tournaments: "bi-trophy",
 	configurations: "bi-gear",
