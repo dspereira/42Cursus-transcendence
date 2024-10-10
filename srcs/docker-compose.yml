@@ -15,6 +15,22 @@ services:
             - pong-network
         restart: on-failure
 
+    backend-django:
+        build: ./backend
+        image: backend-django
+        container_name: backend-django
+        expose:
+            - "8000"
+        environment:
+            - DB_PASS=${DB_PASS}
+            - DB_USER=${DB_USER}
+            - DB_NAME=${DB_NAME}
+            - DB_HOST=postgres
+            - DB_PORT=5432
+        networks:
+            - pong-network
+        restart: on-failure
+
     nginx-server:
         build: ./frontend
         image: nginx-server

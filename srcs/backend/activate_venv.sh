@@ -1,10 +1,6 @@
 #!/bin/bash
 
-#execute with source like "source activate.venv.sh"
-
 VENVPATH="venv/bin/activate"
-
-#colores
 RED='\033[0;31m'
 GREEN='\033[0;32m'
 YELLOW='\033[0;33m'
@@ -26,8 +22,8 @@ print_error() {
 if [ -f "$VENVPATH" ]; then
 	if source "$VENVPATH"; then
 		print_sucess
-		print_warning
 	else
+		print_warning
 		print_error
 	fi
 else
