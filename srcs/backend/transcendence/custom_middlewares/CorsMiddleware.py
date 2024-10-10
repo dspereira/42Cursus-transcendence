@@ -55,10 +55,10 @@ class CorsMiddleware:
 		origins = []
 		if ALLOWED_HOSTS:
 			for origin in ALLOWED_HOSTS:
-				origins.append(f"http://{origin}:{ALLOWED_PORT}")
+				origins.append(f"https://{origin}:{ALLOWED_PORT}")
 		else:
 			origins = [
-				"http://127.0.0.1:8080",
-				"http://localhost:8080"
+				"https://127.0.0.1:8080",
+				"https://localhost:8080"
 			]
 		return origins

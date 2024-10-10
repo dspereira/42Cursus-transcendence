@@ -17,7 +17,7 @@ from dotenv import load_dotenv, find_dotenv
 
 from pathlib import Path
 
-dotenv_path = Path.cwd() / '..' / '..' / 'srcs' / '.env'
+dotenv_path = "../../.env"
 load_dotenv(dotenv_path)
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -33,11 +33,20 @@ SECRET_KEY = 'django-insecure-bg*y#3baf5+jzebgtxu3xx87&089p#q8oom09n45wylt)xl_+y
 DEBUG = True
 
 ALLOWED_HOSTS = [
-    '127.0.0.1',
-    'localhost'
+    "127.0.0.1",
+    "localhost",
+    "django-server",
+    "blitzpong"
 ]
 
-ALLOWED_PORT = 8080
+ALLOWED_PORT = 8443
+
+#django knows it is behind a proxy thats uses HTTPS
+SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
+
+# cookie datas is transmitted over HTTPS
+CSRF_COOKIE_SECURE = True
+SESSION_COOKIE_SECURE = True
 
 # Application definition
 
