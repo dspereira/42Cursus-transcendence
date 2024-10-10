@@ -1,5 +1,6 @@
 import {callAPI} from "../utils/callApiUtils.js";
 import { redirect } from "../js/router.js";
+import componentSetup from "../utils/componentSetupUtils.js";
 
 const styles = `
 .tfa-container {
