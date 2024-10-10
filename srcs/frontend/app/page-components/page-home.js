@@ -1,5 +1,6 @@
 import stateManager from "../js/StateManager.js";
 import { adjustContent } from "../utils/adjustContent.js";
+import componentSetup from "../utils/componentSetupUtils.js";
 
 const styles = `
 	.profile-container {
@@ -47,33 +48,11 @@ export default class PageHome extends HTMLElement {
 		document.title = title;
 
 		this.#initComponent();
-		this.#render();
 		this.#scripts();
 	}
 
 	#initComponent() {
-		this.elmtId = `elmtId_${Math.floor(Math.random() * 100000000000)}`;
-		this.html = document.createElement("div");
-		this.html.classList.add(`${this.elmtId}`);
-		this.styles = document.createElement("style");
-		this.styles.textContent = this.#styles();
-		this.html.innerHTML = this.#html();
-	}
-
-	#styles() {
-		if (styles)
-			return `@scope (.${this.elmtId}) {${styles}}`;
-		return null;
-	}
-
-	#html(data) {
-		return getHtml(data);
-	}
-
-	#render() {
-		if (styles)
-			this.appendChild(this.styles);
-		this.appendChild(this.html);
+		this.html = componentSetup(this, getHtml(), styles);
 	}
 
 	#scripts() {

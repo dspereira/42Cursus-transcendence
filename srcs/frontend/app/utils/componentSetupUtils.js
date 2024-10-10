@@ -1,3 +1,5 @@
+import onerrorEventImg from "./imageErrorUtil.js";
+
 const componentSetup = function(component, html, styles) {
 	const compHtml = document.createElement("div");
 	compHtml.innerHTML = html;
@@ -9,6 +11,7 @@ const componentSetup = function(component, html, styles) {
 		component.appendChild(compStyles);
 	}
 	component.appendChild(compHtml);
+	onerrorEventImg(compHtml);
 	return compHtml;
 }
 
