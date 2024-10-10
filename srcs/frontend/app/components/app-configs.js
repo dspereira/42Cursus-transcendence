@@ -2,6 +2,7 @@ import { callAPI } from "../utils/callApiUtils.js";
 import isValidUsername from "../utils/usernameValidationUtils.js";
 import getCountryCodesOptions from "../utils/countryCodesUtils.js";
 import { getCsrfToken } from "../utils/csrfTokenUtils.js"
+import componentSetup from "../utils/componentSetupUtils.js";
 
 const styles = `
 .main-container {
@@ -234,7 +235,6 @@ export default class AppConfigs extends HTMLElement {
 		this.imageFile = "";
 		this.savedImageUrl;
 		this.#initComponent();
-		this.#render();
 		this.#scripts();
 	}
 
@@ -248,14 +248,7 @@ export default class AppConfigs extends HTMLElement {
 	}
 
 	#initComponent() {
-		this.html = document.createElement("div");
-		this.html.innerHTML = this.#html();
-		if (styles) {
-			this.elmtId = `elmtId_${Math.floor(Math.random() * 100000000000)}`;
-			this.styles = document.createElement("style");
-			this.styles.textContent = this.#styles();
-			this.html.classList.add(`${this.elmtId}`);
-		}
+		this.html = componentSetup(this, getHtml(), styles);
 		this.settingsForm = this.html.querySelector("#settings-form");
 		this.usernameInp = this.html.querySelector("#new-username");
 		this.bioInp = this.html.querySelector("#new-bio");
@@ -274,22 +267,6 @@ export default class AppConfigs extends HTMLElement {
 		this.phoneCheckbox = this.html.querySelector("#phone");
 		this.showQrcode = this.html.querySelector(".show-qrcode");
 		this.qrcodeImg = this.html.querySelector(".qrcode-img");
-	}
-
-	#styles() {
-		if (styles)
-			return `@scope (.${this.elmtId}) {${styles}}`;
-		return null;
-	}
-
-	#html(data){
-		return getHtml(data);
-	}
-
-	#render() {
-		if (styles)
-			this.appendChild(this.styles);
-		this.appendChild(this.html);
 	}
 
 	#scripts() {

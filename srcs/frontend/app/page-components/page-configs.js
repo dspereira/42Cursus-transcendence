@@ -1,7 +1,9 @@
 import stateManager from "../js/StateManager.js";
 import { adjustContent } from "../utils/adjustContent.js";
+import componentSetup from "../utils/componentSetupUtils.js";
 
-const styles = ``;
+const styles = `
+`;
 
 const getHtml = function(data) {
 	const html = `
@@ -25,7 +27,6 @@ export default class PageConfigs extends HTMLElement {
 		document.title = title;
 		
 		this.#initComponent();
-		this.#render();
 		this.#scripts();
 	}
 
@@ -34,31 +35,7 @@ export default class PageConfigs extends HTMLElement {
 	}
 
 	#initComponent() {
-		this.html = document.createElement("div");
-		this.html.innerHTML = this.#html();
-		if (styles) {
-			this.elmtId = `elmtId_${Math.floor(Math.random() * 100000000000)}`;
-			this.styles = document.createElement("style");
-			this.styles.textContent = this.#styles();
-			this.html.classList.add(`${this.elmtId}`);
-		}
-	}
-
-	#styles() {
-		if (styles)
-			return `@scope (.${this.elmtId}) {${styles}}`;
-		return null;
-	}
-
-	#html(data){
-		return getHtml(data);
-	}
-
-	#render() {
-		if (styles)
-			this.appendChild(this.styles);
-		this.appendChild(this.html);
-		stateManager.setState("pageReady", true);
+		this.html = componentSetup(this, getHtml(), styles);
 	}
 
 	#scripts() {
