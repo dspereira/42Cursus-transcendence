@@ -36,21 +36,16 @@ stateManager.addEvent("chatSocket", (stateValue) => {
 	}
 });
 
-// Verify if the user is logged in, but if the refresh token has expired, refresh the access token.
-// The user's logged-in state should not change because of the expired refresh token.
-const setupLoginStateChecker  = function(intervalSeconds) {
-	setInterval(() => {
-		if (!stateManager.getState("isLoggedIn"))
-			return ;
-		checkUserLoginState();
-	}, intervalSeconds * 1000);
-}
-
 const startApp = function() {
-	setupLoginStateChecker(5);
 	router();
 	setHistoryEvents();
 }
+
+window.addEventListener("storage", (event) => {
+	//DEBUG
+	//console.log(`localStorage: isLoggedIn: ${localStorage.getItem("isLoggedIn")}`);
+	checkUserLoginState();
+});
 
 document.addEventListener('DOMContentLoaded', () => {
 	startApp();

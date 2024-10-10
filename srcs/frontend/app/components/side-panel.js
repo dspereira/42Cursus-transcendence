@@ -338,7 +338,7 @@ export default class SidePanel extends HTMLElement {
 
 	#startInvitesPolling(){
 		this.intervalID = setInterval(() => {
-			this.#getNumberRequestsCallApi()
+			this.#getNumberRequestsCallApi();
 		}, 5000);
 	}
 
