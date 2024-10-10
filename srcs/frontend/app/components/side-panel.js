@@ -1,7 +1,7 @@
 import {redirect} from "../js/router.js";
 import stateManager from "../js/StateManager.js";
 import {callAPI} from "../utils/callApiUtils.js";
-
+import componentSetup from "../utils/componentSetupUtils.js";
 
 const styles = `
 
@@ -280,7 +280,6 @@ export default class SidePanel extends HTMLElement {
 	constructor() {
 		super()
 		this.#initComponent();
-		this.#render();
 		this.intervalID = null;
 		this.#scripts();
 	}
@@ -297,36 +296,12 @@ export default class SidePanel extends HTMLElement {
 		else if (name === "state")
 			this.#changeState(newValue);
 	}
-
 	#initComponent() {
-		this.html = document.createElement("div");
-		this.html.innerHTML = this.#html({state: stateManager.getState("sidePanel")});
-		if (styles) {
-			this.elmtId = `elmtId_${Math.floor(Math.random() * 100000000000)}`;
-			this.styles = document.createElement("style");
-			this.styles.textContent = this.#styles();
-			this.html.classList.add(`${this.elmtId}`);
-		}
+		this.html = componentSetup(this, getHtml({state: stateManager.getState("sidePanel")}), styles);
 
 		this.gameNotifications = this.html.querySelector(".game-notifications");
 		this.tournamentNotifications = this.html.querySelector(".tournaments-notifications");
 		this.friendsNotifications = this.html.querySelector(".friends-notifications");
-	}
-
-	#styles() {
-			if (styles)
-				return `@scope (.${this.elmtId}) {${styles}}`;
-			return null;
-	}
-
-	#html(data){
-		return getHtml(data);
-	}
-
-	#render() {
-		if (styles)
-			this.appendChild(this.styles);
-		this.appendChild(this.html);
 	}
 
 	#scripts() {

@@ -1,5 +1,6 @@
 import { callAPI } from "../utils/callApiUtils.js";
-import { getCsrfToken } from "../utils/csrfTokenUtils.js"
+import { getCsrfToken } from "../utils/csrfTokenUtils.js";
+import componentSetup from "../utils/componentSetupUtils.js";
 
 const styles = `
 .invites-section {
@@ -127,7 +128,6 @@ export default class TourneyInviter extends HTMLElement {
 
 	connectedCallback() {
 		this.#initComponent();
-		this.#render();
 		this.#scripts();
 	}
 
@@ -143,32 +143,10 @@ export default class TourneyInviter extends HTMLElement {
 	}
 
 	#initComponent() {
-		this.html = document.createElement("div");
-		this.html.innerHTML = this.#html(this.data);
-		if (styles) {
-			this.elmtId = `elmtId_${Math.floor(Math.random() * 100000000000)}`;
-			this.styles = document.createElement("style");
-			this.styles.textContent = this.#styles();
-			this.html.classList.add(`${this.elmtId}`);
-		}
+		this.html = componentSetup(this, getHtml(this.data), styles);
+
 		this.inviteBtn = this.html.querySelector(".btn-invite");
 		this.refreshBtn = this.html.querySelector(".refresh-btn");
-	}
-
-	#styles() {
-		if (styles)
-			return `@scope (.${this.elmtId}) {${styles}}`;
-		return null;
-	}
-
-	#html(data){
-		return getHtml(data);
-	}
-
-	#render() {
-		if (styles)
-			this.appendChild(this.styles);
-		this.appendChild(this.html);
 	}
 
 	#scripts() {
