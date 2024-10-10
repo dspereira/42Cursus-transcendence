@@ -15,7 +15,7 @@ const getHtml = function(data) {
 	return html;
 }
 
-const title = "Signup Page";
+const title = "BlitzPong - Signup";
 
 export default class PageSignup extends HTMLElement {
 	
@@ -23,6 +23,9 @@ export default class PageSignup extends HTMLElement {
 
 	constructor() {
 		super()
+
+		document.title = title;
+		
 		this.#initComponent();
 		this.#render();
 	}

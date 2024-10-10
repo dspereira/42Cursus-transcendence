@@ -40,13 +40,16 @@ const getHtml = function(data) {
 	return html;
 }
 
-const title = "Email Send";
+const title = "BlitzPong - Email Send";
 
 export default class PageEmailSent extends HTMLElement {
 	static #componentName = "page-email-send";
 
 	constructor() {
 		super()
+
+		document.title = title;
+		
 		this.#initComponent();
 		this.#render();
 		this.#scripts();

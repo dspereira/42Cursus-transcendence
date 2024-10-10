@@ -16,13 +16,16 @@ const getHtml = function(data) {
 	return html;
 }
 
-const title = "initial Page";
+const title = "BlitzPong - Initial Page";
 
 export default class PageInitial extends HTMLElement {
 	static #componentName = "page-initial";
 
 	constructor() {
 		super()
+
+		document.title = title;
+
 		this.#initComponent();
 		this.#render();
 		this.#scripts();

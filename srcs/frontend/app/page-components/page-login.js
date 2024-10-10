@@ -15,13 +15,16 @@ const getHtml = function(data) {
 	return html;
 }
 
-const title = "Login Page";
+const title = "BlitzPong - Login";
 
 export default class PageLogin extends HTMLElement {
 	static #componentName = "page-login";
 
 	constructor() {
 		super()
+
+		document.title = title;
+
 		this.#initComponent();
 		this.#render();
 	}

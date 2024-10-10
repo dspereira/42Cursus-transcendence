@@ -36,13 +36,16 @@ const getHtml = function(data) {
 	return html;
 }
 
-const title = "Home Page";
+const title = "BlitzPong - Home Page";
 
 export default class PageHome extends HTMLElement {
 	static #componentName = "page-home";
 
 	constructor() {
 		super()
+
+		document.title = title;
+
 		this.#initComponent();
 		this.#render();
 		this.#scripts();

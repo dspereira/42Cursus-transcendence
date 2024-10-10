@@ -81,6 +81,7 @@ export default class PageEmailVerification extends HTMLElement {
 	constructor() {
 		super()
 		this.data = {};
+		document.title = title;
 	}
 
 	static get componentName() {

@@ -16,13 +16,16 @@ const getHtml = function(data) {
 }
 
 
-const title = "Friends";
+const title = "BlitzPong - Friends";
 
 export default class PageFriends extends HTMLElement {
 	static #componentName = "page-friends";
 
 	constructor() {
 		super()
+
+		document.title = title;
+
 		this.#initComponent();
 		this.#render();
 		this.#scripts();

@@ -40,13 +40,16 @@ const getHtml = function(data) {
 	return html;
 }
 
-const title = "Play";
+const title = "BlitzPong - Play";
 
 export default class PagePlay extends HTMLElement {
 	static #componentName = "page-play";
 
 	constructor() {
 		super()
+
+		document.title = title;
+
 		this.#initComponent();
 		this.#render();
 		this.#scripts();

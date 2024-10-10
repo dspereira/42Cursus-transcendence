@@ -45,13 +45,16 @@ const getHtml = function(data) {
 	return html;
 }
 
-const title = "2FA page";
+const title = "BlitzPong - 2FA";
 
 export default class Page2FA extends HTMLElement {
 	static #componentName = "page-2fa";
 
 	constructor() {
 		super()
+
+		document.title = title;
+
 		this.chosenMethod;
 		this.methodsObj;
 		this.#initComponent();

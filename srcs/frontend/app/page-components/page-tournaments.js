@@ -52,7 +52,7 @@ const getHtml = function(data) {
 	return html;
 }
 
-const title = "Tournaments";
+const title = "BlitzPong - Tournaments";
 
 export default class PageTournaments extends HTMLElement {
 	static #componentName = "page-tournaments";
@@ -60,6 +60,8 @@ export default class PageTournaments extends HTMLElement {
 	constructor() {
 		super()
 		this.data = {};
+
+		document.title = title;
 
 		this.#initComponent();
 		this.#render();

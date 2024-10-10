@@ -17,13 +17,16 @@ const getHtml = function(data) {
 }
 
 
-const title = "Chat";
+const title = "BlitzPong - Chat";
 
 export default class PageChat extends HTMLElement {
 	static #componentName = "page-chat";
 
 	constructor() {
 		super()
+
+		document.title = title;
+
 		this.#initComponent();
 		this.#render();
 		this.#scripts();

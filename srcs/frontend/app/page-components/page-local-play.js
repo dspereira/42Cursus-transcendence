@@ -11,13 +11,16 @@ const getHtml = function(data) {
 }
 
 
-const title = "LocalPlay";
+const title = "BlitzPong - LocalPlay";
 
 export default class PageLocalPlay extends HTMLElement {
 	static #componentName = "page-local-play";
 
 	constructor() {
 		super()
+
+		document.title = title;
+
 		this.#initComponent();
 		this.#render();
 	}

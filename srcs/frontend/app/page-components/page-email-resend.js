@@ -39,7 +39,7 @@ const getHtml = function(data) {
 	return html;
 }
 
-const title = "Email Resend";
+const title = "BlitzPong - Email Resend";
 
 export default class PageEmailResend extends HTMLElement {
 	static #componentName = "page-email-resend";
@@ -48,6 +48,9 @@ export default class PageEmailResend extends HTMLElement {
 	constructor() {
 		super()
 		this.data = {};
+
+		document.title = title;
+
 		this.#initComponent();
 		this.#render();
 		this.#scripts();

@@ -20,7 +20,7 @@ const getHtml = function(data) {
 }
 
 
-const title = "Tournament Info";
+const title = "BlitzPong - Tournament Info";
 
 export default class PageTournamentInfo extends HTMLElement {
 	static #componentName = "page-tournament-info";
@@ -29,6 +29,7 @@ export default class PageTournamentInfo extends HTMLElement {
 	constructor() {
 		super()
 		this.data = {};
+		document.title = title;
 	}
 
 	connectedCallback() {

@@ -14,13 +14,16 @@ const getHtml = function(data) {
 	return html;
 }
 
-const title = "Configurations";
+const title = "BliyzPong - Configurations";
 
 export default class PageConfigs extends HTMLElement {
 	static #componentName = "page-configs";
 
 	constructor() {
 		super()
+
+		document.title = title;
+		
 		this.#initComponent();
 		this.#render();
 		this.#scripts();

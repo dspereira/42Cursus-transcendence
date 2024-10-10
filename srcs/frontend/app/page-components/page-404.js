@@ -37,7 +37,7 @@ const getHtml = function(data) {
 	return html;
 }
 
-const title = "404 Not Found";
+const title = "BlitzPong - 404 Not Found";
 
 export default class Page404 extends HTMLElement {
 
@@ -45,6 +45,9 @@ export default class Page404 extends HTMLElement {
 
 	constructor() {
 		super()
+
+		document.title = title;
+
 		this.#initComponent();
 		this.#render();
 		this.#scripts();
