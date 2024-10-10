@@ -184,7 +184,6 @@ export default class AppLobby extends HTMLElement {
 			checkUserLoginState((state) => {
 				if (state)
 					gameWebSocket.updateReadyStatus();
-				//updateLoggedInStatus(state);
 				this.readyBtn.disabled = false;
 			});
 		});

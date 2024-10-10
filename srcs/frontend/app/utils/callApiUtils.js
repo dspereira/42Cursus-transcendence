@@ -20,9 +20,6 @@ const publicRoutes = [
 
 export const callAPI = async function (method, url, data, callback_sucess, callback_error, csrf_token) {
 	let resApi = await fetchApi(method, url, data, csrf_token);
-
-	console.log(url);
-
 	if (resApi && !resApi.error && resApi.data && resApi.res) {
 		if (resApi.res.status == 401) {
 			let resRefresh = await fetchApi(refreshMethod, refreshUrl, null, csrf_token);

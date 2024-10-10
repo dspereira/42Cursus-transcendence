@@ -4,7 +4,6 @@ import { callAPI } from "../utils/callApiUtils.js";
 import stateManager from "../js/StateManager.js";
 import { render } from "../js/router.js";
 import { getHtmlElm } from "../utils/getHtmlElmUtils.js";
-import updateLoggedInStatus from "../utils/updateLoggedInUtils.js";
 import checkUserLoginState from "../utils/checkUserLoginState.js";
 import PagePlay from "../page-components/page-play.js";
 
