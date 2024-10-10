@@ -2,7 +2,6 @@ import {redirect} from "../js/router.js";
 import stateManager from "../js/StateManager.js";
 import { callAPI } from "../utils/callApiUtils.js";
 import { getCsrfToken } from "../utils/csrfTokenUtils.js"
-import updateLoggedInStatus from "../utils/updateLoggedInUtils.js";
 
 const styles = ``;
 
@@ -72,10 +71,8 @@ export default class PageLogout extends HTMLElement {
 	}
 
 	#apiResHandlerCalback(res, data) {
-		if (res.ok) {
-			updateLoggedInStatus(false);
+		if (res.ok)
 			redirect("/");
-		}
 	}
 
 	#logoutEvent() {

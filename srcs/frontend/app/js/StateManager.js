@@ -10,7 +10,7 @@ class StateManager {
 		this.states = {
 			sidePanel: "open",
 			pageReady: false, // remover o page ready
-			isLoggedIn: null,   // realy change when user logout and not when chage refresh token
+			isLoggedIn: false,   // realy change when user logout and not when chage refresh token
 			friendChatId: null,
 			newChatMessage: null,
 			chatMessagesCounter: 0,
@@ -38,6 +38,7 @@ class StateManager {
 			hasFriendInvite: null,
 			removeFriendIdFromChat: null,
 		}
+
 		this.stateEvents = {
 			sidePanel: [],
 			pageReady: [],
@@ -116,19 +117,13 @@ class StateManager {
 		});
 	}
 
-
-	// Fazer um loop e passar por todos os eventos e estados
-	cleanAllStatesAndEvents() {
-		this.states.sidePanel = "open";
-		this.states.pageReady = false,
-		this.states.friendChatId = null;
-		this.states.newChatMessage = null;
+	cleanAllStatesAndEvents() {	
+		for (let key in this.states)
+			this.states[key] = null;
 		this.states.chatMessagesCounter = 0;
-		this.states.userId = null;
-		this.states.idBrowser = null;
-		this.states.chatUserData = null;
-		this.states.userImage =  null;
-		this.states.messageSend = null;
+		this.states.sidePanel = "open";
+		this.states.pageReady = false;
+		this.states.isLoggedIn = false;
 	}
 }
 
