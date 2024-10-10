@@ -18,4 +18,6 @@ RUN chmod +x init_venv.sh activate_venv.sh run.sh
 RUN ./init_venv.sh
 RUN bash -c "source activate_venv.sh"
 
+EXPOSE 8000
+
 CMD ["./run.sh"]

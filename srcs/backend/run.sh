@@ -37,4 +37,5 @@ python3 manage.py migrate
 python3 manage.py create_blitzpong_bot
 python3 manage.py getCriptographerKeys
 
-python3 manage.py runserver 8000
+echo "Iniciando server..."
+python3 manage.py runserver 0.0.0.0:8000
