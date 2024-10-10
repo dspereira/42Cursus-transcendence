@@ -2,7 +2,8 @@
 DB		= postgres
 ADMIN	= pgadmin4
 NGINX	= nginx-server
-
+REVERSE_PROXY = reverse-proxy
+BACKEND_DJANGO = backend-django
 
 # Docker Compose
 COMPOSE		= sudo docker compose -f srcs/docker-compose.yml
@@ -13,28 +14,49 @@ include srcs/.env
 .SILENT:
 
 all:
-	sudo mkdir -p $(DB_VOLUME_DATA)
-	$(COMPOSE) up -d
+	$(MAKE) start
 
 start:
-	$(COMPOSE) up -d
+	$(COMPOSE) up -d --build
 
 stop:
 	$(COMPOSE) stop
 
 clean:
 	$(COMPOSE) down -v
-	$(DOCKER) image rm $(NGINX)
 
 # Careful! This command can remove data you don't want.
 clean-data: 
 	$(COMPOSE) down --rmi all --volumes
-	sudo rm -rf $(DB_VOLUME_DATA)
 
 re: clean all
 
+update-frontend:
+	$(COMPOSE) stop $(NGINX)
+	$(COMPOSE) rm -v -f $(NGINX)
+	$(COMPOSE) build $(NGINX)
+	$(COMPOSE) up -d $(NGINX)
+
+update-backend:
+	$(COMPOSE) stop $(BACKEND_DJANGO)
+	$(COMPOSE) rm -v -f $(BACKEND_DJANGO)
+	$(COMPOSE) build $(BACKEND_DJANGO)
+	$(COMPOSE) up -d $(BACKEND_DJANGO)
+
 logs:
-	$(COMPOSE) logs
+	-@$(COMPOSE) logs -f
+
+logs-reverse-proxy:
+	@$(COMPOSE) logs -f $(REVERSE_PROXY)
+
+logs-nginx:
+	-@$(COMPOSE) logs -f $(NGINX)
+
+logs-backend-django:
+	-@$(COMPOSE) logs -f $(BACKEND_DJANGO)
+
+logs-db:
+	-@$(COMPOSE) logs -f $(DB)
 
 info:
 	echo "-------------------------------------------------------------------------------------------------"
@@ -55,3 +77,9 @@ admin-it:
 
 nginx-it:
 	$(DOCKER) exec -it $(NGINX) /bin/bash
+
+backend-django-it:
+	$(DOCKER) exec -it $(BACKEND_DJANGO) /bin/bash
+
+reverse-proxy-it:
+	$(DOCKER) exec -it $(REVERSE_PROXY) /bin/bash
