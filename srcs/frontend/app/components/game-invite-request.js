@@ -1,5 +1,6 @@
 import { callAPI } from "../utils/callApiUtils.js";
 import componentSetup from "../utils/componentSetupUtils.js";
+import stateManager from "../js/StateManager.js";
 
 
 const styles = `

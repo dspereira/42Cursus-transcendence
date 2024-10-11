@@ -1,6 +1,7 @@
 import { callAPI } from "../utils/callApiUtils.js";
 import { getCsrfToken } from "../utils/csrfTokenUtils.js";
 import componentSetup from "../utils/componentSetupUtils.js";
+import stateManager from "../js/StateManager.js";
 
 const styles = `
 .invites-section {
