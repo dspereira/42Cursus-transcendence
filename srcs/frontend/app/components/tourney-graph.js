@@ -358,6 +358,8 @@ export default class TourneyGraph extends HTMLElement {
 
 	#updateGamesPolling() {
 		this.intervalID = setInterval(() => {
+			if (!stateManager.getState("isOnline"))
+				return ;
 			this.#getTournamentGamesData();
 			this.#getNextGame();
 			this.#checkTournamentFinished();

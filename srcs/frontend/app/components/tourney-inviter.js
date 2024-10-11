@@ -316,6 +316,8 @@ export default class TourneyInviter extends HTMLElement {
 
 	#checkInvitesPolling() {
 		this.intervalID = setInterval(() => {
+			if (!stateManager.getState("isOnline"))
+				return ;
 			this.#getListPendingInvites();
 		}, 5000);
 	}

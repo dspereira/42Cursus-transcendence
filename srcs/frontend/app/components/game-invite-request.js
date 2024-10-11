@@ -88,6 +88,8 @@ export default class GameInviteRequest extends HTMLElement {
 
 	#startGameInvitesPolling() {
 		this.intervalID = setInterval(() => {
+			if (!stateManager.getState("isOnline"))
+				return ;
 			this.#getInviteGamesCallApi();
 		}, 5000);
 	}

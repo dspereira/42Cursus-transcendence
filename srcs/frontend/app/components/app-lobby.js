@@ -215,6 +215,8 @@ export default class AppLobby extends HTMLElement {
 	#setActiveInviteCheckEvent() {
 		if (this.data.lobbyId == stateManager.getState("userId")) {
 			this.intervalID = setInterval(() => {
+				if (!stateManager.getState("isOnline"))
+					return ;
 				if (this.lobbyStatus && this.lobbyStatus.guest)
 					return ;
 				callAPI("GET", `/game/has-pending-game-requests/`, null, (res, data) => {

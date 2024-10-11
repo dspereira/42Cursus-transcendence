@@ -280,6 +280,8 @@ export default class TourneyLobby extends HTMLElement {
 
 	#joinedPlayersPolling() {
 		this.intervalID = setInterval(() => {
+			if (!stateManager.getState("isOnline"))
+				return ;
 			this.#joinedPlayersCall();
 			if (!this.data.isOwner) {
 				this.#getTournamentStatusCall();

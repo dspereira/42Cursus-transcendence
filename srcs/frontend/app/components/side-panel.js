@@ -313,6 +313,8 @@ export default class SidePanel extends HTMLElement {
 
 	#startInvitesPolling(){
 		this.intervalID = setInterval(() => {
+			if (!stateManager.getState("isOnline"))
+				return ;
 			this.#getNumberRequestsCallApi();
 		}, 5000);
 	}

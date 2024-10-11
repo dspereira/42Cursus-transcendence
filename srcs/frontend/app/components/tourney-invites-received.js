@@ -89,6 +89,8 @@ export default class TourneyInvitesReceived extends HTMLElement {
 
 	#startGameInvitesPolling() {
 		this.intervalID = setInterval(() => {
+			if (!stateManager.getState("isOnline"))
+				return ;
 			this.#getInviteTournamentsCallApi();
 		}, 5000);
 	}
