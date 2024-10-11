@@ -82,28 +82,6 @@ const initialRoute = "/initial";
 const PUBLIC_ACCESS = "public";
 const PRIVATE_ACCESS = "private";
 
-// remover o page ready state
-
-/*
-const render = function(page) {
-	const app = document.querySelector("#app");
-	const oldElm = app.querySelector("#app > div");
-	const newElm = document.createElement("div");
-	
-	stateManager.addEvent("pageReady", (state) => {
-		if (state) {
-			stateManager.setState("pageReady", false);
-			if (!oldElm)
-				app.appendChild(newElm);
-			else
-				app.replaceChild(newElm, oldElm);
-		}
-	});
-	newElm.innerHTML = page;
-}
-	*/
-
-
 export const render = function(page) {
 	const app = document.querySelector("#app");
 	const oldElm = app.querySelector("#app > div");
@@ -184,9 +162,7 @@ const normalizeRoute = function(route) {
 }
 
 let init = true;
-let isRouting;
 export const router = function(route, isHistoryNavigation) {
-	isRouting = true;
 	stateManager.cleanEvents();
 	checkUserLoginState((isLoggedIn) => {
 		let htmlPage;
@@ -225,7 +201,6 @@ export const router = function(route, isHistoryNavigation) {
 
 		render(htmlPage);
 		init = false;
-		isRouting = false;
 	});
 }
 
@@ -262,9 +237,10 @@ export const redirect = function(route) {
 }
 
 stateManager.addEvent("isLoggedIn", (isLoggedIn) => {
-	if (!isLoggedIn && !isRouting) {
+	if (!isLoggedIn) {
 		const routeObj = getRouteInfo(getCurrentRoute());
-		if (routeObj.accessLevel == PRIVATE_ACCESS)
+		if (routeObj.accessLevel == PRIVATE_ACCESS) {
 			redirect(initialRoute);
+		}
 	}
 });

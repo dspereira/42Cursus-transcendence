@@ -3,6 +3,7 @@ import stateManager from "./StateManager.js";
 import chatWebSocket from "./ChatWebSocket.js";
 import checkUserLoginState from "../utils/checkUserLoginState.js";
 import { getCsrfTokenFromApi } from "../utils/csrfTokenUtils.js";
+import { redirect } from "./router.js";
 
 stateManager.addEvent("isLoggedIn", (stateValue) => {
 	if (stateValue) {
@@ -20,7 +21,8 @@ stateManager.addEvent("isLoggedIn", (stateValue) => {
 // The chat should reopen, reconnect, and send the last message.
 stateManager.addEvent("chatSocket", (stateValue) => {
 	console.log(`Chat socket: ${stateValue}`);
-	if (stateValue == "closed") {
+	const isLoggedIn = stateManager.getState("isLoggedIn");
+	if (stateValue == "closed" && isLoggedIn) {
 		checkUserLoginState((state) => {
 			if (state)
 				chatWebSocket.open();

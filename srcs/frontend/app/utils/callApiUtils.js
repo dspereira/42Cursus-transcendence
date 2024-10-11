@@ -21,9 +21,12 @@ const publicRoutes = [
 ];
 
 export const callAPI = async function (method, url, data, callback_sucess, callback_error, csrf_token) {
+	const isLoggedIn = stateManager.getState("isLoggedIn");
 	url = `${API_ROUTE}${url}`;
 	let resApi = await fetchApi(method, url, data, csrf_token);
-	if (resApi && !resApi.error && resApi.data && resApi.res) {
+
+	// isLoggedIn != false -> because when the page is refreshed, the state is null, and it needs to check if a refresh token exists
+	if (isLoggedIn != false && resApi && !resApi.error && resApi.data && resApi.res) {
 		if (resApi.res.status == 401) {
 			let resRefresh = await fetchApi(REFRESH_METHOD, REFRESH_URL, null, csrf_token);
 			if (resRefresh && resRefresh.res && resRefresh.res.ok) {
