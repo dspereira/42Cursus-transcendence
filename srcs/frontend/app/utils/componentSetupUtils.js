@@ -16,7 +16,7 @@ const componentSetup = function(component, html, styles) {
 	onerrorEventImg(compHtml);
 	
 	if (isPage)
-		browserOnlineEvent(compHtml, online, offline);
+		browserOnlineEvent(compHtml, browserOnline, browserOffline);
 	
 	return compHtml;
 }
@@ -36,7 +36,7 @@ const browserOnlineEvent = function(html, callbackOnline, callbackOffline) {
 	});
 }
 
-const online = function(html) {
+const browserOnline = function(html) {
 
 	// Just for debug pls remove
 	console.log("online: ", html);
@@ -45,7 +45,7 @@ const online = function(html) {
 	elm.classList.remove("back-blue");
 }
 
-const offline = function(html) {
+const browserOffline = function(html) {
 
 	// Just for debug pls remove
 	console.log("offline: ", html);
