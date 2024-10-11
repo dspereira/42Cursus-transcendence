@@ -22,11 +22,13 @@ stateManager.addEvent("isLoggedIn", (stateValue) => {
 stateManager.addEvent("chatSocket", (stateValue) => {
 	console.log(`Chat socket: ${stateValue}`);
 	const isLoggedIn = stateManager.getState("isLoggedIn");
-	if (stateValue == "closed" && isLoggedIn) {
-		checkUserLoginState((state) => {
-			if (state)
-				chatWebSocket.open();
-		});
+	if (stateValue == "closed") {
+		if (isLoggedIn) {
+			checkUserLoginState((state) => {
+				if (state)
+					chatWebSocket.open();
+			});
+		}
 	}
 	else if (stateValue == "open") {
 		chatWebSocket.connect(stateManager.getState("friendChatId"));
