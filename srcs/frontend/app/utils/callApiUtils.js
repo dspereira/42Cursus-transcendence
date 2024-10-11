@@ -4,8 +4,9 @@ import updateLoggedInStatus from "./updateLoggedInUtils.js";
 import { render } from "../js/router.js";
 import { getHtmlElm } from "./getHtmlElmUtils.js";
 import PageError from "../page-components/page-error.js";
+import DOMAIN from "../js/domain.js";
 
-const API_ROUTE 		= `http://127.0.0.1:8000/api`;
+const API_ROUTE 		= `http://${DOMAIN}/api`;
 const REFRESH_URL		= `${API_ROUTE}/auth/refresh_token`;
 const REFRESH_METHOD	= `POST`;
 
