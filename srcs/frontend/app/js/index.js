@@ -50,11 +50,11 @@ window.addEventListener("storage", (event) => {
 });
 
 window.addEventListener('online', () => {
-	console.log("online");
+	stateManager.setState("isOnline", true);
 });
 
 window.addEventListener('offline', () => {
-	console.log("offline");
+	stateManager.setState("isOnline", false);
 });
 
 document.addEventListener('DOMContentLoaded', () => {

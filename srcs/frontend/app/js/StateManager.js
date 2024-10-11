@@ -36,6 +36,7 @@ class StateManager {
 			inviteToPlayFriendID: null,
 			hasFriendInvite: null,
 			removeFriendIdFromChat: null,
+			isOnline: navigator.onLine,
 		}
 
 		this.stateEvents = {
@@ -68,6 +69,7 @@ class StateManager {
 			inviteToPlayFriendID: [],
 			hasFriendInvite: [],
 			removeFriendIdFromChat: [],
+			isOnline: []
 		}
 
 		StateManager.instance = this;
@@ -121,6 +123,7 @@ class StateManager {
 		this.states.chatMessagesCounter = 0;
 		this.states.sidePanel = "open";
 		this.states.isLoggedIn = false;
+		this.states.isOnline = navigator.onLine;
 	}
 }
 
