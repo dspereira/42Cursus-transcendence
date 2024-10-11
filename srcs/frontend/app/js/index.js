@@ -49,6 +49,14 @@ window.addEventListener("storage", (event) => {
 	checkUserLoginState();
 });
 
+window.addEventListener('online', () => {
+	console.log("online");
+});
+
+window.addEventListener('offline', () => {
+	console.log("offline");
+});
+
 document.addEventListener('DOMContentLoaded', () => {
 	startApp();
 });

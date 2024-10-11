@@ -49,7 +49,7 @@ export const callAPI = async function (method, url, data, callback_sucess, callb
 			callback_error(resApi.error);
 		else {
 			console.log(`callAPI Error: ${resApi.error}`);
-			if (`${resApi.error}`.indexOf("Failed to fetch") > -1)
+			if (`${resApi.error}`.indexOf("Failed to fetch") > -1 && navigator.onLine)
 				render(getHtmlElm(PageError));
 		}
 	}		
