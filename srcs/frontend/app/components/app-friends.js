@@ -375,11 +375,11 @@ export default class AppFriends extends HTMLElement {
 		let path = "";
 
 		if (type=="search")
-			path = "/api/friends/search_user_by_name/";
+			path = "/friends/search_user_by_name/";
 		else
-			path = "/api/friends/friendships/";
+			path = "/friends/friendships/";
 
-		callAPI("GET", `http://127.0.0.1:8000${path}?key=${value}`, null, (res, data) => {
+		callAPI("GET", `${path}?key=${value}`, null, (res, data) => {
 			if (res.ok) {
 				if (type=="search" && data.users)
 					this.#insertUsersCards(data.users, "search");
