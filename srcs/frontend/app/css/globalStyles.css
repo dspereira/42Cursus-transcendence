@@ -34,3 +34,14 @@ body {
 	/*height: 85vh;*/
 	margin: 72px 24px 0px 84px;
 }
+
+
+/* Exemplo de estilos de online/offline */
+/* Just for debug pls remove */
+.back-red {
+	background-color: red;
+}
+
+.back-blue {
+	background-color: blue;
+}

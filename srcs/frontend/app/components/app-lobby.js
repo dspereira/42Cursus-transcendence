@@ -4,6 +4,7 @@ import stateManager from "../js/StateManager.js";
 import { redirect } from "../js/router.js";
 import checkUserLoginState from "../utils/checkUserLoginState.js";
 import updateLoggedInStatus from "../utils/updateLoggedInUtils.js";
+import componentSetup from "../utils/componentSetupUtils.js";
 
 const styles = `
 	.lobby {
@@ -66,7 +67,6 @@ export default class AppLobby extends HTMLElement {
 
 	connectedCallback() {
 		this.#initComponent();
-		this.#render();
 		this.#scripts();
 	}
 
@@ -91,32 +91,10 @@ export default class AppLobby extends HTMLElement {
 	}
 
 	#initComponent() {
-		this.html = document.createElement("div");
-		this.html.innerHTML = this.#html(this.data);
-		if (styles) {
-			this.elmtId = `elmtId_${Math.floor(Math.random() * 100000000000)}`;
-			this.styles = document.createElement("style");
-			this.styles.textContent = this.#styles();
-			this.html.classList.add(`${this.elmtId}`);
-		}
+		this.html = componentSetup(this, getHtml(), styles);
+
 		this.readyBtn = this.html.querySelector(".ready-btn");
 		this.lobbyStatus = null;
-	}
-
-	#styles() {
-		if (styles)
-			return `@scope (.${this.elmtId}) {${styles}}`;
-		return null;
-	}
-
-	#html(data){
-		return getHtml(data);
-	}
-
-	#render() {
-		if (styles)
-			this.appendChild(this.styles);
-		this.appendChild(this.html);
 	}
 
 	#scripts() {
@@ -180,10 +158,11 @@ export default class AppLobby extends HTMLElement {
 
 	#setReadyBtnEvent() {
 		this.readyBtn.addEventListener("click", () => {
+			this.readyBtn.disabled = true;
 			checkUserLoginState((state) => {
 				if (state)
 					gameWebSocket.updateReadyStatus();
-				//updateLoggedInStatus(state);
+				this.readyBtn.disabled = false;
 			});
 		});
 	}
@@ -236,9 +215,11 @@ export default class AppLobby extends HTMLElement {
 	#setActiveInviteCheckEvent() {
 		if (this.data.lobbyId == stateManager.getState("userId")) {
 			this.intervalID = setInterval(() => {
+				if (!stateManager.getState("isOnline"))
+					return ;
 				if (this.lobbyStatus && this.lobbyStatus.guest)
 					return ;
-				callAPI("GET", `http://127.0.0.1:8000/api/game/has-pending-game-requests/`, null, (res, data) => {
+				callAPI("GET", `/game/has-pending-game-requests/`, null, (res, data) => {
 					if (res.ok) {
 						if (!data.has_pending_game_requests) {
 							clearInterval(this.intervalID);

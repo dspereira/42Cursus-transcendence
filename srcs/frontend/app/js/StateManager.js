@@ -9,7 +9,6 @@ class StateManager {
 
 		this.states = {
 			sidePanel: "open",
-			pageReady: false, // remover o page ready
 			isLoggedIn: null,   // realy change when user logout and not when chage refresh token
 			friendChatId: null,
 			newChatMessage: null,
@@ -34,14 +33,14 @@ class StateManager {
 			tournamentGameLobby: null,
 			tournamentId: null,
 			isChatMsgReadyToSend: null,
-			friendIdInvitedFromChat: null,
+			inviteToPlayFriendID: null,
 			hasFriendInvite: null,
 			removeFriendIdFromChat: null,
-			csrfToken: null
+			isOnline: navigator.onLine,
 		}
+
 		this.stateEvents = {
 			sidePanel: [],
-			pageReady: [],
 			isLoggedIn: [],
 			friendChatId: [],
 			newChatMessage: [],
@@ -67,10 +66,10 @@ class StateManager {
 			finishedTournament: [],
 			tournamentId: [],
 			isChatMsgReadyToSend: [],
-			friendIdInvitedFromChat: [],
+			inviteToPlayFriendID: [],
 			hasFriendInvite: [],
 			removeFriendIdFromChat: [],
-			csrfToken: []
+			isOnline: []
 		}
 
 		StateManager.instance = this;
@@ -118,19 +117,13 @@ class StateManager {
 		});
 	}
 
-
-	// Fazer um loop e passar por todos os eventos e estados
-	cleanAllStatesAndEvents() {
-		this.states.sidePanel = "open";
-		this.states.pageReady = false,
-		this.states.friendChatId = null;
-		this.states.newChatMessage = null;
+	cleanAllStatesAndEvents() {	
+		for (let key in this.states)
+			this.states[key] = null;
 		this.states.chatMessagesCounter = 0;
-		this.states.userId = null;
-		this.states.idBrowser = null;
-		this.states.chatUserData = null;
-		this.states.userImage =  null;
-		this.states.messageSend = null;
+		this.states.sidePanel = "open";
+		this.states.isLoggedIn = false;
+		this.states.isOnline = navigator.onLine;
 	}
 }
 

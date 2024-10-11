@@ -3,6 +3,8 @@ import stateManager from "../js/StateManager.js";
 import { callAPI } from "../utils/callApiUtils.js";
 import friendProfileRedirectionEvent from "../utils/profileRedirectionUtils.js";
 import { redirect } from "../js/router.js";
+import { getCsrfToken } from "../utils/csrfTokenUtils.js"
+import componentSetup from "../utils/componentSetupUtils.js";
 
 const styles = `
 /* Chat section */
@@ -191,7 +193,6 @@ export default class ChatSection extends HTMLElement {
 
 	connectedCallback() {
 		this.#initComponent();
-		this.#render();
 		this.#scripts();
 	}
 
@@ -204,14 +205,8 @@ export default class ChatSection extends HTMLElement {
 	}
 
 	#initComponent() {
-		this.html = document.createElement("div");
-		this.html.innerHTML = this.#html(this.data);
-		if (styles) {
-			this.elmtId = `elmtId_${Math.floor(Math.random() * 100000000000)}`;
-			this.styles = document.createElement("style");
-			this.styles.textContent = this.#styles();
-			this.html.classList.add(`${this.elmtId}`);
-		}
+		this.html = componentSetup(this, getHtml(this.data), styles);
+
 		this.msgInputscrollHeight = 0;
 		this.msgInputscrollHeight1 = 0;
 		this.msgInputMaxRows = 4;
@@ -222,22 +217,6 @@ export default class ChatSection extends HTMLElement {
 		this.btnBlock = this.html.querySelector(".btn-block");
 		this.textArea = this.html.querySelector("#text-area");
 		this.sendIcon = this.html.querySelector("#send-icon");
-	}
-
-	#styles() {
-			if (styles)
-				return `@scope (.${this.elmtId}) {${styles}}`;
-			return null;
-	}
-
-	#html(data){
-		return getHtml(data);
-	}
-
-	#render() {
-		if (styles)
-			this.appendChild(this.styles);
-		this.appendChild(this.html);
 	}
 
 	#scripts() {
@@ -298,11 +277,13 @@ export default class ChatSection extends HTMLElement {
 	#setSubmitEvents() {
 		this.sendIcon.addEventListener("click", (event) => {
 			event.preventDefault();
+			this.sendIcon.disabled = true;
 			this.#isFriend(this.data.userId, (status) => {
 				if (status)
 					this.html.querySelector("#msg-submit").requestSubmit();
 				else 
 					stateManager.setState("removeFriendIdFromChat", this.data.userId);
+				this.sendIcon.disabled = false;
 			});
 		});
 
@@ -458,11 +439,13 @@ export default class ChatSection extends HTMLElement {
 
 	#setBtnBlockEvent() {
 		this.btnBlock.addEventListener("click", () => {
+			this.btnBlock.disabled = true;
 			this.#isFriend(this.data.userId, (status) => {
 				if (status)
 					this.#blockStatusCall("POST", this.data.userId, "block");
 				else 
 					stateManager.setState("removeFriendIdFromChat", this.data.userId);
+				this.btnBlock.disabled = false;
 			});
 		});
 	}
@@ -470,10 +453,12 @@ export default class ChatSection extends HTMLElement {
 	#setBtnUnblockEvent() {
 		this.btnUnblock .addEventListener("click", () => {
 			this.#isFriend(this.data.userId, (status) => {
+				this.btnUnblock.disabled = true;
 				if (status)
 					this.#blockStatusCall("POST", this.data.userId, "unblock");
 				else 
 					stateManager.setState("removeFriendIdFromChat", this.data.userId);
+				this.btnUnblock.disabled = false;
 			});			
 		});
 	}
@@ -497,13 +482,13 @@ export default class ChatSection extends HTMLElement {
 		else
 			return ;
 
-		callAPI(method, `http://127.0.0.1:8000/api/friends/block/${queryParam}`, data, (res, data) => {
+		callAPI(method, `/friends/block/${queryParam}`, data, (res, data) => {
 			if (res.ok) {
 				this.#blockUserChat(data.status, data.user_has_blocked, data.friend_has_blocked);
 				if (method == "POST")
 					chatWebSocket.updateBlockStatus(friendId);
 			}
-		}, null, stateManager.getState("csrfToken"));
+		}, null, getCsrfToken());
 	}
 
 	#blockUserChat(status, user_has_blocked, friend_has_blocked) {
@@ -536,13 +521,15 @@ export default class ChatSection extends HTMLElement {
 
 	#inviteToGameEvent() {
 		this.btnPlay.addEventListener("click", () => {
+			this.btnPlay.disabled = true;
 			this.#isFriend(this.data.userId, (status) => {
 				if (status) {
-					stateManager.setState("friendIdInvitedFromChat", this.data.userId);
+					stateManager.setState("inviteToPlayFriendID", this.data.userId);
 					redirect("/play");
 				}
 				else 
 					stateManager.setState("removeFriendIdFromChat", this.data.userId);
+				this.btnPlay.disabled = true;
 			});
 		});
 	}
@@ -554,7 +541,7 @@ export default class ChatSection extends HTMLElement {
 	}
 
 	#isFriend(friendId, callback) {
-		callAPI("GET", `http://127.0.0.1:8000/api/friends/is-friend/?friend_id=${friendId}`, null, (res, data) => {
+		callAPI("GET", `/friends/is-friend/?friend_id=${friendId}`, null, (res, data) => {
 			if (res.ok && data)
 				callback(data.friend_status)
 		});

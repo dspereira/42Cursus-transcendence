@@ -14,7 +14,7 @@ const updateUserStates = function(data) {
 }
 
 const checkUserLoginState = function(callback) {
-	callAPI("GET", "http://127.0.0.1:8000/api/auth/login_status", null, (res, data) => {
+	callAPI("GET", "/auth/login_status", null, (res, data) => {
 		updateUserStates(data);
 		if (callback && res && res.ok && data)
 			callback(data.logged_in);
