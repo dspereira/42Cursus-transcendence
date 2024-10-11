@@ -5,23 +5,12 @@ create_files_in_dirs() {
 
 	for dir in "${directories[@]}"; do
 		if [ -d "$dir" ]; then
-			cd $dir && mkdir migrations && cd migrations && touch __init__.py && cd ../..
+			cd $dir && mkdir -p migrations && cd migrations && touch __init__.py && cd ../..
 			echo "Directory migrations created at $dir"
 		else
 			echo "Directory $dir does not exist!"
 		fi
 	done
-}
-
-delete_all_migrations() {
-    for dir in $(find transcendence -type d -name "migrations"); do
-        if confirm "Do you want to check the contents of $dir?"; then
-            if $auto_confirm || confirm "Do you want to delete the directory $dir and all its contents?"; then
-                rm -rf "$dir"
-                echo "$dir" >> "$deleted_dirs"
-            fi
-        fi
-    done
 }
 
 source ./venv/bin/activate || exit

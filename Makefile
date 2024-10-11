@@ -14,10 +14,10 @@ include srcs/.env
 .SILENT:
 
 all:
-	$(MAKE) start
+	$(COMPOSE) up -d --build
 
 start:
-	$(COMPOSE) up -d --build
+	$(COMPOSE) start
 
 stop:
 	$(COMPOSE) stop

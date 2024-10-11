@@ -47,8 +47,6 @@ services:
         build: ./frontend
         image: nginx-server
         container_name: nginx-server
-        # ports:
-        #     - 8080:80
         expose:
             - "80"
         environment:
@@ -72,6 +70,8 @@ services:
         networks:
             - pong-network
         restart: on-failure
+        depends_on:
+            - backend-django
 
     pgadmin4:
         image: dpage/pgadmin4

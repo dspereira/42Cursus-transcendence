@@ -11,9 +11,10 @@ COPY bot_images bot_images/
 COPY requirements.txt .
 COPY init_venv.sh .
 COPY activate_venv.sh .
+COPY healthcheck.sh .
 COPY run.sh .
 
-RUN chmod +x init_venv.sh activate_venv.sh run.sh
+RUN chmod +x init_venv.sh activate_venv.sh healthcheck.sh run.sh
 
 RUN ./init_venv.sh
 RUN bash -c "source activate_venv.sh"
