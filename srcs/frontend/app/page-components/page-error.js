@@ -40,7 +40,7 @@ export default class PageError extends HTMLElement {
 		if (!btn)
 			return ;
 		btn.addEventListener("click", () => {
-			redirect("/");
+			location.reload();
 		});
 	}
 }
