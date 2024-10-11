@@ -31,6 +31,12 @@ clean-data:
 
 re: clean all
 
+update-reverse-proxy:
+	$(COMPOSE) stop $(REVERSE_PROXY)
+	$(COMPOSE) rm -v -f $(REVERSE_PROXY)
+	$(COMPOSE) build $(REVERSE_PROXY)
+	$(COMPOSE) up -d $(REVERSE_PROXY)
+
 update-frontend:
 	$(COMPOSE) stop $(NGINX)
 	$(COMPOSE) rm -v -f $(NGINX)

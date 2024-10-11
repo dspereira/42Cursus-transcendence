@@ -64,7 +64,8 @@ services:
         image: reverse-proxy
         container_name: reverse-proxy
         ports:
-            - "8443:443"
+            - "443:443"
+            - "80:80"
         environment:
             - NGINX_HOST=127.0.0.1
             - DOMAIN=${DOMAIN}

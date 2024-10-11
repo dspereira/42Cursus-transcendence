@@ -37,7 +37,7 @@ ALLOWED_HOSTS = [
     "blitzpong"
 ]
 
-ALLOWED_PORT = 8443
+ALLOWED_PORT = 443
 
 #django knows it is behind a proxy thats uses HTTPS
 SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
@@ -83,10 +83,9 @@ MIDDLEWARE = [
 	'custom_middlewares.InputValidationMiddleware',
 ]
 
-CSRF_TRUSTED_ORIGINS = [
-	"http://127.0.0.1:8080",
-	"http://localhost:8080",
-]
+CSRF_TRUSTED_ORIGINS = []
+for host in ALLOWED_HOSTS:
+    CSRF_TRUSTED_ORIGINS.append(f"https://{host}:{ALLOWED_PORT}")
 
 AUTHENTICATION_BACKENDS = [
 	'user_auth.AuthBackend.AuthBackend'

@@ -11,7 +11,7 @@ RUN openssl req \
 -newkey rsa:2048 \
 -keyout /etc/nginx/certs/nginx-selfsigned.key \
 -out /etc/nginx/certs/nginx-selfsigned.crt \
--subj "/C=PT/L=Lisbon/O=42 Lisboa/CN=dcandeia.42.fr"
+-subj "/C=PT/L=Lisbon/O=42 Lisboa/CN=localhost"
 
 RUN rm /etc/nginx/conf.d/default.conf
 COPY ./conf/nginx.conf /etc/nginx/conf.d/
