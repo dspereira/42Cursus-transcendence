@@ -34,13 +34,13 @@ const styles = `
 
 	.main-container {
 		position: fixed;
-		width: 100vw;
-		min-width: 460px;
-		height: 100vh;
-		justify-content: center;
 		z-index: 1001;
-		top: 0px;
-		right: 0px;
+		top: 0;
+		left: 0;
+		width: 100%;
+		height: 100%;
+		justify-content: center; 
+		align-items: center;
 	}
 
 	.second-container {
@@ -49,15 +49,13 @@ const styles = `
 		flex-direction: column;
 		max-width: 900px;
 		min-width: 460px;
+		height: 90%;
 		max-height: 600px;
 		justify-content: center;
 		align-items: center;
 		left: 50%;
 		top: 50%;
-		transform: translate(-50%, -40%);
-
-		border-style: hidden;
-		border-radius: 20px;
+		transform: translate(-50%, -50%);
 		color: ${colors.primary_text};
 		z-index: 1001;
 	}
@@ -65,7 +63,8 @@ const styles = `
 	.title-container {
 		display: flex;
 		flex-direction: column;
-		width: 90%;
+		width: auto;
+		max-height: 80vh;
 	}
 
 	.button-container {
@@ -75,13 +74,13 @@ const styles = `
 		flex-direction: row;
 		justify-content: center;
 		align-items: center;
-		gap: 200px;
+		gap: 15%;
 		padding: 0px 20px 0px 20px;
 	}
 
 	.logo-img {
-		width: 100%;
-		height: auto;
+		max-width: 100%;
+		max-height: 100%;
 	}
 
 	#login, #signup, #localplay {
