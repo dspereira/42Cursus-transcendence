@@ -2,7 +2,6 @@ import { callAPI } from "../utils/callApiUtils.js";
 import { colors } from "../js/globalStyles.js";
 import stateManager from "../js/StateManager.js";
 import componentSetup from "../utils/componentSetupUtils.js";
-import stateManager from "../js/StateManager.js";
 
 
 const styles = `
