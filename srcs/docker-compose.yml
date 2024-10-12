@@ -1,6 +1,7 @@
 services:
 
     postgres:
+        build: ./database-postgres
         image: postgres
         container_name: postgres
         expose:
@@ -72,18 +73,6 @@ services:
         restart: on-failure
         depends_on:
             - backend-django
-
-    pgadmin4:
-        image: dpage/pgadmin4
-        container_name: pgadmin4
-        ports:
-            - "3000:80"
-        environment:
-            - PGADMIN_DEFAULT_EMAIL=${PGADMIN_EMAIL}
-            - PGADMIN_DEFAULT_PASSWORD=${PGADMIN_PASS}
-        networks:
-            - pong-network
-        restart: on-failure
 
 networks:
     pong-network:
