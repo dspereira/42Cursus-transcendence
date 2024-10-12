@@ -11,6 +11,6 @@ class Command(BaseCommand):
 		users = user_profile_model.filter(~Q(online=0))
 		if users.exists():
 			users.update(online=0)
-			print("All users' online statuses have been successfully reset.")
+			self.stdout.write(self.style.SUCCESS("All users online statuses have been successfully reset."))
 		else:
-			print("User list is empty. No statuses to reset.")
+			self.stdout.write(self.style.SUCCESS("User list is empty. No statuses to reset."))
