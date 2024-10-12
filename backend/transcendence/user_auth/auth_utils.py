@@ -35,6 +35,7 @@ def login(response, user):
 def logout(response):
 	response.delete_cookie("access", path="/")
 	response.delete_cookie("refresh", path="/api/auth")
+	response.delete_cookie("csrftoken", path="/")
 	return response
 
 def refresh_token(response, user_id):

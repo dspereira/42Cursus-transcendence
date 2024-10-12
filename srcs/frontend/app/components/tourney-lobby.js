@@ -6,6 +6,8 @@ import charLimit from "../utils/characterLimit.js";
 import { pfpStyle } from "../utils/stylingFunctions.js";
 import { redirect } from "../js/router.js";
 import friendProfileRedirectionEvent from "../utils/profileRedirectionUtils.js";
+import { getCsrfToken } from "../utils/csrfTokenUtils.js";
+import componentSetup from "../utils/componentSetupUtils.js";
 
 const styles = `
 
@@ -280,7 +282,6 @@ export default class TourneyLobby extends HTMLElement {
 
 	connectedCallback() {
 		this.#initComponent();
-		this.#render();
 		this.#scripts();
 	}
 
@@ -302,30 +303,7 @@ export default class TourneyLobby extends HTMLElement {
 	}
 
 	#initComponent() {
-		this.html = document.createElement("div");
-		this.html.innerHTML = this.#html(this.data);
-		if (styles) {
-			this.elmtId = `elmtId_${Math.floor(Math.random() * 100000000000)}`;
-			this.styles = document.createElement("style");
-			this.styles.textContent = this.#styles();
-			this.html.classList.add(`${this.elmtId}`);
-		}
-	}
-
-	#styles() {
-		if (styles)
-			return `@scope (.${this.elmtId}) {${styles}}`;
-		return null;
-	}
-
-	#html(data){
-		return getHtml(data);
-	}
-
-	#render() {
-		if (styles)
-			this.appendChild(this.styles);
-		this.appendChild(this.html);
+		this.html = componentSetup(this, getHtml(this.data), styles);
 	}
 
 	#scripts() {
@@ -417,7 +395,7 @@ export default class TourneyLobby extends HTMLElement {
 	}
 
 	#joinedPlayersCall() {
-		callAPI("GET", `http://127.0.0.1:8000/api/tournament/players/?id=${this.data.tournamentId}`, null, (res, data) => {
+		callAPI("GET", `/tournament/players/?id=${this.data.tournamentId}`, null, (res, data) => {
 			if (res.ok) {
 				if (data.players) {
 					this.#updatePlayers(data.players);
@@ -428,7 +406,7 @@ export default class TourneyLobby extends HTMLElement {
 	}
 
 	#getTournamentStatusCall() {
-		callAPI("GET", `http://127.0.0.1:8000/api/tournament/active-tournament/`, null, (res, data) => {
+		callAPI("GET", `/tournament/active-tournament/`, null, (res, data) => {
 			if (res.ok) {
 				if (data) {
 					if (!data.tournament || data.tournament.status == "active")
@@ -440,6 +418,8 @@ export default class TourneyLobby extends HTMLElement {
 
 	#joinedPlayersPolling() {
 		this.intervalID = setInterval(() => {
+			if (!stateManager.getState("isOnline"))
+				return ;
 			this.#joinedPlayersCall();
 			if (!this.data.isOwner)
 				this.#getTournamentStatusCall();
@@ -456,12 +436,14 @@ export default class TourneyLobby extends HTMLElement {
 		if (!btn)
 			return ;
 		btn.addEventListener("click", () => {
-			callAPI("DELETE", `http://127.0.0.1:8000/api/tournament/?id=${this.data.tournamentId}`, null, (res, data) => {
+			btn.disabled = true;
+			callAPI("DELETE", `/tournament/?id=${this.data.tournamentId}`, null, (res, data) => {
 				if (res.ok)
 					stateManager.setState("isTournamentChanged", true);
 				else
 					stateManager.setState("errorMsg", "Couldn't cancel tournament");
-			});
+				btn.disabled = false;
+			}, null, getCsrfToken());
 		});
 	}
 
@@ -472,12 +454,16 @@ export default class TourneyLobby extends HTMLElement {
 		if (!btn)
 			return ;
 		btn.addEventListener("click", () => {
-			callAPI("DELETE", `http://127.0.0.1:8000/api/tournament/players/?id=${this.data.tournamentId}`, null, (res, data) => {
-				if (res.ok)
+			btn.disabled = true;
+			callAPI("DELETE", `/tournament/players/?id=${this.data.tournamentId}`, null, (res, data) => {
+				if (res.ok) {
+					stateManager.setState("tournamentId", null);
 					stateManager.setState("isTournamentChanged", true);
+				}
 				else
 					stateManager.setState("errorMsg", "Couldn't leave tournament");
-			});
+				btn.disabled = false;
+			}, null, getCsrfToken());
 		});
 	}
 
@@ -488,12 +474,16 @@ export default class TourneyLobby extends HTMLElement {
 		if (!btn)
 			return ;
 		btn.addEventListener("click", () => {
-			callAPI("POST", `http://127.0.0.1:8000/api/tournament/start/`, {id: this.data.tournamentId}, (res, data) => {
+			this.#toggleStartButton(true);
+			callAPI("POST", `/tournament/start/`, {id: this.data.tournamentId}, (res, data) => {
 				if (res.ok)
 					stateManager.setState("isTournamentChanged", true);
 				else
+				{
 					stateManager.setState("errorMsg", "Tournament couldn't be started");
-			});
+					this.#toggleStartButton(false);
+				}
+			}, null, getCsrfToken());
 		});
 	}
 
@@ -506,17 +496,14 @@ export default class TourneyLobby extends HTMLElement {
 		btn.addEventListener("click", () => {
 			btn.disabled = true;
 			const name = nameInput.value.trim();
-			callAPI("PATCH", `http://127.0.0.1:8000/api/tournament/`, {id: this.data.tournamentId, new_name: name}, (res, data) => {
-				console.log(res);
-				console.log(data);
-				
+			callAPI("PATCH", `/tournament/`, {id: this.data.tournamentId, new_name: name}, (res, data) => {
 				if (res.status == 409)
 				{
 					nameInput.value = data.tournament_name;
 					stateManager.setState("errorMsg", "Couldn't change tournament name");
 				}
 				btn.disabled = false;
-			});
+			}, null, getCsrfToken());
 		});
 	}
 

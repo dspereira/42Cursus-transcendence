@@ -6,7 +6,11 @@ import { redirect } from "../js/router.js";
 import { colors } from "../js/globalStyles.js";
 import { pfpStyle } from "../utils/stylingFunctions.js";
 import updateLoggedInStatus from "../utils/updateLoggedInUtils.js";
+import { render } from "../js/router.js";
+import { getHtmlElm } from "../utils/getHtmlElmUtils.js";
 import checkUserLoginState from "../utils/checkUserLoginState.js";
+import PagePlay from "../page-components/page-play.js";
+import componentSetup from "../utils/componentSetupUtils.js";
 
 const styles = `
 
@@ -133,7 +137,6 @@ export default class AppPlay extends HTMLElement {
 
 	connectedCallback() {
 		this.#initComponent();
-		this.#render();
 		this.#scripts();
 	}
 
@@ -165,14 +168,8 @@ export default class AppPlay extends HTMLElement {
 	}
 
 	#initComponent() {
-		this.html = document.createElement("div");
-		this.html.innerHTML = this.#html(this.data);
-		if (styles) {
-			this.elmtId = `elmtId_${Math.floor(Math.random() * 100000000000)}`;
-			this.styles = document.createElement("style");
-			this.styles.textContent = this.#styles();
-			this.html.classList.add(`${this.elmtId}`);
-		}
+		this.html = componentSetup(this, getHtml(this.data), styles);
+
 		this.canvas = this.html.querySelector("#canvas");
 		this.ctx = this.canvas.getContext("2d");
 		this.startTimer = this.html.querySelector(".start-timer");
@@ -186,22 +183,6 @@ export default class AppPlay extends HTMLElement {
 		this.keyUpStatus = "released";
 		this.isGameFinished = false;
 		this.isFullScreen = false;
-	}
-
-	#styles() {
-		if (styles)
-			return `@scope (.${this.elmtId}) {${styles}}`;
-		return null;
-	}
-
-	#html(data){
-		return getHtml(data);
-	}
-
-	#render() {
-		if (styles)
-			this.appendChild(this.styles);
-		this.appendChild(this.html);
 	}
 
 	#scripts() {
@@ -260,7 +241,7 @@ export default class AppPlay extends HTMLElement {
 	}
 
 	#getGameColorPallet() {
-		callAPI("GET", `http://127.0.0.1:8000/api/game/color_pallet/`, null, (res, data) => {
+		callAPI("GET", `/game/color_pallet/`, null, (res, data) => {
 			if (res.ok) {
 				if (data && data.color_pallet)
 					this.game.setColorPallet(data.color_pallet);
@@ -297,7 +278,7 @@ export default class AppPlay extends HTMLElement {
 			if (this.data.isTournament)
 				stateManager.setState("isTournamentChanged", true);
 			else
-				redirect("/play");
+				render(getHtmlElm(PagePlay));
 		});
 	}
 

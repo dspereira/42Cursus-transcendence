@@ -2,6 +2,8 @@ import { adjustContent } from "../utils/adjustContent.js";
 import stateManager from "../js/StateManager.js";
 import { callAPI } from "../utils/callApiUtils.js";
 import {colors} from "../js/globalStyles.js";
+import { getCsrfToken } from "../utils/csrfTokenUtils.js";
+import componentSetup from "../utils/componentSetupUtils.js";
 
 const styles = `
 
@@ -64,16 +66,20 @@ const getHtml = function(data) {
 	return html;
 }
 
-const title = "Tournaments";
+const title = "BlitzPong - Tournaments";
 
 export default class PageTournaments extends HTMLElement {
 	static #componentName = "page-tournaments";
 
 	constructor() {
 		super()
+		this.data = {};
+
+		document.title = title;
+
 		this.#initComponent();
-		this.#render();
 		this.#scripts();
+
 	}
 
 	static get componentName() {
@@ -81,35 +87,12 @@ export default class PageTournaments extends HTMLElement {
 	}
 
 	#initComponent() {
-		this.html = document.createElement("div");
-		this.html.innerHTML = this.#html();
-		if (styles) {
-			this.elmtId = `elmtId_${Math.floor(Math.random() * 100000000000)}`;
-			this.styles = document.createElement("style");
-			this.styles.textContent = this.#styles();
-			this.html.classList.add(`${this.elmtId}`);
-		}
+		this.html = componentSetup(this, getHtml(this.data), styles);
+
 		this.btnCreateTourneySection = this.html.querySelector(".btn-create-tourney-section");
 		this.tourneySection = this.html.querySelector(".tourney-section");
 		this.invitesReceived = this.html.querySelector(".invites-received");
 		this.exitTournament = this.html.querySelector(".exit-tourney");
-	}
-
-	#styles() {
-		if (styles)
-			return `@scope (.${this.elmtId}) {${styles}}`;
-		return null;
-	}
-
-	#html(data){
-		return getHtml(data);
-	}
-
-	#render() {
-		if (styles)
-			this.appendChild(this.styles);
-		this.appendChild(this.html);
-		stateManager.setState("pageReady", true);
 	}
 
 	#scripts() {
@@ -121,9 +104,9 @@ export default class PageTournaments extends HTMLElement {
 	}
 
 	#createTournamentEvent() {
-		const btn = this.html.querySelector(".btn-create-tourney");
-		btn.addEventListener("click", () => {
-			callAPI("POST", `http://127.0.0.1:8000/api/tournament/`, null, (res, data) => {					
+		this.btnCreateTourneySection.addEventListener("click", () => {
+			this.btnCreateTourneySection.disabled = true;
+			callAPI("POST", `/tournament/`, null, (res, data) => {
 				if (res.ok && data && data.tournament_info) {
 					const info = data.tournament_info;
 					stateManager.setState("tournamentId", info.id);
@@ -136,12 +119,13 @@ export default class PageTournaments extends HTMLElement {
 					></tourney-lobby>`;
 					this.invitesReceived.innerHTML = "";
 				}
-			});
+				this.btnCreateTourneySection.disabled = false;
+			}, null, getCsrfToken());
 		});
 	}
 
 	#checkActiveTournamentCall() {
-		callAPI("GET", `http://127.0.0.1:8000/api/tournament/active-tournament/`, null, (res, data) => {
+		callAPI("GET", `/tournament/active-tournament/`, null, (res, data) => {
 			if (res.ok && data && data.tournament) {
 				const torneyData = data.tournament;
 				stateManager.setState("tournamentId", torneyData.id);
@@ -196,7 +180,7 @@ export default class PageTournaments extends HTMLElement {
 	}
 
 	#checkTournamentFinished(tournamentId) {
-		callAPI("GET", `http://127.0.0.1:8000/api/tournament/is-finished/?id=${tournamentId}`, null, (res, data) => {
+		callAPI("GET", `/tournament/is-finished/?id=${tournamentId}`, null, (res, data) => {
 			if (res.ok && data && data.is_finished) {
 				this.btnCreateTourneySection.classList.add("hide");
 				this.tourneySection.innerHTML = `<tourney-graph tournament-id="${tournamentId}" tournament-name="${data.tournament_name}"></tourney-graph>`;

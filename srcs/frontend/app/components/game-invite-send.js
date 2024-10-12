@@ -3,6 +3,9 @@ import stateManager from "../js/StateManager.js";
 import { colors } from "../js/globalStyles.js";
 import { charLimiter } from "../utils/characterLimit.js";
 import charLimit from "../utils/characterLimit.js";
+import { getCsrfToken } from "../utils/csrfTokenUtils.js"
+import componentSetup from "../utils/componentSetupUtils.js";
+
 
 const styles = `
 
@@ -272,7 +275,6 @@ export default class GameInviteSend extends HTMLElement {
 
 	connectedCallback() {
 		this.#initComponent();
-		this.#render();
 		this.#scripts();
 	}
 
@@ -283,34 +285,14 @@ export default class GameInviteSend extends HTMLElement {
 	}
 
 	#initComponent() {
-		this.html = document.createElement("div");
-		this.html.innerHTML = this.#html(this.data);
-		if (styles) {
-			this.elmtId = `elmtId_${Math.floor(Math.random() * 100000000000)}`;
-			this.styles = document.createElement("style");
-			this.styles.textContent = this.#styles();
-			this.html.classList.add(`${this.elmtId}`);
-		}
-		this.rightFriendListElm = this.html.querySelector(".selected-list-section");
-	}
+		this.html = componentSetup(this, getHtml(this.data), styles);
 
-	#styles() {
-		if (styles)
-			return `@scope (.${this.elmtId}) {${styles}}`;
-		return null;
-	}
-
-	#html(data){
-		return getHtml(data);
-	}
-
-	#render() {
-		if (styles)
-			this.appendChild(this.styles);
-		this.appendChild(this.html);
+		this.rightFriendListElm = this.html.querySelector(".selcted-list-section");
+		this.inviteBtn = this.html.querySelector("#submit-invite");
 	}
 
 	#scripts() {
+
 		this.#getFriendsCallApi();
 		this.#setFriendsSearchEvent();
 		this.#setInviteSubmitEvent();
@@ -330,7 +312,7 @@ export default class GameInviteSend extends HTMLElement {
 		if (key)
 			queryParam = `?key=${key}`;
 
-		callAPI("GET", `http://127.0.0.1:8000/api/game/friends/${queryParam}`, null, (res, data) => {
+		callAPI("GET", `/game/friends/${queryParam}`, null, (res, data) => {
 			if (res.ok) {
 				this.#createFriendsList(data.friends);
 				this.#selectFriendEvent();
@@ -434,10 +416,7 @@ export default class GameInviteSend extends HTMLElement {
 	}
 
 	#setInviteSubmitEvent() {
-		const btn = this.html.querySelector("#submit-invite");
-		if (!btn)
-			return ;
-		btn.addEventListener("click", () => {
+		this.inviteBtn.addEventListener("click", () => {
 			const data = {
 				invites_list: []
 			};
@@ -447,7 +426,8 @@ export default class GameInviteSend extends HTMLElement {
 
 			console.log(data);
 
-			callAPI("POST", "http://127.0.0.1:8000/api/game/request/", data, (res, data) => {
+			this.inviteBtn.disabled = true;
+			callAPI("POST", "/game/request/", data, (res, data) => {
 				if (res.ok) {
 					const contentElm = document.querySelector(".content");
 					contentElm.innerHTML = `
@@ -458,7 +438,8 @@ export default class GameInviteSend extends HTMLElement {
 				}
 				else
 					stateManager.setState("errorMsg", "Couldn't send invite");
-			});
+				this.inviteBtn.disabled = false;
+			}, null, getCsrfToken());
 		});
 	}
 

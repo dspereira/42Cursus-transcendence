@@ -4,9 +4,7 @@ import { charLimiter } from "../utils/characterLimit.js";
 import charLimit from "../utils/characterLimit.js";
 import stateManager from "../js/StateManager.js";
 import { pfpStyle } from "../utils/stylingFunctions.js";
-
-// --bs-font-sans-serif: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", "Noto Sans", "Liberation Sans", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
-
+import componentSetup from "../utils/componentSetupUtils.js";
 
 const styles = `
 .card-container {
@@ -96,7 +94,6 @@ export default class GameInviteCard1 extends HTMLElement {
 
 	connectedCallback() {
 		this.#initComponent();
-		this.#render();
 		this.#scripts();
 	}
 
@@ -112,30 +109,7 @@ export default class GameInviteCard1 extends HTMLElement {
 	}
 
 	#initComponent() {
-		this.html = document.createElement("div");
-		this.html.innerHTML = this.#html(this.data);
-		if (styles) {
-			this.elmtId = `elmtId_${Math.floor(Math.random() * 100000000000)}`;
-			this.styles = document.createElement("style");
-			this.styles.textContent = this.#styles();
-			this.html.classList.add(`${this.elmtId}`);
-		}
-	}
-
-	#styles() {
-			if (styles)
-				return `@scope (.${this.elmtId}) {${styles}}`;
-			return null;
-	}
-
-	#html(data){
-		return getHtml(data);
-	}
-
-	#render() {
-		if (styles)
-			this.appendChild(this.styles);
-		this.appendChild(this.html);
+		this.html = componentSetup(this, getHtml(this.data), styles);
 	}
 
 	#scripts() {

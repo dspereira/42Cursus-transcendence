@@ -6,6 +6,7 @@ import charLimit from "../utils/characterLimit.js";
 import { pfpStyle } from "../utils/stylingFunctions.js";
 import { redirect } from "../js/router.js";
 import friendProfileRedirectionEvent from "../utils/profileRedirectionUtils.js";
+import componentSetup from "../utils/componentSetupUtils.js";
 
 const styles = `
 
@@ -335,7 +336,6 @@ export default class TourneyGraph extends HTMLElement {
 
 	connectedCallback() {
 		this.#initComponent();
-		this.#render();
 		this.#scripts();
 	}
 
@@ -353,34 +353,11 @@ export default class TourneyGraph extends HTMLElement {
 	}
 
 	#initComponent() {
-		this.html = document.createElement("div");
-		this.html.innerHTML = this.#html(this.data);
-		if (styles) {
-			this.elmtId = `elmtId_${Math.floor(Math.random() * 100000000000)}`;
-			this.styles = document.createElement("style");
-			this.styles.textContent = this.#styles();
-			this.html.classList.add(`${this.elmtId}`);
-		}
+		this.html = componentSetup(this, getHtml(this.data), styles);
+
 		this.startGameBtn = this.html.querySelector(".btn-start");
 		this.winnerSection = this.html.querySelector(".winner");
 		this.winnerImage = this.winnerSection.querySelector(".profile-photo");
-
-	}
-
-	#styles() {
-		if (styles)
-			return `@scope (.${this.elmtId}) {${styles}}`;
-		return null;
-	}
-
-	#html(data){
-		return getHtml(data);
-	}
-
-	#render() {
-		if (styles)
-			this.appendChild(this.styles);
-		this.appendChild(this.html);
 	}
 
 	#scripts() {
@@ -391,7 +368,7 @@ export default class TourneyGraph extends HTMLElement {
 	}
 
 	#getTournamentGamesData() {
-		callAPI("GET", `http://127.0.0.1:8000/api/tournament/games/?id=${this.data.tournamentId}`, null, (res, data) => {
+		callAPI("GET", `/tournament/games/?id=${this.data.tournamentId}`, null, (res, data) => {
 			if (res.ok) {
 				if (data && data.games && data.games.length)
 					this.#updateGames(data.games);
@@ -442,22 +419,21 @@ export default class TourneyGraph extends HTMLElement {
 	}
 
 	#setStartGameEvent() {
-		const btn = this.html.querySelector(".btn-start");
-		if (!btn)
-			return ;
-		btn.addEventListener("click", () => {
-			callAPI("GET", `http://127.0.0.1:8000/api/tournament/next-game/?id=${this.data.tournamentId}`, null, (res, data) => {
+		this.startGameBtn.addEventListener("click", () => {
+			this.startGameBtn.disabled = true;
+			callAPI("GET", `/tournament/next-game/?id=${this.data.tournamentId}`, null, (res, data) => {
 				if (res.ok) {
 					if (data && data.lobby_id)
 						stateManager.setState("tournamentGameLobby", data.lobby_id);
 				}
+				this.startGameBtn.disabled = false;
 			});
 			
 		});
 	}
 
 	#getNextGame() {
-		callAPI("GET", `http://127.0.0.1:8000/api/tournament/has-game/?id=${this.data.tournamentId}`, null, (res, data) => {
+		callAPI("GET", `/tournament/has-game/?id=${this.data.tournamentId}`, null, (res, data) => {
 			if (res.ok) {
 				if (data && data.has_game)
 					this.startGameBtn.classList.remove("hide");
@@ -468,7 +444,7 @@ export default class TourneyGraph extends HTMLElement {
 	}
 
 	#checkTournamentFinished() {
-		callAPI("GET", `http://127.0.0.1:8000/api/tournament/is-finished/?id=${this.data.tournamentId}`, null, (res, data) => {
+		callAPI("GET", `/tournament/is-finished/?id=${this.data.tournamentId}`, null, (res, data) => {
 			if (res.ok && data && data.is_finished) {
 				const btn = document.querySelector(".exit-tourney");
 				if (!btn)
@@ -480,6 +456,8 @@ export default class TourneyGraph extends HTMLElement {
 
 	#updateGamesPolling() {
 		this.intervalID = setInterval(() => {
+			if (!stateManager.getState("isOnline"))
+				return ;
 			this.#getTournamentGamesData();
 			this.#getNextGame();
 			this.#checkTournamentFinished();

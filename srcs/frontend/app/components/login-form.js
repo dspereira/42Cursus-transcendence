@@ -5,7 +5,7 @@ import { render } from "../js/router.js";
 import PageEmailResend from "../page-components/page-email-resend.js";
 import { getDynamicHtmlElm, getHtmlElm } from "../utils/getHtmlElmUtils.js";
 import Page2FA from "../page-components/page-2fa.js";
-
+import componentSetup from "../utils/componentSetupUtils.js";
 const EMAIL_NOT_VERIFIED_MSG = 'Email not verified. Please verify your email.';
 
 const styles = `
@@ -196,7 +196,6 @@ export default class LoginForm extends HTMLElement {
 	constructor() {
 		super()
 		this.#initComponent();
-		this.#render();
 		this.#scripts();
 	}
 
@@ -205,33 +204,11 @@ export default class LoginForm extends HTMLElement {
 	}
 
 	#initComponent() {
-		this.html = document.createElement("div");
-		this.html.innerHTML = this.#html();
-		if (styles) {
-			this.elmtId = `elmtId_${Math.floor(Math.random() * 100000000000)}`;
-			this.styles = document.createElement("style");
-			this.styles.textContent = this.#styles();
-			this.html.classList.add(`${this.elmtId}`);
-		}
+		this.html = componentSetup(this, getHtml(), styles);
+
 		this.signupBtn = this.html.querySelector(".btn-signup");
 		this.submitBtn = this.html.querySelector(".btn-submit");
 		this.resendEmailBtn = this.html.querySelector(".btn-resend-email");
-	}
-
-	#styles() {
-			if (styles)
-				return `@scope (.${this.elmtId}) {${styles}}`;
-			return null;
-	}
-
-	#html(data){
-		return getHtml(data);
-	}
-
-	#render() {
-		if (styles)
-			this.appendChild(this.styles);
-		this.appendChild(this.html);
 	}
 
 	#scripts() {
@@ -273,7 +250,7 @@ export default class LoginForm extends HTMLElement {
 				this.submitBtn.disabled = false;
 			}
 			else
-				callAPI("POST", "http://127.0.0.1:8000/api/auth/login", dataForm, this.#apiResHandlerCalback);
+				callAPI("POST", "/auth/login", dataForm, this.#apiResHandlerCalback);
 		});
 	}
 
@@ -281,14 +258,13 @@ export default class LoginForm extends HTMLElement {
 		const value = this.html.querySelector('#email').value.trim();
 		if (res.ok && data.message === "success")
 			render(getHtmlElm(Page2FA));
-			//redirect("/");
 		else if (res.status == 401 && data.message == EMAIL_NOT_VERIFIED_MSG)
 			render(getDynamicHtmlElm(PageEmailResend, value ,"key"));
 		else {
 			if (data && data.message)
 				this.#setLogInErrorStyles(data.message);
-			this.submitBtn.disabled = false;
 		}
+		this.submitBtn.disabled = false;
 	}
 
 	#setLogInErrorStyles(message) {

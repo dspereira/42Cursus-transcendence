@@ -2,6 +2,8 @@ import { adjustContent } from "../utils/adjustContent.js";
 import stateManager from "../js/StateManager.js";
 import { colors } from "../js/globalStyles.js";
 import { callAPI } from "../utils/callApiUtils.js";
+import { getCsrfToken } from "../utils/csrfTokenUtils.js";
+import componentSetup from "../utils/componentSetupUtils.js";
 
 const styles = `
 	.invite-game {
@@ -95,15 +97,17 @@ const getHtml = function(data) {
 	return html;
 }
 
-const title = "Play";
+const title = "BlitzPong - Play";
 
 export default class PagePlay extends HTMLElement {
 	static #componentName = "page-play";
 
 	constructor() {
 		super()
+
+		document.title = title;
+
 		this.#initComponent();
-		this.#render();
 		this.#scripts();
 	}
 
@@ -112,31 +116,7 @@ export default class PagePlay extends HTMLElement {
 	}
 
 	#initComponent() {
-		this.html = document.createElement("div");
-		this.html.innerHTML = this.#html();
-		if (styles) {
-			this.elmtId = `elmtId_${Math.floor(Math.random() * 100000000000)}`;
-			this.styles = document.createElement("style");
-			this.styles.textContent = this.#styles();
-			this.html.classList.add(`${this.elmtId}`);
-		}
-	}
-
-	#styles() {
-		if (styles)
-			return `@scope (.${this.elmtId}) {${styles}}`;
-		return null;
-	}
-
-	#html(data){
-		return getHtml(data);
-	}
-
-	#render() {
-		if (styles)
-			this.appendChild(this.styles);
-		this.appendChild(this.html);
-		stateManager.setState("pageReady", true);
+		this.html = componentSetup(this, getHtml(this.data), styles);
 	}
 
 	#scripts() {
@@ -181,16 +161,16 @@ export default class PagePlay extends HTMLElement {
 	}
 
 	#inviteToPlayAndRedirectToLobby() {
-		const friendId = stateManager.getState("friendIdInvitedFromChat");
-		if (!friendId)
+		const stateInfo = stateManager.getState("inviteToPlayFriendID");
+		if (!stateInfo) 
 			return ;
 
-		stateManager.setState("friendIdInvitedFromChat", null);
+		stateManager.setState("inviteToPlayFriendID", null);
 		const data = {
-			invites_list: [`${friendId}`]
+			invites_list: [`${stateInfo}`]
 		};
 
-		callAPI("POST", "http://127.0.0.1:8000/api/game/request/", data, (res, data) => {
+		callAPI("POST", "/game/request/", data, (res, data) => {
 			if (res.ok) {
 				const contentElm = document.querySelector(".content");
 				contentElm.innerHTML = `
@@ -199,7 +179,7 @@ export default class PagePlay extends HTMLElement {
 				></app-lobby>
 				`;
 			}
-		});
+		}, null, getCsrfToken());
 	}
 }
 customElements.define(PagePlay.componentName, PagePlay);

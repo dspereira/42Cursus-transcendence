@@ -56,3 +56,13 @@ body {
 ::-webkit-scrollbar-thumb:hover {
 	background: #63686F;
 }
+
+/* Exemplo de estilos de online/offline */
+/* Just for debug pls remove */
+.back-red {
+	background-color: red;
+}
+
+.back-blue {
+	background-color: blue;
+}

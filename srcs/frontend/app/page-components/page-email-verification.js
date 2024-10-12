@@ -1,7 +1,7 @@
-import stateManager from "../js/StateManager.js";
 import { callAPI } from "../utils/callApiUtils.js";
 import { render } from "../js/router.js";
 import { redirect } from "../js/router.js";
+import componentSetup from "../utils/componentSetupUtils.js";
 
 const styles = `
 .mail-info-container {
@@ -81,6 +81,7 @@ export default class PageEmailVerification extends HTMLElement {
 	constructor() {
 		super()
 		this.data = {};
+		document.title = title;
 	}
 
 	static get componentName() {
@@ -92,7 +93,7 @@ export default class PageEmailVerification extends HTMLElement {
 			render("<page-404></page-404>");
 		else {
 			replaceCurrentRoute("/email-verification");
-			callAPI("POST", `http://127.0.0.1:8000/api/auth/validate-email`, {email_token: this.data.token}, (res, data) => {
+			callAPI("POST", `/auth/validate-email`, {email_token: this.data.token}, (res, data) => {
 				if (res.ok && data)
 					this.data["state"] = data.validation_status;
 				this.#start();
@@ -106,36 +107,11 @@ export default class PageEmailVerification extends HTMLElement {
 
 	#start() {
 		this.#initComponent();
-		this.#render();
 		this.#scripts();
 	}
 
 	#initComponent() {
-		this.html = document.createElement("div");
-		this.html.innerHTML = this.#html(this.data);
-		if (styles) {
-			this.elmtId = `elmtId_${Math.floor(Math.random() * 100000000000)}`;
-			this.styles = document.createElement("style");
-			this.styles.textContent = this.#styles();
-			this.html.classList.add(`${this.elmtId}`);
-		}
-	}
-
-	#styles() {
-		if (styles)
-			return `@scope (.${this.elmtId}) {${styles}}`;
-		return null;
-	}
-
-	#html(data){
-		return getHtml(data);
-	}
-
-	#render() {
-		if (styles)
-			this.appendChild(this.styles);
-		this.appendChild(this.html);
-		stateManager.setState("pageReady", true);
+		this.html = componentSetup(this, getHtml(this.data), styles);
 	}
 
 	#scripts() {

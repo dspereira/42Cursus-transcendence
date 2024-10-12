@@ -1,7 +1,6 @@
-import stateManager from "../js/StateManager.js";
-import { callAPI } from "../utils/callApiUtils.js";
 import parseDate from "../utils/timeDateUtils.js";
 import { colors } from "../js/globalStyles.js";
+import componentSetup from "../utils/componentSetupUtils.js";
 
 const styles = `
 	.bracket {
@@ -203,13 +202,10 @@ const styles = `
 `;
 
 const getHtml = function(data) {
-	
-	console.log(data);
-
 	const game_0 = data.info.games[0];
 	const game_1 = data.info.games[1]; 
-	const game_2 = data.info.games[2]; 
-	
+	const game_2 = data.info.games[2];
+
 	const html = `
 		<div class="tournament-name">${data.info.name}</div>
 
@@ -286,7 +282,6 @@ export default class TourneyInfo extends HTMLElement {
 
 	connectedCallback() {
 		this.#initComponent();
-		this.#render();
 		this.#scripts();
 	}
 
@@ -300,30 +295,7 @@ export default class TourneyInfo extends HTMLElement {
 	}
 
 	#initComponent() {
-		this.html = document.createElement("div");
-		this.html.innerHTML = this.#html(this.data);
-		if (styles) {
-			this.elmtId = `elmtId_${Math.floor(Math.random() * 100000000000)}`;
-			this.styles = document.createElement("style");
-			this.styles.textContent = this.#styles();
-			this.html.classList.add(`${this.elmtId}`);
-		}
-	}
-
-	#styles() {
-		if (styles)
-			return `@scope (.${this.elmtId}) {${styles}}`;
-		return null;
-	}
-
-	#html(data){
-		return getHtml(data);
-	}
-
-	#render() {
-		if (styles)
-			this.appendChild(this.styles);
-		this.appendChild(this.html);
+		this.html = componentSetup(this, getHtml(this.data), styles);
 	}
 
 	#scripts() {

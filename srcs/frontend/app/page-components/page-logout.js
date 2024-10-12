@@ -2,6 +2,7 @@ import {redirect} from "../js/router.js";
 import stateManager from "../js/StateManager.js";
 import { callAPI } from "../utils/callApiUtils.js";
 import { colors } from "../js/globalStyles.js";
+import { getCsrfToken } from "../utils/csrfTokenUtils.js"
 
 const styles = `
 
@@ -91,9 +92,11 @@ export default class PageLogout extends HTMLElement {
 
 	constructor() {
 		super()
+		this.data = {};
 		this.#initComponent();
 		this.#render();
 		this.#scripts();
+
 	}
 
 	static get componentName() {
@@ -134,16 +137,14 @@ export default class PageLogout extends HTMLElement {
 	}
 
 	#apiResHandlerCalback(res, data) {
-		if (data.ok && res.message === "success")
-			updateLoggedInStatus(false);
-		else
+		if (res.ok)
 			redirect("/");
 	}
 
 	#logoutEvent() {
 		const logout = this.html.querySelector("#logout-submit");
 		logout.addEventListener("click", (event) => {
-			callAPI("POST", "http://127.0.0.1:8000/api/auth/logout", null, this.#apiResHandlerCalback);
+			callAPI("POST", "/auth/logout", null, this.#apiResHandlerCalback, null, getCsrfToken());
 		});
 	}
 

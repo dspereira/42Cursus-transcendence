@@ -4,6 +4,7 @@ import { SCREEN_WIDTH, SCREEN_HEIGHT} from "../game/const_vars.js" ;
 import { redirect } from "../js/router.js";
 import { colors } from "../js/globalStyles.js";
 import stateManager from "../js/StateManager.js";
+import componentSetup from "../utils/componentSetupUtils.js";
 
 const P1_name = "Player 1";
 const P2_name = "Player 2";
@@ -122,7 +123,6 @@ export default class LocalGame extends HTMLElement {
 
 	connectedCallback() {
 		this.#initComponent();
-		this.#render();
 		this.#scripts();
 	}
 
@@ -140,14 +140,8 @@ export default class LocalGame extends HTMLElement {
 	}
 
 	#initComponent() {
-		this.html = document.createElement("div");
-		this.html.innerHTML = this.#html(this.data);
-		if (styles) {
-			this.elmtId = `elmtId_${Math.floor(Math.random() * 100000000000)}`;
-			this.styles = document.createElement("style");
-			this.styles.textContent = this.#styles();
-			this.html.classList.add(`${this.elmtId}`);
-		}
+		this.html = componentSetup(this, getHtml(), styles);
+
 		this.canvas = this.html.querySelector("#canvas");
 		this.ctx = this.canvas.getContext("2d");
 		this.canvas.width = SCREEN_WIDTH;
@@ -165,22 +159,6 @@ export default class LocalGame extends HTMLElement {
 		this.btnFullScreen = this.html.querySelector(".btn-full-screen");
 		this.iconFullScreen = this.html.querySelector(".icon-full-screen");
 		this.btnStart = this.html.querySelector(".start-game");
-	}
-
-	#styles() {
-			if (styles)
-				return `@scope (.${this.elmtId}) {${styles}}`;
-			return null;
-	}
-
-	#html(data){
-		return getHtml(data);
-	}
-
-	#render() {
-		if (styles)
-			this.appendChild(this.styles);
-		this.appendChild(this.html);
 	}
 
 	#scripts() {
@@ -278,6 +256,8 @@ export default class LocalGame extends HTMLElement {
 	#gameLoop() {
 		const intervalMiliSeconds = 10;
 		this.gameLoopId = setInterval(() => {
+			if (!stateManager.getState("isOnline"))
+				return ;
 			this.gameLogic.update();
 			this.game.updateState(this.#getGameState());
 			if (this.gameLogic.isEndGame()) {

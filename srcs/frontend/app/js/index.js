@@ -2,12 +2,14 @@ import { router, setHistoryEvents } from "./router.js"
 import stateManager from "./StateManager.js";
 import chatWebSocket from "./ChatWebSocket.js";
 import checkUserLoginState from "../utils/checkUserLoginState.js";
-import updateLoggedInStatus from "../utils/updateLoggedInUtils.js";
+import { getCsrfTokenFromApi } from "../utils/csrfTokenUtils.js";
+import { redirect } from "./router.js";
 
 stateManager.addEvent("isLoggedIn", (stateValue) => {
 	if (stateValue) {
 		stateManager.setState("idBrowser", Math.floor(Math.random() * 100000000));
 		chatWebSocket.open();
+		getCsrfTokenFromApi();
 	}
 	else {
 		chatWebSocket.close();
@@ -19,11 +21,14 @@ stateManager.addEvent("isLoggedIn", (stateValue) => {
 // The chat should reopen, reconnect, and send the last message.
 stateManager.addEvent("chatSocket", (stateValue) => {
 	console.log(`Chat socket: ${stateValue}`);
+	const isLoggedIn = stateManager.getState("isLoggedIn");
 	if (stateValue == "closed") {
-		checkUserLoginState((state) => {
-			if (state)
-				chatWebSocket.open();
-		});
+		if (isLoggedIn) {
+			checkUserLoginState((state) => {
+				if (state)
+					chatWebSocket.open();
+			});
+		}
 	}
 	else if (stateValue == "open") {
 		chatWebSocket.connect(stateManager.getState("friendChatId"));
@@ -35,21 +40,24 @@ stateManager.addEvent("chatSocket", (stateValue) => {
 	}
 });
 
-// Verify if the user is logged in, but if the refresh token has expired, refresh the access token.
-// The user's logged-in state should not change because of the expired refresh token.
-const setupLoginStateChecker  = function(intervalSeconds) {
-	setInterval(() => {
-		if (!stateManager.getState("isLoggedIn"))
-			return ;
-		checkUserLoginState();
-	}, intervalSeconds * 1000);
-}
-
 const startApp = function() {
-	setupLoginStateChecker(5);
 	router();
 	setHistoryEvents();
 }
+
+window.addEventListener("storage", (event) => {
+	//DEBUG
+	//console.log(`localStorage: isLoggedIn: ${localStorage.getItem("isLoggedIn")}`);
+	checkUserLoginState();
+});
+
+window.addEventListener('online', () => {
+	stateManager.setState("isOnline", true);
+});
+
+window.addEventListener('offline', () => {
+	stateManager.setState("isOnline", false);
+});
 
 document.addEventListener('DOMContentLoaded', () => {
 	startApp();

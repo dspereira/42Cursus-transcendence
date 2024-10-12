@@ -3,6 +3,8 @@ import { colors } from "../js/globalStyles.js";
 import { charLimiter } from "../utils/characterLimit.js";
 import charLimit from "../utils/characterLimit.js";
 import { pfpStyle } from "../utils/stylingFunctions.js";
+import { getCsrfToken } from "../utils/csrfTokenUtils.js";
+import componentSetup from "../utils/componentSetupUtils.js";
 
 const styles = `
 .card-container {
@@ -113,7 +115,6 @@ export default class GameInviteCard extends HTMLElement {
 
 	connectedCallback() {
 		this.#initComponent();
-		this.#render();
 		this.#scripts();
 	}
 
@@ -131,30 +132,10 @@ export default class GameInviteCard extends HTMLElement {
 	}
 
 	#initComponent() {
-		this.html = document.createElement("div");
-		this.html.innerHTML = this.#html(this.data);
-		if (styles) {
-			this.elmtId = `elmtId_${Math.floor(Math.random() * 100000000000)}`;
-			this.styles = document.createElement("style");
-			this.styles.textContent = this.#styles();
-			this.html.classList.add(`${this.elmtId}`);
-		}
-	}
+		this.html = componentSetup(this, getHtml(this.data), styles);
 
-	#styles() {
-			if (styles)
-				return `@scope (.${this.elmtId}) {${styles}}`;
-			return null;
-	}
-
-	#html(data){
-		return getHtml(data);
-	}
-
-	#render() {
-		if (styles)
-			this.appendChild(this.styles);
-		this.appendChild(this.html);
+		this.joinBtn = this.html.querySelector(".join-btn");
+		this.declineBtn = this.html.querySelector(".decline-btn");
 	}
 
 	#scripts() {
@@ -163,11 +144,9 @@ export default class GameInviteCard extends HTMLElement {
 	}
 
 	#setJoinBtnEvent() {
-		const btn = this.html.querySelector(".join-btn");
-		if(!btn)
-			return ;
-		btn.addEventListener("click", () => {
-			callAPI("PUT", `http://127.0.0.1:8000/api/game/request/`, {id: this.data.inviteId}, (res, data) => {
+		this.joinBtn.addEventListener("click", () => {
+			this.joinBtn.disabled = true;
+			callAPI("PUT", `/game/request/`, {id: this.data.inviteId}, (res, data) => {
 				if (res.ok) {
 					const contentElm = document.querySelector(".content");
 					contentElm.innerHTML = `
@@ -176,19 +155,19 @@ export default class GameInviteCard extends HTMLElement {
 						></app-lobby>
 					`;
 				}
-			});
+				this.joinBtn.disabled = false;
+			}, null, getCsrfToken());
 		});
 	}
 
 	#setDeclineBtnEvent() {
-		const btn = this.html.querySelector(".decline-btn");
-		if(!btn)
-			return ;
-		btn.addEventListener("click", () => {
-			callAPI("DELETE", `http://127.0.0.1:8000/api/game/request/`, {id: this.data.inviteId}, (res, data) => {
+		this.declineBtn.addEventListener("click", () => {
+			this.declineBtn.disabled = true;
+			callAPI("DELETE", `/game/request/`, {id: this.data.inviteId}, (res, data) => {
 				if (res.ok)
 					this.remove();
-			});
+				this.declineBtn.disabled = false;
+			}, null, getCsrfToken());
 		});
 	}
 

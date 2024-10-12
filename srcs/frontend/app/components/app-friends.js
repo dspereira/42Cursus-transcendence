@@ -1,6 +1,7 @@
 import stateManager from "../js/StateManager.js";
 import { callAPI } from "../utils/callApiUtils.js";
 import {colors} from "../js/globalStyles.js" 	
+import componentSetup from "../utils/componentSetupUtils.js";
 
 const styles = `
 .friends-section {
@@ -246,7 +247,6 @@ export default class AppFriends extends HTMLElement {
 
 	connectedCallback() {
 		this.#initComponent();
-		this.#render();
 		this.#scripts();
 	}
 
@@ -255,32 +255,12 @@ export default class AppFriends extends HTMLElement {
 	}
 
 	#initComponent() {
-		this.html = document.createElement("div");
-		this.html.innerHTML = this.#html(this.data);
-		if (styles) {
-			this.elmtId = `elmtId_${Math.floor(Math.random() * 100000000000)}`;
-			this.styles = document.createElement("style");
-			this.styles.textContent = this.#styles();
-			this.html.classList.add(`${this.elmtId}`);
+		this.html = componentSetup(this, getHtml(), styles);
 
-			this.notificationDot = this.html.querySelector(".notification");
-		}
-	}
-
-	#styles() {
-			if (styles)
-				return `@scope (.${this.elmtId}) {${styles}}`;
-			return null;
-	}
-
-	#html(data){
-		return getHtml(data);
-	}
-
-	#render() {
-		if (styles)
-			this.appendChild(this.styles);
-		this.appendChild(this.html);
+		this.notificationDot = this.html.querySelector(".notification");
+		this.searchMenuBtn = this.html.querySelector(".search-btn");
+		this.friendsMenuBtn = this.html.querySelector(".friends-btn");
+		this.requestsMenuBtn = this.html.querySelector(".requests-btn");
 	}
 
 	#scripts() {
@@ -307,22 +287,19 @@ export default class AppFriends extends HTMLElement {
 	}
 
 	#setSearchButtonEvent() {
-		const btn = this.html.querySelector(".search-btn");
-		btn.addEventListener("click", (event) => {
+		this.searchMenuBtn.addEventListener("click", (event) => {
 			this.#createSearchPage();
 		});
 	}
 
 	#setFriendsButtonEvent() {
-		const btn = this.html.querySelector(".friends-btn");
-		btn.addEventListener("click", (event) => {
+		this.friendsMenuBtn.addEventListener("click", (event) => {
 			this.#createFriendsPage();
 		});
 	}
 
 	#setRequestsButtonEvent() {
-		const btn = this.html.querySelector(".requests-btn");
-		btn.addEventListener("click", (event) => {
+		this.requestsMenuBtn.addEventListener("click", (event) => {
 			this.#createRequestsPage();
 		});
 	}
@@ -399,12 +376,15 @@ export default class AppFriends extends HTMLElement {
 		this.#addUserList(listPanel);
 
 		this.#setOptionSelected("search");
-		callAPI("GET", `http://127.0.0.1:8000/api/friends/search_user_by_name/`, null, (res, data) => {
-			if (res.ok)
+		this.searchMenuBtn.disabled = true;
+		callAPI("GET", `/friends/search_user_by_name/`, null, (res, data) => {
+			if (res.ok) {
 				if (data.users)
 					this.#insertUsersCards(data.users, "search");
 				else
 					listPanel.innerHTML = "<h1>There are no users to search for!</h1>";
+			}
+			this.searchMenuBtn.disabled = false;
 		});
 	}
 
@@ -415,13 +395,15 @@ export default class AppFriends extends HTMLElement {
 		this.#addUserList(listPanel);
 
 		this.#setOptionSelected("friends");
-		callAPI("GET", `http://127.0.0.1:8000/api/friends/friendships/`, null, (res, data) => {
+		this.friendsMenuBtn.disabled = true;
+		callAPI("GET", `/friends/friendships/`, null, (res, data) => {
 			if (res.ok) {
 				if (data.friends)
 					this.#insertUsersCards(data.friends, "friends");
 				else
 					listPanel.innerHTML = `<div class="no-friends-text">Add friends to see them here!</div>`;
 			}
+			this.friendsMenuBtn.disabled = false;
 		});	
 	}
 
@@ -431,13 +413,15 @@ export default class AppFriends extends HTMLElement {
 		this.#addUserList(listPanel);
 
 		this.#setOptionSelected("requests");
-		callAPI("GET", `http://127.0.0.1:8000/api/friends/request/`, null, (res, data) => {
+		this.requestsMenuBtn.disabled = true;
+		callAPI("GET", `/friends/request/`, null, (res, data) => {
 			if (res.ok) {
 				if (data.friend_requests)
 					this.#insertUsersCards(data.friend_requests, "requests");
 				else 
 					listPanel.innerHTML = "<h1>Your friend requests list is empty. Make the first move</h1>";
 			}
+			this.requestsMenuBtn.disabled = false;
 		});
 	}
 
@@ -489,11 +473,11 @@ export default class AppFriends extends HTMLElement {
 		let path = "";
 
 		if (type=="search")
-			path = "/api/friends/search_user_by_name/";
+			path = "/friends/search_user_by_name/";
 		else
-			path = "/api/friends/friendships/";
+			path = "/friends/friendships/";
 
-		callAPI("GET", `http://127.0.0.1:8000${path}?key=${value}`, null, (res, data) => {
+		callAPI("GET", `${path}?key=${value}`, null, (res, data) => {
 			if (res.ok) {
 				if (type=="search" && data.users)
 					this.#insertUsersCards(data.users, "search");
