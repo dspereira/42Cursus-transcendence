@@ -1,6 +1,5 @@
 from .InputValidationMiddleware import InputValidationMiddleware
 from .BlacklistTokenMiddleware import BlacklistTokenMiddleware
 from .ChannelsAuthMiddleware import ChannelsAuthMiddleware
-from .OnlineStatusMiddleware import OnlineStatusMiddleware
 from .CorsMiddleware import CorsMiddleware
 from .JwtMiddleware import JwtMiddleware

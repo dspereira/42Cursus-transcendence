@@ -25,6 +25,7 @@ python3 manage.py migrate
 
 python3 manage.py create_blitzpong_bot
 python3 manage.py getCriptographerKeys
+python3 manage.py reset_users_online_status
 
 echo "Iniciando server..."
 python3 manage.py runserver 0.0.0.0:8000
