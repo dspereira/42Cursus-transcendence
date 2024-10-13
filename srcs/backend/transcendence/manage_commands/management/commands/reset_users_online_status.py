@@ -9,7 +9,7 @@ class Command(BaseCommand):
 	def handle(self, *args, **kwargs):
 		user_profile_model = ModelManager(UserProfileInfo)
 		users = user_profile_model.filter(~Q(online=0))
-		if users.exists():
+		if users:
 			users.update(online=0)
 			self.stdout.write(self.style.SUCCESS("All users online statuses have been successfully reset."))
 		else:
