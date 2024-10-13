@@ -34,6 +34,7 @@ services:
             - DB_NAME=${DB_NAME}
             - DB_HOST=postgres
             - DB_PORT=5432
+            - JWT_SECRET_KEY=${JWT_SECRET_KEY}
             - TWILIO_ACCOUNT_SID=${TWILIO_ACCOUNT_SID}
             - TWILIO_AUTH_TOKEN=${TWILIO_AUTH_TOKEN}
             - TWILIO_PHONE_NUMBER=${TWILIO_PHONE_NUMBER}

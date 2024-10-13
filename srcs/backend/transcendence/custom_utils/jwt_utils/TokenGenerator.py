@@ -1,7 +1,9 @@
-import jwt
 from uuid_extensions import uuid7str
 from datetime import datetime, timedelta
+import jwt
+import os
 
+JWT_SECRET_KEY = os.getenv("JWT_SECRET_KEY")
 ACCESS_TOKEN = "access"
 REFRESH_TOKEN = "refresh"
 EMAIL_VERIFICATION_TOKEN = "email_verification"
@@ -94,7 +96,7 @@ class TokenGenerator:
 					"exp": exp,
 					"jti": uuid7str()
 				},
-				"your-256-bit-secret",
+				JWT_SECRET_KEY,
 				algorithm="HS256"
 			)
 		except Exception as e:
