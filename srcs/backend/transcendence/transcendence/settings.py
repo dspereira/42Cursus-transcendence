@@ -25,14 +25,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-bg*y#3baf5+jzebgtxu3xx87&089p#q8oom09n45wylt)xl_+y'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False if os.getenv("BACKEND_DEBUG_MODE") == "False" else True
 
-ALLOWED_HOSTS = [
-    "127.0.0.1",
-    "localhost",
-    "django-server",
-    "blitzpong"
-]
+ALLOWED_HOSTS = [os.getenv("DOMAIN")]
 
 ALLOWED_PORT = 443
 
@@ -177,7 +172,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = os.getenv('EMAIL_HOST')
 EMAIL_PORT = os.getenv('EMAIL_PORT')
-EMAIL_USE_TLS = os.getenv('EMAIL_USE_TLS')
+EMAIL_USE_TLS = False if os.getenv('EMAIL_USE_TLS') == "False" else True
 EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER')
 EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
 

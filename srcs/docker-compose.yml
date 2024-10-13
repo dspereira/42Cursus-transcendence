@@ -43,6 +43,8 @@ services:
             - TWILIO_ACCOUNT_SID=${TWILIO_ACCOUNT_SID}
             - TWILIO_AUTH_TOKEN=${TWILIO_AUTH_TOKEN}
             - TWILIO_PHONE_NUMBER=${TWILIO_PHONE_NUMBER}
+            - BACKEND_DEBUG_MODE=${BACKEND_DEBUG_MODE}
+            - DOMAIN=${DOMAIN}
         networks:
             - pong-network
         restart: on-failure
