@@ -54,9 +54,6 @@ export default class PagePlay extends HTMLElement {
 	constructor() {
 		super()
 
-		document.title = title;
-
-
 		this.data = {};
 		this.#loadInitialData();
 	}
@@ -84,6 +81,7 @@ export default class PagePlay extends HTMLElement {
 	}
 
 	#initComponent() {
+		document.title = this.data.langDict.title;
 		this.html = componentSetup(this, getHtml(this.data), styles);
 	}
 

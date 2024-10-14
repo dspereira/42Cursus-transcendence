@@ -106,12 +106,34 @@ export const ptGameInviteSendDict = {
 	invite_button: "Convidar"
 }
 
+export const ptPageChatDict = {
+	title: "BlitzPong - Chat"
+}
+
+export const ptPageConfigsDict = {
+	title: "BlitzPong - Configurações"
+}
+
+export const ptPageFriendsDict = {
+	title: "BlitzPong - Amigos"
+}
+
+export const ptPageHomeDict = {
+	title: "BlitzPong - Início"
+}
+
 export const ptPagePlayDict = {
+	title: "BlitzPong - Jogar",
 	/* HTML */
 	invite_button: "Convidar para o Jogo"
 }
 
+export const ptPageTournamentInfoDict = {
+	title: "BlitzPong - Informação de Torneio",
+}
+
 export const ptPageTournamentsDict = {
+	title: "BlitzPong - Torneio",
 	/* HTML */
 	create_tournament_button: "Criar Torneio",
 	exit_tournament_button: "Sair do Torneio"
@@ -120,7 +142,6 @@ export const ptPageTournamentsDict = {
 export const ptSidePanelDict = {
 	/* HTML */
 	home: "Início",
-	profile: "Perfil",
 	chat: "Chat",
 	tournaments: "Torneios",
 	friends: "Amigos",

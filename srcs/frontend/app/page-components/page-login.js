@@ -22,8 +22,6 @@ export default class PageLogin extends HTMLElement {
 	constructor() {
 		super()
 
-		document.title = title;
-
 		this.#initComponent();
 	}
 
@@ -32,6 +30,7 @@ export default class PageLogin extends HTMLElement {
 	}
 
 	#initComponent() {
+		document.title = title;
 		this.html = componentSetup(this, getHtml(), styles);
 	}
 }

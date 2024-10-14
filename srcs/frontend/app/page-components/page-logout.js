@@ -27,8 +27,6 @@ export default class PageLogout extends HTMLElement {
 	constructor() {
 		super()
 		this.data = {};
-
-		this.data = {};
 		this.#loadInitialData();
 	}
 

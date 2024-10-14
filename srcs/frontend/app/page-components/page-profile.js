@@ -38,7 +38,7 @@ const getHtml = function(data) {
 	return html;
 }
 
-const title = "BlitzPong - Profile";
+const title = "BlitzPong - ";
 
 export default class PageProfile extends HTMLElement {
 	static #componentName = "page-profile";
@@ -48,7 +48,6 @@ export default class PageProfile extends HTMLElement {
 		super()
 
 		this.data = {};
-		document.title = title;
 		this.#loadInitialData();
 	}
 
@@ -97,6 +96,7 @@ export default class PageProfile extends HTMLElement {
 	}
 
 	#initComponent() {
+		document.title = title + this.data.username;
 		this.html = componentSetup(this, getHtml(this.data), styles);
 	}
 

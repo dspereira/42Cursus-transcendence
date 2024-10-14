@@ -96,6 +96,7 @@ export default class PageTournaments extends HTMLElement {
 	}
 
 	#initComponent() {
+		document.title = this.data.langDict.title;
 		this.html = componentSetup(this, getHtml(this.data), styles);
 
 		this.btnCreateTourneySection = this.html.querySelector(".btn-create-tourney-section");

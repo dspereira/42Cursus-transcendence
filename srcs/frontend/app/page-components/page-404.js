@@ -46,8 +46,6 @@ export default class Page404 extends HTMLElement {
 	constructor() {
 		super()
 
-		document.title = title;
-
 		this.#initComponent();
 		this.#scripts();
 	}
@@ -57,6 +55,7 @@ export default class Page404 extends HTMLElement {
 	}
 
 	#initComponent() {
+		document.title = title;
 		this.html = componentSetup(this, getHtml(), styles);
 	}
 

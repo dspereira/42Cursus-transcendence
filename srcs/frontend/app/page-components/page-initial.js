@@ -24,8 +24,6 @@ export default class PageInitial extends HTMLElement {
 	constructor() {
 		super()
 
-		document.title = title;
-
 		this.#initComponent();
 		this.#scripts();
 	}
@@ -35,6 +33,7 @@ export default class PageInitial extends HTMLElement {
 	}
 
 	#initComponent() {
+		document.title = title;
 		this.html = componentSetup(this, getHtml(), styles);
 	}
 

@@ -106,12 +106,34 @@ export const esGameInviteSendDict = {
 	invite_button: "Invitar"
 }
 
+export const esPageChatDict = {
+	title: "BlitzPong - Chat"
+}
+
+export const esPageConfigsDict = {
+	title: "BlitzPong - Configuraciones"
+}
+
+export const esPageFriendsDict = {
+	title: "BlitzPong - Amigos"
+}
+
+export const esPageHomeDict = {
+	title: "BlitzPong - Inicio"
+}
+
 export const esPagePlayDict = {
+	title: "BlitzPong - Jugar",
 	/* HTML */
 	invite_button: "Invitar a Juego"
 }
 
+export const esPageTournamentInfoDict = {
+	title: "BlitzPong - Información del Torneo",
+}
+
 export const esPageTournamentsDict = {
+	title: "BlitzPong - Torneo",
 	/* HTML */
 	create_tournament_button: "Crear Torneo",
 	exit_tournament_button: "Salir del Torneo"
@@ -120,7 +142,6 @@ export const esPageTournamentsDict = {
 export const esSidePanelDict = {
 	/* HTML */
 	home: "Inicio",
-	profile: "Perfil",
 	chat: "Chat",
 	tournaments: "Torneos",
 	friends: "Amigos",

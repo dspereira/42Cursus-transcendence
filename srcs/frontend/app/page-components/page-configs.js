@@ -1,6 +1,10 @@
 import { adjustContent } from "../utils/adjustContent.js";
 import componentSetup from "../utils/componentSetupUtils.js";
 import { callAPI } from "../utils/callApiUtils.js";
+import getLanguageDict from "../utils/languageUtils.js";
+import { enPageConfigsDict } from "../lang-dicts/enLangDict.js";
+import { ptPageConfigsDict } from "../lang-dicts/ptLangDict.js";
+import { esPageConfigsDict } from "../lang-dicts/esLangDict.js";
 
 const styles = ``;
 
@@ -23,9 +27,6 @@ export default class PageConfigs extends HTMLElement {
 	constructor() {
 		super()
 
-		document.title = title;
-		
-
 		this.data = {};
 		this.#loadInitialData();
 	}
@@ -39,6 +40,7 @@ export default class PageConfigs extends HTMLElement {
 			if (res.ok) {
 				if (data && data.settings.language){
 					this.data.language = data.settings.language;
+					this.data.langDict = getLanguageDict(this.data.language, enPageConfigsDict, ptPageConfigsDict, esPageConfigsDict);
 				}
 		}
 		});
@@ -52,6 +54,7 @@ export default class PageConfigs extends HTMLElement {
 	}
 
 	#initComponent() {
+		document.title = this.data.langDict.title;
 		this.html = componentSetup(this, getHtml(this.data), styles);
 	}
 

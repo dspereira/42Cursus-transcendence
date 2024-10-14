@@ -1,6 +1,10 @@
 import { adjustContent } from "../utils/adjustContent.js";
 import componentSetup from "../utils/componentSetupUtils.js";
 import { callAPI } from "../utils/callApiUtils.js";
+import getLanguageDict from "../utils/languageUtils.js";
+import { enPageFriendsDict } from "../lang-dicts/enLangDict.js";
+import { ptPageFriendsDict } from "../lang-dicts/ptLangDict.js";
+import { esPageFriendsDict } from "../lang-dicts/esLangDict.js";
 
 const styles = ``;
 
@@ -23,7 +27,6 @@ export default class PageFriends extends HTMLElement {
 
 	constructor() {
 		super()
-		document.title = title;
 		this.data = {};
 		this.#loadInitialData();
 	}
@@ -37,6 +40,8 @@ export default class PageFriends extends HTMLElement {
 			if (res.ok) {
 				if (data && data.settings.language){
 					this.data.language = data.settings.language;
+					this.data.langDict = getLanguageDict(this.data.language, enPageFriendsDict, ptPageFriendsDict, esPageFriendsDict);
+
 				}
 		}
 		});
@@ -46,6 +51,7 @@ export default class PageFriends extends HTMLElement {
 	}
 
 	#initComponent() {
+		document.title = this.data.langDict.title;
 		this.html = componentSetup(this, getHtml(this.data), styles);
 	}
 
