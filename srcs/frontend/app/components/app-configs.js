@@ -461,7 +461,7 @@ export default class AppConfigs extends HTMLElement {
 			const popup = document.querySelector('.qr-popup');
 			if (popup)
 				popup.style.display = "none";
-			console.log("ESC!!!");
+			this.showQrcode.disabled = false;
 			document.removeEventListener('keydown', this.escQrClose);
 		};
 	}
@@ -760,11 +760,17 @@ export default class AppConfigs extends HTMLElement {
 		this.showQrcode.addEventListener("click", (event) => {
 			this.showQrcode.disabled = true;
 			event.preventDefault();
-			callAPI("POST", "http://127.0.0.1:8000/api/two-factor-auth/request-qr-code/", {}, (res, data) => {
+			callAPI("POST", "/two-factor-auth/request-qr-code/", null, (res, data) => {
 				if (res.ok && data && data.qr_code) {
 					this.qrcodeImg.setAttribute("src", 'data:image/png;base64,' + data.qr_code);
+					const qrElm = document.querySelector(".qr-popup");
+					qrElm.style.display = 'flex';
+					this.#qrPopUp();
+					document.addEventListener('keydown', this.escQrClose);
 				}
-			});
+				else
+					stateManager.setState("errorMsg", "Error: couldn't get the QR code");
+			}, null, getCsrfToken());
 		});
 	}
 
@@ -773,6 +779,7 @@ export default class AppConfigs extends HTMLElement {
 		window.addEventListener('click', (event) => {
 			if (event.target === popup) {
 				popup.style.display = 'none';
+				this.showQrcode.disabled = false;
 				document.removeEventListener('keydown', this.escQrClose);
 			}
 		});

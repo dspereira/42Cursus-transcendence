@@ -3,6 +3,7 @@ import stateManager from "../js/StateManager.js";
 import {colors} from "../js/globalStyles.js"
 import { callAPI } from "../utils/callApiUtils.js";
 import componentSetup from "../utils/componentSetupUtils.js";
+import { getCsrfToken } from "../utils/csrfTokenUtils.js";
 
 const styles = `
 
@@ -621,7 +622,7 @@ export default class SidePanel extends HTMLElement {
 	#logoutEvent() {
 		const logout = this.html.querySelector(".logout-btn");	
 		logout.addEventListener("click", (event) => {
-			callAPI("POST", "http://127.0.0.1:8000/api/auth/logout", null, this.#apiResHandlerCalback);
+			callAPI("POST", "/auth/logout", null, this.#apiResHandlerCalback, null, getCsrfToken());
 		});
 	}
 
