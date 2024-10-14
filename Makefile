@@ -5,8 +5,8 @@ REVERSE_PROXY = reverse-proxy
 BACKEND_DJANGO = backend-django
 
 # Docker Compose
-COMPOSE		= sudo docker compose -f srcs/docker-compose.yml
-DOCKER		= sudo docker
+COMPOSE		= docker compose -f srcs/docker-compose.yml
+DOCKER		= docker
 
 include srcs/.env
 

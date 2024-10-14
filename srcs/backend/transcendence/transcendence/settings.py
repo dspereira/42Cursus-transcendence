@@ -29,7 +29,7 @@ DEBUG = False if os.getenv("BACKEND_DEBUG_MODE") == "False" else True
 
 ALLOWED_HOSTS = [os.getenv("DOMAIN")]
 
-ALLOWED_PORT = 443
+ALLOWED_PORT = os.getenv("PORT")
 
 #django knows it is behind a proxy thats uses HTTPS
 SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
