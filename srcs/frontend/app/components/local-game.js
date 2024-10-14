@@ -3,6 +3,7 @@ import { GameLogic } from "../game/GameLogic.js";
 import { SCREEN_WIDTH, SCREEN_HEIGHT} from "../game/const_vars.js" ;
 import { redirect } from "../js/router.js";
 import componentSetup from "../utils/componentSetupUtils.js";
+import stateManager from "../js/StateManager.js";
 
 const P1_name = "Player 1";
 const P2_name = "Player 2";
