@@ -8,7 +8,7 @@ const friendProfileRedirectionEvent = function(html, elmSelector, userId) {
 	 if (!elm)
 		 return ;
 	elm.addEventListener("click", () => {
-		callAPI("GET", `http://127.0.0.1:8000/api/profile/username/?id=${userId}`, null, (res, data) => {
+		callAPI("GET", `/profile/username/?id=${userId}`, null, (res, data) => {
 			if (res.ok && data && data.username)
 				redirect(`/profile/${data.username}`);
 		});

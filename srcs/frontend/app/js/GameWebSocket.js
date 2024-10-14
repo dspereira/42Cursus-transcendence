@@ -1,4 +1,5 @@
 import stateManager from "./StateManager.js";
+import DOMAIN from "./domain.js";
 
 /*
 Values of connection
@@ -9,7 +10,7 @@ this.socket.CLOSED
 this.socket.CLOSING
 */
 
-const webSocketUrl = "ws://127.0.0.1:8000/game/";
+const webSocketUrl = `ws://${DOMAIN}/game/`;
 
 class GameWebSocket {
 

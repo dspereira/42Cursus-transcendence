@@ -1,5 +1,5 @@
 import {callAPI} from "../utils/callApiUtils.js";
-import stateManager from "../js/StateManager.js";
+import componentSetup from "../utils/componentSetupUtils.js";
 
 const styles = `
 
@@ -121,7 +121,6 @@ export default class UserProfile extends HTMLElement {
 
 	connectedCallback() {
 		this.#initComponent();
-		this.#render();
 		this.#scripts();
 	}
 
@@ -130,14 +129,8 @@ export default class UserProfile extends HTMLElement {
 	}
 
 	#initComponent() {
-		this.html = document.createElement("div");
-		this.html.innerHTML = this.#html(this.data);
-		if (styles) {
-			this.elmtId = `elmtId_${Math.floor(Math.random() * 100000000000)}`;
-			this.styles = document.createElement("style");
-			this.styles.textContent = this.#styles();
-			this.html.classList.add(`${this.elmtId}`);
-		}
+		this.html = componentSetup(this, getHtml(this.data), styles);
+
 		this.totalGames = this.html.querySelector('.total-games');
 		this.gameWinRate = this.html.querySelector('.games-win-rate');
 		this.winRateBarGame = this.html.querySelector('.win-rate-bar.game');
@@ -151,28 +144,12 @@ export default class UserProfile extends HTMLElement {
 		this.tournamentLoses = this.html.querySelector('.losses.tournament');
 	}
 
-	#styles() {
-			if (styles)
-				return `@scope (.${this.elmtId}) {${styles}}`;
-			return null;
-	}
-
-	#html(data){
-		return getHtml(data);
-	}
-
-	#render() {
-		if (styles)
-			this.appendChild(this.styles);
-		this.appendChild(this.html);
-	}
-
 	#scripts() {
 		this.#getProfileInfo();
 	}
 
 	#getProfileInfo() {
-		callAPI("GET", `http://127.0.0.1:8000/api/profile/?username=${this.data.username}`, null, (res, resData) => {
+		callAPI("GET", `/profile/?username=${this.data.username}`, null, (res, resData) => {
 			if (res.ok && resData && resData.data)
 				this.#updateProfile(resData.data);
 		});

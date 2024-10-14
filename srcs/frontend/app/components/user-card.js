@@ -1,5 +1,8 @@
 import { callAPI } from "../utils/callApiUtils.js";
 import stateManager from "../js/StateManager.js";
+import { redirect } from "../js/router.js";
+import { getCsrfToken } from "../utils/csrfTokenUtils.js"
+import componentSetup from "../utils/componentSetupUtils.js";
 
 const styles = `
 
@@ -117,7 +120,6 @@ export default class UserCard extends HTMLElement {
 		"chat-btn",
 		"play-btn",
 		"remove-friend-btn",
-		"csrf-token"
 	];
 
 	constructor() {
@@ -127,7 +129,6 @@ export default class UserCard extends HTMLElement {
 
 	connectedCallback() {
 		this.#initComponent();
-		this.#render();
 		this.#scripts();
 	}
 
@@ -154,36 +155,11 @@ export default class UserCard extends HTMLElement {
 			name = "playBtn";
 		else if (name == "remove-friend-btn")
 			name = "removeFriendBtn";
-		else if (name == "csrf-token")
-			name = "csrfToken";
 		this.data[name] = newValue;
 	}
 
 	#initComponent() {
-		this.html = document.createElement("div");
-		this.html.innerHTML = this.#html(this.data);
-		if (styles) {
-			this.elmtId = `elmtId_${Math.floor(Math.random() * 100000000000)}`;
-			this.styles = document.createElement("style");
-			this.styles.textContent = this.#styles();
-			this.html.classList.add(`${this.elmtId}`);
-		}
-	}
-
-	#styles() {
-			if (styles)
-				return `@scope (.${this.elmtId}) {${styles}}`;
-			return null;
-	}
-
-	#html(data){
-		return getHtml(data);
-	}
-
-	#render() {
-		if (styles)
-			this.appendChild(this.styles);
-		this.appendChild(this.html);
+		this.html = componentSetup(this, getHtml(this.data), styles);
 	}
 
 	#scripts() {
@@ -191,20 +167,22 @@ export default class UserCard extends HTMLElement {
 		this.#setDeclineEvent();
 		this.#setAcceptEvent();
 		this.#setRemoveEvent();
+		this.#setPlayBtnEvent();
+		this.#setChatBtnEvent();
 	}
 
 	#friendRequest(method, body, callback) {
-		callAPI(method, "http://127.0.0.1:8000/api/friends/request/", body, (res, data) => {
+		callAPI(method, "/friends/request/", body, (res, data) => {
 			if (res.ok)
 				callback(data);
-		}, null, stateManager.getState("csrfToken"));
+		}, null, getCsrfToken());
 	}
 
 	#friends(method, body, callback) {
-		callAPI(method, "http://127.0.0.1:8000/api/friends/friendships/", body, (res, data) => {
+		callAPI(method, "/friends/friendships/", body, (res, data) => {
 			if (res.ok)
 				callback(data);
-		}, null, stateManager.getState("csrfToken"));
+		}, null, getCsrfToken());
 	}
 
 	#switchBtns(btn) {
@@ -224,14 +202,18 @@ export default class UserCard extends HTMLElement {
 			return ;
 		btn.addEventListener("click", () => {
 			if (btn.classList.contains("invite")) {
+				btn.disabled = true;
 				this.#friendRequest("POST", {"requested_user": this.data.userId}, (data) => {
 					this.data.requestId = data.request_id;
 					this.#switchBtns(btn);
+					btn.disabled = false;
 				});
 			}
 			else {
+				btn.disabled = true;
 				this.#friendRequest("DELETE", {"request_id": this.data.requestId}, () => {
 					this.#switchBtns(btn);
+					btn.disabled = false;
 				});
 			}
 		});
@@ -242,6 +224,7 @@ export default class UserCard extends HTMLElement {
 		if (!btn)
 			return ;
 		btn.addEventListener("click", () => {
+			btn.disabled = true;
 			this.#friendRequest("DELETE", {"request_id": this.data.requestId}, () => {
 				this.remove();
 			});
@@ -253,6 +236,7 @@ export default class UserCard extends HTMLElement {
 		if (!btn)
 			return ;
 		btn.addEventListener("click", () => {
+			btn.disabled = true;
 			this.#friends("POST", {"request_id": this.data.requestId}, () => {
 				this.remove();
 			});
@@ -264,9 +248,60 @@ export default class UserCard extends HTMLElement {
 		if (!btn)
 			return ;
 		btn.addEventListener("click", () => {
-			this.#friends("DELETE", {"friend_id": this.data.userId}, () => {
-				this.remove();
+			btn.disabled = true;
+			this.#isFriend(this.data.userId, (status) => {
+				if (status) {
+					this.#friends("DELETE", {"friend_id": this.data.userId}, () => {
+						this.remove();
+					});
+				}
+				else 
+					this.remove();
 			});
+		});
+	}
+
+	#setPlayBtnEvent() {
+		let btn = this.html.querySelector(".play")
+		if (!btn)
+			return ;
+		btn.addEventListener("click", () => {
+			btn.disabled = true;
+			this.#isFriend(this.data.userId, (status) => {
+				if (status) {
+					stateManager.setState("inviteToPlayFriendID", this.data.userId);
+					redirect("/play");
+					btn.disabled = false;
+				}
+				else 
+					this.remove();
+			});
+		});
+	}
+
+	#setChatBtnEvent() {
+		let btn = this.html.querySelector(".chat")
+		if (!btn)
+			return ;
+		btn.addEventListener("click", () => {
+			this.#isFriend(this.data.userId, (status) => {
+				if (status) {
+					btn.disabled = true;
+					stateManager.setState("friendChatId", this.data.userId);
+					redirect("/chat");
+					btn.disabled = false;
+				}
+				else 
+					this.remove();
+			});
+		});		
+	}
+
+
+	#isFriend(friendId, callback) {
+		callAPI("GET", `/friends/is-friend/?friend_id=${friendId}`, null, (res, data) => {
+			if (res.ok && data)
+				callback(data.friend_status);
 		});
 	}
 }

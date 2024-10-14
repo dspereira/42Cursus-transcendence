@@ -1,6 +1,6 @@
 import {redirect} from "../js/router.js";
-import stateManager from "../js/StateManager.js";
 import { callAPI } from "../utils/callApiUtils.js";
+import componentSetup from "../utils/componentSetupUtils.js";
 
 const styles = `
 .tfa-methods {
@@ -45,17 +45,19 @@ const getHtml = function(data) {
 	return html;
 }
 
-const title = "2FA page";
+const title = "BlitzPong - 2FA";
 
 export default class Page2FA extends HTMLElement {
 	static #componentName = "page-2fa";
 
 	constructor() {
 		super()
+
+		document.title = title;
+
 		this.chosenMethod;
 		this.methodsObj;
 		this.#initComponent();
-		this.#render();
 		this.#scripts();
 	}
 
@@ -64,34 +66,11 @@ export default class Page2FA extends HTMLElement {
 	}
 
 	#initComponent() {
-		this.html = document.createElement("div");
-		this.html.innerHTML = this.#html();
-		if (styles) {
-			this.elmtId = `elmtId_${Math.floor(Math.random() * 100000000000)}`;
-			this.styles = document.createElement("style");
-			this.styles.textContent = this.#styles();
-			this.html.classList.add(`${this.elmtId}`);
-		}
+		this.html = componentSetup(this, getHtml(), styles);
+
 		this.option2fa = this.html.querySelector(".option-2fa");
 		this.msgBtn = this.html.querySelector(".message");
 		this.methods = this.html.querySelector(".methods");
-	}
-
-	#styles() {
-		if (styles)
-			return `@scope (.${this.elmtId}) {${styles}}`;
-		return null;
-	}
-
-	#html(data){
-		return getHtml(data);
-	}
-
-	#render() {
-		if (styles)
-			this.appendChild(this.styles);
-		this.appendChild(this.html);
-		stateManager.setState("pageReady", true);
 	}
 
 	#scripts() {
@@ -101,7 +80,7 @@ export default class Page2FA extends HTMLElement {
 	}
 
 	#get2faOption() {
-		callAPI("GET", `http://127.0.0.1:8000/api/two-factor-auth/configured-2fa/`, null, (res, data) => {	
+		callAPI("GET", `/two-factor-auth/configured-2fa/`, null, (res, data) => {	
 			if (res.ok && data) {
 				this.#setAllowedMethods(data.configured_methods);
 				this.#setChosenMethod(data.method);

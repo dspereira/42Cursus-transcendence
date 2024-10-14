@@ -1,5 +1,6 @@
 import {callAPI} from "../utils/callApiUtils.js";
 import { redirect } from "../js/router.js";
+import componentSetup from "../utils/componentSetupUtils.js";
 
 const styles = `
 .tfa-container {
@@ -108,7 +109,6 @@ export default class TfaForm extends HTMLElement {
 
 	connectedCallback() {
 		this.#initComponent();
-		this.#render();
 		this.#scripts();
 	}
 
@@ -122,32 +122,10 @@ export default class TfaForm extends HTMLElement {
 	}
 
 	#initComponent() {
-		this.html = document.createElement("div");
-		this.html.innerHTML = this.#html(this.data);
-		if (styles) {
-			this.elmtId = `elmtId_${Math.floor(Math.random() * 100000000000)}`;
-			this.styles = document.createElement("style");
-			this.styles.textContent = this.#styles();
-			this.html.classList.add(`${this.elmtId}`);
-		}
+		this.html = componentSetup(this, getHtml(this.data), styles);
+
 		this.submitBtn = this.html.querySelector(".btn-submit");
 		this.inputs = this.html.querySelectorAll(".otp-code");
-	}
-
-	#styles() {
-			if (styles)
-				return `@scope (.${this.elmtId}) {${styles}}`;
-			return null;
-	}
-
-	#html(data){
-		return getHtml(data);
-	}
-
-	#render() {
-		if (styles)
-			this.appendChild(this.styles);
-		this.appendChild(this.html);
 	}
 
 	#scripts() {
@@ -162,9 +140,12 @@ export default class TfaForm extends HTMLElement {
 	}
 
 	#sendTwoFactorCode(destination) {
-		callAPI("POST", `http://127.0.0.1:8000/api/two-factor-auth/request-${destination}/`, null, (res, data) => {		
+		callAPI("POST", `/two-factor-auth/request-${destination}/`, null, (res, data) => {		
 			if (!res.ok)
 				console.log(data.message); // Esta mensagem deve ser apresentada no frontend
+			const btn = this.html.querySelector(".btn-resend");
+			if(btn)
+				btn.disabled = false;
 		});
 	}
 
@@ -174,6 +155,7 @@ export default class TfaForm extends HTMLElement {
 			return ;
 		btn.addEventListener("click", (event) => {
 			event.preventDefault();
+			btn.disabled = true;
 			if (this.data.method != QRCODE_METHOD)
 				this.#sendTwoFactorCode(this.data.method);
 		});
@@ -217,6 +199,7 @@ export default class TfaForm extends HTMLElement {
 		const tfaForm = this.html.querySelector("#tfa-code");
 		tfaForm.addEventListener("submit", (event) => {
 			event.preventDefault();
+			this.submitBtn.disabled = true;
 			const formData = {
 				code: this.#getCodeValue(),
 				method: this.data.method
@@ -227,13 +210,14 @@ export default class TfaForm extends HTMLElement {
 				return ;
 			}
 			else {
-				callAPI("POST", "http://127.0.0.1:8000/api/two-factor-auth/validate-otp/", formData, (res, data) => {		
+				callAPI("POST", "/two-factor-auth/validate-otp/", formData, (res, data) => {		
 					if (res.ok)
 						redirect("/");
 					else if (res.status == 401)
 						redirect("/");
 					// caso dê 401 colocar mensagem no frontend
 					this.#updateInvalidCodeStyle(true);
+					this.submitBtn.disabled = false;
 				});
 			}
 		});

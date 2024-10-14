@@ -1,4 +1,7 @@
 import { callAPI } from "../utils/callApiUtils.js";
+import componentSetup from "../utils/componentSetupUtils.js";
+import stateManager from "../js/StateManager.js";
+
 
 const styles = `
 	h3 {
@@ -35,7 +38,6 @@ export default class GameInviteRequest extends HTMLElement {
 
 	connectedCallback() {
 		this.#initComponent();
-		this.#render();
 		this.#scripts();
 	}
 
@@ -49,31 +51,8 @@ export default class GameInviteRequest extends HTMLElement {
 	}
 
 	#initComponent() {
-		this.html = document.createElement("div");
-		this.html.innerHTML = this.#html(this.data);
-		if (styles) {
-			this.elmtId = `elmtId_${Math.floor(Math.random() * 100000000000)}`;
-			this.styles = document.createElement("style");
-			this.styles.textContent = this.#styles();
-			this.html.classList.add(`${this.elmtId}`);
-		}
+		this.html = componentSetup(this, getHtml(this.data), styles);
 		this.reqListHtml = this.html.querySelector(".requests-list");
-	}
-
-	#styles() {
-			if (styles)
-				return `@scope (.${this.elmtId}) {${styles}}`;
-			return null;
-	}
-
-	#html(data){
-		return getHtml(data);
-	}
-
-	#render() {
-		if (styles)
-			this.appendChild(this.styles);
-		this.appendChild(this.html);
 	}
 
 	#scripts() {
@@ -82,7 +61,7 @@ export default class GameInviteRequest extends HTMLElement {
 	}
 
 	#getInviteGamesCallApi() {
-		callAPI("GET", `http://127.0.0.1:8000/api/game/request/`, null, (res, data) => {
+		callAPI("GET", `/game/request/`, null, (res, data) => {
 			if (res.ok){
 				if (data)
 					this.#createRequestList(data.requests_list);
@@ -98,7 +77,6 @@ export default class GameInviteRequest extends HTMLElement {
 		requestCard.setAttribute("profile-photo", requestData.image);
 		requestCard.setAttribute("exp", requestData.exp);
 		requestCard.setAttribute("user-id", requestData.id);
-		requestCard.setAttribute("csrf-token", this.data.csrfToken);
 		this.reqListHtml.appendChild(requestCard);
 	}
 
@@ -111,6 +89,8 @@ export default class GameInviteRequest extends HTMLElement {
 
 	#startGameInvitesPolling() {
 		this.intervalID = setInterval(() => {
+			if (!stateManager.getState("isOnline"))
+				return ;
 			this.#getInviteGamesCallApi();
 		}, 5000);
 	}

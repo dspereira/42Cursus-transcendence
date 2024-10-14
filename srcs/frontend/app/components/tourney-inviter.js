@@ -1,4 +1,6 @@
 import { callAPI } from "../utils/callApiUtils.js";
+import { getCsrfToken } from "../utils/csrfTokenUtils.js";
+import componentSetup from "../utils/componentSetupUtils.js";
 import stateManager from "../js/StateManager.js";
 
 const styles = `
@@ -80,6 +82,17 @@ const styles = `
 	color: blue; /* outra cor igual mas mais carregada */
 }
 
+.refresh-btn {
+    all: unset;
+    background: none;
+    border: none;
+    padding: 0;
+    margin: 0;
+    font: inherit;
+    color: inherit;
+    cursor: pointer;
+}
+
 `;
 
 const getHtml = function(data) {
@@ -93,7 +106,7 @@ const getHtml = function(data) {
 							<input type="text" class="form-control form-control-md" id="search" placeholder="Search friends..." maxlength="15">
 						</div>
 					</div>
-					<div><i class="bi bi-arrow-clockwise refresh-icon"></i></div>
+					<button class="refresh-btn"><i class="bi bi-arrow-clockwise refresh-icon"></i></button>
 				</div>
 				<div class="friends"></div>
 			</div>
@@ -105,7 +118,7 @@ const getHtml = function(data) {
 }
 
 export default class TourneyInviter extends HTMLElement {
-	static observedAttributes = ["tournament-id", "csrf-token"];
+	static observedAttributes = ["tournament-id"];
 
 	constructor() {
 		super()
@@ -116,7 +129,6 @@ export default class TourneyInviter extends HTMLElement {
 
 	connectedCallback() {
 		this.#initComponent();
-		this.#render();
 		this.#scripts();
 	}
 
@@ -128,36 +140,14 @@ export default class TourneyInviter extends HTMLElement {
 	attributeChangedCallback(name, oldValue, newValue) {
 		if (name == "tournament-id")
 			name = "tournamentId";
-		else if (name == "csrf-token")
-			this.data.csrfToken = newValue;
 		this.data[name] = newValue;
 	}
 
 	#initComponent() {
-		this.html = document.createElement("div");
-		this.html.innerHTML = this.#html(this.data);
-		if (styles) {
-			this.elmtId = `elmtId_${Math.floor(Math.random() * 100000000000)}`;
-			this.styles = document.createElement("style");
-			this.styles.textContent = this.#styles();
-			this.html.classList.add(`${this.elmtId}`);
-		}
-	}
+		this.html = componentSetup(this, getHtml(this.data), styles);
 
-	#styles() {
-		if (styles)
-			return `@scope (.${this.elmtId}) {${styles}}`;
-		return null;
-	}
-
-	#html(data){
-		return getHtml(data);
-	}
-
-	#render() {
-		if (styles)
-			this.appendChild(this.styles);
-		this.appendChild(this.html);
+		this.inviteBtn = this.html.querySelector(".btn-invite");
+		this.refreshBtn = this.html.querySelector(".refresh-btn");
 	}
 
 	#scripts() {
@@ -259,26 +249,24 @@ export default class TourneyInviter extends HTMLElement {
 		if (key)
 			queryParam = `?key=${key}`;
 
-		callAPI("GET", `http://127.0.0.1:8000/api/tournament/friend-list/${queryParam}`, null, (res, data) => {
+		callAPI("GET", `/tournament/friend-list/${queryParam}`, null, (res, data) => {
 			if (res.ok) {
 				this.#createFriendsList(data.friends);
 				this.#selectFriendEvent();
 			}
+			this.refreshBtn.disabled = false;
 		});
 	}
 
 	#getListPendingInvites() {
-		callAPI("GET", `http://127.0.0.1:8000/api/tournament/invited-friends/`, null, (res, data) => {
+		callAPI("GET", `/tournament/invited-friends/`, null, (res, data) => {
 			if (res.ok && data)
 				this.#createInvitesSendList(data.invited_users);
 		});
 	}	
 
 	#setBtnInviteEvent() {
-		const btn = this.html.querySelector(".btn-invite");
-		if (!btn)
-			return ;
-		btn.addEventListener("click", () => {
+		this.inviteBtn.addEventListener("click", () => {
 			if (!this.selectedElm.length)
 				return ;
 			const data = {
@@ -288,15 +276,18 @@ export default class TourneyInviter extends HTMLElement {
 			this.selectedElm.forEach((elm) => {
 				data.invites_list.push(elm.substring(3));
 			});
-			callAPI("POST", `http://127.0.0.1:8000/api/tournament/invite/`, data, (res, data) => {
+
+			this.inviteBtn.disabled = true;
+			callAPI("POST", `/tournament/invite/`, data, (res, data) => {
 				if (res.ok) {
 					this.#getListPendingInvites();
 					this.selectedElm.forEach((elm) => {
 						this.#removeFriendFromList(elm.substring(3));
 					});
 					this.selectedElm.length = 0; // clear array
+					this.inviteBtn.disabled = false;
 				}
-			}, null, stateManager.getState("csrfToken"));
+			}, null, getCsrfToken());
 		});
 	}
 
@@ -308,24 +299,26 @@ export default class TourneyInviter extends HTMLElement {
 			return ;
 		btn.addEventListener("click", () => {
 			const inviteId = btn.id.substring(3);
-			callAPI("DELETE", `http://127.0.0.1:8000/api/tournament/invite/?id=${inviteId}`, null, (res, data) => {
+			btn.disabled = true;
+			callAPI("DELETE", `/tournament/invite/?id=${inviteId}`, null, (res, data) => {
 				if (res.ok)
 					this.#removeInvitesSendFromList(inviteId);
-			}, null , stateManager.getState("csrfToken"));
+				btn.disabled = false;
+			}, null , getCsrfToken());
 		});
 	}
 
 	#setRefreshFriendsListEvent() {
-		const btn = this.html.querySelector(".refresh-icon");
-		if (!btn)
-			return ;
-		btn.addEventListener("click", () => {
+		this.refreshBtn.addEventListener("click", () => {
+			this.refreshBtn.disabled = true;
 			this.#getFriendsCallApi();
 		});
 	}
 
 	#checkInvitesPolling() {
 		this.intervalID = setInterval(() => {
+			if (!stateManager.getState("isOnline"))
+				return ;
 			this.#getListPendingInvites();
 		}, 5000);
 	}

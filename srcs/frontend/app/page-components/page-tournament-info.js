@@ -1,7 +1,7 @@
 import { adjustContent } from "../utils/adjustContent.js";
-import stateManager from "../js/StateManager.js";
 import { callAPI } from "../utils/callApiUtils.js";
 import { render } from "../js/router.js";
+import componentSetup from "../utils/componentSetupUtils.js";
 
 const styles = `
 
@@ -20,7 +20,7 @@ const getHtml = function(data) {
 }
 
 
-const title = "Tournament Info";
+const title = "BlitzPong - Tournament Info";
 
 export default class PageTournamentInfo extends HTMLElement {
 	static #componentName = "page-tournament-info";
@@ -29,6 +29,7 @@ export default class PageTournamentInfo extends HTMLElement {
 	constructor() {
 		super()
 		this.data = {};
+		document.title = title;
 	}
 
 	connectedCallback() {
@@ -36,7 +37,7 @@ export default class PageTournamentInfo extends HTMLElement {
 			render("<page-404></page-404>");
 		}
 		else {
-			callAPI("GET", `http://127.0.0.1:8000/api/tournament/info/?id=${this.data.id}`, null, (res, data) => {
+			callAPI("GET", `/tournament/info/?id=${this.data.id}`, null, (res, data) => {
 				if (res.ok && data && data.info) {
 					this.data["info"] = data.info;
 					this.#start();
@@ -57,35 +58,11 @@ export default class PageTournamentInfo extends HTMLElement {
 
 	#start() {
 		this.#initComponent();
-		this.#render();
 		this.#scripts();
 	}
 
 	#initComponent() {
-		this.html = document.createElement("div");
-		this.html.innerHTML = this.#html(this.data);
-		if (styles) {
-			this.elmtId = `elmtId_${Math.floor(Math.random() * 100000000000)}`;
-			this.styles = document.createElement("style");
-			this.styles.textContent = this.#styles();
-			this.html.classList.add(`${this.elmtId}`);
-		}
-	}
-
-	#styles() {
-		if (styles)
-			return `@scope (.${this.elmtId}) {${styles}}`;
-		return null;
-	}
-
-	#html(data){
-		return getHtml(data);
-	}
-
-	#render() {
-		if (styles)
-			this.appendChild(this.styles);
-		this.appendChild(this.html);
+		this.html = componentSetup(this, getHtml(this.data), styles);
 	}
 
 	#scripts() {

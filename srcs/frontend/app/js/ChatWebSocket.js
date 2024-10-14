@@ -1,4 +1,5 @@
 import stateManager from "./StateManager.js";
+import DOMAIN from "./domain.js";
 
 /*
 Values of connection
@@ -10,7 +11,7 @@ this.socket.CLOSING
 */
 
 // Wrong link, another link is needed. This is just for test
-const webSockettUrl = "ws://127.0.0.1:8000/chat_connection/";
+const webSockettUrl = `ws://${DOMAIN}/chat_connection/`;
 
 class ChatWebSocket {
 
