@@ -1,5 +1,6 @@
 import { adjustContent } from "../utils/adjustContent.js";
 import stateManager from "../js/StateManager.js";
+import componentSetup from "../utils/componentSetupUtils.js";
 import { callAPI } from "../utils/callApiUtils.js";
 
 const styles = `
@@ -18,14 +19,14 @@ const getHtml = function(data) {
 }
 
 
-const title = "Chat";
+const title = "BlitzPong - Chat";
 
 export default class PageChat extends HTMLElement {
 	static #componentName = "page-chat";
 
 	constructor() {
 		super()
-
+		document.title = title;
 		this.data = {};
 		this.#loadInitialData();
 	}
@@ -35,7 +36,7 @@ export default class PageChat extends HTMLElement {
 	}
 
 	async #loadInitialData() {
-		await callAPI("GET", "http://127.0.0.1:8000/api/settings/", null, (res, data) => {
+		await callAPI("GET", "/settings/", null, (res, data) => {
 			if (res.ok) {
 				if (data && data.settings.language){
 					this.data.language = data.settings.language;
@@ -44,36 +45,11 @@ export default class PageChat extends HTMLElement {
 		});
 
 		this.#initComponent();
-		this.#render();
 		this.#scripts();
 	}
 
 	#initComponent() {
-		this.html = document.createElement("div");
-		this.html.innerHTML = this.#html(this.data);
-		if (styles) {
-			this.elmtId = `elmtId_${Math.floor(Math.random() * 100000000000)}`;
-			this.styles = document.createElement("style");
-			this.styles.textContent = this.#styles();
-			this.html.classList.add(`${this.elmtId}`);
-		}
-	}
-
-	#styles() {
-		if (styles)
-			return `@scope (.${this.elmtId}) {${styles}}`;
-		return null;
-	}
-
-	#html(data){
-		return getHtml(data);
-	}
-
-	#render() {
-		if (styles)
-			this.appendChild(this.styles);
-		this.appendChild(this.html);
-		stateManager.setState("pageReady", true);
+		this.html = componentSetup(this, getHtml(this.data), styles);
 	}
 
 	#scripts() {

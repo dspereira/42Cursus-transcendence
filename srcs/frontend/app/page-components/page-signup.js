@@ -1,4 +1,4 @@
-import stateManager from "../js/StateManager.js";
+import componentSetup from "../utils/componentSetupUtils.js";
 
 const styles = ``;
 
@@ -15,7 +15,7 @@ const getHtml = function(data) {
 	return html;
 }
 
-const title = "Signup Page";
+const title = "BlitzPong - Signup";
 
 export default class PageSignup extends HTMLElement {
 	
@@ -23,8 +23,10 @@ export default class PageSignup extends HTMLElement {
 
 	constructor() {
 		super()
+
+		document.title = title;
+		
 		this.#initComponent();
-		this.#render();
 	}
 
 	static get componentName() {
@@ -32,32 +34,8 @@ export default class PageSignup extends HTMLElement {
 	}
 
 	#initComponent() {
-		this.html = document.createElement("div");
-		this.html.innerHTML = this.#html();
-		if (styles) {
-			this.elmtId = `elmtId_${Math.floor(Math.random() * 100000000000)}`;
-			this.styles = document.createElement("style");
-			this.styles.textContent = this.#styles();
-			this.html.classList.add(`${this.elmtId}`);
-		}
+		this.html = componentSetup(this, getHtml(), styles);
 	}
-
-	#styles() {
-		if (styles)
-			return `@scope (.${this.elmtId}) {${styles}}`;
-		return null;
-	}
-
-	#html(data){
-		return getHtml(data);
-	}
-
-	#render() {
-		if (styles)
-			this.appendChild(this.styles);
-		this.appendChild(this.html);
-		stateManager.setState("pageReady", true);
-	}	
 }
 
 customElements.define(PageSignup.componentName, PageSignup);

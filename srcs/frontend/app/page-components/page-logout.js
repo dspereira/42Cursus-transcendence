@@ -1,6 +1,7 @@
 import {redirect} from "../js/router.js";
 import stateManager from "../js/StateManager.js";
 import { callAPI } from "../utils/callApiUtils.js";
+import { getCsrfToken } from "../utils/csrfTokenUtils.js"
 
 const styles = ``;
 
@@ -36,7 +37,7 @@ export default class PageLogout extends HTMLElement {
 	}
 
 	async #loadInitialData() {
-		await callAPI("GET", "http://127.0.0.1:8000/api/settings/", null, (res, data) => {
+		await callAPI("GET", "/settings/", null, (res, data) => {
 			if (res.ok) {
 				if (data && data.settings.language){
 					this.data.language = data.settings.language;
@@ -87,16 +88,14 @@ export default class PageLogout extends HTMLElement {
 	}
 
 	#apiResHandlerCalback(res, data) {
-		if (data.ok && res.message === "success")
-			updateLoggedInStatus(false);
-		else
+		if (res.ok)
 			redirect("/");
 	}
 
 	#logoutEvent() {
 		const logout = this.html.querySelector("#logout-submit");
 		logout.addEventListener("click", (event) => {
-			callAPI("POST", "http://127.0.0.1:8000/api/auth/logout", null, this.#apiResHandlerCalback, null, stateManager.getState("csrfToken"));
+			callAPI("POST", "/auth/logout", null, this.#apiResHandlerCalback, null, getCsrfToken());
 		});
 	}
 }

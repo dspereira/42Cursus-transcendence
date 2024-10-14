@@ -1,9 +1,9 @@
-import stateManager from "../js/StateManager.js";
 import { redirect } from "../js/router.js";
 import { callAPI } from "../utils/callApiUtils.js";
 import { render } from "../js/router.js";
 import { getHtmlElm } from "../utils/getHtmlElmUtils.js";
 import PageEmailSent from "./page-email-sent.js";
+import componentSetup from "../utils/componentSetupUtils.js";
 
 const styles = `
 .mail-info-container {
@@ -39,7 +39,7 @@ const getHtml = function(data) {
 	return html;
 }
 
-const title = "Email Resend";
+const title = "BlitzPong - Email Resend";
 
 export default class PageEmailResend extends HTMLElement {
 	static #componentName = "page-email-resend";
@@ -48,8 +48,10 @@ export default class PageEmailResend extends HTMLElement {
 	constructor() {
 		super()
 		this.data = {};
+
+		document.title = title;
+
 		this.#initComponent();
-		this.#render();
 		this.#scripts();
 	}
 
@@ -62,31 +64,7 @@ export default class PageEmailResend extends HTMLElement {
 	}	
 
 	#initComponent() {
-		this.html = document.createElement("div");
-		this.html.innerHTML = this.#html();
-		if (styles) {
-			this.elmtId = `elmtId_${Math.floor(Math.random() * 100000000000)}`;
-			this.styles = document.createElement("style");
-			this.styles.textContent = this.#styles();
-			this.html.classList.add(`${this.elmtId}`);
-		}
-	}
-
-	#styles() {
-		if (styles)
-			return `@scope (.${this.elmtId}) {${styles}}`;
-		return null;
-	}
-
-	#html(data){
-		return getHtml(data);
-	}
-
-	#render() {
-		if (styles)
-			this.appendChild(this.styles);
-		this.appendChild(this.html);
-		stateManager.setState("pageReady", true);
+		this.html = componentSetup(this, getHtml(this.data), styles);
 	}
 
 	#scripts() {
@@ -108,9 +86,11 @@ export default class PageEmailResend extends HTMLElement {
 		if (!btn)
 			return ;
 		btn.addEventListener("click", () => {
-			callAPI("POST", `http://127.0.0.1:8000/api/auth/resend-email-validation/`, {info: this.data.key}, (res, data) => {
-				if (res.ok)
+			btn.disabled = true;
+			callAPI("POST", `/auth/resend-email-validation/`, {info: this.data.key}, (res, data) => {
+				if (res.ok) 
 					render(getHtmlElm(PageEmailSent));	
+				btn.disabled = false; 
 			});
 		});
 	}

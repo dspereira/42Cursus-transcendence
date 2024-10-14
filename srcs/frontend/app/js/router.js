@@ -17,6 +17,7 @@ import PageEmailVerification from "../page-components/page-email-verification.js
 import PageEmailSent from "../page-components/page-email-sent.js";
 import PageEmailResend from "../page-components/page-email-resend.js";
 import Page2FA from "../page-components/page-2fa.js";
+import PageError from "../page-components/page-error.js";
 
 // Components
 import AppHeader from "../components/app-header.js";
@@ -53,7 +54,6 @@ import TfaForm from "../components/tfa-form.js";
 import stateManager from "./StateManager.js";
 import checkUserLoginState from "../utils/checkUserLoginState.js";
 import { getHtmlElm } from "../utils/getHtmlElmUtils.js";
-import updateLoggedInStatus from "../utils/updateLoggedInUtils.js";
 
 const routes = {
 	"/initial"			: getHtmlElm(PageInitial),
@@ -81,28 +81,6 @@ const initialRoute = "/initial";
 
 const PUBLIC_ACCESS = "public";
 const PRIVATE_ACCESS = "private";
-
-// remover o page ready state
-
-/*
-const render = function(page) {
-	const app = document.querySelector("#app");
-	const oldElm = app.querySelector("#app > div");
-	const newElm = document.createElement("div");
-	
-	stateManager.addEvent("pageReady", (state) => {
-		if (state) {
-			stateManager.setState("pageReady", false);
-			if (!oldElm)
-				app.appendChild(newElm);
-			else
-				app.replaceChild(newElm, oldElm);
-		}
-	});
-	newElm.innerHTML = page;
-}
-	*/
-
 
 export const render = function(page) {
 	const app = document.querySelector("#app");
@@ -184,9 +162,7 @@ const normalizeRoute = function(route) {
 }
 
 let init = true;
-let isRouting;
 export const router = function(route, isHistoryNavigation) {
-	isRouting = true;
 	stateManager.cleanEvents();
 	checkUserLoginState((isLoggedIn) => {
 		let htmlPage;
@@ -225,7 +201,6 @@ export const router = function(route, isHistoryNavigation) {
 
 		render(htmlPage);
 		init = false;
-		isRouting = false;
 	});
 }
 
@@ -262,9 +237,10 @@ export const redirect = function(route) {
 }
 
 stateManager.addEvent("isLoggedIn", (isLoggedIn) => {
-	if (!isLoggedIn && !isRouting) {
+	if (!isLoggedIn) {
 		const routeObj = getRouteInfo(getCurrentRoute());
-		if (routeObj.accessLevel == PRIVATE_ACCESS)
+		if (routeObj.accessLevel == PRIVATE_ACCESS) {
 			redirect(initialRoute);
+		}
 	}
 });

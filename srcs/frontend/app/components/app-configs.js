@@ -1,7 +1,8 @@
 import { callAPI } from "../utils/callApiUtils.js";
 import isValidUsername from "../utils/usernameValidationUtils.js";
 import getCountryCodesOptions from "../utils/countryCodesUtils.js";
-import stateManager from "../js/StateManager.js";
+import { getCsrfToken } from "../utils/csrfTokenUtils.js"
+import componentSetup from "../utils/componentSetupUtils.js";
 import { enAppConfigs } from "../lang-dicts/enLangDict.js";
 import { ptAppConfigs } from "../lang-dicts/ptLangDict.js";
 import { esAppConfigs } from "../lang-dicts/esLangDict.js";
@@ -229,8 +230,7 @@ export default class AppConfigs extends HTMLElement {
 		this.qrcodeConfigured = false;
 		this.imageSeed = "";
 		this.imageFile = "";
-		this.data = {};
-
+		this.savedImageUrl;
 	}
 
 	connectedCallback() {
@@ -241,7 +241,6 @@ export default class AppConfigs extends HTMLElement {
 			"imageType": `${this.data.langDict.image_type}${suportedFileTypesToString()}`
 		}
 		this.#initComponent();
-		this.#render();
 		this.#scripts();
 	}
 
@@ -252,15 +251,13 @@ export default class AppConfigs extends HTMLElement {
 		}
 	}
 
+	disconnectedCallback() {
+		if (this.savedImageUrl)
+			URL.revokeObjectURL(this.savedImageUrl);
+	}
+
 	#initComponent() {
-		this.html = document.createElement("div");
-		this.html.innerHTML = this.#html(this.data);
-		if (styles) {
-			this.elmtId = `elmtId_${Math.floor(Math.random() * 100000000000)}`;
-			this.styles = document.createElement("style");
-			this.styles.textContent = this.#styles();
-			this.html.classList.add(`${this.elmtId}`);
-		}
+		this.html = componentSetup(this, getHtml(this.data), styles);
 		this.settingsForm = this.html.querySelector("#settings-form");
 		this.usernameInp = this.html.querySelector("#new-username");
 		this.bioInp = this.html.querySelector("#new-bio");
@@ -279,22 +276,6 @@ export default class AppConfigs extends HTMLElement {
 		this.phoneCheckbox = this.html.querySelector("#phone");
 		this.showQrcode = this.html.querySelector(".show-qrcode");
 		this.qrcodeImg = this.html.querySelector(".qrcode-img");
-	}
-
-	#styles() {
-		if (styles)
-			return `@scope (.${this.elmtId}) {${styles}}`;
-		return null;
-	}
-
-	#html(data){
-		return getHtml(data);
-	}
-
-	#render() {
-		if (styles)
-			this.appendChild(this.styles);
-		this.appendChild(this.html);
 	}
 
 	#scripts() {
@@ -349,7 +330,7 @@ export default class AppConfigs extends HTMLElement {
 			if (this.imageFile)
 				formData.append('image', this.imageFile);
 			
-			callAPI("POST", "http://127.0.0.1:8000/api/settings/", formData, (res, resData) => {
+			callAPI("POST", "/settings/", formData, (res, resData) => {
 				if (res.ok && resData) {
 					this.#loadData(resData.settings);
 					this.#cleanErrorStyles();
@@ -361,12 +342,12 @@ export default class AppConfigs extends HTMLElement {
 					this.#setErrorMessage(resData.message);
 				}
 				this.submitBtn.disabled = false;
-			}, null, stateManager.getState("csrfToken"));
+			}, null, getCsrfToken());
 		});
 	}
 
 	#getUserSettings() {
-		callAPI("GET", "http://127.0.0.1:8000/api/settings/", null, (res, resData) => {
+		callAPI("GET", "/settings/", null, (res, resData) => {
 			if (res.ok && resData && resData.settings)
 				this.#loadData(resData.settings);
 		});
@@ -403,16 +384,25 @@ export default class AppConfigs extends HTMLElement {
 			if (!this.imageFile)
 				return ;
 			if (this.imageFile.size > MAX_IMAGE_SIZE_BYTES) {
-				this.#setErrorMessage(this.messages.imageSize);
+				this.#handleImageError(this.messages.imageSize);
 				return ;
 			}
 			if (!isFalidFormat(this.imageFile.type)) {
-				this.#setErrorMessage(this.messages.imageType);
+				this.#handleImageError(this.messages.imageType);
 				return ;
 			}
-			this.imagePreview.setAttribute("src", URL.createObjectURL(this.imageFile));
+			if (this.savedImageUrl)
+				URL.revokeObjectURL(this.savedImageUrl);
+			this.savedImageUrl = URL.createObjectURL(this.imageFile);
+			this.imagePreview.setAttribute("src", this.savedImageUrl);
 			this.imageSeed = "";
 		});
+	}
+
+	#handleImageError(msg) {
+		this.#setErrorMessage(msg);
+		this.imageFile = "";
+		this.newImageInp.value = "";	
 	}
 
 	#setFieldInvalid(field) {
@@ -434,6 +424,7 @@ export default class AppConfigs extends HTMLElement {
 			return ;
 		this.errorAlert.classList.remove("hide");
 		this.errorAlert.innerHTML = message;
+		this.successAlert.classList.add("hide");
 	}
 
 	#setSuccessMessage(message) {
@@ -441,6 +432,7 @@ export default class AppConfigs extends HTMLElement {
 			return ;
 		this.successAlert.classList.remove("hide");
 		this.successAlert.innerHTML = message;
+		this.errorAlert.classList.add("hide");
 	}
 
 	#cleanSuccessMessage() {
@@ -541,19 +533,20 @@ export default class AppConfigs extends HTMLElement {
 			}
 			else
 				this.showQrcode.classList.add("hide");
-
 		});
 	}
 
 	#showQrcode() {
 		this.showQrcode.addEventListener("click", (event) => {
+			this.showQrcode.disabled = true;
 			event.preventDefault();
-			callAPI("POST", "http://127.0.0.1:8000/api/two-factor-auth/request-qr-code/", null, (res, data) => {
+			callAPI("POST", "/two-factor-auth/request-qr-code/", null, (res, data) => {
 				if (res.ok && data && data.qr_code) {
 					this.qrcodeImg.classList.remove("hide");
 					this.qrcodeImg.setAttribute("src", 'data:image/png;base64,' + data.qr_code);
 				}
-			}, null, stateManager.getState("csrfToken"));
+				this.showQrcode.disabled = false;
+			}, null, getCsrfToken());
 		});
 	}
 }

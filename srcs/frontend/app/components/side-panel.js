@@ -4,7 +4,7 @@ import { enSidePanelDict } from "../lang-dicts/enLangDict.js";
 import { ptSidePanelDict } from "../lang-dicts/ptLangDict.js";
 import { esSidePanelDict } from "../lang-dicts/esLangDict.js";
 import getLanguageDict from "../utils/languageUtils.js";import {callAPI} from "../utils/callApiUtils.js";
-
+import componentSetup from "../utils/componentSetupUtils.js";
 
 const styles = `
 
@@ -198,12 +198,6 @@ const getHtml = function(data) {
 							<span class="icon-text">${data.langDict.home}</span>
 						</span>
 					</button>
-					<button id="profile">
-						<span>
-							<i class="icon bi bi-person"></i>
-							<span class="icon-text">${data.langDict.profile}</span>
-						</span>
-					</button>
 					<button id="chat">
 						<span>
 							<i class="icon bi bi-chat"></i>
@@ -257,7 +251,6 @@ const getHtml = function(data) {
 // key -> id element   value -> pretended route
 const navigation = [
 	"home",
-	"profile",
 	"chat",
 	"tournaments",
 	"logout",
@@ -268,7 +261,6 @@ const navigation = [
 
 const selectedIcon  = {
 	home: "bi-house-door-fill",
-	profile: "bi-person-fill",
 	chat: "bi-chat-fill",
 	tournaments: "bi-trophy-fill",
 	configurations: "bi-gear-fill",
@@ -278,7 +270,6 @@ const selectedIcon  = {
 
 const deselectedIcon = {
 	home: "bi-house-door",
-	profile: "bi-person",
 	chat: "bi-chat",
 	tournaments: "bi-trophy",
 	configurations: "bi-gear",
@@ -297,7 +288,6 @@ export default class SidePanel extends HTMLElement {
 
 	connectedCallback() {
 		this.#initComponent();
-		this.#render();
 		this.intervalID = null;
 		this.#scripts();
 	}
@@ -320,37 +310,13 @@ export default class SidePanel extends HTMLElement {
 			this.data.language = newValue;
 		}
 	}
-
 	#initComponent() {
-		this.html = document.createElement("div");
 		this.data.state = stateManager.getState("sidePanel");
-		this.html.innerHTML = this.#html(this.data);
-		if (styles) {
-			this.elmtId = `elmtId_${Math.floor(Math.random() * 100000000000)}`;
-			this.styles = document.createElement("style");
-			this.styles.textContent = this.#styles();
-			this.html.classList.add(`${this.elmtId}`);
-		}
+		this.html = componentSetup(this, getHtml(this.data), styles);
 
 		this.gameNotifications = this.html.querySelector(".game-notifications");
 		this.tournamentNotifications = this.html.querySelector(".tournaments-notifications");
 		this.friendsNotifications = this.html.querySelector(".friends-notifications");
-	}
-
-	#styles() {
-			if (styles)
-				return `@scope (.${this.elmtId}) {${styles}}`;
-			return null;
-	}
-
-	#html(data){
-		return getHtml(data);
-	}
-
-	#render() {
-		if (styles)
-			this.appendChild(this.styles);
-		this.appendChild(this.html);
 	}
 
 	#scripts() {
@@ -363,12 +329,14 @@ export default class SidePanel extends HTMLElement {
 
 	#startInvitesPolling(){
 		this.intervalID = setInterval(() => {
-			this.#getNumberRequestsCallApi()
+			if (!stateManager.getState("isOnline"))
+				return ;
+			this.#getNumberRequestsCallApi();
 		}, 5000);
 	}
 
 	#getNumberRequestsCallApi(){
-		callAPI("GET", "http://127.0.0.1:8000/api/notifications/requests-notifications/", null, (res, data) => {
+		callAPI("GET", "/notifications/requests-notifications/", null, (res, data) => {
 			if (res.ok && data) {
 				this.#updateNotifications(this.gameNotifications, data.number_game_requests);
 				this.#updateNotifications(this.tournamentNotifications, data.number_tournament_requests);

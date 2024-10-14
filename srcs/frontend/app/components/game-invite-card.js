@@ -1,5 +1,6 @@
 import { callAPI } from "../utils/callApiUtils.js";
-import stateManager from "../js/StateManager.js";
+import { getCsrfToken } from "../utils/csrfTokenUtils.js";
+import componentSetup from "../utils/componentSetupUtils.js";
 import { enGameInviteCardDict } from "../lang-dicts/enLangDict.js";
 import { ptGameInviteCardDict } from "../lang-dicts/ptLangDict.js";
 import { esGameInviteCardDict } from "../lang-dicts/esLangDict.js";
@@ -86,7 +87,7 @@ const getHtml = function(data) {
 }
 
 export default class GameInviteCard extends HTMLElement {
-	static observedAttributes = ["username", "profile-photo", "invite-id", "exp", "user-id", "csrf-token", "language"];
+	static observedAttributes = ["username", "profile-photo", "invite-id", "exp", "user-id", "language"];
 
 	constructor() {
 		super()
@@ -95,7 +96,6 @@ export default class GameInviteCard extends HTMLElement {
 
 	connectedCallback() {
 		this.#initComponent();
-		this.#render();
 		this.#scripts();
 	}
 
@@ -106,8 +106,6 @@ export default class GameInviteCard extends HTMLElement {
 			name = "inviteId";
 		else if (name == "user-id")
 			name = "userId";
-		else if (name == "csrf-token")
-			name = "csrfToken";
 		else if (name == "language")
 			this.data.langDict = getLanguageDict(newValue, enGameInviteCardDict, ptGameInviteCardDict, esGameInviteCardDict);
 		this.data[name] = newValue;
@@ -117,30 +115,10 @@ export default class GameInviteCard extends HTMLElement {
 	}
 
 	#initComponent() {
-		this.html = document.createElement("div");
-		this.html.innerHTML = this.#html(this.data);
-		if (styles) {
-			this.elmtId = `elmtId_${Math.floor(Math.random() * 100000000000)}`;
-			this.styles = document.createElement("style");
-			this.styles.textContent = this.#styles();
-			this.html.classList.add(`${this.elmtId}`);
-		}
-	}
+		this.html = componentSetup(this, getHtml(this.data), styles);
 
-	#styles() {
-			if (styles)
-				return `@scope (.${this.elmtId}) {${styles}}`;
-			return null;
-	}
-
-	#html(data){
-		return getHtml(data);
-	}
-
-	#render() {
-		if (styles)
-			this.appendChild(this.styles);
-		this.appendChild(this.html);
+		this.joinBtn = this.html.querySelector(".join-btn");
+		this.declineBtn = this.html.querySelector(".decline-btn");
 	}
 
 	#scripts() {
@@ -149,11 +127,9 @@ export default class GameInviteCard extends HTMLElement {
 	}
 
 	#setJoinBtnEvent() {
-		const btn = this.html.querySelector(".join-btn");
-		if(!btn)
-			return ;
-		btn.addEventListener("click", () => {
-			callAPI("PUT", `http://127.0.0.1:8000/api/game/request/`, {id: this.data.inviteId}, (res, data) => {
+		this.joinBtn.addEventListener("click", () => {
+			this.joinBtn.disabled = true;
+			callAPI("PUT", `/game/request/`, {id: this.data.inviteId}, (res, data) => {
 				if (res.ok) {
 					const contentElm = document.querySelector(".content");
 					contentElm.innerHTML = `
@@ -163,19 +139,19 @@ export default class GameInviteCard extends HTMLElement {
 						></app-lobby>
 					`;
 				}
-			}, null, stateManager.getState("csrfToken"));
+				this.joinBtn.disabled = false;
+			}, null, getCsrfToken());
 		});
 	}
 
 	#setDeclineBtnEvent() {
-		const btn = this.html.querySelector(".decline-btn");
-		if(!btn)
-			return ;
-		btn.addEventListener("click", () => {
-			callAPI("DELETE", `http://127.0.0.1:8000/api/game/request/`, {id: this.data.inviteId}, (res, data) => {
+		this.declineBtn.addEventListener("click", () => {
+			this.declineBtn.disabled = true;
+			callAPI("DELETE", `/game/request/`, {id: this.data.inviteId}, (res, data) => {
 				if (res.ok)
 					this.remove();
-			}, null, stateManager.getState("csrfToken"));
+				this.declineBtn.disabled = false;
+			}, null, getCsrfToken());
 		});
 	}
 

@@ -1,5 +1,6 @@
 import {callAPI} from "../utils/callApiUtils.js";
 import parseDate from "../utils/timeDateUtils.js";
+import componentSetup from "../utils/componentSetupUtils.js";
 import { enGameHistory } from "../lang-dicts/enLangDict.js";
 import { ptGameHistory } from "../lang-dicts/ptLangDict.js";
 import { esGameHistory } from "../lang-dicts/esLangDict.js";
@@ -105,7 +106,6 @@ export default class GameHistory extends HTMLElement {
 
 	connectedCallback() {
 		this.#initComponent();
-		this.#render();
 		this.#scripts();
 	}
 
@@ -116,33 +116,11 @@ export default class GameHistory extends HTMLElement {
 	}
 
 	#initComponent() {
-		this.html = document.createElement("div");
-		this.html.innerHTML = this.#html(this.data);
-		if (styles) {
-			this.elmtId = `elmtId_${Math.floor(Math.random() * 100000000000)}`;
-			this.styles = document.createElement("style");
-			this.styles.textContent = this.#styles();
-			this.html.classList.add(`${this.elmtId}`);
-		}
+		this.html = componentSetup(this, getHtml(this.data), styles);
+
 		this.btnTournamentGames = this.html.querySelector(".btn-tournament-games");
 		this.btnSoloGames = this.html.querySelector(".btn-solo-games");
 		this.gamesListHtml = this.html.querySelector(".games-list");
-	}
-
-	#styles() {
-			if (styles)
-				return `@scope (.${this.elmtId}) {${styles}}`;
-			return null;
-	}
-
-	#html(data){
-		return getHtml(data);
-	}
-
-	#render() {
-		if (styles)
-			this.appendChild(this.styles);
-		this.appendChild(this.html);
 	}
 
 	#scripts() {
@@ -204,16 +182,20 @@ export default class GameHistory extends HTMLElement {
 	}
 
 	#getGameList() {
-		callAPI("GET", `http://127.0.0.1:8000/api/game/get-games/?username=${this.data.username}`, null, (res, data) => {
+		this.btnSoloGames.disbled = true;
+		callAPI("GET", `/game/get-games/?username=${this.data.username}`, null, (res, data) => {
 			if (res.ok && data)
 				this.#insertGames(data.games_list);
+			this.btnSoloGames.disbled = false;
 		});
 	};
 
 	#getTournamentList() {
-		callAPI("GET", `http://127.0.0.1:8000/api/tournament/?username=${this.data.username}`, null, (res, data) => {
+		this.btnTournamentGames.disbled = true;
+		callAPI("GET", `/tournament/?username=${this.data.username}`, null, (res, data) => {
 			if (res.ok && data)
 				this.#insertTournaments(data.tournaments_list);
+			this.btnTournamentGames.disbled = false;
 		});		
 	}
 
