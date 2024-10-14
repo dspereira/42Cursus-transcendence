@@ -187,23 +187,27 @@ def _set_cookies(response, token_gen):
 		value=token_gen.get_access_token(),
 		httponly=True,
 		expires=token_gen.get_access_token_exp(),
-		samesite="Lax",
-		path="/"
+		samesite="Strict",
+		path="/",
+		secure=True
 	)
 	response.set_cookie(
 		key="refresh",
 		value=token_gen.get_refresh_token(),
 		httponly=True,
 		expires=token_gen.get_refresh_token_exp(),
-		samesite="Lax",
-		path="/api/auth"
+		samesite="Strict",
+		path="/api/auth",
+		secure=True
 	)
 
 def _set_tfa_cookie(response, token):
 	response.set_cookie(
 		key="two_factor_auth",
 		value=token.get_tfa_token(),
-		httponly=True, expires=token.get_tfa_token_exp(),
-		samesite="Lax",
-		path="/api/two-factor-auth"
+		httponly=True,
+		expires=token.get_tfa_token_exp(),
+		samesite="Strict",
+		path="/api/two-factor-auth",
+		secure=True
 	)

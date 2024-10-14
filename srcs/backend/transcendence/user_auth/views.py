@@ -150,6 +150,7 @@ def get_csrf_token(request):
 		response = JsonResponse({"message": "Could not get CSRF Token."}, status=409)
 	return response
 
+@csrf_exempt
 @accepted_methods(["POST"])
 @check_request_body(["email_token"])
 def validate_email(request):
