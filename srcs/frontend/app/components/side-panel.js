@@ -346,12 +346,6 @@ const getHtml = function(data) {
 								<span class="icon-text">Home</span>
 							</span>
 						</button>
-						<button id="profile">
-							<span>
-								<i class="icon bi bi-person"></i>
-								<span class="icon-text">Profile</span>
-							</span>
-						</button>
 						<button id="chat">
 							<span>
 								<i class="icon bi bi-chat"></i>
