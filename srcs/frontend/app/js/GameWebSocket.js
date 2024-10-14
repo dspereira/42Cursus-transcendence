@@ -10,7 +10,7 @@ this.socket.CLOSED
 this.socket.CLOSING
 */
 
-const webSocketUrl = `ws://${DOMAIN}/game/`;
+const webSocketUrl = `wss://${DOMAIN}/ws/game/`;
 
 class GameWebSocket {
 

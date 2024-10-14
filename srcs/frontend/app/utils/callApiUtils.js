@@ -6,7 +6,7 @@ import { getHtmlElm } from "./getHtmlElmUtils.js";
 import PageError from "../page-components/page-error.js";
 import DOMAIN from "../js/domain.js";
 
-const API_ROUTE 		= `http://${DOMAIN}/api`;
+const API_ROUTE 		= `https://${DOMAIN}/api`;
 const REFRESH_URL		= `${API_ROUTE}/auth/refresh_token`;
 const REFRESH_METHOD	= `POST`;
 
