@@ -10,7 +10,7 @@ const styles = `
 		min-width: 460px;
 		flex-direction: row;
 		color: ${colors.second_text};
-		display: flex;
+		display: flex;	
 		justify-content: center;
 		gap: 50px;
 	}
@@ -30,9 +30,11 @@ const styles = `
 			flex-direction: column;
 			align-items: center;
 		}
+
 		.history {
 			width: 100%;
 		}
+
 		.profile {
 			width: 100%;
 		}
