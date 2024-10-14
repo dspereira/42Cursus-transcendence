@@ -46,6 +46,7 @@ const styles = `
 		align-items: center;
 		gap: 33%;
 		width: 100%;
+		color: ${colors.second_text};
 	}
 
 	.victory-container, .defeat-container {
@@ -87,6 +88,7 @@ const styles = `
 		display: flex;
 		flex-direction: column;
 		overflow-y: auto;
+		color: ${colors.second_text};
 	}
 
 	@media (max-width: 1000px) {

@@ -122,27 +122,55 @@ user-card {
 	transition: 0.5s;
 }
 
+.user-list {
+	display: flex;
+	flex-direction: row;
+	justify-content: center;
+	flex-wrap: wrap;
+	gap: 20px;
+	overflow-y: auto;
+}
+
+.notification {
+	background: red;
+	border-radius: 50%;
+	padding: 7px 7px;
+}
+
+.hide {
+	display: none;
+}
+
+.no-friends-text {
+	font-size: 16px;
+	text-align: center;
+}
+
 .alert-div {
 	display: flex;
+	margin: 0px auto;
 	width: 100%;
-	animation: disappear linear 10s forwards;
+	animation: disappear linear 5s forwards;
 	background-color: ${colors.alert};
+	z-index: 1001;
+	position: relative;
+	margin-bottom: 30px;
 }
 
 .alert-bar {
-	width: 100%;
+	width: 95%;
 	height: 5px;
 	border-style: hidden;
 	border-radius: 2px;
 	background-color: ${colors.alert_bar};
 	position: absolute;
 	bottom: 2px;
-	animation: expire linear 10s forwards;
+	animation: expire linear 5s forwards;
 }
 
 @keyframes expire {
 	from {
-		width: 100%;
+		width: 95%;
 	}
 	to {
 		width: 0%;
@@ -163,31 +191,6 @@ user-card {
 		opacity: 0;
 		display: none;
 	}
-}
-
-.user-list {
-	display: flex;
-	flex-direction: row;
-	justify-content: center;
-	flex-wrap: wrap;
-	gap: 20px;
-	overflow-y: auto;
-}
-
-.notification {	
-	background: red;
-	border-radius: 50%;
-	padding: 7px 7px;
-}
-
-.hide {
-	display: none;
-}
-
-.no-friends-text {
-	font-size: 16px;
-	text-align: center;
-
 }
 
 `;

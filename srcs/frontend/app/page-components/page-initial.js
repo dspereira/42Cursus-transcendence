@@ -50,7 +50,7 @@ const styles = `
 		flex-direction: column;
 		max-width: 900px;
 		min-width: 460px;
-		height: 90%;
+		height: 80%;
 		max-height: 600px;
 		justify-content: center;
 		align-items: center;
@@ -171,7 +171,7 @@ const styles = `
 const getHtml = function(data) {
 	const html = `
 	<div class=main-container>
-	<div class=second-container>
+		<div class=second-container>
 			<div class=title-container>
 				<img src="../img/pong-2k.png" class=logo-img>
 			</div>

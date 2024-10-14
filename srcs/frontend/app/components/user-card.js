@@ -321,8 +321,11 @@ export default class UserCard extends HTMLElement {
 					redirect("/play");
 					btn.disabled = false;
 				}
-				else 
+				else {
+					stateManager.setState("errorMsg", "User is no longer your friend");
+					console.log("USER REMOVED!!");
 					this.remove();
+				}
 			});
 		});
 	}
@@ -339,8 +342,10 @@ export default class UserCard extends HTMLElement {
 					redirect("/chat");
 					btn.disabled = false;
 				}
-				else 
+				else {
+					stateManager.setState("errorMsg", "User is no longer your friend");
 					this.remove();
+				}
 			});
 		});		
 	}
