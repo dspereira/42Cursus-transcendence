@@ -283,6 +283,8 @@ export default class TfaForm extends HTMLElement {
 							stateManager.setState("errorMsg", data.message);
 						}, 200);
 					}
+					else if (res.status == 409)
+						stateManager.setState("errorMsg", data.message);
 					// caso dê 401 colocar mensagem no frontend
 					this.#updateInvalidCodeStyle(true);
 					this.submitBtn.disabled = false;

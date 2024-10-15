@@ -147,7 +147,6 @@ export default class PagePlay extends HTMLElement {
 				if (alertBefore)
 					alertBefore.remove();
 				const insertElement = mainDiv.querySelector(".invite-game");
-				console.log("html = ", insertElement.innerHTML);
 				var alertCard = document.createElement("div");
 				alertCard.className = "alert alert-danger hide from alert-div";
 				alertCard.role = "alert";

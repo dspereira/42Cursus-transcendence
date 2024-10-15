@@ -180,13 +180,6 @@ const styles = `
 	background-clip: content-box;
 }
 
-.alert-div {
-	display: flex;
-	width: 100%;
-	animation: disappear linear 10s forwards;
-	background-color: ${colors.alert};
-}
-
 .separator {
 	display: flex;
 	width: 80%;
@@ -198,20 +191,29 @@ const styles = `
 	background-color: ${colors.main_card};
 }
 
-.alert-bar {
+.alert-div {
+	display: flex;
+	margin: 30px auto;
 	width: 100%;
+	animation: disappear linear 5s forwards;
+	background-color: ${colors.alert};
+	z-index: 1001;
+}
+
+.alert-bar {
+	width: 95%;
 	height: 5px;
 	border-style: hidden;
 	border-radius: 2px;
 	background-color: ${colors.alert_bar};
 	position: absolute;
 	bottom: 2px;
-	animation: expire linear 10s forwards;
+	animation: expire linear 5s forwards;
 }
 
 @keyframes expire {
 	from {
-		width: 100%;
+		width: 95%;
 	}
 	to {
 		width: 0%;

@@ -21,31 +21,33 @@ const styles = `
 
 	.alert-div {
 		display: flex;
+		margin: 30px auto;
 		width: 100%;
-		animation: disappear linear 10s forwards;
+		animation: disappear linear 5s forwards;
 		background-color: ${colors.alert};
+		z-index: 1001;
 	}
-	
+
 	.alert-bar {
-		width: 100%;
+		width: 95%;
 		height: 5px;
 		border-style: hidden;
 		border-radius: 2px;
 		background-color: ${colors.alert_bar};
 		position: absolute;
 		bottom: 2px;
-		animation: expire linear 10s forwards;
+		animation: expire linear 5s forwards;
 	}
-	
+
 	@keyframes expire {
 		from {
-			width: 100%;
+			width: 95%;
 		}
 		to {
 			width: 0%;
 		}
 	}
-	
+
 	@keyframes disappear {
 		0% {
 			visibility: visible;
@@ -113,7 +115,6 @@ export default class GameInviteRequest extends HTMLElement {
 				if (data)
 				{
 					this.#createRequestList(data.requests_list);
-					console.log(data.requests_list.length);
 					if (data.requests_list.length < this.lastRequestSize)
 						stateManager.setState("errorMsg", "An invite has expired");
 					this.lastRequestSize = data.requests_list.length;

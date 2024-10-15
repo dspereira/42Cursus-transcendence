@@ -555,7 +555,6 @@ export default class SidePanel extends HTMLElement {
 			if (btnId === "home")
 				btnId = "/";
 			redirect(btnId);
-			console.log("redirecting to ", btnId);
 		});
 	}
 

@@ -84,7 +84,7 @@ const styles = `
 }
 
 .alert-bar {
-	width: 100%;
+	width: 95%;
 	height: 5px;
 	border-style: hidden;
 	border-radius: 2px;
@@ -96,7 +96,7 @@ const styles = `
 
 @keyframes expire {
 	from {
-		width: 100%;
+		width: 95%;
 	}
 	to {
 		width: 0%;
@@ -251,7 +251,6 @@ export default class Page2FA extends HTMLElement {
 				if (alertBefore)
 					alertBefore.remove();
 				const insertElement = mainDiv.querySelector(".main-text");
-				console.log("html = ", insertElement.innerHTML);
 				var alertCard = document.createElement("div");
 				alertCard.className = "alert alert-danger hide from alert-div";
 				alertCard.role = "alert";

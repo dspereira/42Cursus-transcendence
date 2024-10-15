@@ -49,12 +49,11 @@ const styles = `
 
 .alert-div {
 	display: flex;
-	margin: 0px auto;
+	margin: 30px auto;
 	width: 100%;
 	animation: disappear linear 5s forwards;
 	background-color: ${colors.alert};
 	z-index: 1001;
-	position: relative;
 }
 
 .alert-bar {
@@ -193,7 +192,6 @@ export default class AppChat extends HTMLElement {
 				if (alertBefore)
 					alertBefore.remove();
 				const insertElement = mainDiv.querySelector(".no-friends-selected-msg");
-				console.log("html = ", insertElement.innerHTML);
 				var alertCard = document.createElement("div");
 				alertCard.className = "alert alert-danger hide from alert-div";
 				alertCard.role = "alert";

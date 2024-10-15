@@ -125,31 +125,31 @@ const styles = `
 		display: flex;
 		margin: 30px auto;
 		width: 80%;
-		animation: disappear linear 10s forwards;
+		animation: disappear linear 5s forwards;
 		background-color: ${colors.alert};
 		z-index: 1001;
 	}
-
+	
 	.alert-bar {
-		width: 100%;
+		width: 95%;
 		height: 5px;
 		border-style: hidden;
 		border-radius: 2px;
 		background-color: ${colors.alert_bar};
 		position: absolute;
 		bottom: 2px;
-		animation: expire linear 10s forwards;
+		animation: expire linear 5s forwards;
 	}
-
+	
 	@keyframes expire {
 		from {
-			width: 100%;
+			width: 95%;
 		}
 		to {
 			width: 0%;
 		}
 	}
-
+	
 	@keyframes disappear {
 		0% {
 			visibility: visible;
@@ -241,7 +241,6 @@ export default class PageInitial extends HTMLElement {
 				if (alertBefore)
 					alertBefore.remove();
 				const insertElement = mainDiv.querySelector(".second-container");
-				console.log("html = ", insertElement.innerHTML);
 				var alertCard = document.createElement("div");
 				alertCard.className = "alert alert-danger hide from alert-div";
 				alertCard.role = "alert";
