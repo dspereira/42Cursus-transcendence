@@ -199,6 +199,10 @@ legend {
 	color: ${colors.primary_text};
 }
 
+.top-margin {
+	margin-top: 30px;
+}
+
 .div-margin {
 	margin-bottom: 40px;
 }
@@ -350,7 +354,7 @@ const getHtml = function(data) {
 								</div>
 							</div>
 						</div>
-						<div class="form-check div-margin">
+						<div class="form-check ">
 							<input class="form-check-input" type="checkbox" value="phone" id="phone">
 							<label class="form-check-label" for="phone">
 								Phone
@@ -368,7 +372,7 @@ const getHtml = function(data) {
 							</div>
 						<div>
 					</fieldset>
-					<div class="main-conf-text">Game Settings</div>
+					<div class="main-conf-text top-margin">Game Settings</div>
 					<hr>
 					<label for="theme-options">Choose the game theme:</label>
 					<select class="form-select div-margin" id="theme-options" aria-label="Game theme selection">
