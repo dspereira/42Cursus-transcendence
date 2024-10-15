@@ -202,10 +202,7 @@ export default class TfaForm extends HTMLElement {
 	#sendTwoFactorCode(destination) {
 		callAPI("POST", `/two-factor-auth/request-${destination}/`, null, (res, data) => {		
 			if (!res.ok)
-			{
-				console.log(data.message); // Esta mensagem deve ser apresentada no frontend
 				stateManager.setState("errorMsg", data.message);
-			}
 			const btn = this.html.querySelector(".btn-resend");
 			if(btn)
 				btn.disabled = false;

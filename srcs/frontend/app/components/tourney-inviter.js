@@ -341,7 +341,6 @@ export default class TourneyInviter extends HTMLElement {
 
 	#removeFriendFromList(friendId) {
 		const elm = this.html.querySelector(`game-invite-card1[id="id-${friendId}"]`);
-		console.log()
 		if (elm)
 			elm.remove();
 	} 
@@ -350,7 +349,6 @@ export default class TourneyInviter extends HTMLElement {
 		friendCard.setAttribute("selected", "true");
 		this.selectedElm.push(friendCard.id);
 		const inviteButton = document.querySelector(".invite-btn");
-		console.log("selecting", this.selectedElm);
 		inviteButton.disabled = this.selectedElm == 0;
 	}
 

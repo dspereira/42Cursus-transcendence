@@ -517,7 +517,6 @@ export default class TourneyLobby extends HTMLElement {
 	#errorMsgEvents() {
 		stateManager.addEvent("errorMsg", (msg) => {
 			if (msg) {
-				console.log(msg);
 				stateManager.setState("errorMsg", null);
 				const alertBefore  = this.html.querySelector(".alert");
 				if (alertBefore)

@@ -204,7 +204,6 @@ export default class PageInitial extends HTMLElement {
 		this.#initComponent();
 		this.#scripts();
 		this.#errorMsgEvents();
-		console.log(stateManager);
 	}
 
 	static get componentName() {

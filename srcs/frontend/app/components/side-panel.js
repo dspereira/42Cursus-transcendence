@@ -443,7 +443,6 @@ export default class SidePanel extends HTMLElement {
 			const popup = document.querySelector('.logout-popup');
 			if (popup)
 				popup.style.display = "none";
-			console.log("ESC!!!");
 			document.removeEventListener('keydown', this.escClose);
 		};
 	}
@@ -635,7 +634,6 @@ export default class SidePanel extends HTMLElement {
 	}
 
 	#openSidePanel() {
-		console.log();
 		let sidePanel = this.html.querySelector(".side-panel-wrapper");
 		if (this.lastState == "close")
 			return ;

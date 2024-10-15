@@ -37,21 +37,13 @@ const browserOnlineEvent = function(html, callbackOnline, callbackOffline) {
 }
 
 const browserOnline = function(html) {
-
-	// Just for debug pls remove
-	console.log("online: ", html);
 	const elm = html.querySelector(".content");
 	const popup = elm.querySelector(".offline-popup");
-	console.log(elm);
 	if (popup)
 		popup.remove();
-	// elm.classList.add("back-blue");
 }
 
 const browserOffline = function(html) {
-
-	// Just for debug pls remove
-	console.log("offline: ", html);
 	const elm = html.querySelector(".content");
 	const popup = document.createElement("div");
 	const icon = document.createElement("i");
@@ -65,7 +57,6 @@ const browserOffline = function(html) {
 	popup.appendChild(icon);
 	popup.appendChild(test)
 	elm.appendChild(popup);
-	// elm.classList.remove("back-red");
 }
 
 export default componentSetup;

@@ -67,8 +67,6 @@ const getBtn = function(type) {
 	let icone = null;
 	let colorBtn = "btn-success";
 
-	console.log
-
 	if (type == "play")
 		icone = `bi-controller`;
 	else if (type == "chat")
@@ -323,7 +321,6 @@ export default class UserCard extends HTMLElement {
 				}
 				else {
 					stateManager.setState("errorMsg", "User is no longer your friend");
-					console.log("USER REMOVED!!");
 					this.remove();
 				}
 			});

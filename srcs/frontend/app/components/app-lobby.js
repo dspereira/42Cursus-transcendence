@@ -232,7 +232,6 @@ export default class AppLobby extends HTMLElement {
 			if (value) {
 				stateManager.setState("hasLobbyEnded", false);
 				redirect("/play");
-				console.log("lobby ended");//host leaves
 				setTimeout( () => {
 					stateManager.setState("errorMsg", "The lobby has ended");
 				}, 100);
@@ -249,15 +248,12 @@ export default class AppLobby extends HTMLElement {
 					return ;
 				callAPI("GET", `/game/has-pending-game-requests/`, null, (res, data) => {
 					if (res.ok) {
-						console.log("data = ", data);
-						console.log(res);
 						if (!data.has_pending_game_requests) {
 							clearInterval(this.intervalID);
-							redirect("/play"); // modificar esta redireçao
+							redirect("/play");
 							setTimeout( () => {
 								stateManager.setState("errorMsg", "All players have declined your invite");
 							}, 100);
-							console.log("lobby ended2"); //quando dao decline a todos os convites
 						}
 					}
 				});

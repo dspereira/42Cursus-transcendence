@@ -425,9 +425,6 @@ export default class GameInviteSend extends HTMLElement {
 			this.selectedElm.forEach((elm) => {
 				data.invites_list.push(elm.substring(3));
 			});
-
-			console.log(data);
-
 			this.inviteBtn.disabled = true;
 			callAPI("POST", "/game/request/", data, (res, data) => {
 				if (res.ok) {
