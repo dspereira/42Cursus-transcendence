@@ -273,7 +273,7 @@ legend {
 .alert-div {
 	display: flex;
 	margin: 30px auto;
-	width: 100%;
+	width: 80%;
 	animation: disappear linear 5s forwards;
 	background-color: ${colors.alert};
 	z-index: 1001;
