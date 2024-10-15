@@ -146,6 +146,10 @@ user-card {
 	text-align: center;
 }
 
+.no-content-text {
+	color: ${colors.second_text};
+}
+
 .alert-div {
 	display: flex;
 	margin: 0px auto;
@@ -385,7 +389,7 @@ export default class AppFriends extends HTMLElement {
 				if (data.users)
 					this.#insertUsersCards(data.users, "search");
 				else
-					listPanel.innerHTML = "<h1>There are no users to search for!</h1>";
+					listPanel.innerHTML = `<div class="no-content-text">There are no users to search for!</div>`;
 			}
 			this.searchMenuBtn.disabled = false;
 		});

@@ -228,6 +228,10 @@ legend {
 	.btn-submit {
 		width: 70%;
 	}
+
+	.img-buttons {
+		margin-bottom: 30px;
+	}
 }
 
 .popup-overlay {
@@ -325,10 +329,10 @@ const getHtml = function(data) {
 	const html = `
 	<form id="settings-form">
 		<div class="page-container">
+		<div class="main-conf-text">Profile Settings</div>
+		<hr>
 			<div class="main-container">
 				<div class="general-settings-container">
-					<div class="main-conf-text">Profile Settings</div>
-					<hr>
 					<div class="alert alert-danger hide" role="alert"></div>
 					<div class="alert alert-success hide" role="alert"></div>
 					<label for="new-username">Change Username</label>

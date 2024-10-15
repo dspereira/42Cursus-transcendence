@@ -69,6 +69,10 @@ const styles = `
 		background-color: #FF6666;
 	}
 
+	.no-content-text {
+		color: ${colors.second_text};
+	}
+
 	.btn-primary {
 		background-color: ${colors.btn_default};
 		border-style: hidden;
@@ -161,7 +165,7 @@ export default class GameHistory extends HTMLElement {
 
 		this.gamesListHtml.innerHTML = "";
 		if (!gameList || !gameList.length) {
-			this.gamesListHtml.innerHTML = '<h1>No games played yet.</h1>';
+			this.gamesListHtml.innerHTML = `<div class="no-content-text">No games played yet.</div>`;
 			return ;
 		}
 		gameList.forEach(elm => {
@@ -189,7 +193,7 @@ export default class GameHistory extends HTMLElement {
 
 		this.gamesListHtml.innerHTML = "";
 		if (!tournamentList || !tournamentList.length) {
-			this.gamesListHtml.innerHTML =  "<h1>No tournaments played yet.</h1>";
+			this.gamesListHtml.innerHTML =  `<div class="no-content-text">No tournaments played yet.</div>`;
 			return ;
 		}
 		tournamentList.forEach(elm => {
