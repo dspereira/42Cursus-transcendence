@@ -287,7 +287,7 @@ export default class GameInviteSend extends HTMLElement {
 	#initComponent() {
 		this.html = componentSetup(this, getHtml(this.data), styles);
 
-		this.rightFriendListElm = this.html.querySelector(".selcted-list-section");
+		this.rightFriendListElm = this.html.querySelector(".selected-list-section");
 		this.inviteBtn = this.html.querySelector("#submit-invite");
 	}
 
