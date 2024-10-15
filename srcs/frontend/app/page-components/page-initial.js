@@ -125,6 +125,7 @@ const styles = `
 		display: flex;
 		margin: 30px auto;
 		width: 80%;
+		margin: 20px auto;
 		animation: disappear linear 5s forwards;
 		background-color: ${colors.alert};
 		z-index: 1001;

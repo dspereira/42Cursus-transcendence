@@ -152,7 +152,7 @@ user-card {
 
 .alert-div {
 	display: flex;
-	margin: 0px auto;
+	margin: 20px auto;
 	width: 80%;
 	animation: disappear linear 5s forwards;
 	background-color: ${colors.alert};

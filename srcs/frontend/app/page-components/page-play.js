@@ -37,6 +37,7 @@ const styles = `
 
 	.alert-div {
 		display: flex;
+		margin: 20px auto;
 		width: 80%;
 		animation: disappear linear 10s forwards;
 		background-color: ${colors.alert};
