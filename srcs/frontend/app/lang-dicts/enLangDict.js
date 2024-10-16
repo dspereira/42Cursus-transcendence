@@ -149,6 +149,9 @@ export const enSidePanelDict = {
 	friends: "Friends",
 	play: "Play",
 	logout: "Logout",
+	logout_popup_msg: "Logout from BlitzPong",
+	logout_popup_close: "Close",
+	logout_popup_logout: "Logout",
 	configurations: "Configurations"
 }
 

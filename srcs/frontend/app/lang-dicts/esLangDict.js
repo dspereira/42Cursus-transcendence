@@ -149,6 +149,9 @@ export const esSidePanelDict = {
 	friends: "Amigos",
 	play: "Jugar",
 	logout: "Cerrar Sesión",
+	logout_popup_msg: "Cerrar sesión de BlitzPong",
+	logout_popup_close: "Cerrar",
+	logout_popup_logout: "Cerrar Sesión",
 	configurations: "Configuraciones"
 }
 

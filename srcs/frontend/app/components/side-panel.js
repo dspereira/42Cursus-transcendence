@@ -322,10 +322,10 @@ const getHtml = function(data) {
 	const html = ` 
 	<div class="logout-popup popup-overlay">
 			<div class="popup-content">
-			<h2>Logout from BlitzPong</h2>
+			<h2>${data.langDict.logout_popup_msg}</h2>
 			<div class="btn-container">
-				<button class="close-popup">Close</button>
-				<button class="logout-btn">Logout</button>
+				<button class="close-popup">${data.langDict.logout_popup_close}</button>
+				<button class="logout-btn">${data.langDict.logout_popup_logout}</button>
 			</div>
 		</div>
 	</div>

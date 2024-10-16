@@ -149,6 +149,9 @@ export const ptSidePanelDict = {
 	friends: "Amigos",
 	play: "Jogar",
 	logout: "Sair",
+	logout_popup_msg: "Sair do BlitzPong",
+	logout_popup_close: "Fechar",
+	logout_popup_logout: "Sair",
 	configurations: "Configurações"
 }
 
