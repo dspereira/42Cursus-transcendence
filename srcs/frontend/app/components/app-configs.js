@@ -336,12 +336,12 @@ const getHtml = function(data) {
 	const html = `
 	<form id="settings-form">
 		<div class="page-container">
+		<div class="alert alert-danger hide" role="alert"></div>
+		<div class="alert alert-success hide" role="alert"></div>
 		<div class="main-conf-text">${data.langDict.profile_settings_header}</div>
 		<hr>
 			<div class="main-container">
 				<div class="general-settings-container">
-					<div class="alert alert-danger hide" role="alert"></div>
-					<div class="alert alert-success hide" role="alert"></div>
 					<label for="new-username">${data.langDict.new_username_label}</label>
 					<input type="text" class="form-control form-control-md small-margin" id="new-username" placeholder="New Username" maxlength="15">
 					<label for="new-bio">${data.langDict.new_bio_label}</label>
@@ -467,9 +467,11 @@ export default class AppConfigs extends HTMLElement {
 	connectedCallback() {
 		this.messages = {
 			"success": this.data.langDict.success,
-			"usernameInvalid": this.data.langDict.username_invalid,
+			"invalidUsername": this.data.langDict.username_invalid,
 			"imageSize": `${this.data.langDict.image_size} ${MAX_IMAGE_SIZE_BYTES / MEGABYTE}MB`,
-			"imageType": `${this.data.langDict.image_type}${suportedFileTypesToString()}`
+			"imageType": `${this.data.langDict.image_type}${suportedFileTypesToString()}`,
+			"invalidPhone": "Invalid Phone Number!",
+			"unexpectedError": "Unexpected error"
 		}
 		this.#initComponent();
 		this.#scripts();
@@ -534,11 +536,12 @@ export default class AppConfigs extends HTMLElement {
 	#submit() {
 		this.settingsForm.addEventListener("submit", (event) => {
 			event.preventDefault();
+			this.#cleanErrorStyles();
 			this.submitBtn.disabled = true;
 			const username = this.usernameInp.value.trim();
 			if (!isValidUsername(username)) {
 				this.#setFieldInvalid("username");
-				this.#setErrorMessage(this.messages.usernameInvalid);
+				this.#setErrorMessage(this.messages.invalidUsername);
 				this.submitBtn.disabled = false;
 				return ;
 			}
@@ -546,7 +549,7 @@ export default class AppConfigs extends HTMLElement {
 			if (phoneNum) {
 				if (!this.#isValidPhoneNumber(phoneNum)) {
 					this.#setFieldInvalid("phone");
-					this.#setErrorMessage("Invalid Phone Number!");
+					this.#setErrorMessage(messages.invalidPhone);
 					this.submitBtn.disabled = false;
 					return ;
 				}
@@ -570,7 +573,8 @@ export default class AppConfigs extends HTMLElement {
 			if (this.imageFile)
 				formData.append('image', this.imageFile);
 			
-			callAPI("POST", "/settings/", formData, (res, resData) => {
+			callAPI("POST", "/settings/", formData, 
+			(res, resData) => {
 				if (res.ok && resData) {
 					this.#loadData(resData.settings);
 					this.#cleanErrorStyles();
@@ -584,7 +588,12 @@ export default class AppConfigs extends HTMLElement {
 					this.#setErrorMessage(resData.message);
 				}
 				this.submitBtn.disabled = false;
-			}, null, getCsrfToken());
+			}, 
+			() => {
+				this.submitBtn.disabled = false;
+				this.#setErrorMessage(messages.unexpectedError);
+			}, 
+			getCsrfToken());
 		});
 	}
 
@@ -724,7 +733,6 @@ export default class AppConfigs extends HTMLElement {
 		const option = this.html.querySelector(`[value="${code}"]`);
 		if (!option)
 			return ;
-
 		option.setAttribute("selected", "");
 		let value = option.innerHTML;
 		let idx = value.indexOf("&nbsp;&nbsp; ");
@@ -786,6 +794,8 @@ export default class AppConfigs extends HTMLElement {
 				if (res.ok && data && data.qr_code) {
 					this.qrcodeImg.setAttribute("src", 'data:image/png;base64,' + data.qr_code);
 					const qrElm = document.querySelector(".qr-popup");
+					if (!qrElm)
+						return ;
 					qrElm.style.display = 'flex';
 					this.#qrPopUp();
 					document.addEventListener('keydown', this.escQrClose);
@@ -798,6 +808,8 @@ export default class AppConfigs extends HTMLElement {
 
 	#qrPopUp() {
 		const popup = document.querySelector('.qr-popup');
+		if (!popup)
+			return ;
 		window.addEventListener('click', (event) => {
 			if (event.target === popup) {
 				popup.style.display = 'none';
@@ -813,10 +825,14 @@ export default class AppConfigs extends HTMLElement {
 				stateManager.setState("errorMsg", null);
 				const mainDiv = this.html.querySelector(".page-container");
 				const alertBefore  = this.html.querySelector(".alert");
+				if (!mainDiv)
+					return ;
 				if (alertBefore)
 					alertBefore.remove();
-				const insertElement = mainDiv.querySelector(".main-container"); 
-				var alertCard = document.createElement("div");
+				const insertElement = mainDiv.querySelector(".main-container");
+				if (!insertElement)
+					return ;
+				let alertCard = document.createElement("div");
 				alertCard.className = "alert alert-danger hide from alert-div";
 				alertCard.role = "alert";
 				alertCard.innerHTML = `

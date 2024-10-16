@@ -305,7 +305,8 @@ export default class GameInviteSend extends HTMLElement {
 		this.#setFriendsSearchEvent();
 		this.#setInviteSubmitEvent();
 		const inviteButton = document.querySelector(".btn-primary");
-		inviteButton.disabled = this.selectedElm == 0;
+		if (inviteButton)
+			inviteButton.disabled = this.selectedElm == 0;
 		this.#errorMsgEvents();
 	}
 
@@ -330,6 +331,8 @@ export default class GameInviteSend extends HTMLElement {
 
 	#createFriendsList(friends) {
 		const friendList = this.html.querySelector(".friend-list");
+		if (!friendList)
+			return ;
 		friendList.innerHTML = "";
 		let friendCard;
 		if (!friendList || !friends || !friends.length) {
@@ -457,7 +460,9 @@ export default class GameInviteSend extends HTMLElement {
 				if (alertBefore)
 					alertBefore.remove();
 				const insertElement = this.html.querySelector(".send-invite-section");
-				var alertCard = document.createElement("div");
+				if (!insertElement)
+					return ;
+				let alertCard = document.createElement("div");
 				alertCard.className = "alert alert-danger hide from alert-div";
 				alertCard.role = "alert";
 				alertCard.innerHTML = `

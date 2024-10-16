@@ -37,14 +37,24 @@ const browserOnlineEvent = function(html, callbackOnline, callbackOffline) {
 }
 
 const browserOnline = function(html) {
-	const elm = html.querySelector(".content");
+	let elm = html.querySelector(".content");
+	if (!elm)
+		elm = html.querySelector(".main-container");
+	if (!elm)
+		return ;
+
 	const popup = elm.querySelector(".offline-popup");
 	if (popup)
 		popup.remove();
 }
 
 const browserOffline = function(html) {
-	const elm = html.querySelector(".content");
+	let elm = html.querySelector(".content");
+	if (!elm)
+		elm = html.querySelector(".main-container");
+	if (!elm)
+		return ;
+
 	const popup = document.createElement("div");
 	const icon = document.createElement("i");
 	const test = document.createElement("div");

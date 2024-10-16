@@ -1,10 +1,11 @@
 services:
 
     postgres:
+        build: ./database-postgres
         image: postgres
         container_name: postgres
-        ports:
-            - 5432:5432
+        expose:
+            - "5432"
         volumes:
             - db-data:/var/lib/postgresql/data
         environment:
@@ -14,42 +15,80 @@ services:
         networks:
             - pong-network
         restart: on-failure
+        healthcheck:
+          test: ["CMD-SHELL", "pg_isready", "-d", "${DB_NAME}"]
+          interval: 30s
+          timeout: 60s
+          retries: 5
+          start_period: 90s
+
+    backend-django:
+        build: ./backend
+        image: backend-django
+        container_name: backend-django
+        expose:
+            - "8000"
+        environment:
+            - DB_PASS=${DB_PASS}
+            - DB_USER=${DB_USER}
+            - DB_NAME=${DB_NAME}
+            - DB_HOST=postgres
+            - DB_PORT=5432
+            - JWT_SECRET_KEY=${JWT_SECRET_KEY}
+            - EMAIL_HOST=${EMAIL_HOST}
+            - EMAIL_PORT=${EMAIL_PORT}
+            - EMAIL_USE_TLS=${EMAIL_USE_TLS}
+            - EMAIL_HOST_USER=${EMAIL_HOST_USER}
+            - EMAIL_HOST_PASSWORD=${EMAIL_HOST_PASSWORD}
+            - TWILIO_ACCOUNT_SID=${TWILIO_ACCOUNT_SID}
+            - TWILIO_AUTH_TOKEN=${TWILIO_AUTH_TOKEN}
+            - TWILIO_PHONE_NUMBER=${TWILIO_PHONE_NUMBER}
+            - BACKEND_DEBUG_MODE=${BACKEND_DEBUG_MODE}
+            - CRYPTOGRAPHER_PRIVATE_KEY=${CRYPTOGRAPHER_PRIVATE_KEY}
+            - CRYPTOGRAPHER_PUBLIC_KEY=${CRYPTOGRAPHER_PUBLIC_KEY}
+            - DOMAIN=${DOMAIN}
+            - PORT=${PORT}
+        networks:
+            - pong-network
+        restart: on-failure
+        depends_on:
+          postgres:
+            condition: service_healthy
 
     nginx-server:
         build: ./frontend
         image: nginx-server
         container_name: nginx-server
-        ports:
-            - 8080:80
+        expose:
+            - "80"
         environment:
-            - NGINX_HOST=localhost
+            - NGINX_HOST=127.0.0.1
             - NGINX_PORT=80
-        volumes:
-            - ./frontend/app:/usr/share/nginx/html/app
+            - DOMAIN=${DOMAIN}
+            - PORT=${PORT}
         networks:
             - pong-network
         restart: on-failure
 
-    pgadmin4:
-        image: dpage/pgadmin4
-        container_name: pgadmin4
+    reverse-proxy:
+        build: ./reverse_proxy
+        image: reverse-proxy
+        container_name: reverse-proxy
         ports:
-            - 3000:80
+            - "8443:443"
         environment:
-            - PGADMIN_DEFAULT_EMAIL=${PGADMIN_EMAIL}
-            - PGADMIN_DEFAULT_PASSWORD=${PGADMIN_PASS}
+            - NGINX_HOST=127.0.0.1
+            - DOMAIN=${DOMAIN}
         networks:
             - pong-network
         restart: on-failure
+        depends_on:
+            - backend-django
 
 networks:
     pong-network:
         name: pong-network
 
 volumes:
-  db-data:
-    name: db-data
-    driver_opts:
-      type: none
-      device: ${DB_VOLUME_DATA}
-      o: bind
+    db-data:
+        name: blitzpong_database

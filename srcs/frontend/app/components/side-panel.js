@@ -537,8 +537,12 @@ export default class SidePanel extends HTMLElement {
 	// criar uma função só de abrir e uma de fechar DRY principle
 	#openClosePanel() {
 		let btn = this.html.querySelector(`.list-btn > button`);
+		if (!btn)
+			return ;
 		btn.addEventListener("click", () => {
 			let sidePanel = this.html.querySelector(".side-panel-wrapper");
+			if (!sidePanel)
+				return ;
 			const logo = this.html.querySelector(".logo");
 			sidePanel.classList.toggle("close");
 			sidePanel.classList.toggle("open");
@@ -546,11 +550,9 @@ export default class SidePanel extends HTMLElement {
 			{
 				stateManager.setState("sidePanel", "close");
 				this.lastState = "close";
-				// logo.classList.add("hide");
 			}
 			else
 			{
-				logo.classList.remove("hide");
 				stateManager.setState("sidePanel", "open");
 				this.lastState = "open";
 			}
@@ -610,6 +612,8 @@ export default class SidePanel extends HTMLElement {
 	#logOutPopUp() {
 		const popup = document.querySelector('.logout-popup');
 		const closePopupButton = document.querySelector('.close-popup');
+		if (!popup || !closePopupButton)
+			return ;
 		closePopupButton.addEventListener('click', () => {
 			popup.style.display = 'none';
 			document.removeEventListener('keydown',this.escClose);
@@ -635,7 +639,9 @@ export default class SidePanel extends HTMLElement {
 	}
 
 	#logoutEvent() {
-		const logout = this.html.querySelector(".logout-btn");	
+		const logout = this.html.querySelector(".logout-btn");
+		if (!logout)
+			return ;
 		logout.addEventListener("click", (event) => {
 			callAPI("POST", "/auth/logout", null, this.#apiResHandlerCalback, null, getCsrfToken());
 		});
@@ -652,6 +658,8 @@ export default class SidePanel extends HTMLElement {
 
 	#openSidePanel() {
 		let sidePanel = this.html.querySelector(".side-panel-wrapper");
+		if (!sidePanel)
+			return ;
 		if (this.lastState == "close")
 			return ;
 		if (sidePanel.classList.contains("close"))
@@ -666,6 +674,8 @@ export default class SidePanel extends HTMLElement {
 
 	#closeSidePanel() {
 		let sidePanel = this.html.querySelector(".side-panel-wrapper");
+		if (!sidePanel)
+			return ;
 		if (sidePanel.classList.contains("open"))
 		{
 			sidePanel.classList.remove("open");

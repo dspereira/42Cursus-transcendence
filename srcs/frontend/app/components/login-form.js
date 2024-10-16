@@ -128,9 +128,8 @@ h1 {
 }
 
 .logo-img {
-	width: 100%;
+	width: 70%;
 	height: auto;
-	align-test: center;
 	margin-top: 40px;
 }
 

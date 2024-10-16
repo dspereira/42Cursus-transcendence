@@ -11,7 +11,7 @@ this.socket.CLOSING
 */
 
 // Wrong link, another link is needed. This is just for test
-const webSockettUrl = `ws://${DOMAIN}/chat_connection/`;
+const webSockettUrl = `wss://${DOMAIN}/ws/chat_connection/`;
 
 class ChatWebSocket {
 

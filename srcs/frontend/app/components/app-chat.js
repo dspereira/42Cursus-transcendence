@@ -51,6 +51,36 @@ const styles = `
 	color: ${colors.second_text};
 }
 
+	.no-content-container {
+		position: relative;
+		display: flex;
+		width: 100%;
+		height: 500px;
+		flex-direction: column;
+		max-height: 500px;
+	}
+
+	.no-content-img {
+		position: absolute;
+		width: 450px;
+		height: auto;
+		margin: 20px auto;
+		opacity: 5%;
+		left: 50%;
+		top: 50%;
+		transform: translate(-50%, -50%);
+	}
+
+	.no-content-text {
+		position: absolute;
+		margin-top: 50px;
+		font-size: 24px;
+		left: 50%;
+		transform: translate(-50%, 0);
+		text-align: center;
+		color: ${colors.second_text};
+	}
+
 .alert-div {
 	display: flex;
 	margin: 30px auto;
@@ -108,7 +138,14 @@ const getHtml = function(data) {
 			<chat-friends-list language=${data.language}></chat-friends-list>
 		</div>
 		<div class="chat-area">
+<<<<<<< HEAD
+			<div class= "no-content-container">
+				<img src="/img/pong-gs.png" class="no-content-img">
+				<div class="no-content-text">You have no friend selected. Please select a friend to start a chat.</div>
+			</div>
+=======
 			<div class="no-friends-selected-msg hide"><span>${data.langDict.no_friend_selected}</span></div>
+>>>>>>> main
 		</div>
 	</div>
 	`;
@@ -183,10 +220,13 @@ export default class AppChat extends HTMLElement {
 	#addfriendChatIdStateEvent() {
 		stateManager.addEvent("friendChatId", (state) => {
 			if (!state) {
-				this.chatSection.innerHTML = `
-				<div class="no-friends-selected-msg">
-					<span>${data.langDict.no_friend_selected}</span>
-				</div>`;
+				this.chatSection.innerHTML = 
+				`
+				<div class= "no-content-container">
+					<img src="/img/pong-gs.png" class="no-content-img">
+					<div class="no-content-text">${data.langDict.no_friend_selected}</div>
+				</div>
+				`;
 				stateManager.setState("errorMsg", `${data.langDict.error_msg}`);
 			}
 		});
@@ -198,10 +238,14 @@ export default class AppChat extends HTMLElement {
 				stateManager.setState("errorMsg", null);
 				const mainDiv = this.html.querySelector(".chat-area");
 				const alertBefore  = this.html.querySelector(".alert");
+				if (!mainDiv)
+					return ;
 				if (alertBefore)
 					alertBefore.remove();
 				const insertElement = mainDiv.querySelector(".no-friends-selected-msg");
-				var alertCard = document.createElement("div");
+				if (!insertElement)
+					return ;
+				let alertCard = document.createElement("div");
 				alertCard.className = "alert alert-danger hide from alert-div";
 				alertCard.role = "alert";
 				alertCard.innerHTML = `

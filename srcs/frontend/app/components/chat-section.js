@@ -351,7 +351,8 @@ export default class ChatSection extends HTMLElement {
 	// to 1 to get the scrollHeight and reset to the original value
 	#resizeMessageInput() {
 		const input = this.html.querySelector(".text-area");
-
+		if (!input)
+			return ;
 		input.addEventListener('click', () => {
 			if (!this.msgInputscrollHeight) {
 				input.setAttribute("rows", "1");

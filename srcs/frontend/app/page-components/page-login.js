@@ -3,10 +3,7 @@ import componentSetup from "../utils/componentSetupUtils.js";
 const styles = ``;
 
 const getHtml = function(data) {
-	const html = `
-	<!--<app-header></app-header>-->
-		<login-form></login-form>
-	`;
+	const html = `<login-form></login-form>`;
 	return html;
 }
 

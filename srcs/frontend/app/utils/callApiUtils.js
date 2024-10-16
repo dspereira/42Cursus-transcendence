@@ -6,8 +6,9 @@ import { getHtmlElm } from "./getHtmlElmUtils.js";
 import PageError from "../page-components/page-error.js";
 import DOMAIN from "../js/domain.js";
 
-const API_ROUTE 		= `http://${DOMAIN}/api`;
+const API_ROUTE 		= `https://${DOMAIN}/api`;
 const REFRESH_URL		= `${API_ROUTE}/auth/refresh_token`;
+const HEALTH_CHECK_URL		= `${API_ROUTE}/check/`;
 const REFRESH_METHOD	= `POST`;
 
 const publicRoutes = [
@@ -46,14 +47,15 @@ export const callAPI = async function (method, url, data, callback_sucess, callb
 			updateLoggedInStatus(true);
 	}
 	else if (resApi && resApi.error) {
+		console.log(`callAPI Error: ${resApi.error}`);
 		if (callback_error)
 			callback_error(resApi.error);
-		else {
-			console.log(`callAPI Error: ${resApi.error}`);
-			if (`${resApi.error}`.indexOf("Failed to fetch") > -1 && navigator.onLine)
+		if (navigator.onLine) {
+			let checkRes = await fetchApi("GET", HEALTH_CHECK_URL, null);
+			if (checkRes.error)
 				render(getHtmlElm(PageError));
 		}
-	}		
+	}
 }
 
 const fetchApi = async function (method, url, data, csrf_token) {
@@ -63,7 +65,9 @@ const fetchApi = async function (method, url, data, csrf_token) {
 	
 	try {
 		res = await fetch(url, getReqHeader(method, data, csrf_token));
-		resData = await res.json();
+		let contentLength = res.headers.get('content-length');
+		if (contentLength && contentLength != "0")
+			resData = await res.json();
 	}
 	catch (error) {
 		callError = error;

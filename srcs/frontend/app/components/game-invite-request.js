@@ -165,7 +165,9 @@ export default class GameInviteRequest extends HTMLElement {
 				if (alertBefore)
 					alertBefore.remove();
 				const insertElement = this.html.querySelector(".send-invite-section");
-				var alertCard = document.createElement("div");
+				if (!insertElement)
+					return ;
+				let alertCard = document.createElement("div");
 				alertCard.className = "alert alert-danger hide from alert-div";
 				alertCard.role = "alert";
 				alertCard.innerHTML = `

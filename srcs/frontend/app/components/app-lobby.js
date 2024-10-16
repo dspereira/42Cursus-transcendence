@@ -202,6 +202,8 @@ export default class AppLobby extends HTMLElement {
 	#startGame() {
 		const playersData = stateManager.getState("lobbyStatus");
 		const contentElm = document.querySelector(".content");
+		if (!contentElm)
+			return ;
 		const lobbyId = this.data.lobbyId;
 		this.startGame = true;
 		this.remove();
@@ -221,6 +223,8 @@ export default class AppLobby extends HTMLElement {
 	#startTournamentGame() {
 		const playersData = stateManager.getState("lobbyStatus");
 		const contentElm = document.querySelector(".tourney-section");
+		if (!contentElm)
+			return ;
 		const lobbyId = this.data.lobbyId;
 		this.startGame = true;
 		this.remove();

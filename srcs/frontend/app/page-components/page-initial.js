@@ -236,11 +236,15 @@ export default class PageInitial extends HTMLElement {
 			if (msg) {
 				stateManager.setState("errorMsg", null);
 				const mainDiv = this.html.querySelector(".main-container");
+				if (!mainDiv)
+					return ;
 				const alertBefore  = this.html.querySelector(".alert");
 				if (alertBefore)
 					alertBefore.remove();
 				const insertElement = mainDiv.querySelector(".second-container");
-				var alertCard = document.createElement("div");
+				if (!insertElement)
+					return ;
+				let alertCard = document.createElement("div");
 				alertCard.className = "alert alert-danger hide from alert-div";
 				alertCard.role = "alert";
 				alertCard.innerHTML = `

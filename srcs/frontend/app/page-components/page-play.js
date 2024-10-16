@@ -90,6 +90,7 @@ const getHtml = function(data) {
 	<app-header></app-header>
 	<side-panel selected="play" language=${data.language}></side-panel>
 	<div class="content content-small main-play-container">
+		<div class="alert-container"></div>
 		<div class="page-1">
 			<div class="invite-game">
 				<button type="button" class="btn btn-primary invite-game-btn">${data.langDict.invite_button}</button>
@@ -166,18 +167,22 @@ export default class PagePlay extends HTMLElement {
 			if (msg) {
 				stateManager.setState("errorMsg", null);
 				const mainDiv = this.html.querySelector(".page-1");
+				if (!mainDiv)
+					return ;
 				const alertBefore  = this.html.querySelector(".alert");
 				if (alertBefore)
 					alertBefore.remove();
 				const insertElement = mainDiv.querySelector(".invite-game");
-				var alertCard = document.createElement("div");
+				if (!insertElement)
+					return ;
+				let alertCard = document.createElement("div");
 				alertCard.className = "alert alert-danger hide from alert-div";
 				alertCard.role = "alert";
 				alertCard.innerHTML = `
 						${msg}
 						<div class=alert-bar></div>
 					`;
-				mainDiv.insertBefore(alertCard, insertElement);
+				mainDiv.appendChild(alertCard);
 			}
 		});
 	}
