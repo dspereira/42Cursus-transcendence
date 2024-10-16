@@ -1,21 +1,34 @@
 import { adjustContent } from "../utils/adjustContent.js";
 import stateManager from "../js/StateManager.js";
 import { callAPI } from "../utils/callApiUtils.js";
+import {colors} from "../js/globalStyles.js";
 import { getCsrfToken } from "../utils/csrfTokenUtils.js";
 import componentSetup from "../utils/componentSetupUtils.js";
 
 const styles = `
+
 .border-separation {
 	width: 60%;
 	margin: 0 auto;
 	margin-top: 25px;
 	margin-bottom: 25px;
-	border-bottom: 3px solid #EEEDEB;
+	border-bottom: 3px solid ${colors.third_card};
 }
 
 .create-tourney {
 	display: flex;
 	justify-content: center;
+}
+
+.btn-create-tourney, .btn-exit-tourney {
+	color: ${colors.btn_text};
+	background-color: ${colors.btn_default};
+	border-style: hidden;
+}
+
+.btn-create-tourney:hover, .btn-exit-tourney:hover {
+	color: ${colors.hover_text};
+	background-color: ${colors.btn_hover};
 }
 
 .btn-create-tourney {
@@ -41,7 +54,7 @@ const getHtml = function(data) {
 	<div class="content content-small">
 		<div class="btn-create-tourney-section hide">
 			<div class="create-tourney">
-				<button type="button" class="btn btn-primary btn-create-tourney">Create Tornement</button>
+				<button type="button" class="btn btn-primary btn-create-tourney">Create Tournament</button>
 			</div>
 			<div class="border-separation"></div>
 		</div>

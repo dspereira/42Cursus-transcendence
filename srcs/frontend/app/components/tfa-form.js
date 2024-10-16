@@ -1,23 +1,29 @@
 import {callAPI} from "../utils/callApiUtils.js";
 import { redirect } from "../js/router.js";
+import { colors } from "../js/globalStyles.js";
+import stateManager from "../js/StateManager.js";
 import componentSetup from "../utils/componentSetupUtils.js";
 
 const styles = `
 .tfa-container {
 	width: 100%;
+	min-width: 460px;
 	display: flex;
 	flex-direction: column;
 	align-items: center;
+	margin-bottom: 10px;
 }
 
 .tfa-elements {
 	width: 50%;
+	min-width: 420px;
 	display: flex;
 	flex-direction: column;
 	align-items: center;
 	gap: 20px;
 	padding: 20px;
-	background-color: #D3D3D3;
+	background-color: ${colors.second_card};
+	color: ${colors.primary_text};
 	border-radius: 8px;
 }
 
@@ -43,6 +49,7 @@ p {
 	background: none;
 	border: none;
 	color: blue;
+	color: ${colors.btn_default};
 	cursor: pointer;
 	padding: 0;
 	font: inherit;
@@ -54,13 +61,66 @@ p {
 .submit-container {
 	width: 100%;
 	display: flex;
-	justify-content: flex-end;
-	margin-top: 10px;
+	justify-content: center;
+	margin-top: 30px;
 }
 
 .code-invalid {
 	border: 2px solid #dc3545;
 }
+
+
+.form-control {
+	border-radius: 5px;
+	border-style: hidden;
+	background-color: ${colors.input_background};
+	color: ${colors.second_text};
+}
+
+.form-control::placeholder {
+	color: ${colors.second_text};
+}
+
+.form-control:focus {
+	background-color: ${colors.input_background};
+	color: ${colors.second_text};
+}
+
+.search input {
+	padding-left: 30px;
+	color:  ${colors.second_text};
+}
+
+.form-control + input:focus {
+	color:  ${colors.second_text};
+}
+
+.btn-primary:not(disabled) {
+	background-color: ${colors.btn_default};
+	color: ${colors.primary_text};
+}
+
+.btn-primary:not(:disabled):hover {
+	background-color: ${colors.btn_hover};
+	color: ${colors.second_text};
+}
+
+.btn-primary:disabled {
+	background-color: ${colors.main_card};
+	cursor: not-allowed;
+	border-style: hidden;
+}
+
+.btn-submit {
+	width: 70%;
+}
+
+.2fa-text {
+}
+
+
+
+
 `;
 
 const QRCODE_METHOD = "qr_code";
@@ -77,7 +137,7 @@ const getHtml = function(data) {
 	const html = `
 		<div class="tfa-container">
 			<div class="tfa-elements">
-				<p>${infoMsg}</p>
+				<div class="2fa-text">${infoMsg}</div>
 				<form id="tfa-code">
 					<div class="form-group">
 						<div class="code-container">
@@ -142,7 +202,7 @@ export default class TfaForm extends HTMLElement {
 	#sendTwoFactorCode(destination) {
 		callAPI("POST", `/two-factor-auth/request-${destination}/`, null, (res, data) => {		
 			if (!res.ok)
-				console.log(data.message); // Esta mensagem deve ser apresentada no frontend
+				stateManager.setState("errorMsg", data.message);
 			const btn = this.html.querySelector(".btn-resend");
 			if(btn)
 				btn.disabled = false;
@@ -214,7 +274,14 @@ export default class TfaForm extends HTMLElement {
 					if (res.ok)
 						redirect("/");
 					else if (res.status == 401)
+					{
 						redirect("/");
+						setTimeout( () => {
+							stateManager.setState("errorMsg", data.message);
+						}, 200);
+					}
+					else if (res.status == 409)
+						stateManager.setState("errorMsg", data.message);
 					// caso dê 401 colocar mensagem no frontend
 					this.#updateInvalidCodeStyle(true);
 					this.submitBtn.disabled = false;

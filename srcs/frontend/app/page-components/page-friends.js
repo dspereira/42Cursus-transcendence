@@ -1,7 +1,8 @@
 import { adjustContent } from "../utils/adjustContent.js";
 import componentSetup from "../utils/componentSetupUtils.js";
 
-const styles = ``;
+const styles = `
+`;
 
 const getHtml = function(data) {
 	const html = `

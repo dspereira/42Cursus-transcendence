@@ -2,6 +2,7 @@ import { callAPI } from "../utils/callApiUtils.js";
 import { render } from "../js/router.js";
 import { redirect } from "../js/router.js";
 import componentSetup from "../utils/componentSetupUtils.js";
+import { colors } from "../js/globalStyles.js";
 
 const styles = `
 .mail-info-container {
@@ -35,6 +36,17 @@ p {
 
 .validated-color {
 	background-color: #43b581;
+}
+
+.btn-primary {
+	background-color: ${colors.btn_default};
+	border-style: hidden;
+	color: ${colors.btn_text};
+}
+
+.btn-primary:hover {
+	background-color: ${colors.btn_hover};
+	color: ${colors.hover_text};
 }
 `;
 

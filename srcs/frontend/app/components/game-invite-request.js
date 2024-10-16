@@ -1,10 +1,12 @@
 import { callAPI } from "../utils/callApiUtils.js";
-import componentSetup from "../utils/componentSetupUtils.js";
+import { colors } from "../js/globalStyles.js";
 import stateManager from "../js/StateManager.js";
+import componentSetup from "../utils/componentSetupUtils.js";
 
 
 const styles = `
 	h3 {
+		color: ${colors.second_text};
 		margin-bottom: 20px;
 		font-size: 22px;
 		text-align: center;
@@ -15,6 +17,51 @@ const styles = `
 		flex-wrap: wrap;
 		gap: 30px;
 		justify-content: center;
+	}
+
+	.alert-div {
+		display: flex;
+		margin: 30px auto;
+		width: 80%;
+		animation: disappear linear 5s forwards;
+		background-color: ${colors.alert};
+		z-index: 1001;
+	}
+
+	.alert-bar {
+		width: 95%;
+		height: 5px;
+		border-style: hidden;
+		border-radius: 2px;
+		background-color: ${colors.alert_bar};
+		position: absolute;
+		bottom: 2px;
+		animation: expire linear 5s forwards;
+	}
+
+	@keyframes expire {
+		from {
+			width: 95%;
+		}
+		to {
+			width: 0%;
+		}
+	}
+
+	@keyframes disappear {
+		0% {
+			visibility: visible;
+			opacity: 1;
+		}
+		99% {
+			visibility: visible;
+			opacity: 1;
+		}
+		100% {
+			visibility: hidden;
+			opacity: 0;
+			display: none;
+		}
 	}
 `;
 
@@ -34,6 +81,7 @@ export default class GameInviteRequest extends HTMLElement {
 		super()
 		this.data = {};
 		this.intervalID = null;
+		this.lastRequestSize = 0;;
 	}
 
 	connectedCallback() {
@@ -58,13 +106,19 @@ export default class GameInviteRequest extends HTMLElement {
 	#scripts() {
 		this.#getInviteGamesCallApi();
 		this.#startGameInvitesPolling();
+		this.#errorMsgEvents();
 	}
 
 	#getInviteGamesCallApi() {
 		callAPI("GET", `/game/request/`, null, (res, data) => {
 			if (res.ok){
 				if (data)
+				{
 					this.#createRequestList(data.requests_list);
+					if (data.requests_list.length < this.lastRequestSize)
+						stateManager.setState("errorMsg", "An invite has expired");
+					this.lastRequestSize = data.requests_list.length;
+				}
 			}
 		});
 	}
@@ -93,6 +147,26 @@ export default class GameInviteRequest extends HTMLElement {
 				return ;
 			this.#getInviteGamesCallApi();
 		}, 5000);
+	}
+
+	#errorMsgEvents() {
+		stateManager.addEvent("errorMsg", (msg) => {
+			if (msg) {
+				stateManager.setState("errorMsg", null);
+				const alertBefore  = this.html.querySelector(".alert");
+				if (alertBefore)
+					alertBefore.remove();
+				const insertElement = this.html.querySelector(".send-invite-section");
+				var alertCard = document.createElement("div");
+				alertCard.className = "alert alert-danger hide from alert-div";
+				alertCard.role = "alert";
+				alertCard.innerHTML = `
+						${msg}
+						<div class=alert-bar></div>
+					`;
+				this.html.insertBefore(alertCard, insertElement);
+			}
+		});
 	}
 }
 

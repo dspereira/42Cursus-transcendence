@@ -1,10 +1,25 @@
 import stateManager from "../js/StateManager.js";
 import { callAPI } from "../utils/callApiUtils.js";
+import { colors } from "../js/globalStyles.js";
+import { charLimiter } from "../utils/characterLimit.js";
+import charLimit from "../utils/characterLimit.js";
+import { pfpStyle } from "../utils/stylingFunctions.js";
+import { redirect } from "../js/router.js";
+import friendProfileRedirectionEvent from "../utils/profileRedirectionUtils.js";
 import componentSetup from "../utils/componentSetupUtils.js";
 
 const styles = `
+
+	.tourney-div {
+		display: flex;
+		min-width: 460px;
+		flex-direction: column;
+	}
+
 	.tournament-container {
-		background-color: #939185;
+		display: flex;
+		align-items: center;
+		flex-direction: column;
 	}
 
 	.winner {
@@ -13,13 +28,27 @@ const styles = `
 		justify-content: center;
 		flex-direction: column;
 		gap: 10px;
+		width: 250px;
+		height: 150px;
+		border: 5px hidden;
+		background-color: ${colors.second_card};
+		border-radius: 25px;
+		margin: 20px 0px 20px 0px;
+	}
+
+	.winner-text {
+		color: ${colors.primary_text};
 	}
 
 	.graph {
 		display: flex;
+		width: 100%;
+		min-width: 460px;
 		justify-content: flex-start;
-		background-color: #939185;
+		// background-color: ${colors.second_card};
 		border-radius: 8px;
+		border-style: hidden;
+		border: 2px solid ${colors.third_card};
 	}
 
 	.game-size-1 {
@@ -52,7 +81,9 @@ const styles = `
 	.player-1, .player-2 {
 		display: flex;
 		align-items: center;
-		background-color: #F6F5F5;
+		background-color: ${colors.second_card};
+		color: ${colors.primary_text};
+		padding: 10px 2px 10px 2px;
 		width: 100%;
 		height: 60px;
 		border-radius: 8px;
@@ -66,10 +97,13 @@ const styles = `
 		justify-content: flex-end;
 	}
 
+	${pfpStyle(".profile-photo", "40px", "auto")}
 
 	.profile-photo {
-		width: 40px;
+		cursor: pointer;
 	}
+
+	${pfpStyle(".winner .profile-photo", "70px", "auto")}
 
 	.winner {
 		padding-top: 20px;
@@ -131,98 +165,161 @@ const styles = `
 		justify-content: center;
 		align-items: center;
 		font-size: 20px;
+		color: ${colors.second_text};
+	}
+
+	.btn-container {
+		display: flex;
+		width: 100%;
+		align-items: center;
+		justify-content: center;
 	}
 
 	.hide {
 		display: none;
 	}
+
+	.player-1, .player-2 {
+		min-width: 152px;
+	}
+
+	@media (max-width:1100px) {
+		.player-1, .player-2 {
+			height: auto;
+			min-height: 88px;
+			min-width: 100px;
+		}
+
+		.info-right, .info-left {
+			height: auto;
+		}
+
+		.info-right, .info-right > .img-name-info {
+			flex-direction: column-reverse;
+		}
+
+		.info-left, .info-left > .img-name-info{
+			flex-direction: column;
+		}
+
+		.game-flex {
+			gap: 10px;
+		}
+	}
+	.clickable {
+	cursor: pointer;
+	}
+
+	.hover-popup {
+		position: fixed;
+		padding: 10px;
+		background-color: ${colors.main_card};
+		color: ${colors.primary_text};
+		opacity: 0.9;
+		backdrop-filter: blur(5px);
+		border-radius: 5px;
+		white-space: nowrap;
+		display: none;
+		pointer-events: none;
+		z-index: 1000;
+		transform: translate(-50%, 10px);
+	}
 `;
 
 const getHtml = function(data) {
 	const html = `
-	<div class="tourney-title">${data.tournamentName}</div>
-		<div class="tournament-container">
-			<div class="winner hide">
-				<div><img src="" class="profile-photo" alt="profile photo chat"/></div>
-				<div>WINNER</div>
+	<div class=tourney-div>
+		<div class="tourney-title">${data.tournamentName}</div>
+			<div class="tournament-container">
+				<div class="winner hide">
+					<div><img src="" class="profile-photo" alt="profile photo chat"/></div>
+					<div class="winner-text">WINNER</div>
+				</div>
+				<div class="graph">
+					<div class="game-size-1 padding-35 game-flex game-flex-column game-0">
+						<div class="player-1">
+							<div class="player-info hide info-left">
+								<div class="img-name-info">
+									<img src="https://api.dicebear.com/8.x/bottts/svg?seed=dsilveri" class="profile-photo" alt="profile photo chat"/>
+									<span class="username">username</span>
+									<div id="hover-popup" class="hover-popup"></div>
+								</div>
+								<div class="score-info">
+									<span class="score hide">7</span>
+								</div>
+							</div>
+						</div>
+						<div class="player-2">
+							<div class="player-info hide info-left">
+								<div class="img-name-info">
+									<img src="https://api.dicebear.com/8.x/bottts/svg?seed=dsilveri" class="profile-photo" alt="profile photo chat"/>
+									<span class="username">username</span>
+									<div id="hover-popup" class="hover-popup"></div>
+								</div>
+								<div class="score-info">
+									<span class="score hide">7</span>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="game-size-2 game-flex game-flex-row game-2">
+						<div class="player-1 justify-start">
+							<div class="player-info hide info-left">
+								<div class="img-name-info">
+									<img src="https://api.dicebear.com/8.x/bottts/svg?seed=dsilveri" class="profile-photo" alt="profile photo chat"/>
+									<span class="username">username</span>
+									<div id="hover-popup" class="hover-popup"></div>
+								</div>
+								<div class="score-info">
+									<span class="score hide">7</span>
+								</div>
+							</div>
+						</div>
+						<div class="player-2">
+							<div class="player-info hide info-right">
+								<div class="score-info">
+									<span class="score hide">7</span>
+								</div>
+								<div class="img-name-info justify-end">
+									<span class="username">username</span>
+									<img src="https://api.dicebear.com/8.x/bottts/svg?seed=dsilveri" class="profile-photo" alt="profile photo chat"/>
+									<div id="hover-popup" class="hover-popup"></div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="game-size-1 padding-35 game-flex game-flex-column game-1">
+						<div class="player-1">
+							<div class="player-info hide info-right">
+								<div class="score-info">
+									<span class="score hide">7</span>
+								</div>
+								<div class="img-name-info justify-end">
+									<span class="username">username</span>
+									<img src="https://api.dicebear.com/8.x/bottts/svg?seed=dsilveri" class="profile-photo" alt="profile photo chat"/>
+									<div id="hover-popup" class="hover-popup"></div>
+								</div>
+							</div>
+						</div>
+						<div class="player-2">
+							<div class="player-info hide info-right">
+								<div class="score-info">
+									<span class="score hide">7</span>
+								</div>
+								<div class="img-name-info justify-end">
+									<span class="username">username</span>
+									<img src="https://api.dicebear.com/8.x/bottts/svg?seed=dsilveri" class="profile-photo" alt="profile photo chat"/>
+									<div id="hover-popup" class="hover-popup"></div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
 			</div>
-			<div class="graph">
-				<div class="game-size-1 padding-35 game-flex game-flex-column game-0">
-					<div class="player-1">
-						<div class="player-info hide">
-							<div class="img-name-info">
-								<img src="https://api.dicebear.com/8.x/bottts/svg?seed=dsilveri" class="profile-photo" alt="profile photo chat"/>
-								<span class="username">username</span>
-							</div>
-							<div class="score-info">
-								<span class="score hide">7</span>
-							</div>
-						</div>
-					</div>
-					<div class="player-2">
-						<div class="player-info hide">
-							<div class="img-name-info">
-								<img src="https://api.dicebear.com/8.x/bottts/svg?seed=dsilveri" class="profile-photo" alt="profile photo chat"/>
-								<span class="username">username</span>
-							</div>
-							<div class="score-info">
-								<span class="score hide">7</span>
-							</div>
-						</div>
-					</div>
-				</div>
-				<div class="game-size-2 game-flex game-flex-row game-2">
-					<div class="player-1 justify-start">
-						<div class="player-info hide">
-							<div class="img-name-info">
-								<img src="https://api.dicebear.com/8.x/bottts/svg?seed=dsilveri" class="profile-photo" alt="profile photo chat"/>
-								<span class="username">username</span>
-							</div>
-							<div class="score-info">
-								<span class="score hide">7</span>
-							</div>
-						</div>
-					</div>
-					<div class="player-2">
-						<div class="player-info hide">
-							<div class="score-info">
-								<span class="score hide">7</span>
-							</div>
-							<div class="img-name-info justify-end">
-								<span class="username">username</span>
-								<img src="https://api.dicebear.com/8.x/bottts/svg?seed=dsilveri" class="profile-photo" alt="profile photo chat"/>
-							</div>
-						</div>
-					</div>
-				</div>
-				<div class="game-size-1 padding-35 game-flex game-flex-column game-1">
-					<div class="player-1">
-						<div class="player-info hide">
-							<div class="score-info">
-								<span class="score hide">7</span>
-							</div>
-							<div class="img-name-info justify-end">
-								<span class="username">username</span>
-								<img src="https://api.dicebear.com/8.x/bottts/svg?seed=dsilveri" class="profile-photo" alt="profile photo chat"/>
-							</div>
-						</div>
-					</div>
-					<div class="player-2">
-						<div class="player-info hide">
-							<div class="score-info">
-								<span class="score hide">7</span>
-							</div>
-							<div class="img-name-info justify-end">
-								<span class="username">username</span>
-								<img src="https://api.dicebear.com/8.x/bottts/svg?seed=dsilveri" class="profile-photo" alt="profile photo chat"/>
-							</div>
-						</div>
-					</div>
-				</div>
-			</div>
+			<br></br>
+		<div class="btn-container">
+			<button type="button" class="btn btn-success btn-start hide">Start Game</button>
 		</div>
-		<br></br>
-		<button type="button" class="btn btn-success btn-start hide">Start Game</button>
 	`;
 	return html;
 }
@@ -300,8 +397,9 @@ export default class TourneyGraph extends HTMLElement {
 			return ;
 		playerHide.classList.remove("hide");
 		img.setAttribute("src", playerInfo.image);
-		username.innerHTML = playerInfo.username;
+		username.innerHTML = charLimiter(playerInfo.username, charLimit);
 		score.innerHTML = `${playerScore}`;
+		this.#addProfileRedirect(player, playerInfo);
 
 		if (playerWinner) {
 			score.classList.remove("hide");
@@ -365,6 +463,27 @@ export default class TourneyGraph extends HTMLElement {
 			this.#checkTournamentFinished();
 
 		}, 5000);
+	}
+
+	#addProfileRedirect(elmHtml, playerData) {
+		const movePopup = (event) => {
+			popup.style.left = event.clientX + 'px';
+			popup.style.top = event.clientY + 'px';
+		};
+		const profilePhoto = elmHtml.querySelector(".profile-photo");
+		const popup = elmHtml.querySelector('.hover-popup');
+		popup.innerHTML = `${playerData.username}'s profile`;
+		if (!profilePhoto || !popup)
+			return ;
+		friendProfileRedirectionEvent(elmHtml, ".profile-photo", playerData.id);
+		profilePhoto.addEventListener('mouseenter', () => {
+			popup.style.display = 'block'
+			profilePhoto.addEventListener('mousemove', movePopup);
+		});
+		profilePhoto.addEventListener('mouseleave', () => {
+			popup.style.display = 'none'
+			profilePhoto.removeEventListener('mousemove', movePopup);
+		});
 	}
 }
 

@@ -1,3 +1,5 @@
+import { colors, chatColors } from "../js/globalStyles.js";
+import { pfpStyle } from "../utils/stylingFunctions.js";
 import componentSetup from "../utils/componentSetupUtils.js";
 
 const styles = `
@@ -22,6 +24,8 @@ const styles = `
 	width: 40px;
 }
 
+${pfpStyle(".profile-photo", "40px", "auto")}
+
 .msg {
 	max-width: 80%;
 }
@@ -29,6 +33,7 @@ const styles = `
 .date-text {
 	display: flex;
 	flex-direction: column;
+	color: ${colors.second_text};
 }
 
 .msg-date {
@@ -41,6 +46,7 @@ const styles = `
 	border-radius: 8px;
 	font-size: 16px;
 	overflow-wrap: anywhere;
+	color: ${colors.primary_text};
 }
 
 .msg-margin-left {
@@ -54,11 +60,11 @@ const styles = `
 }
 
 .friend-color {
-	background-color: #FF5733;
+	background-color: ${chatColors.chat_bubble_friend};
 }
 
 .owner-color {
-	background-color: #33FFBD;
+	background-color: ${chatColors.chat_bubble_owner};
 }
 
 .msg-date-friend {

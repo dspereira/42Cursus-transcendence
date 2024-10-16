@@ -1,12 +1,16 @@
 import { callAPI } from "../utils/callApiUtils.js";
 import stateManager from "../js/StateManager.js";
+import { colors } from "../js/globalStyles.js";
+import { charLimiter } from "../utils/characterLimit.js";
+import charLimit from "../utils/characterLimit.js";
+import { pfpStyle } from "../utils/stylingFunctions.js";
 import { getCsrfToken } from "../utils/csrfTokenUtils.js";
 import componentSetup from "../utils/componentSetupUtils.js";
 
 const styles = `
 .card-container {
 	display: inline-block;
-	background-color: #EEEDEB;
+	background-color: ${colors.input_background};
 	border-radius: 8px;
 	padding: 20px 30px 20px 30px;
 }
@@ -16,6 +20,7 @@ const styles = `
 	flex-direction: column;
 	justify-content: center;
 	align-items: center;
+	color: ${colors.primary_text};
 }
 
 .join-btn {
@@ -42,9 +47,7 @@ const styles = `
 	margin-bottom: 5px;
 }
 
-.profile-photo {
-	width: 60px;
-}
+${pfpStyle(".profile-photo", "60px", "auto")}
 
 .exp-date {
 	margin-bottom: 5px;
@@ -52,6 +55,23 @@ const styles = `
 
 .date {
 	font-size: 18px;
+}
+
+.online-status {
+	position: absolute;
+	display: inline-block;
+	width: 15px;
+	height: 15px;
+	border-radius: 50%;
+	background-color: green;
+	z-index: 2;
+	top: 50px;
+	left: 45px;
+	border: 2px solid #A9A9A9;
+}
+
+.hide {
+	display: none;
 }
 
 `;
@@ -64,7 +84,7 @@ const getHtml = function(data) {
 				<img src="${data.profilePhoto}" class="profile-photo" alt="profile photo chat"/>
 			</div>
 			<div class="username-section">
-				<span class="username">${data.username}</span>
+				<span class="username">${charLimiter(data.username, charLimit)}</span>
 			</div>
 			
 			<div class="exp-date">

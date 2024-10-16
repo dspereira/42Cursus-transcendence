@@ -1,5 +1,6 @@
 import {callAPI} from "../utils/callApiUtils.js";
 import parseDate from "../utils/timeDateUtils.js";
+import { colors } from "../js/globalStyles.js";
 import componentSetup from "../utils/componentSetupUtils.js";
 
 const styles = `
@@ -8,6 +9,7 @@ const styles = `
 		width: 100%;
 		flex-direction: column;
 		gap: 20px;
+		height: 90vh;
 	}
 
 	.tab-select {
@@ -44,6 +46,7 @@ const styles = `
 		align-items: center;
 		gap: 33%;
 		width: 100%;
+		color: ${colors.second_text};
 	}
 
 	.victory-container, .defeat-container {
@@ -65,6 +68,39 @@ const styles = `
 		border-radius: 50% ;
 		background-color: #FF6666;
 	}
+
+	.no-content-text {
+		color: ${colors.second_text};
+	}
+
+	.btn-primary {
+		background-color: ${colors.btn_default};
+		border-style: hidden;
+		color: ${colors.btn_text};
+	}
+
+	.btn-primary:hover {
+		background-color: ${colors.btn_hover};
+		color: ${colors.hover_text};
+	}
+
+	.btn-selected {
+		background-color: ${colors.btn_hover};
+	}
+
+	.games-list {
+		display: flex;
+		flex-direction: column;
+		overflow-y: auto;
+		color: ${colors.second_text};
+	}
+
+	@media (max-width: 1000px) {
+		.games-list {
+			max-height: 35vh;
+		}
+	}
+
 `;
 
 const getHtml = function(data) {
@@ -129,7 +165,7 @@ export default class GameHistory extends HTMLElement {
 
 		this.gamesListHtml.innerHTML = "";
 		if (!gameList || !gameList.length) {
-			this.gamesListHtml.innerHTML = '<h1>No games played yet.</h1>';
+			this.gamesListHtml.innerHTML = `<div class="no-content-text">No games played yet.</div>`;
 			return ;
 		}
 		gameList.forEach(elm => {
@@ -157,7 +193,7 @@ export default class GameHistory extends HTMLElement {
 
 		this.gamesListHtml.innerHTML = "";
 		if (!tournamentList || !tournamentList.length) {
-			this.gamesListHtml.innerHTML =  "<h1>No tournaments played yet.</h1>";
+			this.gamesListHtml.innerHTML =  `<div class="no-content-text">No tournaments played yet.</div>`;
 			return ;
 		}
 		tournamentList.forEach(elm => {

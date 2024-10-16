@@ -1,5 +1,6 @@
 import { redirect } from "../js/router.js";
 import { callAPI } from "../utils/callApiUtils.js";
+import { colors } from "../js/globalStyles.js";
 import isValidUsername from "../utils/usernameValidationUtils.js";
 import { render } from "../js/router.js";
 import { getHtmlElm } from "../utils/getHtmlElmUtils.js";
@@ -11,15 +12,30 @@ form {
 	position: relative;
 }
 
+.alert.alert-danger {
+	--bs-alert-color: ${colors.primary_text};
+    --bs-alert-bg: #FFBAAB;
+    --bs-alert-border-color: #FFBAAB;
+    --bs-alert-link-color: var(--bs-danger-text-emphasis);
+}
+
 .icon {
 	position: absolute;
 	margin-top: 3px;
 	font-size: 28px;
+	color: ${colors.second_text};
 }
 
 .right-icon {
 	right: 0;
 	margin-right: 10px;
+}
+
+.highlight-text {
+	text-align: center;
+	font-size: 32px;
+	margin-top: 0px;
+	color: ${colors.primary_text};
 }
 
 .left-icon {
@@ -48,6 +64,7 @@ div {
 }
 
 h1 {
+	color: ${colors.primary_text};
 	text-align: center;
 	margin-top: 30px;
 	margin-bottom: 30px;
@@ -56,12 +73,78 @@ h1 {
 .btn-submit {
 	width: 100%;
 	margin-top: 30px;
+	color: ${colors.primary_text};
+	background-color: ${colors.btn_default};
+}
+
+.btn-submit:hover {
+	background-color: ${colors.btn_default};
+	color: ${colors.second_text};
 }
 
 .btn-signin {
 	width: 100%;
+	border: 2px solid ${colors.btn_default};
+	color: ${colors.second_text};
 }
 
+.btn-signxin:hover {
+	background-color: ${colors.btn_default};
+	color: ${colors.primary_text};
+}
+
+.form-control,.form-control:focus, .form-control::placeholder {
+	background-color: ${colors.main_card};
+	color: ${colors.primary_text};
+	background-image: none;
+}
+
+.form-control:focus::placeholder {
+	color: ${colors.second_text};
+}
+
+.logo-img {
+	width: 80%;
+	height: auto;
+	align-test: center;
+	margin-top: 40px;
+}
+
+.logo-container {
+	display: flex;
+	width: 90%;
+	justify-content: center;
+}
+
+
+.main-container {
+	display: flex;
+	align-items: center;
+	width: 100%;
+	flex-direction: column;
+}
+
+.second-container {
+	display: flex;
+	align-items: center;
+	flex-direction: column;
+	width: 50%;
+	min-width: 460px;
+	max-width: 750px;
+}
+
+#signup-form {
+	width: 100%;
+}
+
+
+
+input:-webkit-autofill, input:-webkit-autofill:hover, input:-webkit-autofill:focus, input:-webkit-autofill:active {
+	-webkit-background-clip: text;
+	-webkit-text-fill-color: #ffffff;
+	transition: background-color 5000s ease-in-out 0s;
+	box-shadow: inset 0 0 20px 20px #23232329;
+}
 .invalid{
 	color: #D9534F;	
 }
@@ -82,21 +165,28 @@ h1 {
 
 const getHtml = function(data) {
 	const html = `
-		<h1>Sign up</h1>
-		<form id="signup-form">
-			<div class="alert alert-danger hide" role="alert"></div>
-			<div class="form-group">
-				<i class="icon left-icon bi-envelope"></i>
-				<input type="text" class="input-padding form-control form-control-lg" id="email" placeholder="Email" maxlength="254">
-			</div>
-			<div class="form-group">
-				<i class="icon left-icon bi-person"></i>
-				<input type="text" class="input-padding form-control form-control-lg" id="username" placeholder="Username" maxlength="15">
-			</div>
-			<div class="form-group">
-				<i class="icon left-icon bi bi-key"></i>
-				<i class="icon right-icon bi bi-eye-slash eye-icon"></i>
-				<input type="password" class="input-padding form-control form-control-lg" id="password" placeholder="Password" maxlength="25">
+
+
+		<div class="main-container">
+			<div class="second-container">
+				<div class="logo-container">
+					<img src="/img/pong-1k.png" class="logo-img" alt="logo">
+				</div>
+				<div class="highlight-text">Sign up</div>
+				<form id="signup-form">
+					<div class="alert alert-danger hide" role="alert"></div>
+					<div class="form-group">
+						<i class="icon left-icon bi-envelope"></i>
+						<input type="text" class="input-padding form-control form-control-lg" id="email" placeholder="Email" maxlength="254">
+					</div>
+					<div class="form-group">
+						<i class="icon left-icon bi-person"></i>
+						<input type="text" class="input-padding form-control form-control-lg" id="username" placeholder="Username" maxlength="15">
+					</div>
+					<div class="form-group">
+						<i class="icon left-icon bi bi-key"></i>
+						<i class="icon right-icon bi bi-eye-slash eye-icon"></i>
+						<input type="password" class="input-padding form-control form-control-lg" id="password" placeholder="Password" maxlength="25">
 			</div>
 			<div class="password-msg hide">
 				<div class="password-validation-msg invalid" id="length"><i class="bi bi-x-lg"></i>Between 8 and 25 characters</div>
@@ -105,19 +195,21 @@ const getHtml = function(data) {
 				<div class="password-validation-msg valid" id="digit"><i class="bi bi-check-lg"></i>At least one number</div>
 				<div class="password-validation-msg invalid" id="special_character"><i class="bi bi-x-lg"></i>At least one special character (@, #, $, %, etc.)</div>
 				<div class="password-validation-msg invalid hide" id="white_character"><i class="bi bi-x-lg"></i>Can't have white characters</div>
+					</div>
+					<div class="form-group">
+						<i class="icon left-icon bi bi-key"></i>
+						<i class="icon right-icon bi bi-eye-slash eye-icon"></i>
+						<input type="password" class="input-padding form-control form-control-lg" id="confirm-password" placeholder="Confirm Password" maxlength="25">
+					</div>
+					<div>
+						<button type="submit" class="btn btn-primary btn-submit">Sign Up</button>
+					</div>
+					<div>
+						<button type="button" class="btn btn-outline-primary btn-signin">Already has an account? Sign in here</button>
+					</div>
+				</form>
 			</div>
-			<div class="form-group">
-				<i class="icon left-icon bi bi-key"></i>
-				<i class="icon right-icon bi bi-eye-slash eye-icon"></i>
-				<input type="password" class="input-padding form-control form-control-lg" id="confirm-password" placeholder="Confirm Password" maxlength="25">
-			</div>
-			<div>
-				<button type="submit" class="btn btn-primary btn-submit">Sign Up</button>
-			</div>
-			<div>
-				<button type="button" class="btn btn-outline-primary btn-signin">Already has an account? Sign in here</button>
-			</div>
-		</form>
+		</div>
 	`;
 
 	return html;

@@ -1,4 +1,5 @@
 import { adjustContent } from "../utils/adjustContent.js";
+import { colors } from "../js/globalStyles.js";
 import componentSetup from "../utils/componentSetupUtils.js";
 
 const styles = ``;

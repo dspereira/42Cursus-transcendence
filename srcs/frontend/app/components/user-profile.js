@@ -1,14 +1,20 @@
 import {callAPI} from "../utils/callApiUtils.js";
+import stateManager from "../js/StateManager.js";
+import { colors } from "../js/globalStyles.js";
+import charLimit from "../utils/characterLimit.js";
+import { charLimiter } from "../utils/characterLimit.js";
 import componentSetup from "../utils/componentSetupUtils.js";
 
 const styles = `
 
 	.profile-grid-container {
 		display: flex;
+		min-width: 200px;
 		flex-direction: column;
 		align-items: center;
 		border-radius: 10px;
-		background: #9F9F9F;
+		background: ${colors.second_card};
+		color: ${colors.primary_text};
 	}
 
 	.profile-info {
@@ -43,8 +49,35 @@ const styles = `
 		display: flex;
 		flex-direction: column;
 		align-items: center;
-		font-size: 21px;
-		margin-top: 25px;
+		width:100%;
+		font-size: 18px;
+		border-radius: 5px;
+		border-style: hidden;
+		margin: 25px 0px 0px 0px;
+		padding: 20px 0px 20px 0px;
+		background-color: ${colors.third_card};
+	}
+
+	.separator {
+		display: flex;
+		width: 80%;
+		height: 2px;
+		border-radius: 10px;
+		justify-content: center;
+		align-items: center;
+		margin: 25px 0px 25px 0px;
+		background-color: ${colors.second_card};
+	}
+
+	.separator-v {
+		display: none;
+		width: 3px;
+		height: 120px;
+		border-radius: 10px;
+		justify-content: center;
+		align-items: center;
+		margin: 0px 10px 0px 10px;
+		background-color: ${colors.second_card};
 	}
 
 	.win-rate-bar {
@@ -60,50 +93,147 @@ const styles = `
 
 	.bio-box {
 		text-overflow: ellipsis;
-		border: 2px solid #000;
-		border-radius: 15px;
-		background-color: #E7E7E7;
+		border-radius: 5px;
 		font-size: 21px;
-		width: 85%;
+		width: 100%;
 		margin-bottom: 10px;
 		text-align: center;
+		color: ${colors.second_text};
 	}
+
+	.bio-and-stats {
+		display: flex;
+		width: 90%;
+		min-width: 200px;
+		flex-direction: column;
+		align-items: center;
+		border-radius: 10px;
+	}
+
+	@media (max-width: 1100px) {
+		.profile-grid-container {
+			width: 100%;
+			flex-direction: column;
+			justify-content: center;
+			gap: 20px;
+		}
+
+		.game-stats-container, .tournament-stats-container {
+			width: 40%;
+		}
+
+		.game-stats {
+			flex-direction: row;
+			gap: 10px;
+			padding: 20px;
+		}
+
+		.game-stats > .separator {
+			display: none;
+		}
+		.game-stats > .separator-v {
+			display: flex;
+		}
+	}
+
+	@media (max-width: 660px) {
+		.game-stats-container, .tournament-stats-container {
+			width: 100%;
+		}
+
+		.game-stats {
+			flex-direction: column;
+		}
+
+		.game-stats > .separator {
+			display: flex;
+		}
+
+		.game-stats > .separator-v {
+			display: none;
+		}
 	
+	}
+
+	.game-stats-container, .tournament-stats-container {
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+		align-items: center;
+		width: 100%;
+	}
+
+	.games-win-rate, .tournaments-win-rate {
+		margin-bottom: 10px;
+	}
+
+	.online-status {
+		position: absolute;
+		display: inline-block;
+		width: 20px;
+		height: 20px;
+		border-radius: 50%;
+		background-color: green;
+		z-index: 2;
+		bottom: 33px;
+		right: 20px;
+		border: 2px solid white;
+	}
+
+	.profile-photo-status {
+		position: relative;
+	}
+
+	.hide {
+		display: none;
+	}
+
+	.small-margin {
+		margin-bottom: 10px;
+	}
+
 `;
 
 const getHtml = function(data) {
 	const html = `
 		<div class="profile-grid-container">
 			<div class="profile-info">
-				<div>
+				<div class="profile-photo-status">
 					<img class="profile-picture" src="" alt="Profile Picture">
+					<div class="online-status hide"></div>
 				</div>
 				<div class="username-container">
 					<div class="username"></div>
 				</div>
 			</div>
-			<div class="game-stats">
-				<!-- Total games tournaments included -->
-				<div class="total-games"></div>
-				<div class="games-win-rate"></div>
-				<div class="win-rate-bar game"></div>
-				<div class="wins-losses game">
-					<div class="wins game"></div>
-					<div class="losses game"></div>
+			<div class="bio-and-stats">
+				<div class="game-stats">
+					<!-- Total games tournaments included -->
+					<div class="game-stats-container">
+						<div class="total-games small-margin"></div>
+						<div class="games-win-rate"></div>
+						<div class="win-rate-bar game"></div>
+						<div class="wins-losses game">
+							<div class="wins game"></div>
+							<div class="losses game"></div>
+						</div>
+					</div>
+					<div class="separator"></div>
+					<div class="separator-v"></div>
+					<div class="tournament-stats-container">
+						<div class="total-tournaments small-margin"></div>
+						<div class="tournaments-win-rate"></div>
+						<div class="win-rate-bar tournament"></div>
+						<div class="wins-losses tournament">
+							<div class="wins tournament"></div>
+							<div class="losses tournament"></div>
+						</div>
+					</div>
 				</div>
-
-				<div class="total-tournaments"></div>
-				<div class="tournaments-win-rate"></div>
-				<div class="win-rate-bar tournament"></div>
-				<div class="wins-losses tournament">
-					<div class="wins tournament"></div>
-					<div class="losses tournament"></div>
+				<br></br>
+				<div class="bio-box">
+					<span class="bio"></span>
 				</div>
-			</div>
-
-			<br></br>
-			<div class="bio-box">
-				<span class="bio"></span>
 			</div>
 		</div>
 	`;
@@ -160,6 +290,7 @@ export default class UserProfile extends HTMLElement {
 		this.#updateUsername(data.username);
 		this.#updateBio(data.bio);
 		this.#updateStats(this.#getPlayedStatsObj(data));
+		this.#updateOnline(data.online);
 	}
 
 	#updateImage(image_url) {
@@ -171,7 +302,7 @@ export default class UserProfile extends HTMLElement {
 	#updateUsername(username) {
 		const htmlElement = this.html.querySelector('.username');
 		if (htmlElement)
-			htmlElement.textContent = username;
+			htmlElement.textContent = charLimiter(username, charLimit);
 	}
 
 	#updateBio(bio) {
@@ -182,26 +313,33 @@ export default class UserProfile extends HTMLElement {
 
 	#updateStats(stats) {
 		this.totalGames.innerHTML = `Total games: ${stats.totalGames}`;
-		this.gameWinRate.innerHTML = `Games win rate: ${stats.gamesWinRate}`;
+		this.gameWinRate.innerHTML = `Game win rate: ${stats.totalGames > 0 ? `${stats.gamesWinRate}%` : "---"}`;
 
 		if (!stats.gamesWinRate && !stats.totalGames)
-			this.winRateBarGame.style.background = `linear-gradient(to right, blue 0%, red 100%)`;
+			this.winRateBarGame.style.background = `linear-gradient(to right, ${colors.game_win} 0%, ${colors.game_loss} 100%)`;
 		else
-			this.winRateBarGame.style.background = `linear-gradient(to right, blue ${stats.gamesWinRate}%, red ${stats.gamesWinRate}%)`;
+			this.winRateBarGame.style.background = `linear-gradient(to right, ${colors.game_win} ${stats.gamesWinRate}%, ${colors.game_loss} )`;
 		
 		this.gamesWins.innerHTML = `W: ${stats.gamesWon}`;
 		this.gamesLoses.innerHTML = `L: ${stats.gamesLost}`;
 
 		this.totalTournaments.innerHTML = `Total tornaments: ${stats.totalTournaments}`;
-		this.tournamentWinRate.innerHTML = `Tornaments win rate: ${stats.tournamentsWinRate}`;
+		this.tournamentWinRate.innerHTML = `Tornament win rate: ${stats.totalTournaments > 0 ? `${stats.tournamentsWinRate}%`: "---"}`;
 		
 		if (!stats.tournamentsWinRate && !stats.totalTournaments)
-			this.winRateBarTournaments.style.background = `linear-gradient(to right, blue 0%, red 100%)`;
+			this.winRateBarTournaments.style.background = `linear-gradient(to right,  ${colors.game_win} 0%, ${colors.game_loss} 100%)`;
 		else
-			this.winRateBarTournaments.style.background = `linear-gradient(to right, blue ${stats.tournamentsWinRate}%, red ${stats.tournamentsWinRate}%)`;
+			this.winRateBarTournaments.style.background = `linear-gradient(to right,  ${colors.game_win} ${stats.tournamentsWinRate}%, ${colors.game_loss})`;
 
 		this.tournamentWins.innerHTML = `W: ${stats.tournamentsWon}`;
 		this.tournamentLoses.innerHTML = `L: ${stats.tournamentsLost}`;
+	}
+
+	#updateOnline(online) {
+		if (!online || online == "false")
+			return ;
+		const onlineHtml = this.html.querySelector(".online-status");
+		onlineHtml.classList.remove("hide");
 	}
 
 	#getPlayedStatsObj(data) {

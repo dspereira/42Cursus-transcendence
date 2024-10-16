@@ -1,24 +1,37 @@
 import stateManager from "../js/StateManager.js";
 import { callAPI } from "../utils/callApiUtils.js";
+import {colors} from "../js/globalStyles.js" 	
 import componentSetup from "../utils/componentSetupUtils.js";
 
 const styles = `
 .friends-section {
+	min-width: 460px;
 	display: flex;
 	flex-direction: row;
 	justify-content: flex-start;
-	gap: 30px;
-	padding: 0px 10px 0px 10px;
+	gap: 20px;
+	max-height: 90vh;
+	font-family: inherit;
 }
 
 .lateral-menu {
 	display: flex;
 	flex-direction: column;
 	justify-content: flex-start;
+	min-width: 180px;
+	width: 10%;
+	border-radius: 5px;
+	border-style: hidden;
+	background-color: ${colors.second_card};
+	padding: 10px 10px 10px 10px;
+	font-family: inherit;
 }
 
 .list-panel {
-	width:100%;
+	color: ${colors.second_text};
+	width: 100%;
+	display: flex;
+	flex-direction: column;
 }
 
 .lateral-menu button {
@@ -26,7 +39,6 @@ const styles = `
 	background : transparent;
 	border: 0;
 	padding: 0;
-	font-family: innherit;
 	text-align: left;
 	width: 100%;
 	/*margin-bottom: 16px;*/
@@ -34,11 +46,14 @@ const styles = `
 
 .icon {
 	font-size: 22px;
+	color: ${colors.primary_text};
 }
 
 .icon-text {
 	font-size: 14px;
 	white-space: nowrap;
+	color: ${colors.primary_text};
+	font-family: inherit;
 }
 
 .lateral-menu button > span {
@@ -50,15 +65,20 @@ const styles = `
 
 user-card {
 	display: block;
-	margin-bottom: 20px;
+}
+
+.user-card {
+	background-color: ${colors.second_card};
+	color: ${colors.second_text};
 }
 
 .options {
 	padding: 5px 10px 5px 10px;
+	font-family: inherit;
 }
 
 .options:hover {
-	background-color: #dbd9d7;
+	background-color: ${colors.button_background};
 	border-radius: 8px;
 	padding: 5px 10px 5px 10px;
 }
@@ -68,22 +88,50 @@ user-card {
 	margin-top: 6px;
 	margin-left: 15px;
 	font-size: 16px;
+	color: ${colors.second_text};
 }
 
-.search-bar input {
+.search-bar input, .search-bar input:hover, .search-bar input:focus{
 	padding-left: 40px;
+	color:  ${colors.second_text};
 }
 
 .search-bar {
 	margin-bottom: 25px;
 }
 
-.selected-option {
-	background-color: #dbd9d7;
-	border-radius: 8px;
+.form-control {
+	border-radius: 5px;
+	border-style: hidden;
+	background-color: ${colors.input_background};
 }
 
-.notification {	
+.form-control::placeholder {
+	color: ${colors.second_text};
+}
+
+.form-control:focus {
+	background-color: ${colors.input_background};
+}
+
+
+.selected-option {
+	background-color: ${colors.btn_default};
+	border-style: hidden;
+	border-radius: 5px;
+	transition: 0.5s;
+}
+
+.user-list {
+	display: flex;
+	flex-direction: row;
+	justify-content: center;
+	flex-wrap: wrap;
+	gap: 20px;
+	overflow-y: auto;
+}
+
+.notification {
 	background: red;
 	border-radius: 50%;
 	padding: 7px 7px;
@@ -91,6 +139,62 @@ user-card {
 
 .hide {
 	display: none;
+}
+
+.no-friends-text {
+	font-size: 16px;
+	text-align: center;
+}
+
+.no-content-text {
+	color: ${colors.second_text};
+}
+
+.alert-div {
+	display: flex;
+	margin: 20px auto;
+	width: 80%;
+	animation: disappear linear 5s forwards;
+	background-color: ${colors.alert};
+	z-index: 1001;
+	position: relative;
+	margin-bottom: 30px;
+}
+
+.alert-bar {
+	width: 95%;
+	height: 5px;
+	border-style: hidden;
+	border-radius: 2px;
+	background-color: ${colors.alert_bar};
+	position: absolute;
+	bottom: 2px;
+	animation: expire linear 5s forwards;
+}
+
+@keyframes expire {
+	from {
+		width: 95%;
+	}
+	to {
+		width: 0%;
+	}
+}
+
+@keyframes disappear {
+	0% {
+		visibility: visible;
+		opacity: 1;
+	}
+	99% {
+		visibility: visible;
+		opacity: 1;
+	}
+	100% {
+		visibility: hidden;
+		opacity: 0;
+		display: none;
+	}
 }
 
 `;
@@ -171,6 +275,7 @@ export default class AppFriends extends HTMLElement {
 		this.#setSearchButtonEvent();
 		this.#setFriendsButtonEvent();
 		this.#setRequestsButtonEvent();
+		this.#errorMsgEvents();
 		this.#notificationEvent();
 		this.#updateNotificationStyle(stateManager.getState("hasFriendInvite"));
 	}
@@ -284,7 +389,7 @@ export default class AppFriends extends HTMLElement {
 				if (data.users)
 					this.#insertUsersCards(data.users, "search");
 				else
-					listPanel.innerHTML = "<h1>There are no users to search for!</h1>";
+					listPanel.innerHTML = `<div class="no-content-text">There are no users to search for!</div>`;
 			}
 			this.searchMenuBtn.disabled = false;
 		});
@@ -303,7 +408,7 @@ export default class AppFriends extends HTMLElement {
 				if (data.friends)
 					this.#insertUsersCards(data.friends, "friends");
 				else
-					listPanel.innerHTML = "<h1>Add friends to see them here!</h1>";
+					listPanel.innerHTML = `<div class="no-friends-text">Add friends to see them here!</div>`;
 			}
 			this.friendsMenuBtn.disabled = false;
 		});	
@@ -387,6 +492,26 @@ export default class AppFriends extends HTMLElement {
 					this.#insertUsersCards(data.friends, "friends");
 				else
 					userList.innerHTML = "<h1>Username not Found!</h1>";
+			}
+		});
+	}
+
+	#errorMsgEvents() {
+		stateManager.addEvent("errorMsg", (msg) => {
+			if (msg) {
+				stateManager.setState("errorMsg", null);
+				const alertBefore  = this.html.querySelector(".alert");
+				if (alertBefore)
+					alertBefore.remove();
+				const insertElement = this.html.querySelector(".friends-section");
+				var alertCard = document.createElement("div");
+				alertCard.className = "alert alert-danger hide from alert-div";
+				alertCard.role = "alert";
+				alertCard.innerHTML = `
+						${msg}
+						<div class=alert-bar></div>
+					`;
+				this.html.insertBefore(alertCard, insertElement);
 			}
 		});
 	}

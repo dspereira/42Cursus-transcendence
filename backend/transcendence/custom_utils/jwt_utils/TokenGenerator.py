@@ -9,7 +9,7 @@ TFA_TOKEN = "two_factor_auth"
 ACCESS_TOKEN_EXP_MIN = 25
 REFRESH_TOKEN_EXP_DAY = 1
 EMAIL_VERIFICATION_TOKEN_EXP_DAY = 1
-TFA_TOKEN_EXP_MIN = 15
+TFA_TOKEN_EXP_MIN = 1
 
 class TokenGenerator:
 	def __init__(self, user_id: int):
