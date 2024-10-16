@@ -209,7 +209,7 @@ export default class PageTournaments extends HTMLElement {
 		callAPI("GET", `/tournament/is-finished/?id=${tournamentId}`, null, (res, data) => {
 			if (res.ok && data && data.is_finished) {
 				this.btnCreateTourneySection.classList.add("hide");
-				this.tourneySection.innerHTML = `<tourney-graph tournament-id="${tournamentId}" tournament-name="${data.tournament_name}"></tourney-graph>`;
+				this.tourneySection.innerHTML = `<tourney-graph tournament-id="${tournamentId}" tournament-name="${data.tournament_name}" language="${this.data.language}"></tourney-graph>`;
 				this.invitesReceived.innerHTML = "";
 				this.exitTournament.classList.remove("hide");
 			}
