@@ -810,9 +810,13 @@ export default class AppConfigs extends HTMLElement {
 				stateManager.setState("errorMsg", null);
 				const mainDiv = this.html.querySelector(".page-container");
 				const alertBefore  = this.html.querySelector(".alert");
+				if (!mainDiv)
+					return ;
 				if (alertBefore)
 					alertBefore.remove();
-				const insertElement = mainDiv.querySelector(".main-container"); 
+				const insertElement = mainDiv.querySelector(".main-container");
+				if (!insertElement)
+					return ;
 				var alertCard = document.createElement("div");
 				alertCard.className = "alert alert-danger hide from alert-div";
 				alertCard.role = "alert";

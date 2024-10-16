@@ -255,7 +255,7 @@ export default class SignupForm extends HTMLElement {
 
 	#showHidePassword() {
 		let eyes = this.html.querySelectorAll(".eye-icon");
-		eyes.forEach(eye => {			
+		eyes.forEach(eye => {
 			eye.addEventListener("click", () => {
 				const openEye = "bi-eye";
 				const closeEye = "bi-eye-slash";

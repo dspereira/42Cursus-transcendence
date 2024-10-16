@@ -225,9 +225,13 @@ export default class AppChat extends HTMLElement {
 				stateManager.setState("errorMsg", null);
 				const mainDiv = this.html.querySelector(".chat-area");
 				const alertBefore  = this.html.querySelector(".alert");
+				if (!mainDiv)
+					return ;
 				if (alertBefore)
 					alertBefore.remove();
 				const insertElement = mainDiv.querySelector(".no-friends-selected-msg");
+				if (!insertElement)
+					return ;
 				var alertCard = document.createElement("div");
 				alertCard.className = "alert alert-danger hide from alert-div";
 				alertCard.role = "alert";

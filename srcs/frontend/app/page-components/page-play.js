@@ -144,10 +144,14 @@ export default class PagePlay extends HTMLElement {
 			if (msg) {
 				stateManager.setState("errorMsg", null);
 				const mainDiv = this.html.querySelector(".page-1");
+				if (!mainDiv)
+					return ;
 				const alertBefore  = this.html.querySelector(".alert");
 				if (alertBefore)
 					alertBefore.remove();
 				const insertElement = mainDiv.querySelector(".invite-game");
+				if (!insertElement)
+					return ;
 				var alertCard = document.createElement("div");
 				alertCard.className = "alert alert-danger hide from alert-div";
 				alertCard.role = "alert";

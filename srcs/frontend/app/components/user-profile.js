@@ -339,7 +339,8 @@ export default class UserProfile extends HTMLElement {
 		if (!online || online == "false")
 			return ;
 		const onlineHtml = this.html.querySelector(".online-status");
-		onlineHtml.classList.remove("hide");
+		if (onlineHtml)
+			onlineHtml.classList.remove("hide");
 	}
 
 	#getPlayedStatsObj(data) {

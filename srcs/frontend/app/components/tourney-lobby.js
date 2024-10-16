@@ -523,6 +523,8 @@ export default class TourneyLobby extends HTMLElement {
 				if (alertBefore)
 					alertBefore.remove();
 				const insertElement = this.html.querySelector(".tournament-name-update");
+				if (!insertElement)
+					return ;
 				var alertCard = document.createElement("div");
 				alertCard.className = "alert alert-danger hide from alert-div";
 				alertCard.role = "alert";

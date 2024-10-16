@@ -405,10 +405,10 @@ export default class AppFriends extends HTMLElement {
 	#createSearchPage() {
 		const listPanel = this.html.querySelector(".list-panel");
 		listPanel.innerHTML = "";	
-		this.#addSearchBar(listPanel, "search");
-		this.#addUserList(listPanel);
 		if (!listPanel)
 			return ;
+		this.#addSearchBar(listPanel, "search");
+		this.#addUserList(listPanel);
 		this.#setOptionSelected("search");
 		this.searchMenuBtn.disabled = true;
 		callAPI("GET", `/friends/search_user_by_name/`, null, (res, data) => {
@@ -430,11 +430,11 @@ export default class AppFriends extends HTMLElement {
 
 	#createFriendsPage() {
 		const listPanel = this.html.querySelector(".list-panel");
-		listPanel.innerHTML = "";	
-		this.#addSearchBar(listPanel, "friends");
-		this.#addUserList(listPanel);
 		if (!listPanel)
 			return ;
+		listPanel.innerHTML = "";
+		this.#addSearchBar(listPanel, "friends");
+		this.#addUserList(listPanel);
 		this.#setOptionSelected("friends");
 		this.friendsMenuBtn.disabled = true;
 		callAPI("GET", `/friends/friendships/`, null, (res, data) => {
@@ -456,10 +456,10 @@ export default class AppFriends extends HTMLElement {
 
 	#createRequestsPage() {
 		const listPanel = this.html.querySelector(".list-panel");
-		listPanel.innerHTML = "";
-		this.#addUserList(listPanel);
 		if (!listPanel)
 			return ;
+		listPanel.innerHTML = "";
+		this.#addUserList(listPanel);
 		this.#setOptionSelected("requests");
 		this.requestsMenuBtn.disabled = true;
 		callAPI("GET", `/friends/request/`, null, (res, data) => {
@@ -481,7 +481,6 @@ export default class AppFriends extends HTMLElement {
 
 	#setOptionSelected(option) {
 		const options = this.html.querySelectorAll(".options");
-
 		if (!options)
 			return ;
 		options.forEach((elm) => {
@@ -524,6 +523,8 @@ export default class AppFriends extends HTMLElement {
 
 	#search(type, value) {
 		const userList = this.html.querySelector(".user-list");
+		if (!userList)
+			return ;
 		let path = "";
 
 		if (type=="search")

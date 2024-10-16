@@ -132,6 +132,8 @@ export default class AppHeader extends HTMLElement {
 		if (!elm)
 			return ;
 		const popup = elmHtml.querySelector('.my-profile');
+		if (!popup)
+			return ;
 		elm.addEventListener('mouseenter', () => popup.style.display = 'block');
 		elm.addEventListener('mouseleave', () => popup.style.display = 'none');
 		if (page === "/home" || page === "home")
