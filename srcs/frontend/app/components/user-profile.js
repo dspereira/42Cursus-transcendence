@@ -318,7 +318,7 @@ export default class UserProfile extends HTMLElement {
 		if (!stats.gamesWinRate && !stats.totalGames)
 			this.winRateBarGame.style.background = `linear-gradient(to right, ${colors.game_win} 0%, ${colors.game_loss} 100%)`;
 		else
-			this.winRateBarGame.style.background = `linear-gradient(to right, ${colors.game_win} 0%, ${colors.game_loss} 100%)`;
+			this.winRateBarGame.style.background = `linear-gradient(to right, ${colors.game_win} ${stats.gamesWinRate}%, ${colors.game_loss} )`;
 		
 		this.gamesWins.innerHTML = `W: ${stats.gamesWon}`;
 		this.gamesLoses.innerHTML = `L: ${stats.gamesLost}`;
@@ -329,7 +329,7 @@ export default class UserProfile extends HTMLElement {
 		if (!stats.tournamentsWinRate && !stats.totalTournaments)
 			this.winRateBarTournaments.style.background = `linear-gradient(to right,  ${colors.game_win} 0%, ${colors.game_loss} 100%)`;
 		else
-			this.winRateBarTournaments.style.background = `linear-gradient(to right,  ${colors.game_win} ${stats.tournamentsWinRate}%, ${colors.game_loss} ${stats.tournamentsWinRate}%)`;
+			this.winRateBarTournaments.style.background = `linear-gradient(to right,  ${colors.game_win} ${stats.tournamentsWinRate}%, ${colors.game_loss})`;
 
 		this.tournamentWins.innerHTML = `W: ${stats.tournamentsWon}`;
 		this.tournamentLoses.innerHTML = `L: ${stats.tournamentsLost}`;
