@@ -56,21 +56,6 @@ export const callAPI = async function (method, url, data, callback_sucess, callb
 				render(getHtmlElm(PageError));
 		}
 	}
-
-	/*else if (resApi && resApi.error) {
-		if (callback_error)
-			callback_error(resApi.error);
-		else {
-			console.log(`callAPI Error: ${resApi.error}`);
-			if (navigator.onLine) {
-				let checkRes = await fetchApi("GET", HEALTH_CHECK_URL, null);
-				if (checkRes.error)
-					render(getHtmlElm(PageError));
-			}
-		}
-	}*/
-	
-	
 }
 
 const fetchApi = async function (method, url, data, csrf_token) {

@@ -5,7 +5,6 @@ import { redirect } from "../js/router.js";
 import { colors } from "../js/globalStyles.js";
 import stateManager from "../js/StateManager.js";
 import componentSetup from "../utils/componentSetupUtils.js";
-import stateManager from "../js/StateManager.js";
 
 const P1_name = "Player 1";
 const P2_name = "Player 2";
