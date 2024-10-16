@@ -183,7 +183,7 @@ const styles = `
 		min-width: 152px;
 	}
 
-	@media (max-width:800px) {
+	@media (max-width:1100px) {
 		.player-1, .player-2 {
 			height: auto;
 			min-height: 88px;
