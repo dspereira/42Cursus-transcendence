@@ -47,6 +47,36 @@ const styles = `
 	color: ${colors.second_text};
 }
 
+	.no-content-container {
+		position: relative;
+		display: flex;
+		width: 100%;
+		height: 500px;
+		flex-direction: column;
+		max-height: 500px;
+	}
+
+	.no-content-img {
+		position: absolute;
+		width: 450px;
+		height: auto;
+		margin: 20px auto;
+		opacity: 5%;
+		left: 50%;
+		top: 50%;
+		transform: translate(-50%, -50%);
+	}
+
+	.no-content-text {
+		position: absolute;
+		margin-top: 50px;
+		font-size: 24px;
+		left: 50%;
+		transform: translate(-50%, 0);
+		text-align: center;
+		color: ${colors.second_text};
+	}
+
 .alert-div {
 	display: flex;
 	margin: 30px auto;
@@ -104,7 +134,10 @@ const getHtml = function(data) {
 			<chat-friends-list></chat-friends-list>
 		</div>
 		<div class="chat-area">
-			<div class="no-friends-selected-msg hide"><span>You have no friends selected. Please select a friend to start a chat.</span></div>
+			<div class= "no-content-container">
+				<img src="/img/pong-gs.png" class="no-content-img">
+				<div class="no-content-text">You have no friend selected. Please select a friend to start a chat.</div>
+			</div>
 		</div>
 	</div>
 	`;
@@ -174,10 +207,13 @@ export default class AppChat extends HTMLElement {
 	#addfriendChatIdStateEvent() {
 		stateManager.addEvent("friendChatId", (state) => {
 			if (!state) {
-				this.chatSection.innerHTML = `
-				<div class="no-friends-selected-msg">
-					<span>You have no friend selected. Please select a friend to start a chat.</span>
-				</div>`;
+				this.chatSection.innerHTML = 
+				`
+				<div class= "no-content-container">
+					<img src="/img/pong-gs.png" class="no-content-img">
+					<div class="no-content-text">You have no friend selected. Please select a friend to start a chat.</div>
+				</div>
+				`;
 				stateManager.setState("errorMsg", "Error: The user you tried to message is no longer your friend");
 			}
 		});

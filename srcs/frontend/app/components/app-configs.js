@@ -718,7 +718,6 @@ export default class AppConfigs extends HTMLElement {
 		const option = this.html.querySelector(`[value="${code}"]`);
 		if (!option)
 			return ;
-
 		option.setAttribute("selected", "");
 		let value = option.innerHTML;
 		let idx = value.indexOf("&nbsp;&nbsp; ");
@@ -780,6 +779,8 @@ export default class AppConfigs extends HTMLElement {
 				if (res.ok && data && data.qr_code) {
 					this.qrcodeImg.setAttribute("src", 'data:image/png;base64,' + data.qr_code);
 					const qrElm = document.querySelector(".qr-popup");
+					if (!qrElm)
+						return ;
 					qrElm.style.display = 'flex';
 					this.#qrPopUp();
 					document.addEventListener('keydown', this.escQrClose);
@@ -792,6 +793,8 @@ export default class AppConfigs extends HTMLElement {
 
 	#qrPopUp() {
 		const popup = document.querySelector('.qr-popup');
+		if (!popup)
+			return ;
 		window.addEventListener('click', (event) => {
 			if (event.target === popup) {
 				popup.style.display = 'none';

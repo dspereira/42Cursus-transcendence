@@ -69,7 +69,33 @@ const styles = `
 		background-color: #FF6666;
 	}
 
+	.no-content-container {
+		position: relative;
+		display: flex;
+		width: 100%;
+		height: 500px;
+		flex-direction: column;
+		max-height: 500px;
+	}
+
+	.no-content-img {
+		position: absolute;
+		width: 450px;
+		height: auto;
+		margin: 20px auto;
+		opacity: 5%;
+		left: 50%;
+		top: 50%;
+		transform: translate(-50%, -50%);
+	}
+
 	.no-content-text {
+		position: absolute;
+		margin-top: 50px;
+		font-size: 24px;
+		left: 50%;
+		transform: translate(-50%, 0);
+		text-align: center;
 		color: ${colors.second_text};
 	}
 
@@ -165,7 +191,12 @@ export default class GameHistory extends HTMLElement {
 
 		this.gamesListHtml.innerHTML = "";
 		if (!gameList || !gameList.length) {
-			this.gamesListHtml.innerHTML = `<div class="no-content-text">No games played yet.</div>`;
+			this.gamesListHtml.innerHTML = `
+			<div class= "no-content-container">
+				<img src="/img/pong-gs.png" class="no-content-img">
+				<div class="no-content-text">No games played yet.</div>
+			</div>
+			`;
 			return ;
 		}
 		gameList.forEach(elm => {
@@ -193,7 +224,13 @@ export default class GameHistory extends HTMLElement {
 
 		this.gamesListHtml.innerHTML = "";
 		if (!tournamentList || !tournamentList.length) {
-			this.gamesListHtml.innerHTML =  `<div class="no-content-text">No tournaments played yet.</div>`;
+			this.gamesListHtml.innerHTML = 
+			`
+			<div class= "no-content-container">
+				<img src="/img/pong-gs.png" class="no-content-img">
+				<div class="no-content-text">No tournaments played yet.</div>
+			</div>
+			`;
 			return ;
 		}
 		tournamentList.forEach(elm => {
