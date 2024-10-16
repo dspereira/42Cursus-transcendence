@@ -183,11 +183,13 @@ def send_smsto_user(user):
 	return otp_code
 
 def send_email_to_user(user):
-	otp_user_opt = otp_user_opt_model.get(user=user)
-	otp_code = generate_otp_code(user)
-	if otp_code and EmailSender().send_verification_code(code=otp_code, receiver_email=otp_user_opt.email):
-		return True
-	return False
+	try:
+		otp_user_opt = otp_user_opt_model.get(user=user)
+		otp_code = generate_otp_code(user)
+		if otp_code and EmailSender().send_verification_code(code=otp_code, receiver_email=otp_user_opt.email):
+			return True
+	except:
+		return False
 
 def is_valid_input_code(input_code):
 	if input_code:
