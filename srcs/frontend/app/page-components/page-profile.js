@@ -44,14 +44,14 @@ const styles = `
 const getHtml = function(data) {
 	const html = `
 		<app-header></app-header>
-		<side-panel></side-panel>
+		<side-panel language=${data.language}></side-panel>
 		<div class="content content-small">
 			<div class="profile-container">
 				<div class="profile">
-					<user-profile username="${data.username}"></user-profile>
+					<user-profile username="${data.username}" language=${data.language}></user-profile>
 				</div>
 				<div class="history">
-					<game-history username="${data.username}"></game-history>
+					<game-history username="${data.username}" language=${data.language}></game-history>
 				</div>
 			</div>
 		</div>
@@ -59,7 +59,7 @@ const getHtml = function(data) {
 	return html;
 }
 
-const title = "BlitzPong - Profile";
+const title = "BlitzPong - ";
 
 export default class PageProfile extends HTMLElement {
 	static #componentName = "page-profile";
@@ -67,11 +67,24 @@ export default class PageProfile extends HTMLElement {
 
 	constructor() {
 		super()
+
 		this.data = {};
-		document.title = title;
+		this.#loadInitialData();
 	}
 
-	connectedCallback() {
+	static get componentName() {
+		return this.#componentName;
+	}
+
+	async #loadInitialData() {
+		await callAPI("GET", "/settings/", null, (res, data) => {
+			if (res.ok) {
+				if (data && data.settings.language){
+					this.data.language = data.settings.language;
+				}
+			}
+		});
+
 		if (!this.data.username) {
 			this.data.username = stateManager.getState("username");
 			this.#start();
@@ -86,9 +99,13 @@ export default class PageProfile extends HTMLElement {
 		}
 	}
 
+	connectedCallback() {
+	}
+
 	attributeChangedCallback(name, oldValue, newValue) {
 		this.data[name] = newValue;
 	}
+
 
 	static get componentName() {
 		return this.#componentName;
@@ -100,6 +117,7 @@ export default class PageProfile extends HTMLElement {
 	}
 
 	#initComponent() {
+		document.title = title + this.data.username;
 		this.html = componentSetup(this, getHtml(this.data), styles);
 	}
 

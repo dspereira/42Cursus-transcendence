@@ -148,8 +148,6 @@ export default class Page2FA extends HTMLElement {
 	constructor() {
 		super()
 
-		document.title = title;
-
 		this.chosenMethod;
 		this.methodsObj;
 		this.#initComponent();
@@ -161,6 +159,7 @@ export default class Page2FA extends HTMLElement {
 	}
 
 	#initComponent() {
+		document.title = title;
 		this.html = componentSetup(this, getHtml(), styles);
 
 		this.option2fa = this.html.querySelector(".option-2fa");

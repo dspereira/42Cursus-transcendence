@@ -4,6 +4,10 @@ import { callAPI } from "../utils/callApiUtils.js";
 import {colors} from "../js/globalStyles.js";
 import { getCsrfToken } from "../utils/csrfTokenUtils.js";
 import componentSetup from "../utils/componentSetupUtils.js";
+import { enPageTournamentsDict } from "../lang-dicts/enLangDict.js";
+import { ptPageTournamentsDict } from "../lang-dicts/ptLangDict.js";
+import { esPageTournamentsDict } from "../lang-dicts/esLangDict.js";
+import getLanguageDict from "../utils/languageUtils.js";
 
 const styles = `
 
@@ -50,17 +54,17 @@ const styles = `
 const getHtml = function(data) {
 	const html = `
 	<app-header></app-header>
-	<side-panel selected="tournaments"></side-panel>
+	<side-panel selected="tournaments" language=${data.language}></side-panel>
 	<div class="content content-small">
 		<div class="btn-create-tourney-section hide">
 			<div class="create-tourney">
-				<button type="button" class="btn btn-primary btn-create-tourney">Create Tournament</button>
+				<button type="button" class="btn btn-primary btn-create-tourney">${data.langDict.create_tournament_button}</button>
 			</div>
 			<div class="border-separation"></div>
 		</div>
 		<div class="tourney-section"></div>
 		<div class="invites-received"></div>
-		<div class="exit-tourney hide"><button type="button" class="btn btn-primary btn-exit-tourney">Exit Tournament</button></div>
+		<div class="exit-tourney hide"><button type="button" class="btn btn-primary btn-exit-tourney">${data.langDict.exit_tournament_button}</button></div>
 	</div>
 	`;
 	return html;
@@ -73,20 +77,39 @@ export default class PageTournaments extends HTMLElement {
 
 	constructor() {
 		super()
+		
 		this.data = {};
 
 		document.title = title;
-
-		this.#initComponent();
-		this.#scripts();
-
+		this.#loadInitialData();
 	}
 
 	static get componentName() {
 		return this.#componentName;
 	}
 
+	async #loadInitialData() {
+		await callAPI("GET", "/settings/", null, (res, data) => {
+			if (res.ok) {
+				if (data && data.settings.language){
+					this.data.language = data.settings.language;
+					this.data.langDict = getLanguageDict(this.data.language, enPageTournamentsDict, ptPageTournamentsDict, esPageTournamentsDict);
+				}
+		}
+		});
+
+		this.#initComponent();
+		this.#scripts();
+
+	}
+
+
+	static get componentName() {
+		return this.#componentName;
+	}
+
 	#initComponent() {
+		document.title = this.data.langDict.title;
 		this.html = componentSetup(this, getHtml(this.data), styles);
 
 		this.btnCreateTourneySection = this.html.querySelector(".btn-create-tourney-section");
@@ -116,6 +139,7 @@ export default class PageTournaments extends HTMLElement {
 						tournament-id="${info.id}"
 						owner-id="${stateManager.getState("userId")}"
 						tournament-name="${info.name}"
+						language="${this.data.language}"
 					></tourney-lobby>`;
 					this.invitesReceived.innerHTML = "";
 				}
@@ -137,11 +161,12 @@ export default class PageTournaments extends HTMLElement {
 						tournament-id="${torneyData.id}"
 						owner-id="${torneyData.owner}"
 						tournament-name="${torneyData.name}"
+						language="${this.data.language}"
 					></tourney-lobby>`;
 					this.invitesReceived.innerHTML = "";
 				}
 				else if (torneyData.status == "active") {
-					this.tourneySection.innerHTML = `<tourney-graph tournament-id="${torneyData.id}" tournament-name="${torneyData.name}"></tourney-graph>`;
+					this.tourneySection.innerHTML = `<tourney-graph tournament-id="${torneyData.id}" tournament-name="${torneyData.name}" language="${this.data.language}"></tourney-graph>`;
 					this.invitesReceived.innerHTML = "";
 				}
 			}
@@ -149,7 +174,7 @@ export default class PageTournaments extends HTMLElement {
 				this.btnCreateTourneySection.classList.remove("hide");
 				this.exitTournament.classList.add("hide");
 				this.tourneySection.innerHTML = "";
-				this.invitesReceived.innerHTML = "<tourney-invites-received></tourney-invites-received>";
+				this.invitesReceived.innerHTML = `<tourney-invites-received language="${this.data.language}"></tourney-invites-received>`;
 			}
 		});
 
@@ -172,6 +197,7 @@ export default class PageTournaments extends HTMLElement {
 				this.tourneySection.innerHTML = `<app-lobby 
 					lobby-id=${stateValue} 
 					is-tournament="true"
+					language="${this.data.language}"
 				></app-lobby>`;
 				this.invitesReceived.innerHTML = "";		
 				stateManager.setState("tournamentGameLobby", null);
@@ -183,7 +209,7 @@ export default class PageTournaments extends HTMLElement {
 		callAPI("GET", `/tournament/is-finished/?id=${tournamentId}`, null, (res, data) => {
 			if (res.ok && data && data.is_finished) {
 				this.btnCreateTourneySection.classList.add("hide");
-				this.tourneySection.innerHTML = `<tourney-graph tournament-id="${tournamentId}" tournament-name="${data.tournament_name}"></tourney-graph>`;
+				this.tourneySection.innerHTML = `<tourney-graph tournament-id="${tournamentId}" tournament-name="${data.tournament_name}" language="${this.data.language}"></tourney-graph>`;
 				this.invitesReceived.innerHTML = "";
 				this.exitTournament.classList.remove("hide");
 			}

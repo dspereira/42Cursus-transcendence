@@ -2,6 +2,10 @@ import {callAPI} from "../utils/callApiUtils.js";
 import parseDate from "../utils/timeDateUtils.js";
 import { colors } from "../js/globalStyles.js";
 import componentSetup from "../utils/componentSetupUtils.js";
+import { enGameHistory } from "../lang-dicts/enLangDict.js";
+import { ptGameHistory } from "../lang-dicts/ptLangDict.js";
+import { esGameHistory } from "../lang-dicts/esLangDict.js";
+import getLanguageDict from "../utils/languageUtils.js";
 
 const styles = `
 	.page-container {
@@ -107,16 +111,16 @@ const getHtml = function(data) {
 	const html = `
 	<div class="page-container">
 		<div class="tab-select">
-			<button type="button" class="btn btn-primary btn-solo-games btn-selected">Solo Games</button>
-			<button type="button" class="btn btn-primary btn-tournament-games">Tournament Games</button>
+			<button type="button" class="btn btn-primary btn-solo-games btn-selected">${data.langDict.solo_games_button}</button>
+			<button type="button" class="btn btn-primary btn-tournament-games">${data.langDict.tournament_games}</button>
 		</div>
 		<div class="caption-color">
 			<div class="victory-container">
 				<div class="color-victory"></div>
-				<div class="word-victory">Victory</div>
+				<div class="word-victory">${data.langDict.victory_color}</div>
 			</div>
 			<div class="defeat-container">
-				<div class="word-defeat">Defeat</div>
+				<div class="word-defeat">${data.langDict.defeat_color}</div>
 				<div class="color-defeat"></div>
 			</div>
 		</div>
@@ -129,7 +133,7 @@ const getHtml = function(data) {
 }
 
 export default class GameHistory extends HTMLElement {
-	static observedAttributes = ["username"];
+	static observedAttributes = ["username", "language"];
 
 	constructor() {
 		super();
@@ -142,6 +146,8 @@ export default class GameHistory extends HTMLElement {
 	}
 
 	attributeChangedCallback(name, oldValue, newValue) {
+		if (name == "language")
+			this.data.langDict = getLanguageDict(newValue, enGameHistory, ptGameHistory, esGameHistory);
 		this.data[name] = newValue;
 	}
 
@@ -165,7 +171,7 @@ export default class GameHistory extends HTMLElement {
 
 		this.gamesListHtml.innerHTML = "";
 		if (!gameList || !gameList.length) {
-			this.gamesListHtml.innerHTML = `<div class="no-content-text">No games played yet.</div>`;
+			this.gamesListHtml.innerHTML = `<div class="no-content-text">${this.data.langDict.no_games_played}</div>`;
 			return ;
 		}
 		gameList.forEach(elm => {
@@ -193,7 +199,7 @@ export default class GameHistory extends HTMLElement {
 
 		this.gamesListHtml.innerHTML = "";
 		if (!tournamentList || !tournamentList.length) {
-			this.gamesListHtml.innerHTML =  `<div class="no-content-text">No tournaments played yet.</div>`;
+			this.gamesListHtml.innerHTML =  `<div class="no-content-text">${this.data.langDict.no_tournaments_played}</div>`;
 			return ;
 		}
 		tournamentList.forEach(elm => {
@@ -204,6 +210,7 @@ export default class GameHistory extends HTMLElement {
 				name="${elm.name}"
 				is-winner="${elm.is_winner}"
 				date="${parseDate(elm.creation_date)}";
+				language="${this.data.language}"
 			></tournament-card>`;
 			this.gamesListHtml.insertBefore(tournament, prev_tournament);
 			prev_tournament = tournament;

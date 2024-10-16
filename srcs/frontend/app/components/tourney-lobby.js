@@ -8,6 +8,10 @@ import { redirect } from "../js/router.js";
 import friendProfileRedirectionEvent from "../utils/profileRedirectionUtils.js";
 import { getCsrfToken } from "../utils/csrfTokenUtils.js";
 import componentSetup from "../utils/componentSetupUtils.js";
+import { enTourneyLobbyDict } from "../lang-dicts/enLangDict.js";
+import { ptTourneyLobbyDict } from "../lang-dicts/ptLangDict.js";
+import { esTourneyLobbyDict } from "../lang-dicts/esLangDict.js";
+import getLanguageDict from "../utils/languageUtils.js";
 
 const styles = `
 
@@ -215,19 +219,19 @@ ${pfpStyle(".default-photo","50%","auto")}
 
 const getHtml = function(data) {
 	const tournamentInviterHtml = `<div class="border-separation"></div>
-	<tourney-inviter tournament-id="${data.tournamentId}"></tourney-inviter>`;
+	<tourney-inviter tournament-id="${data.tournamentId}" language="${data.language}"></tourney-inviter>`;
 
-	const ownerBtns = `<button id="button" type="button" class="btn btn-success btn-start">Start</button>
-			<button id="button" type="button" class="btn btn-danger btn-cancel">Cancel</button>`;
+	const ownerBtns = `<button id="button" type="button" class="btn btn-success btn-start">${data.langDict.start_button}</button>
+			<button id="button" type="button" class="btn btn-danger btn-cancel">${data.langDict.cancel_button}</button>`;
 	
-	const guestBtns = `<button id="button" type="button" class="btn btn-danger btn-leave">Leave</button>`;
+	const guestBtns = `<button id="button" type="button" class="btn btn-danger btn-leave">${data.langDict.leave_button}</button>`;
 
 	const updateNameForm = `<div class="form-group tournament-name-update">
 		<div class="input-container">
 			<input type="text" class="form-control form-control-md name-input" value="${data.tournamentName}" placeholder="Tournament Name" maxlength="50">
 		</div>
 		<div class="button-container">
-			<button id="button" type="button" class="btn btn-primary btn-update">Update Name</button>
+			<button id="button" type="button" class="btn btn-primary btn-update">${data.langDict.update_name_button}</button>
 		</div>
 	</div>`;
 
@@ -270,7 +274,7 @@ const getHtml = function(data) {
 }
 
 export default class TourneyLobby extends HTMLElement {
-	static observedAttributes = ["tournament-id", "owner-id", "tournament-name"];
+	static observedAttributes = ["tournament-id", "owner-id", "tournament-name", "language"];
 
 	constructor() {
 		super()
@@ -298,6 +302,9 @@ export default class TourneyLobby extends HTMLElement {
 		else if (name == "owner-id") {
 			name = "ownerId";
 			this.data.isOwner = stateManager.getState("userId") == newValue;
+		}
+		else if (name == "language") {
+			this.data.langDict = getLanguageDict(newValue, enTourneyLobbyDict, ptTourneyLobbyDict, esTourneyLobbyDict);
 		}
 		this.data[name] = newValue;
 	}
@@ -351,7 +358,7 @@ export default class TourneyLobby extends HTMLElement {
 		img.setAttribute("src", "../img/default_profile.png");
 		img.classList.remove("profile-photo");
 		img.classList.add("default-photo");
-		elmHtml.querySelector(".username").innerHTML = "waiting...";
+		elmHtml.querySelector(".username").innerHTML = `${this.data.langDict.player_username_placeholder}`;
 		elmHtml.querySelector(".player-id").innerHTML = "";
 	}
 
@@ -442,7 +449,7 @@ export default class TourneyLobby extends HTMLElement {
 				if (res.ok)
 					stateManager.setState("isTournamentChanged", true);
 				else
-					stateManager.setState("errorMsg", "Couldn't cancel tournament");
+					stateManager.setState("errorMsg", `${data.langDict.error_msg1}`);
 				btn.disabled = false;
 			}, null, getCsrfToken());
 		});
@@ -462,7 +469,7 @@ export default class TourneyLobby extends HTMLElement {
 					stateManager.setState("isTournamentChanged", true);
 				}
 				else
-					stateManager.setState("errorMsg", "Couldn't leave tournament");
+					stateManager.setState("errorMsg", `${data.langDict.error_msg2}`);
 				btn.disabled = false;
 			}, null, getCsrfToken());
 		});
@@ -481,7 +488,7 @@ export default class TourneyLobby extends HTMLElement {
 					stateManager.setState("isTournamentChanged", true);
 				else
 				{
-					stateManager.setState("errorMsg", "Tournament couldn't be started");
+					stateManager.setState("errorMsg", `${data.langDict.error_msg3}`);
 					this.#toggleStartButton(false);
 				}
 			}, null, getCsrfToken());
@@ -501,7 +508,7 @@ export default class TourneyLobby extends HTMLElement {
 				if (res.status == 409)
 				{
 					nameInput.value = data.tournament_name;
-					stateManager.setState("errorMsg", "Couldn't change tournament name");
+					stateManager.setState("errorMsg", `${data.langDict.error_msg4}`);
 				}
 				btn.disabled = false;
 			}, null, getCsrfToken());

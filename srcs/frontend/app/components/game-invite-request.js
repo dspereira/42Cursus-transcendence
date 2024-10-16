@@ -3,6 +3,10 @@ import { colors } from "../js/globalStyles.js";
 import stateManager from "../js/StateManager.js";
 import componentSetup from "../utils/componentSetupUtils.js";
 
+import { enGameInviteRequestDict } from "../lang-dicts/enLangDict.js";
+import { ptGameInviteRequestDict } from "../lang-dicts/ptLangDict.js";
+import { esGameInviteRequestDict } from "../lang-dicts/esLangDict.js";
+import getLanguageDict from "../utils/languageUtils.js";
 
 const styles = `
 	h3 {
@@ -68,14 +72,14 @@ const styles = `
 const getHtml = function(data) {
 
 	const html = `
-		<h3>Game Invites</h3>
+		<h3>${data.langDict.game_invites}</h3>
 		<div class="requests-list"></div>
 	`;
 	return html;
 }
 
 export default class GameInviteRequest extends HTMLElement {
-	static observedAttributes = [];
+	static observedAttributes = ["language"];
 
 	constructor() {
 		super()
@@ -95,7 +99,10 @@ export default class GameInviteRequest extends HTMLElement {
 	}
 
 	attributeChangedCallback(name, oldValue, newValue) {
-
+		if (name == "language") {
+			this.data.langDict = getLanguageDict(newValue, enGameInviteRequestDict, ptGameInviteRequestDict, esGameInviteRequestDict);
+			this.data.language = newValue;
+		}
 	}
 
 	#initComponent() {
@@ -116,7 +123,7 @@ export default class GameInviteRequest extends HTMLElement {
 				{
 					this.#createRequestList(data.requests_list);
 					if (data.requests_list.length < this.lastRequestSize)
-						stateManager.setState("errorMsg", "An invite has expired");
+						stateManager.setState("errorMsg", `${data.langDict.error_msg}`);
 					this.lastRequestSize = data.requests_list.length;
 				}
 			}
@@ -131,6 +138,7 @@ export default class GameInviteRequest extends HTMLElement {
 		requestCard.setAttribute("profile-photo", requestData.image);
 		requestCard.setAttribute("exp", requestData.exp);
 		requestCard.setAttribute("user-id", requestData.id);
+		requestCard.setAttribute("language", this.data.language);
 		this.reqListHtml.appendChild(requestCard);
 	}
 

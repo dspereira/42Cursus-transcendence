@@ -8,6 +8,10 @@ import { redirect } from "../js/router.js";
 import friendProfileRedirectionEvent from "../utils/profileRedirectionUtils.js";
 import { getCsrfToken } from "../utils/csrfTokenUtils.js"
 import componentSetup from "../utils/componentSetupUtils.js";
+import { enChatSectionDict } from "../lang-dicts/enLangDict.js";
+import { ptChatSectionDict } from "../lang-dicts/ptLangDict.js";
+import { esChatSectionDict } from "../lang-dicts/esLangDict.js";
+import getLanguageDict from "../utils/languageUtils.js";
 
 const styles = `
 /* Chat section */
@@ -242,7 +246,6 @@ const getHtml = function(data) {
 	let onlineVisibility = "";
 	if (data.online == "false")
 		onlineVisibility = "hide";
-
 	const html = `
 		<div class="chat-section">
 			<div class="chat-header">
@@ -271,7 +274,7 @@ const getHtml = function(data) {
 				<div class="msg-panel scroll"></div>
 				<div class="msg-input">
 					<form id="msg-submit">
-						<textarea class="form-control text-area input-color" id="text-area" rows="1" maxlength="2000" placeholder="Type your message here..."></textarea>
+						<textarea class="form-control text-area input-color" id="text-area" rows="1" maxlength="2000" placeholder="${data.langDict.message_placeholder}"></textarea>
 						<i class="icon bi bi-send" id="send-icon"></i>
 					</form>
 				</div>
@@ -282,7 +285,7 @@ const getHtml = function(data) {
 }
 
 export default class ChatSection extends HTMLElement {
-	static observedAttributes = ["user-id", "username", "profile-photo", "online"];
+	static observedAttributes = ["user-id", "username", "profile-photo", "online", "language"];
 
 	constructor() {
 		super()
@@ -299,6 +302,8 @@ export default class ChatSection extends HTMLElement {
 			name = "profilePhoto";
 		if (name == "user-id")
 			name = "userId";
+		if (name == "language")
+			this.data.langDict = getLanguageDict(newValue, enChatSectionDict, ptChatSectionDict, esChatSectionDict);
 		this.data[name] = newValue;
 	}
 
@@ -451,9 +456,9 @@ export default class ChatSection extends HTMLElement {
 		let dateStr = null;
 
 		if (msgDate >= today)
-			dateStr = `Today`;
+			dateStr = `${this.data.langDict.today_timestamp}`;
 		else if (msgDate >= yesterday)
-			dateStr = `Yesterday`;
+			dateStr = `${this.data.langDict.today_yesterday_timestamp}`;
 		else
 		{
 			const year = msgDate.getFullYear();

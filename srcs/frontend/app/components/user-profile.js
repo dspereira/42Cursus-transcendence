@@ -4,6 +4,10 @@ import { colors } from "../js/globalStyles.js";
 import charLimit from "../utils/characterLimit.js";
 import { charLimiter } from "../utils/characterLimit.js";
 import componentSetup from "../utils/componentSetupUtils.js";
+import { enUserProfile } from "../lang-dicts/enLangDict.js";
+import { ptUserProfile } from "../lang-dicts/ptLangDict.js";
+import { esUserProfile } from "../lang-dicts/esLangDict.js";
+import getLanguageDict from "../utils/languageUtils.js";
 
 const styles = `
 
@@ -242,7 +246,7 @@ const getHtml = function(data) {
 }
 
 export default class UserProfile extends HTMLElement {
-	static observedAttributes = ["username"];
+	static observedAttributes = ["username", "language"];
 
 	constructor() {
 		super();
@@ -255,6 +259,8 @@ export default class UserProfile extends HTMLElement {
 	}
 
 	attributeChangedCallback(name, oldValue, newValue) {
+		if (name == "language")
+			this.data.langDict = getLanguageDict(newValue, enUserProfile, ptUserProfile, esUserProfile);
 		this.data[name] = newValue;
 	}
 
@@ -312,8 +318,9 @@ export default class UserProfile extends HTMLElement {
 	}
 
 	#updateStats(stats) {
-		this.totalGames.innerHTML = `Total games: ${stats.totalGames}`;
-		this.gameWinRate.innerHTML = `Game win rate: ${stats.totalGames > 0 ? `${stats.gamesWinRate}%` : "---"}`;
+		console.log(this.data.langDict);
+		this.totalGames.innerHTML = `${this.data.langDict.total_games} ${stats.totalGames}`;
+		this.gameWinRate.innerHTML = `${this.data.langDict.games_win_rate} ${stats.totalGames > 0 ? `${stats.gamesWinRate}%` : "---"}`;
 
 		if (!stats.gamesWinRate && !stats.totalGames)
 			this.winRateBarGame.style.background = `linear-gradient(to right, ${colors.game_win} 0%, ${colors.game_loss} 100%)`;
@@ -323,8 +330,8 @@ export default class UserProfile extends HTMLElement {
 		this.gamesWins.innerHTML = `W: ${stats.gamesWon}`;
 		this.gamesLoses.innerHTML = `L: ${stats.gamesLost}`;
 
-		this.totalTournaments.innerHTML = `Total tornaments: ${stats.totalTournaments}`;
-		this.tournamentWinRate.innerHTML = `Tornament win rate: ${stats.totalTournaments > 0 ? `${stats.tournamentsWinRate}%`: "---"}`;
+		this.totalTournaments.innerHTML = `${this.data.langDict.total_tournaments} ${stats.totalTournaments}`;
+		this.tournamentWinRate.innerHTML = `${this.data.langDict.tournaments_win_rate} ${stats.totalTournaments > 0 ? `${stats.tournamentsWinRate}%`: "---"}`;
 		
 		if (!stats.tournamentsWinRate && !stats.totalTournaments)
 			this.winRateBarTournaments.style.background = `linear-gradient(to right,  ${colors.game_win} 0%, ${colors.game_loss} 100%)`;

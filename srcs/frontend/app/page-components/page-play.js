@@ -4,6 +4,10 @@ import { colors } from "../js/globalStyles.js";
 import { callAPI } from "../utils/callApiUtils.js";
 import { getCsrfToken } from "../utils/csrfTokenUtils.js";
 import componentSetup from "../utils/componentSetupUtils.js";
+import { enPagePlayDict } from "../lang-dicts/enLangDict.js";
+import { ptPagePlayDict } from "../lang-dicts/ptLangDict.js";
+import { esPagePlayDict } from "../lang-dicts/esLangDict.js";
+import getLanguageDict from "../utils/languageUtils.js";
 
 const styles = `
 	.invite-game {
@@ -81,17 +85,18 @@ const styles = `
 `;
 
 const getHtml = function(data) {
+	console.log(data);
 	const html = `
 	<app-header></app-header>
-	<side-panel selected="play"></side-panel>
+	<side-panel selected="play" language=${data.language}></side-panel>
 	<div class="content content-small main-play-container">
 		<div class="page-1">
 			<div class="invite-game">
-				<button type="button" class="btn btn-primary invite-game-btn">Invite to Game</button>
+				<button type="button" class="btn btn-primary invite-game-btn">${data.langDict.invite_button}</button>
 				<div></div>
 				<div class="div-border"></div>
 			</div>
-			<game-invite-request></game-invite-request>
+			<game-invite-request language=${data.language}></game-invite-request>
 		</div>
 	</div>
 	`;
@@ -106,7 +111,23 @@ export default class PagePlay extends HTMLElement {
 	constructor() {
 		super()
 
-		document.title = title;
+		this.data = {};
+		this.#loadInitialData();
+	}
+
+	static get componentName() {
+		return this.#componentName;
+	}
+
+	async #loadInitialData() {
+		await callAPI("GET", "/settings/", null, (res, data) => {
+			if (res.ok) {
+				if (data && data.settings.language){
+					this.data.language = data.settings.language;
+					this.data.langDict = getLanguageDict(this.data.language, enPagePlayDict, ptPagePlayDict, esPagePlayDict);
+				}
+		}
+		});
 
 		this.#initComponent();
 		this.#scripts();
@@ -117,6 +138,7 @@ export default class PagePlay extends HTMLElement {
 	}
 
 	#initComponent() {
+		document.title = this.data.langDict.title;
 		this.html = componentSetup(this, getHtml(this.data), styles);
 	}
 
@@ -135,7 +157,7 @@ export default class PagePlay extends HTMLElement {
 			return ;
 		btn.addEventListener("click", () => {
 			content.removeChild(page1);
-			content.innerHTML = "<game-invite-send></game-invite-send>";
+			content.innerHTML = `<game-invite-send language=${this.data.language}></game-invite-send>`;
 		});
 	}
 
@@ -176,6 +198,7 @@ export default class PagePlay extends HTMLElement {
 				contentElm.innerHTML = `
 				<app-lobby 
 					lobby-id="${stateManager.getState("userId")}"
+					language="${this.data.language}"
 				></app-lobby>
 				`;
 			}

@@ -5,6 +5,10 @@ import { chatColors } from "../js/globalStyles.js";
 import { charLimiter } from "../utils/characterLimit.js";
 import charLimit from "../utils/characterLimit.js";
 import componentSetup from "../utils/componentSetupUtils.js";
+import { enChatFriendListDict } from "../lang-dicts/enLangDict.js";
+import { ptChatFriendListDict } from "../lang-dicts/ptLangDict.js";
+import { esChatFriendListDict } from "../lang-dicts/esLangDict.js";
+import getLanguageDict from "../utils/languageUtils.js";
 
 const styles = `
 .friend-list {
@@ -174,7 +178,7 @@ const getHtml = function(data) {
 			<div class="search-container">
 				<div class="form-group search">
 					<i class="search-icon bi bi-search"></i>
-					<input type="text" class="form-control form-control-sm" id="search" placeholder="Search..." maxlength="15">
+					<input type="text" class="form-control form-control-sm" id="search" placeholder="${data.langDict.search_bar_placeholder_search}" maxlength="15">
 				</div>
 			</div>
 			<div class="search-list scroll hide"></div>
@@ -185,11 +189,12 @@ const getHtml = function(data) {
 }
 
 export default class ChatFriendsList extends HTMLElement {
-	static observedAttributes = [];
+	static observedAttributes = ["language"];
 
 	constructor() {
 		super()
 		this.friendListData = null;
+		this.data = {};
 	}
 
 	connectedCallback() {
@@ -198,11 +203,14 @@ export default class ChatFriendsList extends HTMLElement {
 	}
 
 	attributeChangedCallback(name, oldValue, newValue) {
-
+		if (name == "language") {
+			this.data.langDict = getLanguageDict(newValue, enChatFriendListDict, ptChatFriendListDict, esChatFriendListDict);
+			this.data.language = newValue;
+		}
 	}
 
 	#initComponent() {
-		this.html = componentSetup(this, getHtml(), styles);
+		this.html = componentSetup(this, getHtml(this.data), styles);
 
 		this.friendListHtml = this.html.querySelector(".friend-list");
 		this.searchListHtml = this.html.querySelector(".search-list");

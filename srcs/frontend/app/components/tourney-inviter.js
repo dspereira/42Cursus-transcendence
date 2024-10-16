@@ -5,6 +5,10 @@ import charLimit from "../utils/characterLimit.js";
 import { getCsrfToken } from "../utils/csrfTokenUtils.js";
 import componentSetup from "../utils/componentSetupUtils.js";
 import stateManager from "../js/StateManager.js";
+import { enTourneyInviterDict } from "../lang-dicts/enLangDict.js";
+import { ptTourneyInviterDict } from "../lang-dicts/ptLangDict.js";
+import { esTourneyInviterDict } from "../lang-dicts/esLangDict.js";
+import getLanguageDict from "../utils/languageUtils.js";
 
 const styles = `
 
@@ -245,7 +249,7 @@ const getHtml = function(data) {
 					<div class="search-bar">
 						<div class="form-group">
 							<i class="search-icon bi bi-search"></i>
-							<input type="text" class="form-control form-control-md" id="search" placeholder="Search friends..." maxlength="50">
+							<input type="text" class="form-control form-control-md" id="search" placeholder="${data.langDict.search_bar_placeholder_search}" maxlength="50">
 						</div>
 					</div>
 					<button class="refresh-btn"><i class="bi bi-arrow-clockwise refresh-icon"></i></button>
@@ -256,7 +260,7 @@ const getHtml = function(data) {
 				<div class=players-invited>players invited</div>
 				<div class=separator></div>
 				<div class="invites-send"></div>
-				<button type="button" class="btn-primary btn-invite invite-btn">Invite</button>
+				<button type="button" class="btn-primary btn-invite invite-btn">${data.langDict.invite_button}</button>
 			</div>
 		</div>
 	`;
@@ -264,7 +268,7 @@ const getHtml = function(data) {
 }
 
 export default class TourneyInviter extends HTMLElement {
-	static observedAttributes = ["tournament-id"];
+	static observedAttributes = ["tournament-id", "language"];
 
 	constructor() {
 		super()
@@ -286,6 +290,8 @@ export default class TourneyInviter extends HTMLElement {
 	attributeChangedCallback(name, oldValue, newValue) {
 		if (name == "tournament-id")
 			name = "tournamentId";
+		if (name == "language")
+			this.data.langDict = getLanguageDict(newValue, enTourneyInviterDict, ptTourneyInviterDict, esTourneyInviterDict);
 		this.data[name] = newValue;
 	}
 
