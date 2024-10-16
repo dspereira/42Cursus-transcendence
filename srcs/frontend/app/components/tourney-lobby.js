@@ -307,7 +307,7 @@ export default class TourneyLobby extends HTMLElement {
 	}
 
 	#scripts() {
-		// this.#toggleStartButton(true);
+		this.#toggleStartButton(true);
 		this.#joinedPlayersCall();
 		this.#joinedPlayersPolling();
 		this.#setCancelTournamentEvent();
