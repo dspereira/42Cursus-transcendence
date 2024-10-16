@@ -810,7 +810,7 @@ export default class AppConfigs extends HTMLElement {
 				if (alertBefore)
 					alertBefore.remove();
 				const insertElement = mainDiv.querySelector(".main-container"); 
-				var alertCard = document.createElement("div");
+				let alertCard = document.createElement("div");
 				alertCard.className = "alert alert-danger hide from alert-div";
 				alertCard.role = "alert";
 				alertCard.innerHTML = `

@@ -504,7 +504,7 @@ export default class AppFriends extends HTMLElement {
 				if (alertBefore)
 					alertBefore.remove();
 				const insertElement = this.html.querySelector(".friends-section");
-				var alertCard = document.createElement("div");
+				let alertCard = document.createElement("div");
 				alertCard.className = "alert alert-danger hide from alert-div";
 				alertCard.role = "alert";
 				alertCard.innerHTML = `

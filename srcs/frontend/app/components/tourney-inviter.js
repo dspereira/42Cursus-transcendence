@@ -400,12 +400,6 @@ export default class TourneyInviter extends HTMLElement {
 				this.#setCancelInviteEvent(elm);
 			});
 		}
-		// var button = document.createElement("button");
-		// button.setAttribute("type", "button");
-		// button.className = "btn-primary btn-invite invite-btn";
-		// button.textContent = "Invite";
-		// listHtml.appendChild(button);
-		// this.#setBtnInviteEvent();
 		const inviteButton = document.querySelector(".invite-btn");
 		inviteButton.disabled = this.selectedElm == 0;
 	}
