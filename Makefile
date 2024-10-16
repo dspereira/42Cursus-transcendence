@@ -5,10 +5,10 @@ REVERSE_PROXY = reverse-proxy
 BACKEND_DJANGO = backend-django
 
 # Docker Compose
-COMPOSE		= docker compose -f srcs/docker-compose.yml
+COMPOSE		= docker compose -f docker-compose.yml
 DOCKER		= docker
 
-include srcs/.env
+include .env
 
 .SILENT:
 

@@ -1,7 +1,7 @@
 services:
 
     postgres:
-        build: ./database-postgres
+        build: ./srcs/database-postgres
         image: postgres
         container_name: postgres
         expose:
@@ -23,7 +23,7 @@ services:
           start_period: 90s
 
     backend-django:
-        build: ./backend
+        build: ./srcs/backend
         image: backend-django
         container_name: backend-django
         expose:
@@ -56,7 +56,7 @@ services:
             condition: service_healthy
 
     nginx-server:
-        build: ./frontend
+        build: ./srcs/frontend
         image: nginx-server
         container_name: nginx-server
         expose:
@@ -71,7 +71,7 @@ services:
         restart: on-failure
 
     reverse-proxy:
-        build: ./reverse_proxy
+        build: ./srcs/reverse_proxy
         image: reverse-proxy
         container_name: reverse-proxy
         ports:
