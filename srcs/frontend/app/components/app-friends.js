@@ -155,26 +155,26 @@ user-card {
 	max-height: 500px;
 }
 
-.no-content-img {
-	position: absolute;
-	width: 450px;
-	height: auto;
-	margin: 20px auto;
-	opacity: 5%;
-	left: 50%;
-	top: 50%;
-	transform: translate(-50%, -50%);
-}
+	.no-content-img {
+		position: absolute;
+		width: 450px;
+		height: auto;
+		margin: 20px auto;
+		opacity: 5%;
+		left: 50%;
+		top: 50%;
+		transform: translate(-50%, -50%);
+	}
 
-.no-content-text {
-	position: absolute;
-	margin-top: 50px;
-	font-size: 24px;
-	left: 50%;
-	transform: translate(-50%, 0);
-	text-align: center;
-	color: ${colors.second_text};
-}
+	.no-content-text {
+		position: absolute;
+		margin-top: 50px;
+		font-size: 24px;
+		left: 50%;
+		transform: translate(-50%, 0);
+		text-align: center;
+		color: ${colors.second_text};
+	}
 
 .alert-div {
 	display: flex;
