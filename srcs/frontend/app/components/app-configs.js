@@ -470,8 +470,8 @@ export default class AppConfigs extends HTMLElement {
 			"invalidUsername": this.data.langDict.username_invalid,
 			"imageSize": `${this.data.langDict.image_size} ${MAX_IMAGE_SIZE_BYTES / MEGABYTE}MB`,
 			"imageType": `${this.data.langDict.image_type}${suportedFileTypesToString()}`,
-			"invalidPhone": "Invalid Phone Number!",
-			"unexpectedError": "Unexpected error"
+			"invalidPhone": '${this.data.langDict.invalid_phone}',
+			"unexpectedError": '${this.data.langDict.unexpected_error}'
 		}
 		this.#initComponent();
 		this.#scripts();

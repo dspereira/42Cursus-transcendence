@@ -33,6 +33,8 @@ export const ptAppConfigs = {
 	username_invalid: "Nome de usuário inválido!",
 	image_size: "O tamanho da imagem não deve exceder",
 	image_type: "Apenas os seguintes formatos são aceitos:",
+	invalid_phone: "Número de telémovel inválido!",
+	unexpected_error: "Error inesperado!",
 
 	/* stateManager.setState("errorMsg */
 	error_msg: "Erro: Não foi possivel obter o QRCode",

@@ -33,6 +33,8 @@ export const esAppConfigs = {
 	username_invalid: "¡Nombre de usuario inválido!",
 	image_size: "El tamaño de la imagen no debe exceder",
 	image_type: "Solo se aceptan los siguientes formatos:",
+	invalid_phone: "¡Número de teléfono inválido!",
+	unexpected_error: "¡Error inesperado!",
 
 	/* stateManager.setState("errorMsg */
 	error_msg: "Error: no se pudo obtener el código QR",

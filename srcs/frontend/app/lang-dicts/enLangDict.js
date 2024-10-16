@@ -33,6 +33,8 @@ export const enAppConfigs = {
 	username_invalid: "Invalid username!",
 	image_size: "The image size must not exceed",
 	image_type: "Only the following formats are accepted:",
+	invalid_phone: "Invalid Phone Number!",
+	unexpected_error: "Unexpected error",
 
 	/* stateManager.setState("errorMsg */
 	error_msg: "Error: couldn't get the QR code",
