@@ -312,13 +312,14 @@ export default class UserProfile extends HTMLElement {
 	}
 
 	#updateStats(stats) {
+		console.log(stats);
 		this.totalGames.innerHTML = `Total games: ${stats.totalGames}`;
 		this.gameWinRate.innerHTML = `Game win rate: ${stats.totalGames > 0 ? `${stats.gamesWinRate}%` : "---"}`;
 
-		if (!stats.gamesWinRate && !stats.totalGames)
+		if (!stats.totalGames)
 			this.winRateBarGame.style.background = `linear-gradient(to right, ${colors.game_win} 0%, ${colors.game_loss} 100%)`;
 		else
-			this.winRateBarGame.style.background = `linear-gradient(to right, ${colors.game_win} ${stats.gamesWinRate}%, ${colors.game_loss} )`;
+			this.winRateBarGame.style.background = `linear-gradient(to right, ${colors.game_win} ${stats.gamesWinRate}%, ${colors.game_loss} ${stats.gamesWinRate}%)`;
 		
 		this.gamesWins.innerHTML = `W: ${stats.gamesWon}`;
 		this.gamesLoses.innerHTML = `L: ${stats.gamesLost}`;
@@ -326,10 +327,10 @@ export default class UserProfile extends HTMLElement {
 		this.totalTournaments.innerHTML = `Total tornaments: ${stats.totalTournaments}`;
 		this.tournamentWinRate.innerHTML = `Tornament win rate: ${stats.totalTournaments > 0 ? `${stats.tournamentsWinRate}%`: "---"}`;
 		
-		if (!stats.tournamentsWinRate && !stats.totalTournaments)
+		if (!stats.totalTournaments)
 			this.winRateBarTournaments.style.background = `linear-gradient(to right,  ${colors.game_win} 0%, ${colors.game_loss} 100%)`;
 		else
-			this.winRateBarTournaments.style.background = `linear-gradient(to right,  ${colors.game_win} ${stats.tournamentsWinRate}%, ${colors.game_loss})`;
+			this.winRateBarTournaments.style.background = `linear-gradient(to right,  ${colors.game_win} ${stats.tournamentsWinRate}%, ${colors.game_loss} ${stats.tournamentsWinRate}%)`;
 
 		this.tournamentWins.innerHTML = `W: ${stats.tournamentsWon}`;
 		this.tournamentLoses.innerHTML = `L: ${stats.tournamentsLost}`;
