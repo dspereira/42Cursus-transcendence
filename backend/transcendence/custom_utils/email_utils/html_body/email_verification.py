@@ -6,7 +6,7 @@ email_verification_html = """<!DOCTYPE html>
 <title>Email Verification</title>
 </head>
 <body style="font-family: Arial, sans-serif;">
-
+	<img>
 	<table style="max-width: 600px; margin: 0 auto; padding: 20px;">
 		<tr>
 			<td style="text-align: center;">

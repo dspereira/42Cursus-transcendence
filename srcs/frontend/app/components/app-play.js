@@ -2,6 +2,10 @@ import Game from "../game/Game.js";
 import gameWebSocket from "../js/GameWebSocket.js";
 import { callAPI } from "../utils/callApiUtils.js";
 import stateManager from "../js/StateManager.js";
+import { redirect } from "../js/router.js";
+import { colors } from "../js/globalStyles.js";
+import { pfpStyle } from "../utils/stylingFunctions.js";
+import updateLoggedInStatus from "../utils/updateLoggedInUtils.js";
 import { render } from "../js/router.js";
 import { getHtmlElm } from "../utils/getHtmlElmUtils.js";
 import checkUserLoginState from "../utils/checkUserLoginState.js";
@@ -9,13 +13,14 @@ import PagePlay from "../page-components/page-play.js";
 import componentSetup from "../utils/componentSetupUtils.js";
 
 const styles = `
-.profile-photo {
-	width: 50px;
-}
+
+${pfpStyle(".profile-photo", "50px", "auto")}
 
 .players-info {
 	display: flex;
+	flex-direction: row;
 	justify-content: space-between;
+	color: ${colors.primary_text};
 }
 
 .game-board {
@@ -25,12 +30,19 @@ const styles = `
 .btn-leave-div {
 	display: flex;
 	justify-content: center;
-	margin-top: 50px;
+	position: absolute;
 }
 
 .btn-leave {
 	width: 150px;
 	height: 50px;
+	color: ${colors.primary_text};
+	background-color: ${colors.btn_default};
+}
+
+.btn-leave:hover {
+	background-color: ${colors.btn_hover};
+	color: ${colors.second_text};
 }
 
 .hide {
@@ -38,8 +50,12 @@ const styles = `
 }
 
 .game-board {
+	display: flex;
+	flex-direction: column;
 	width: 100%;
+	min-width: 460px;
 	height: 80vh;
+	gap: 20px;
 }
 
 .board {
@@ -96,14 +112,14 @@ const getHtml = function(data) {
 						<img src="${data.guestImage}" class="profile-photo" alt="profile photo chat">
 					</div>
 				</div>
-				<div class="container-canvas">	
+				<div class="container-canvas">
 					<button type="button" class="btn-full-screen"><i class="bi bi-fullscreen icon-full-screen"></i></button>
 					<canvas id="canvas"></canvas>
 				</div>
 			</div>
-		</div>
-		<div class="btn-leave-div">
-			<button type="button" class="btn btn-primary btn-leave hide">Leave</button>
+			<div class="btn-leave-div">
+				<button type="button" class="btn btn-primary btn-leave hide">Leave</button>
+			</div>
 		</div>
 	</div>
 	`;

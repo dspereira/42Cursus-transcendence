@@ -1,4 +1,5 @@
 import { adjustContent } from "../utils/adjustContent.js";
+import { colors } from "../js/globalStyles.js";
 import componentSetup from "../utils/componentSetupUtils.js";
 import { callAPI } from "../utils/callApiUtils.js";
 import getLanguageDict from "../utils/languageUtils.js";

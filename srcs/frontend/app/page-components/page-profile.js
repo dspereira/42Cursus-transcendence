@@ -2,21 +2,42 @@ import { redirect, render } from "../js/router.js";
 import { adjustContent } from "../utils/adjustContent.js";
 import stateManager from "../js/StateManager.js";
 import { callAPI } from "../utils/callApiUtils.js";
+import { colors } from "../js/globalStyles.js";
 import componentSetup from "../utils/componentSetupUtils.js";
 
 const styles = `
 	.profile-container {
-		display: flex;
-		justify-content: flex-start;
+		min-width: 460px;
+		flex-direction: row;
+		color: ${colors.second_text};
+		display: flex;	
+		justify-content: center;
 		gap: 50px;
 	}
 
 	.profile {
 		width: 30%;
+		min-width: 280px;
 	}
 
 	.history {
 		width: 70%;
+		min-width: 350px;
+	}
+
+	@media (max-width: 1100px) {
+		.profile-container {
+			flex-direction: column;
+			align-items: center;
+		}
+
+		.history {
+			width: 100%;
+		}
+
+		.profile {
+			width: 100%;
+		}
 	}
 `;
 

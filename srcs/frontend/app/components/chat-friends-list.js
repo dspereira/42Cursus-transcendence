@@ -1,5 +1,9 @@
 import { callAPI } from "../utils/callApiUtils.js";
 import stateManager from "../js/StateManager.js";
+import { colors } from "../js/globalStyles.js"
+import { chatColors } from "../js/globalStyles.js";
+import { charLimiter } from "../utils/characterLimit.js";
+import charLimit from "../utils/characterLimit.js";
 import componentSetup from "../utils/componentSetupUtils.js";
 import { enChatFriendListDict } from "../lang-dicts/enLangDict.js";
 import { ptChatFriendListDict } from "../lang-dicts/ptLangDict.js";
@@ -8,8 +12,29 @@ import getLanguageDict from "../utils/languageUtils.js";
 
 const styles = `
 .friend-list {
-	margin-right: 25px;
-	max-height: 87vh;
+	margin-right: 0px;
+	max-height: 80vh;
+}
+
+.friend-list::-webkit-scrollbar {
+	width: 15px;
+}
+
+.friend-list::-webkit-scrollbar-track {
+	width: 15px;
+	background: ${colors.second_card};
+}
+
+.friend-list::-webkit-scrollbar-thumb {
+	background: ${colors.main_card};
+	border-radius: 10px;
+	border-style: hidden;
+	border: 3px solid transparent;
+	background-clip: content-box;
+}
+
+.scroll::-webkit-scrollbar-thumb:hover {
+	background: ${colors.main_card};
 }
 
 .search-list {
@@ -22,7 +47,7 @@ const styles = `
 	cursor: pointer;
 	align-items: center;
 	gap: 10px;
-	margin-bottom: 20px;
+	margin: 0px 5px 20px 5px;
 	padding: 5px 10px 5px 10px;
 }
 
@@ -38,22 +63,50 @@ const styles = `
 }
 
 .user:hover {
-	background-color: #4287f5;
+	background-color: ${colors.btn_hover};
+	color: ${colors.second_text};
 	border-radius: 8px;
 }
 
 .friend-selected {
-	background-color: #4287f5;
-	border-radius: 8px;
+	background-color: ${colors.btn_default};
+	border-style: hidden;
+	color: ${colors.primary_text};
+	border-radius: 5px;
 }
 
 .scroll {
 	overflow-y: auto;
 }
 
+.search-container {
+	display: flex;
+	justify-content: center;
+}
+
 .search {
-	margin-right: 40px;
+	background-color: ${colors.second_card};
+	width: 90%;
+	align-items: center;
+	margin-right: 0px;
+	margin-top: 10px;
 	margin-bottom: 25px;
+}
+
+
+.form-control {
+	border-radius: 5px;
+	border-style: hidden;
+	background-color: ${colors.input_background};
+}
+
+.form-control::placeholder {
+	color: ${colors.second_text};
+}
+
+.form-control:focus {
+	background-color: ${colors.input_background};
+	color: ${colors.second_text};
 }
 
 .search-icon {
@@ -61,11 +114,18 @@ const styles = `
 	margin-top: 3px;
 	margin-left: 8px;
 	font-size: 16px;
+	color: ${colors.second_text};
 }
 
 .search input {
 	padding-left: 30px;
+	color:  ${colors.second_text};
 }
+
+.form-control + input:focus {
+	color:  ${colors.second_text};
+}
+
 
 .search-bar {
 	margin-bottom: 25px;
@@ -100,16 +160,30 @@ const styles = `
 	display: none;
 }
 
+.list-container {
+	display: flex;
+	flex-direction: column;
+		min-width: 200px;
+	border-radius: 10px;
+	border-style: hidden;
+	background-color: ${colors.second_card};
+	padding-bottom: 10px;
+}
+
 `;
 
 const getHtml = function(data) {
 	const html = `
-		<div class="form-group search">
-			<i class="search-icon bi bi-search"></i>
-			<input type="text" class="form-control form-control-sm" id="search" placeholder="${data.langDict.search_bar_placeholder_search}" maxlength="15">
+		<div class="list-container">
+			<div class="search-container">
+				<div class="form-group search">
+					<i class="search-icon bi bi-search"></i>
+					<input type="text" class="form-control form-control-sm" id="search" placeholder="${data.langDict.search_bar_placeholder_search}" maxlength="15">
+				</div>
+			</div>
+			<div class="search-list scroll hide"></div>
+			<div class="friend-list scroll"></div>
 		</div>
-		<div class="search-list scroll hide"></div>
-		<div class="friend-list scroll"></div>
 	`;
 	return html;
 }

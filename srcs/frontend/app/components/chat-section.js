@@ -1,8 +1,11 @@
 import chatWebSocket from "../js/ChatWebSocket.js";
 import stateManager from "../js/StateManager.js";
 import { callAPI } from "../utils/callApiUtils.js";
-import friendProfileRedirectionEvent from "../utils/profileRedirectionUtils.js";
+import { chatColors, colors } from "../js/globalStyles.js";
+import { charLimiter } from "../utils/characterLimit.js";
+import charLimit from "../utils/characterLimit.js";
 import { redirect } from "../js/router.js";
+import friendProfileRedirectionEvent from "../utils/profileRedirectionUtils.js";
 import { getCsrfToken } from "../utils/csrfTokenUtils.js"
 import componentSetup from "../utils/componentSetupUtils.js";
 import { enChatSectionDict } from "../lang-dicts/enLangDict.js";
@@ -23,7 +26,7 @@ const styles = `
 	display: flex;
 	justify-content: space-between;
 	flex-direction: column;
-	background-color: #C0C0C0;
+	background-color: ${chatColors.main_card_light};
 	/*padding: 10px 10px 10px 10px;*/
 	border-radius: 0px 0px 10px 10px;
 	height: 80vh;
@@ -38,7 +41,8 @@ const styles = `
 	align-items: center;
 	padding: 10px;
 	border-radius: 10px 10px 0px 0px;
-	background-color: #A9A9A9;
+	color: ${colors.second_text};
+	background-color: ${chatColors.header};
 }
 
 .chat-header .profile-photo {
@@ -55,13 +59,12 @@ const styles = `
 
 .block-mark {
 	font-size: 12px;
-    color: white;
-    background-color: red;
-    padding: 2px 4px;
-    border-radius: 5px;
+	color: white;
+	background-color: red;
+	padding: 2px 4px;
+	border-radius: 5px;
 	margin-left: 10px;
 }
-
 
 .icon-play {
 	font-size: 16px;
@@ -86,7 +89,11 @@ const styles = `
 .msg-input {
 	padding: 10px 10px 10px 10px;
 	border-radius: 0px 0px 10px 10px;
-	background-color: #A9A9A9;
+	background-color: ${chatColors.header};
+}
+
+button .btn-success:disabled {
+	cursor: not-allowed;
 }
 
 form {
@@ -97,19 +104,28 @@ form {
 	padding-right: 50px;
 }
 
+.form-control:disabled {
+	background-color: ${chatColors.header};
+	cursor: not-allowed;
+}
+
+.form-control:disabled::placeholder {
+	color: ${chatColors.main_card_light};
+}
+
 .icon {
 	position: absolute;
 	/*margin-top: 3px;*/
 	font-size: 22px;
 	right: 0;
 	bottom: 2px;
-
+	color: ${colors.primary_text};
 	margin-right: 20px;
 }
 
 .icon:hover {
 	cursor: pointer;
-	color: blue;
+	color: ${colors.button_default};
 	transform: scale(1.3);
 	transition: transform 0.3s ease, color 0.3s ease;
 }
@@ -136,6 +152,24 @@ form {
 	display: inline-block;
 }
 
+.input-color {
+	background-color: ${chatColors.header};
+	color: ${colors.second_text};
+}
+
+.input-color::placeholder {
+	color: ${colors.primary_text};
+}
+
+.input-color:focus {
+	background-color: ${chatColors.header};
+	color: ${colors.second_text};
+}
+
+.input-color:focus + .msg-input {
+	border: solid 5px ${colors.button_background};
+}
+
 .friend-info {
 	cursor: pointer;
 }
@@ -143,6 +177,69 @@ form {
 .hide {
 	display: none;
 }
+
+.scroll::-webkit-scrollbar {
+	width: 15px;
+}
+
+.scroll::-webkit-scrollbar-track {
+	width: 15px;
+	background: ${chatColors.main_card_light};
+}
+
+.scroll::-webkit-scrollbar-thumb {
+	background: ${colors.second_card};
+	border-radius: 10px;
+	border-style: hidden;
+	border: 3px solid transparent;
+	background-clip: content-box;
+}
+
+.scroll::-webkit-scrollbar-thumb:hover {
+	background: ${colors.main_card};
+}
+
+.msg-input ::-webkit-scrollbar {
+	width: 15px;
+}
+
+.msg-input ::-webkit-scrollbar-track {
+	width: 15px;
+	background: ${chatColors.header};
+}
+
+.msg-input ::-webkit-scrollbar-thumb {
+	background: ${colors.main_card};
+	border-radius: 10px;
+	border-style: hidden;
+	border: 3px solid transparent;
+	background-clip: content-box;
+}
+
+.clickable {
+	cursor: pointer;
+}
+
+.hover-popup {
+	position: fixed;
+	padding: 10px;
+	background-color: ${colors.main_card};
+	color: ${colors.primary_text};
+	opacity: 0.9;
+	backdrop-filter: blur(5px);
+	border-radius: 5px;
+	white-space: nowrap;
+	display: none;
+	pointer-events: none;
+	z-index: 1000;
+}
+
+@media (max-width: 610px) {
+	form > .text-area::placeholder {
+		font-size: 13px;
+	}
+}
+
 `;
 
 const getHtml = function(data) {
@@ -154,10 +251,11 @@ const getHtml = function(data) {
 			<div class="chat-header">
 				<div class="friend-info">
 					<div class="profile-photo-status">
-						<img src="${data.profilePhoto}" class="profile-photo" alt="profile photo chat"/>
+						<img src="${data.profilePhoto}" class="profile-photo clickable" alt="profile photo chat"/>
+						<div id="hover-popup" class="hover-popup">${data.username}'s profile</div>
 						<div class="online-status ${onlineVisibility}"></div>
 					</div>
-					<span class="name">${data.username}</span>
+					<span class="name">${charLimiter(data.username, charLimit)}</span>
 					<span class="block-mark hide">blocked</span>
 				</div>
 				<div>
@@ -176,7 +274,7 @@ const getHtml = function(data) {
 				<div class="msg-panel scroll"></div>
 				<div class="msg-input">
 					<form id="msg-submit">
-						<textarea class="form-control text-area" id="text-area" rows="1" maxlength="2000" placeholder="${data.langDict.message_placeholder}"></textarea>
+						<textarea class="form-control text-area input-color" id="text-area" rows="1" maxlength="2000" placeholder="${data.langDict.message_placeholder}"></textarea>
 						<i class="icon bi bi-send" id="send-icon"></i>
 					</form>
 				</div>
@@ -239,6 +337,7 @@ export default class ChatSection extends HTMLElement {
 		this.#setBtnBlockEvent();
 		this.#setBtnUnblockEvent();
 		this.#setBlockStatusEvent();
+		this.#addProfileRedirect();
 		friendProfileRedirectionEvent(this.html, ".friend-info", this.data.userId);
 		this.#inviteToGameEvent();
 	}
@@ -521,6 +620,27 @@ export default class ChatSection extends HTMLElement {
 		stateManager.addEvent("blockStatus", (stateValue) => {
 			if (stateValue == this.data.userId)
 				this.#getUserBlockStatus();
+		});
+	}
+
+	#addProfileRedirect() {
+
+		const movePopup = (event) => {
+			popup.style.left = event.clientX + 'px';
+			popup.style.top = event.clientY + 'px';
+		};
+		const chatElm = this.html.querySelector(".chat-section");
+		const profilePhoto = chatElm.querySelector(".friend-info");
+		const popup = chatElm.querySelector('.hover-popup');
+		if (!chatElm || !profilePhoto || !popup)
+			return ;
+		profilePhoto.addEventListener('mouseenter', () => {
+			popup.style.display = 'block';
+			profilePhoto.addEventListener('mousemove', movePopup);
+		});
+		profilePhoto.addEventListener('mouseleave', () => {
+			popup.style.display = 'none';
+			profilePhoto.removeEventListener('mousemove', movePopup);
 		});
 	}
 

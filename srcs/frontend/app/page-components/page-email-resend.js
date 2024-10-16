@@ -4,6 +4,7 @@ import { render } from "../js/router.js";
 import { getHtmlElm } from "../utils/getHtmlElmUtils.js";
 import PageEmailSent from "./page-email-sent.js";
 import componentSetup from "../utils/componentSetupUtils.js";
+import { colors } from "../js/globalStyles.js";
 
 const styles = `
 .mail-info-container {
@@ -18,12 +19,24 @@ h1 {
 	font-size: 32px;
 	font-weight: bold;
 	margin-bottom: 40px;
+	color: ${colors.primary_text};
 }
 
 p {
-	color: #333;
+	color: ${colors.second_text};
 	margin-bottom: 40px;
 	font-size: 20px;
+}
+
+.btn-primary {
+	background-color: ${colors.btn_default};
+	border-style: hidden;
+	color: ${colors.btn_text};
+}
+
+.btn-primary:hover {
+	background-color: ${colors.btn_hover};
+	color: ${colors.hover_text};
 }
 `;
 

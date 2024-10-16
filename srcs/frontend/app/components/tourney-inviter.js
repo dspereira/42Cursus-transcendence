@@ -1,4 +1,7 @@
 import { callAPI } from "../utils/callApiUtils.js";
+import { colors } from "../js/globalStyles.js";
+import { charLimiter } from "../utils/characterLimit.js";
+import charLimit from "../utils/characterLimit.js";
 import { getCsrfToken } from "../utils/csrfTokenUtils.js";
 import componentSetup from "../utils/componentSetupUtils.js";
 import stateManager from "../js/StateManager.js";
@@ -8,44 +11,108 @@ import { esTourneyInviterDict } from "../lang-dicts/esLangDict.js";
 import getLanguageDict from "../utils/languageUtils.js";
 
 const styles = `
+
+game-invite-card1 {
+	max-height: 150px;
+}
+
 .invites-section {
+	max-height: calc(100vh - 500px);
+	height: calc(100vh - 500px);
+	min-height: 240px;
 	display: flex;
 	width: 100%;
-	height: 50vh;
 	gap: 10px;
+	margin-bottom: 20px;
 }
 
 .friend-list {
-	width: 70%;
-	background-color: #D3D3D3;	
+	display: flex;
+	flex-direction: column;
+	width: 80%;
+	min-width: 250px;
+	background-color: ${colors.second_card};
 	border-radius: 5px;
-	padding: 20px;
+	padding-bottom: 20px;
+}
+
+.invites-send-container {
+	min-width: 200px;
+	max-width: 300px;
+	display: flex;
+	flex-direction: column;
+	position: relative;
+	align-items: center;
+	width: 30%;
+	background-color: ${colors.second_card};
+	border-radius: 5px;
 }
 
 .invites-send {
-	width: 30%;
-	background-color: #D3D3D3;
+	align-items: center;
+	width: 100%;
+	padding: 0px 20px 20px 20px;
+	overflow-y: auto;
+	margin-bottom: 70px;
 	border-radius: 5px;
-	padding: 20px;
 }
+
+.friends {
+	padding: 0px 20px 0px 20px;
+	display: flex;
+	flex-wrap: wrap;
+	gap: 30px;
+	justify-content: center;
+	overflow-y: auto;
+	align-items: center;
+}
+
+@media (max-width: 800px) {
+	.invites-section {
+		max-height: calc(100vh - 550px);
+	}
+}
+
+.friends::-webkit-scrollbar-track, .invites-send::-webkit-scrollbar-track {
+	background: ${colors.second_card};
+}
+
+.friends::-webkit-scrollbar-thumb, .invites-send::-webkit-scrollbar-thumb {
+	background: ${colors.main_card};
+	border-radius: 10px;
+	border-style: hidden;
+	border: 3px solid transparent;
+	background-clip: content-box;
+}
+
+.players-invited {
+	margin-top: 20px;
+	color: ${colors.second_text};
+}
+
+.separator {
+	display: flex;
+	width: 80%;
+	height: 5px;
+	border-radius: 10px;
+	justify-content: center;
+	align-items: center;
+	margin: 10px 0px 10px 0px;
+	background-color: ${colors.main_card};
+}
+
 .search-bar-section {
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
-	width: 100%;
-	margin-bottom: 20px;
-}
-
-.search-icon {
-	position: absolute;
-	margin-top: 6px;
-	margin-left: 15px;
-	font-size: 16px;
+	gap: 20px;
+	margin: 20px;
 }
 
 .refresh-icon {
 	font-size: 22px;
 	cursor: pointer;
+	color: ${colors.second_text};
 }
 
 .search-bar input {
@@ -53,15 +120,34 @@ const styles = `
 }
 
 .search-bar {
-	width: 93%;
+	width: 83%;
 }
 
-.friends {
-	display: flex;
-	flex-wrap: wrap;
-	gap: 30px;
-	justify-content: center;
+.search-icon {
+	position: absolute;
+	margin-top: 6px;
+	margin-left: 15px;
+	font-size: 16px;
+	color: ${colors.second_text};
+}
 
+.search-bar input, .search-bar input:hover, .search-bar input:focus{
+	padding-left: 40px;
+	color:  ${colors.second_text};
+}
+
+.form-control {
+	border-radius: 5px;
+	border-style: hidden;
+	background-color: ${colors.input_background};
+}
+
+.form-control::placeholder {
+	color: ${colors.second_text};
+}
+
+.form-control:focus {
+	background-color: ${colors.input_background};
 }
 
 .player-invite-send {
@@ -69,6 +155,20 @@ const styles = `
 	justify-content: space-between;
 	align-items: center;
 	margin-bottom: 10px;
+	background-color: ${colors.third_card};
+	padding: 0px 10px 0px 0px;
+	border-radius: 5px;
+	border-style: hidden;
+	color: ${colors.second_text};
+}
+
+.invite-sep {
+	display: flex;
+	width: 100%;
+	flex-direction: column;
+	justify-content: space-between;
+	align-items: center;
+	padding: 0px 10px 0px 10px;
 }
 
 .player-invite-send span {
@@ -77,13 +177,55 @@ const styles = `
 }
 
 .cross-icon {
-	color: red;
+	color: ${colors.btn_alert};
 	font-size: 24px;
 	cursor: pointer;
 }
 
 .cross-icon:hover {
-	color: blue; /* outra cor igual mas mais carregada */
+	color: ${colors.btn_alert_hvr};
+}
+
+.btn-danger:hover {
+	color: ${colors.second_text};
+}
+
+.invite-btn.btn-primary:not(disabled) {
+	background-color: ${colors.btn_default};
+	color: ${colors.primary_text};
+}
+
+.invite-btn.btn-primary:not(:disabled):hover {
+	background-color: ${colors.btn_hover};
+	color: ${colors.second_text};
+}
+
+.invite-btn.btn-primary:disabled {
+	background-color: ${colors.main_card};
+	cursor: not-allowed;
+	border-style: hidden;
+}
+
+.btn-invite {
+	display: flex;
+	justify-content: center;
+	position: absolute;
+	bottom: 20px;
+	width: 80%;
+	height: 40px;
+	align-items: center;
+	left: 50%;
+	transform: translateX(-50%);
+	border-style: hidden;
+	border-radius: 5px;
+}
+
+.btn-invite:hover {
+	color: ${colors.second_text};
+}
+
+.no-friends-text {
+	color: ${colors.second_text};
 }
 
 .refresh-btn {
@@ -107,16 +249,20 @@ const getHtml = function(data) {
 					<div class="search-bar">
 						<div class="form-group">
 							<i class="search-icon bi bi-search"></i>
-							<input type="text" class="form-control form-control-md" id="search" placeholder="${data.langDict.search_bar_placeholder_search}" maxlength="15">
+							<input type="text" class="form-control form-control-md" id="search" placeholder="${data.langDict.search_bar_placeholder_search}" maxlength="50">
 						</div>
 					</div>
 					<button class="refresh-btn"><i class="bi bi-arrow-clockwise refresh-icon"></i></button>
 				</div>
 				<div class="friends"></div>
 			</div>
-			<div class="invites-send"></div>
+			<div class="invites-send-container">
+				<div class=players-invited>players invited</div>
+				<div class=separator></div>
+				<div class="invites-send"></div>
+				<button type="button" class="btn-primary btn-invite invite-btn">${data.langDict.invite_button}</button>
+			</div>
 		</div>
-		<button type="button" class="btn btn-primary btn-invite">${data.langDict.invite_button}</button>
 	`;
 	return html;
 }
@@ -175,12 +321,23 @@ export default class TourneyInviter extends HTMLElement {
 		const friendList = this.html.querySelector(".friends");
 		friendList.innerHTML = "";
 		let friendCard;
-		if (!friendList || !friends)
+		if (!friendList || !friends || !friends.length) {
+			if (friendList) {
+				const noFriendsMsg = document.createElement("div");
+				noFriendsMsg.classList.add("no-friends-text");
+				noFriendsMsg.innerHTML = `
+					No friends to be selected
+				`;
+				friendList.appendChild(noFriendsMsg);
+			}
 			return ;
+		}
 		friends.forEach(elm => {
 			friendCard = document.createElement("game-invite-card1");
 			friendCard.setAttribute("username", elm.username);
 			friendCard.setAttribute("profile-photo", elm.image);
+			friendCard.setAttribute("online", elm.online);
+			friendCard.setAttribute("user-id", elm.id);
 			friendCard.id = `id-${elm.id}`;
 			if(this.selectedElm.find(e => e == friendCard.id))
 				friendCard.setAttribute("selected", "true");
@@ -190,7 +347,6 @@ export default class TourneyInviter extends HTMLElement {
 
 	#removeFriendFromList(friendId) {
 		const elm = this.html.querySelector(`game-invite-card1[id="id-${friendId}"]`);
-		console.log()
 		if (elm)
 			elm.remove();
 	} 
@@ -198,6 +354,8 @@ export default class TourneyInviter extends HTMLElement {
 	#selectFriend(friendCard) {
 		friendCard.setAttribute("selected", "true");
 		this.selectedElm.push(friendCard.id);
+		const inviteButton = document.querySelector(".invite-btn");
+		inviteButton.disabled = this.selectedElm == 0;
 	}
 
 	#unselectFriend(friendCard) {
@@ -205,6 +363,9 @@ export default class TourneyInviter extends HTMLElement {
 		const index = this.selectedElm.indexOf(friendCard.id);
 		if (index > -1)
 			this.selectedElm.splice(index, 1);
+		const inviteButton = document.querySelector(".invite-btn");
+		inviteButton.disabled = this.selectedElm == 0;
+
 	}
 
 	#selectFriendEvent() {
@@ -225,23 +386,34 @@ export default class TourneyInviter extends HTMLElement {
 	#createInvitesSendList(list) {
 		const listHtml = this.html.querySelector(".invites-send");
 		listHtml.innerHTML = "";
-		if (!list || !list.length)
-			return ;
-
-		let elm = null;
-		list.forEach((invite) => {
-			elm = document.createElement("div");
-			if (!elm)
-				return ;
-			elm.classList.add("player-invite-send");
-			elm.classList.add(`id-${invite.req_id}`);
-			elm.innerHTML = `
-				<div><span>${invite.username}</span></div>
-				<div class="cross-icon btn-cancel-invite" id="id-${invite.req_id}"><i class="bi bi-x-lg"></i></div>
-			`;
-			listHtml.appendChild(elm);
-			this.#setCancelInviteEvent(elm);
-		});
+		if (!(!list || !list.length))
+		{
+			let elm = null;
+			list.forEach((invite) => {
+				elm = document.createElement("div");
+				if (!elm)
+					return ;
+				elm.classList.add("player-invite-send");
+				elm.classList.add(`id-${invite.req_id}`);
+				elm.innerHTML = `
+				<div class=invite-sep>
+					<span>${charLimiter(invite.username, charLimit)}</span>
+					<div>${invite.exp}</div>
+					</div>
+					<div class="cross-icon btn-cancel-invite" id="id-${invite.req_id}">x</div>
+				`;
+				listHtml.appendChild(elm);
+				this.#setCancelInviteEvent(elm);
+			});
+		}
+		// var button = document.createElement("button");
+		// button.setAttribute("type", "button");
+		// button.className = "btn-primary btn-invite invite-btn";
+		// button.textContent = "Invite";
+		// listHtml.appendChild(button);
+		// this.#setBtnInviteEvent();
+		const inviteButton = document.querySelector(".invite-btn");
+		inviteButton.disabled = this.selectedElm == 0;
 	}
 
 	#removeInvitesSendFromList(inviteId) {

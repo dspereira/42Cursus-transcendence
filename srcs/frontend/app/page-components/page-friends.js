@@ -6,7 +6,8 @@ import { enPageFriendsDict } from "../lang-dicts/enLangDict.js";
 import { ptPageFriendsDict } from "../lang-dicts/ptLangDict.js";
 import { esPageFriendsDict } from "../lang-dicts/esLangDict.js";
 
-const styles = ``;
+const styles = `
+`;
 
 const getHtml = function(data) {
 	const html = `
