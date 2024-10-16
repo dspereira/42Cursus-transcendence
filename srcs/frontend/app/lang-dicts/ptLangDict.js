@@ -61,6 +61,11 @@ export const ptAppLobbyDict = {
 	not_ready_status: "Não Pronto", 
 }
 
+export const ptAppPlayDict = {
+	/* HTML */
+	leave_button: "Sair",
+}
+
 export const ptChatFriendListDict = {
 	/* HTML */
 	search_bar_placeholder_search: "Procurar usuários..."

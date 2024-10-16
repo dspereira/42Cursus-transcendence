@@ -61,6 +61,11 @@ export const esAppLobbyDict = {
 	not_ready_status: "No Listo", 
 }
 
+export const esAppPlayDict = {
+	/* HTML */
+	leave_button: "Salir",
+}
+
 export const esChatFriendListDict = {
 	/* HTML */
 	search_bar_placeholder_search: "Buscar usuarios..."

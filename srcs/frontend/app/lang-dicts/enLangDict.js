@@ -61,6 +61,11 @@ export const enAppLobbyDict = {
 	not_ready_status: "Not Ready", 
 }
 
+export const enAppPlayDict = {
+	/* HTML */
+	leave_button: "Leave",
+}
+
 export const enChatFriendListDict = {
 	/* HTML */
 	search_bar_placeholder_search: "Search users..."

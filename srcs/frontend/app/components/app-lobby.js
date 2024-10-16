@@ -213,6 +213,7 @@ export default class AppLobby extends HTMLElement {
 			guest-image="${playersData.guest.image}"
 			lobby-id="${lobbyId}"
 			is-tournament="${this.data.isTournament}"
+			language="${this.data.language}"
 		></app-play>
 		`;
 	}
@@ -231,6 +232,7 @@ export default class AppLobby extends HTMLElement {
 			guest-image="${playersData.guest.image}"
 			lobby-id="${lobbyId}"
 			is-tournament="${this.data.isTournament}"
+			language="${this.data.language}"
 		></app-play>
 		`;
 	}
