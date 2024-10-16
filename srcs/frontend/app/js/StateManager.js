@@ -40,7 +40,8 @@ class StateManager {
 			inviteToPlayFriendID: null,
 			hasFriendInvite: null,
 			removeFriendIdFromChat: null,
-			isOnline: navigator.onLine
+			isOnline: navigator.onLine,
+			isUpdateConfigs: null
 		}
 
 		this.stateEvents = {
@@ -77,7 +78,8 @@ class StateManager {
 			inviteToPlayFriendID: [],
 			hasFriendInvite: [],
 			removeFriendIdFromChat: [],
-			isOnline: []
+			isOnline: [],
+			isUpdateConfigs: []
 		}
 
 		StateManager.instance = this;

@@ -5,6 +5,13 @@ import { colors } from "../js/globalStyles.js";
 import stateManager from "../js/StateManager.js";
 import { getCsrfToken } from "../utils/csrfTokenUtils.js"
 import componentSetup from "../utils/componentSetupUtils.js";
+import { enAppConfigs } from "../lang-dicts/enLangDict.js";
+import { ptAppConfigs } from "../lang-dicts/ptLangDict.js";
+import { esAppConfigs } from "../lang-dicts/esLangDict.js";
+import getLanguageDict from "../utils/languageUtils.js";
+import PageConfigs from "../page-components/page-configs.js";
+import { getHtmlElm } from "../utils/getHtmlElmUtils.js";
+import { render } from "../js/router.js";
 
 const styles = `
 
@@ -331,19 +338,19 @@ const getHtml = function(data) {
 		<div class="page-container">
 		<div class="alert alert-danger hide" role="alert"></div>
 		<div class="alert alert-success hide" role="alert"></div>
-		<div class="main-conf-text">Profile Settings</div>
+		<div class="main-conf-text">${data.langDict.profile_settings_header}</div>
 		<hr>
 			<div class="main-container">
 				<div class="general-settings-container">
-					<label for="new-username">Change Username</label>
+					<label for="new-username">${data.langDict.new_username_label}</label>
 					<input type="text" class="form-control form-control-md small-margin" id="new-username" placeholder="New Username" maxlength="15">
-					<label for="new-bio">Change Bio</label>
+					<label for="new-bio">${data.langDict.new_bio_label}</label>
 					<textarea type="text" class="form-control form-control-md div-margin" id="new-bio" placeholder="New Bio" rows="3" maxlength="255"></textarea>
 
-					<div class="main-conf-text">Security Settings</div>
+					<div class="main-conf-text">${data.langDict.security_settings_header}</div>
 					<hr>
 					<fieldset>
-						<legend>Choose where to receive your two-factor authentication:</legend>
+						<legend>${data.langDict.security_settings_legend}</legend>
 						<div class="form-check">
 							<input class="form-check-input" checked type="checkbox" value="email" id="email">
 							<label class="form-check-label" for="email">Email</label>
@@ -351,7 +358,7 @@ const getHtml = function(data) {
 						<div class="form-check">
 							<input class="form-check-input" type="checkbox" value="qrcode" id="qrcode">
 							<label class="form-check-label" for="qrcode">QR Code</label>
-							<button class="show-qrcode hide">Show Qrcode</button>
+							<button class="show-qrcode hide">${data.langDict.show_qrcode}</button>
 							<div class="qr-popup popup-overlay">
 								<div class="popup-content">
 									<img src="" class="qrcode-img" alt="Qrcode image"></img>
@@ -360,9 +367,7 @@ const getHtml = function(data) {
 						</div>
 						<div class="form-check ">
 							<input class="form-check-input" type="checkbox" value="phone" id="phone">
-							<label class="form-check-label" for="phone">
-								Phone
-							</label>
+							<label class="form-check-label" for="phone">${data.langDict.security_phone_label}</label>
 						</div>
 
 						<div class="phone-container hide">
@@ -376,9 +381,9 @@ const getHtml = function(data) {
 							</div>
 						<div>
 					</fieldset>
-					<div class="main-conf-text top-margin">Game Settings</div>
+					<div class="main-conf-text top-margin">${data.langDict.game_settings_header}</div>
 					<hr>
-					<label for="theme-options">Choose the game theme:</label>
+					<label for="theme-options">${data.langDict.game_theme_label}</label>
 					<select class="form-select div-margin" id="theme-options" aria-label="Game theme selection">
 						<option value="0" selected>Classic Retro</option>
 						<option value="1">Modern Neon</option>
@@ -387,9 +392,9 @@ const getHtml = function(data) {
 						<option value="4">Forest Retreat</option>
 					</select>
 
-					<div class="main-conf-text">Language Settings</div>
+					<div class="main-conf-text">${data.langDict.language_settings_header}</div>
 					<hr>
-					<label for="language-options">Choose language:</label>
+					<label for="language-options">${data.langDict.language_label}</label>
 					<select class="form-select" id="language-options" aria-label="Language selection">
 						<option value="en">English &#x1F1EC;&#x1F1E7;</option>
 						<option value="pt">Português &#x1F1F5;&#x1F1F9;</option>
@@ -402,13 +407,13 @@ const getHtml = function(data) {
 						<img src="../img/default_profile.png" class="image-preview" alt="Preview of the Image to be Changed">
 					</div>
 					<div class="img-buttons">
-						<label for="new-image" class="btn btn-primary btn-img">Upload Image</label>
+						<label for="new-image" class="btn btn-primary btn-img">${data.langDict.upload_image_button}</label>
 						<input id="new-image" class="hide" type="file" accept="image/png, image/jpeg, image/webp">
-						<button class="btn btn-primary btn-img btn-new-seed">New Avatar</button>
+						<button class="btn btn-primary btn-img btn-new-seed">${data.langDict.new_avatar_button}</button>
 					</div>
 				</div>
 			</div>
-			<div class="btn-container"><button type="submit" class="btn btn-primary btn-submit">Apply Changes</button></div>
+			<div class="btn-container"><button type="submit" class="btn btn-primary btn-submit">${data.langDict.apply_changes_button}</button></div>
 		</div>
 	</form>
 	`;
@@ -444,27 +449,30 @@ const suportedFileTypesToString = function() {
 		idx++;
 	}
 	return result;
-}
-
-const messages = {
-	"success": "User settings updated with success",
-	"imageSize": `The image size must not exceed ${MAX_IMAGE_SIZE_BYTES / MEGABYTE}MB`,
-	"imageType": `Only the following formats are accepted:${suportedFileTypesToString()}`,
-	"invalidUsername" : "Invalid username!",
-	"invalidPhone": "Invalid Phone Number!",
-	"unexpectedError": "Unexpected error"
-}
+} 
 
 export default class AppConfigs extends HTMLElement {
-	static observedAttributes = [];
-
+	static observedAttributes = ["language"];
+	
 	constructor() {
 		super()
+		this.data = {};
 		this.countryBufferStr;
 		this.qrcodeConfigured = false;
 		this.imageSeed = "";
 		this.imageFile = "";
 		this.savedImageUrl;
+	}
+
+	connectedCallback() {
+		this.messages = {
+			"success": this.data.langDict.success,
+			"invalidUsername": this.data.langDict.username_invalid,
+			"imageSize": `${this.data.langDict.image_size} ${MAX_IMAGE_SIZE_BYTES / MEGABYTE}MB`,
+			"imageType": `${this.data.langDict.image_type}${suportedFileTypesToString()}`,
+			"invalidPhone": "Invalid Phone Number!",
+			"unexpectedError": "Unexpected error"
+		}
 		this.#initComponent();
 		this.#scripts();
 		this.escQrClose = () => {
@@ -477,7 +485,10 @@ export default class AppConfigs extends HTMLElement {
 	}
 
 	attributeChangedCallback(name, oldValue, newValue) {
-
+		if (name == "language") {
+			this.data.langDict = getLanguageDict(newValue, enAppConfigs, ptAppConfigs, esAppConfigs);
+			this.data.language = newValue;
+		}
 	}
 
 	disconnectedCallback() {
@@ -486,7 +497,7 @@ export default class AppConfigs extends HTMLElement {
 	}
 
 	#initComponent() {
-		this.html = componentSetup(this, getHtml(), styles);
+		this.html = componentSetup(this, getHtml(this.data), styles);
 		this.settingsForm = this.html.querySelector("#settings-form");
 		this.usernameInp = this.html.querySelector("#new-username");
 		this.bioInp = this.html.querySelector("#new-bio");
@@ -519,6 +530,7 @@ export default class AppConfigs extends HTMLElement {
 		this.#qrcodeSelectEvent();
 		this.#showQrcode();
 		this.#errorMsgEvents();
+		this.#showSuccessMessageAfterInit();
 	}
 
 	#submit() {
@@ -529,7 +541,7 @@ export default class AppConfigs extends HTMLElement {
 			const username = this.usernameInp.value.trim();
 			if (!isValidUsername(username)) {
 				this.#setFieldInvalid("username");
-				this.#setErrorMessage(messages.invalidUsername);
+				this.#setErrorMessage(this.messages.invalidUsername);
 				this.submitBtn.disabled = false;
 				return ;
 			}
@@ -565,7 +577,10 @@ export default class AppConfigs extends HTMLElement {
 			(res, resData) => {
 				if (res.ok && resData) {
 					this.#loadData(resData.settings);
-					this.#setSuccessMessage(messages.success);
+					this.#cleanErrorStyles();
+					this.#setSuccessMessage(this.messages.success);
+					stateManager.setState("isUpdateConfigs", true); 
+					render(getHtmlElm(PageConfigs));
 				}
 				if (!res.ok && resData) {
 					this.#cleanSuccessMessage();
@@ -620,11 +635,11 @@ export default class AppConfigs extends HTMLElement {
 			if (!this.imageFile)
 				return ;
 			if (this.imageFile.size > MAX_IMAGE_SIZE_BYTES) {
-				this.#handleImageError(messages.imageSize);
+				this.#handleImageError(this.messages.imageSize);
 				return ;
 			}
 			if (!isFalidFormat(this.imageFile.type)) {
-				this.#handleImageError(messages.imageType);
+				this.#handleImageError(this.messages.imageType);
 				return ;
 			}
 			if (this.savedImageUrl)
@@ -786,7 +801,7 @@ export default class AppConfigs extends HTMLElement {
 					document.addEventListener('keydown', this.escQrClose);
 				}
 				else
-					stateManager.setState("errorMsg", "Error: couldn't get the QR code");
+					stateManager.setState("errorMsg", `${this.data.langDict.error_msg}`);
 			}, null, getCsrfToken());
 		});
 	}
@@ -827,6 +842,14 @@ export default class AppConfigs extends HTMLElement {
 				mainDiv.insertBefore(alertCard, insertElement);
 			}
 		});
+	}
+
+	#showSuccessMessageAfterInit() {
+		if (stateManager.getState("isUpdateConfigs")) {
+			this.#setSuccessMessage(this.messages.success);
+			stateManager.setState("isUpdateConfigs" ,false);
+		}
+
 	}
 }
 

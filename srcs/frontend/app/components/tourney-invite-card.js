@@ -6,6 +6,10 @@ import charLimit from "../utils/characterLimit.js";
 import { pfpStyle } from "../utils/stylingFunctions.js";
 import { getCsrfToken } from "../utils/csrfTokenUtils.js";
 import componentSetup from "../utils/componentSetupUtils.js";
+import { enTourneyInviteCardDict } from "../lang-dicts/enLangDict.js";
+import { ptTourneyInviteCardDict } from "../lang-dicts/ptLangDict.js";
+import { esTourneyInviteCardDict } from "../lang-dicts/esLangDict.js";
+import getLanguageDict from "../utils/languageUtils.js";
 
 const styles = `
 .card-container {
@@ -92,7 +96,7 @@ const getHtml = function(data) {
 			</div>
 			
 			<div class="buttons">
-				<button type="button" class="btn btn-success join-btn">Join</button>
+				<button type="button" class="btn btn-success join-btn">${data.langDict.join_button}</button>
 				<button type="button" class="btn btn-danger decline-btn">
 					<i class="bi bi-x-lg"></i>
 				</button>
@@ -104,7 +108,7 @@ const getHtml = function(data) {
 }
 
 export default class TourneyInviteCard extends HTMLElement {
-	static observedAttributes = ["username", "profile-photo", "invite-id", "exp", "user-id"];
+	static observedAttributes = ["username", "profile-photo", "invite-id", "exp", "user-id", "language"];
 
 	constructor() {
 		super()
@@ -123,6 +127,8 @@ export default class TourneyInviteCard extends HTMLElement {
 			name = "inviteId";
 		else if (name == "user-id")
 			name = "userId";
+		else if (name == "language")
+			this.data.langDict = getLanguageDict(newValue, enTourneyInviteCardDict, ptTourneyInviteCardDict, esTourneyInviteCardDict);
 		this.data[name] = newValue;
 
 		if (name == "exp" && this.html)

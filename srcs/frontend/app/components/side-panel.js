@@ -1,5 +1,9 @@
 import {redirect} from "../js/router.js";
 import stateManager from "../js/StateManager.js";
+import { enSidePanelDict } from "../lang-dicts/enLangDict.js";
+import { ptSidePanelDict } from "../lang-dicts/ptLangDict.js";
+import { esSidePanelDict } from "../lang-dicts/esLangDict.js";
+import getLanguageDict from "../utils/languageUtils.js";
 import {colors} from "../js/globalStyles.js"
 import { callAPI } from "../utils/callApiUtils.js";
 import componentSetup from "../utils/componentSetupUtils.js";
@@ -318,10 +322,10 @@ const getHtml = function(data) {
 	const html = ` 
 	<div class="logout-popup popup-overlay">
 			<div class="popup-content">
-			<h2>Logout from BlitzPong</h2>
+			<h2>${data.langDict.logout_popup_msg}</h2>
 			<div class="btn-container">
-				<button class="close-popup">Close</button>
-				<button class="logout-btn">Logout</button>
+				<button class="close-popup">${data.langDict.logout_popup_close}</button>
+				<button class="logout-btn">${data.langDict.logout_popup_logout}</button>
 			</div>
 		</div>
 	</div>
@@ -344,13 +348,13 @@ const getHtml = function(data) {
 						<button id="home">
 							<span>
 								<i class="icon bi bi-house-door"></i>
-								<span class="icon-text">Home</span>
+								<span class="icon-text">${data.langDict.home}</span>
 							</span>
 						</button>
 						<button id="chat">
 							<span>
 								<i class="icon bi bi-chat"></i>
-								<span class="icon-text">Chat</span>
+								<span class="icon-text">${data.langDict.chat}</span>
 							</span>
 						</button>
 						<button id="tournaments">
@@ -358,7 +362,7 @@ const getHtml = function(data) {
 								<i class="icon bi bi-trophy">
 									<span class="tournaments-notifications notification"></span>
 								</i>
-								<span class="icon-text">Tournaments</span>
+								<span class="icon-text">${data.langDict.tournaments}</span>
 							</span>
 						</button>
 						<button id="friends">
@@ -366,7 +370,7 @@ const getHtml = function(data) {
 								<i class="icon bi bi-people">
 									<span class="friends-notifications notification"></span>
 								</i>
-								<span class="icon-text">Friends</span>
+								<span class="icon-text">${data.langDict.friends}</span>
 							</span>
 						</button>
 						<button id="play">
@@ -374,20 +378,20 @@ const getHtml = function(data) {
 								<i class="icon bi bi-dpad">
 									<span class="game-notifications notification"></span>
 								</i>
-								<span class="icon-text">Play</span>
+								<span class="icon-text">${data.langDict.play}</span>
 							</span>
 						</button>
 						<div class="bottom-buttons">
 							<button id="logout">
 								<span>
 									<i class="icon bi bi-power"></i>
-									<span class="icon-text">Logout</span>
+									<span class="icon-text">${data.langDict.logout}</span>
 								</span>
 							</button>
 							<button id="configurations">
 								<span>
 									<i class="icon bi bi-gear"></i>
-									<span class="icon-text">Configurations</span>
+									<span class="icon-text">${data.langDict.configurations}</span>
 								</span>
 							</button>
 						</div>
@@ -431,10 +435,15 @@ const deselectedIcon = {
 }
 
 export default class SidePanel extends HTMLElement {
-	static observedAttributes = ["selected", "state"];
+	static observedAttributes = ["selected", "state", "language"];
 
 	constructor() {
 		super()
+		
+		this.data = {};
+	}
+
+	connectedCallback() {
 		this.#initComponent();
 		this.intervalID = null;
 		this.#scripts();
@@ -460,13 +469,20 @@ export default class SidePanel extends HTMLElement {
 	}
 
 	attributeChangedCallback(name, oldValue, newValue) {
-		if (name === "selected")
-			this.#changeSelectedPage(oldValue, newValue);
+		if (name === "selected") {
+			this.newPage = newValue;
+			this.oldPage = oldValue;
+		}
 		else if (name === "state")
 			this.#changeState(newValue);
+		if (name == "language") {
+			this.data.langDict = getLanguageDict(newValue, enSidePanelDict, ptSidePanelDict, esSidePanelDict);
+			this.data.language = newValue;
+		}
 	}
 	#initComponent() {
-		this.html = componentSetup(this, getHtml({state: stateManager.getState("sidePanel")}), styles);
+		this.data.state = stateManager.getState("sidePanel");
+		this.html = componentSetup(this, getHtml(this.data), styles);
 
 		this.gameNotifications = this.html.querySelector(".game-notifications");
 		this.tournamentNotifications = this.html.querySelector(".tournaments-notifications");
@@ -474,6 +490,7 @@ export default class SidePanel extends HTMLElement {
 	}
 
 	#scripts() {
+		this.#changeSelectedPage(this.oldPage, this.newPage);
 		this.#openClosePanel();
 		this.#setupNavigationEvents();
 		this.#addPageRedirection("profile", "logo");
@@ -565,7 +582,7 @@ export default class SidePanel extends HTMLElement {
 		})
 	}
 
-	#changeSelectedPage(oldValue, newValue) {		
+	#changeSelectedPage(oldValue, newValue) {
 		const newPage = navigation.find((elem) => elem === newValue);
 		const oldPage = navigation.find((elem) => elem === oldValue);
 		if (newPage === oldPage)

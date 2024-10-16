@@ -7,6 +7,10 @@ import { pfpStyle } from "../utils/stylingFunctions.js";
 import { redirect } from "../js/router.js";
 import friendProfileRedirectionEvent from "../utils/profileRedirectionUtils.js";
 import componentSetup from "../utils/componentSetupUtils.js";
+import { enTourneyGraphDict } from "../lang-dicts/enLangDict.js";
+import { ptTourneyGraphDict } from "../lang-dicts/ptLangDict.js";
+import { esTourneyGraphDict } from "../lang-dicts/esLangDict.js";
+import getLanguageDict from "../utils/languageUtils.js";
 
 const styles = `
 
@@ -227,13 +231,14 @@ const styles = `
 `;
 
 const getHtml = function(data) {
+	console.log("1", data);
 	const html = `
 	<div class=tourney-div>
 		<div class="tourney-title">${data.tournamentName}</div>
 			<div class="tournament-container">
 				<div class="winner hide">
 					<div><img src="" class="profile-photo" alt="profile photo chat"/></div>
-					<div class="winner-text">WINNER</div>
+					<div class="winner-text">${data.langDict.tournament_winner}</div>
 				</div>
 				<div class="graph">
 					<div class="game-size-1 padding-35 game-flex game-flex-column game-0">
@@ -318,14 +323,14 @@ const getHtml = function(data) {
 			</div>
 			<br></br>
 		<div class="btn-container">
-			<button type="button" class="btn btn-success btn-start hide">Start Game</button>
+			<button type="button" class="btn btn-success btn-start hide">${data.langDict.start_game_button}</button>
 		</div>
 	`;
 	return html;
 }
 
 export default class TourneyGraph extends HTMLElement {
-	static observedAttributes = ["tournament-id", "tournament-name"];
+	static observedAttributes = ["tournament-id", "tournament-name", "language"];
 
 	constructor() {
 		super()
@@ -349,6 +354,8 @@ export default class TourneyGraph extends HTMLElement {
 			name = "tournamentId";
 		if (name == "tournament-name")
 			name = "tournamentName";
+		if (name == "language")
+			this.data.langDict = getLanguageDict(newValue, enTourneyGraphDict, ptTourneyGraphDict, esTourneyGraphDict);
 		this.data[name] = newValue;
 	}
 

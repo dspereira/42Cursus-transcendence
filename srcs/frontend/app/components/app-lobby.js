@@ -7,6 +7,10 @@ import { pfpStyle } from "../utils/stylingFunctions.js";
 import checkUserLoginState from "../utils/checkUserLoginState.js";
 import updateLoggedInStatus from "../utils/updateLoggedInUtils.js";
 import componentSetup from "../utils/componentSetupUtils.js";
+import { enAppLobbyDict } from "../lang-dicts/enLangDict.js";
+import { ptAppLobbyDict } from "../lang-dicts/ptLangDict.js";
+import { esAppLobbyDict } from "../lang-dicts/esLangDict.js";
+import getLanguageDict from "../utils/languageUtils.js";
 
 const styles = `
 	.lobby {
@@ -59,6 +63,7 @@ const styles = `
 `;
 
 const getHtml = function(data) {
+	console.log(data, data.langDict, data.langDict.ready_button);
 	const html = `
 		<div class="lobby">
 			<div class="host">
@@ -70,14 +75,14 @@ const getHtml = function(data) {
 		</div>
 
 		<div class="btn-section">
-			<button type="button" class="btn btn-primary ready-btn">ready</button>
+			<button type="button" class="btn btn-primary ready-btn">${data.langDict.ready_button}</button>
 		</div>
 	`;
 	return html;
 }
 
 export default class AppLobby extends HTMLElement {
-	static observedAttributes = ["lobby-id", "is-tournament"];
+	static observedAttributes = ["lobby-id", "is-tournament", "language"];
 
 	constructor() {
 		super()
@@ -108,11 +113,14 @@ export default class AppLobby extends HTMLElement {
 			name = "lobbyId";
 		else if (name == "is-tournament")
 			name = "isTournament";
+		else if (name == "language") {
+			this.data.langDict = getLanguageDict(newValue, enAppLobbyDict, ptAppLobbyDict, esAppLobbyDict);
+		}
 		this.data[name] = newValue;
 	}
 
 	#initComponent() {
-		this.html = componentSetup(this, getHtml(), styles);
+		this.html = componentSetup(this, getHtml(this.data), styles);
 
 		this.readyBtn = this.html.querySelector(".ready-btn");
 		this.lobbyStatus = null;
@@ -163,11 +171,11 @@ export default class AppLobby extends HTMLElement {
 		playerImage.innerHTML = `
 			<img src="${playerInfo.image}" class="profile-photo" alt="avatar">
 			<div class=text-color>${playerInfo.username}</div>
-			<div class=text-color>${playerInfo.is_ready ? "ready" : "not ready"}</div>
+			<div class=text-color>${playerInfo.is_ready ? `${this.data.langDict.ready_status}` : `${this.data.langDict.not_ready_status}`}</div>
 		`;
 
 		if (playerInfo.id == stateManager.getState("userId"))
-			this.readyBtn.innerHTML = `${playerInfo.is_ready ? "not ready" : "ready"}`;
+			this.readyBtn.innerHTML = `${playerInfo.is_ready ? `${this.data.langDict.not_ready_status}` : `${this.data.langDict.ready_status}`}`;
 	}
 
 	#removePlayer(playerType) {
@@ -207,6 +215,7 @@ export default class AppLobby extends HTMLElement {
 			guest-image="${playersData.guest.image}"
 			lobby-id="${lobbyId}"
 			is-tournament="${this.data.isTournament}"
+			language="${this.data.language}"
 		></app-play>
 		`;
 	}
@@ -227,6 +236,7 @@ export default class AppLobby extends HTMLElement {
 			guest-image="${playersData.guest.image}"
 			lobby-id="${lobbyId}"
 			is-tournament="${this.data.isTournament}"
+			language="${this.data.language}"
 		></app-play>
 		`;
 	}
@@ -237,7 +247,7 @@ export default class AppLobby extends HTMLElement {
 				stateManager.setState("hasLobbyEnded", false);
 				redirect("/play");
 				setTimeout( () => {
-					stateManager.setState("errorMsg", "The lobby has ended");
+					stateManager.setState("errorMsg", `${this.data.langDict.error_msg1}`);
 				}, 100);
 			}
 		});
@@ -256,7 +266,7 @@ export default class AppLobby extends HTMLElement {
 							clearInterval(this.intervalID);
 							redirect("/play");
 							setTimeout( () => {
-								stateManager.setState("errorMsg", "All players have declined your invite");
+								stateManager.setState("errorMsg", `${this.data.langDict.error_msg1}`);
 							}, 100);
 						}
 					}

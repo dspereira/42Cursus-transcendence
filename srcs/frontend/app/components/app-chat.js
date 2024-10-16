@@ -3,6 +3,10 @@ import stateManager from "../js/StateManager.js";
 import { redirect } from "../js/router.js";
 import { colors } from "../js/globalStyles.js";
 import componentSetup from "../utils/componentSetupUtils.js";
+import { enAppChatDict } from "../lang-dicts/enLangDict.js";
+import { ptAppChatDict } from "../lang-dicts/ptLangDict.js";
+import { esAppChatDict } from "../lang-dicts/esLangDict.js";
+import getLanguageDict from "../utils/languageUtils.js";
 
 const styles = `
 .chat {
@@ -127,17 +131,21 @@ const getHtml = function(data) {
 	const html = `
 	<div class="chat">
 		<div class="no-friends-msg hide">
-			<span>You have no friends! Please search for friends here to start a chat!</span>
-			<div><span class="link">Find friends to chat here</span></div>
-		</div>	
+			<span>${data.langDict.no_friends_msg}</span>
+			<div><span class="link">${data.langDict.find_friends_msg}</span></div>
+		</div>
 		<div class="friends-list">
-			<chat-friends-list></chat-friends-list>
+			<chat-friends-list language=${data.language}></chat-friends-list>
 		</div>
 		<div class="chat-area">
+<<<<<<< HEAD
 			<div class= "no-content-container">
 				<img src="/img/pong-gs.png" class="no-content-img">
 				<div class="no-content-text">You have no friend selected. Please select a friend to start a chat.</div>
 			</div>
+=======
+			<div class="no-friends-selected-msg hide"><span>${data.langDict.no_friend_selected}</span></div>
+>>>>>>> main
 		</div>
 	</div>
 	`;
@@ -145,10 +153,11 @@ const getHtml = function(data) {
 }
 
 export default class AppChat extends HTMLElement {
-	static observedAttributes = [];
+	static observedAttributes = ["language"];
 
 	constructor() {
 		super()
+		this.data = {};
 	}
 
 	connectedCallback() {
@@ -157,11 +166,14 @@ export default class AppChat extends HTMLElement {
 	}
 
 	attributeChangedCallback(name, oldValue, newValue) {
-
+		if (name == "language") {
+			this.data.langDict = getLanguageDict(newValue, enAppChatDict, ptAppChatDict, esAppChatDict);
+			this.data.language = newValue;
+		}
 	}
 
 	#initComponent() {
-		this.html = componentSetup(this, getHtml(), styles);
+		this.html = componentSetup(this, getHtml(this.data), styles);
 
 		this.chatSection = this.html.querySelector(".chat-area");
 	}
@@ -191,6 +203,7 @@ export default class AppChat extends HTMLElement {
 				username="${userData.username}"
 				profile-photo="${userData.image}"
 				online="${userData.online}"
+				language="${this.data.language}"
 			></chat-section>
 		`;
 	}
@@ -211,10 +224,10 @@ export default class AppChat extends HTMLElement {
 				`
 				<div class= "no-content-container">
 					<img src="/img/pong-gs.png" class="no-content-img">
-					<div class="no-content-text">You have no friend selected. Please select a friend to start a chat.</div>
+					<div class="no-content-text">${data.langDict.no_friend_selected}</div>
 				</div>
 				`;
-				stateManager.setState("errorMsg", "Error: The user you tried to message is no longer your friend");
+				stateManager.setState("errorMsg", `${data.langDict.error_msg}`);
 			}
 		});
 	}

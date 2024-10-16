@@ -93,7 +93,6 @@ export default class PageEmailVerification extends HTMLElement {
 	constructor() {
 		super()
 		this.data = {};
-		document.title = title;
 	}
 
 	static get componentName() {
@@ -123,6 +122,7 @@ export default class PageEmailVerification extends HTMLElement {
 	}
 
 	#initComponent() {
+		document.title = title;
 		this.html = componentSetup(this, getHtml(this.data), styles);
 	}
 

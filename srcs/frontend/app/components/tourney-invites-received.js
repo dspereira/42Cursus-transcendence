@@ -4,6 +4,10 @@ import { charLimiter } from "../utils/characterLimit.js";
 import charLimit from "../utils/characterLimit.js";
 import componentSetup from "../utils/componentSetupUtils.js";
 import stateManager from "../js/StateManager.js";
+import { enTourneyInvitesReceivedDict } from "../lang-dicts/enLangDict.js";
+import { ptTourneyInvitesReceivedDict } from "../lang-dicts/ptLangDict.js";
+import { esTourneyInvitesReceivedDict } from "../lang-dicts/esLangDict.js";
+import getLanguageDict from "../utils/languageUtils.js";
 
 const styles = `	
 h1 {
@@ -26,14 +30,14 @@ h1 {
 
 const getHtml = function(data) {
 	const html = `
-		<h1 class=main-text>Tournaments Invites</h1>
+		<h1 class=main-text>${data.langDict.tournaments_invites}</h1>
 		<div class="requests-list"></div>
 	`;
 	return html;
 }
 
 export default class TourneyInvitesReceived extends HTMLElement {
-	static observedAttributes = [];
+	static observedAttributes = ["language"];
 
 	constructor() {
 		super()
@@ -52,7 +56,10 @@ export default class TourneyInvitesReceived extends HTMLElement {
 	}
 
 	attributeChangedCallback(name, oldValue, newValue) {
-
+		if (name == "language") {
+			this.data.langDict = getLanguageDict(newValue, enTourneyInvitesReceivedDict, ptTourneyInvitesReceivedDict, esTourneyInvitesReceivedDict);
+			this.data.language = newValue;
+		}
 	}
 
 	#initComponent() {
@@ -74,6 +81,7 @@ export default class TourneyInvitesReceived extends HTMLElement {
 		requestCard.setAttribute("profile-photo", requestData.image);
 		requestCard.setAttribute("exp", requestData.exp);
 		requestCard.setAttribute("user-id", requestData.id);
+		requestCard.setAttribute("language", this.data.language);
 		this.reqListHtml.appendChild(requestCard);
 	}
 

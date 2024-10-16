@@ -140,7 +140,7 @@ export default class LocalGame extends HTMLElement {
 	}
 
 	#initComponent() {
-		this.html = componentSetup(this, getHtml(), styles);
+		this.html = componentSetup(this, getHtml(this.data), styles);
 
 		this.canvas = this.html.querySelector("#canvas");
 		this.ctx = this.canvas.getContext("2d");

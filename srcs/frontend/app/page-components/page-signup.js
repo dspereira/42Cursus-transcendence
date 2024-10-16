@@ -18,8 +18,6 @@ export default class PageSignup extends HTMLElement {
 
 	constructor() {
 		super()
-
-		document.title = title;
 		
 		this.#initComponent();
 	}
@@ -29,6 +27,7 @@ export default class PageSignup extends HTMLElement {
 	}
 
 	#initComponent() {
+		document.title = title;
 		this.html = componentSetup(this, getHtml(), styles);
 	}
 }

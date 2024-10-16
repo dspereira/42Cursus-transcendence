@@ -5,6 +5,10 @@ import { charLimiter } from "../utils/characterLimit.js";
 import charLimit from "../utils/characterLimit.js";
 import { getCsrfToken } from "../utils/csrfTokenUtils.js"
 import componentSetup from "../utils/componentSetupUtils.js";
+import { enGameInviteSendDict } from "../lang-dicts/enLangDict.js";
+import { ptGameInviteSendDict } from "../lang-dicts/ptLangDict.js";
+import { esGameInviteSendDict } from "../lang-dicts/esLangDict.js";
+import getLanguageDict from "../utils/languageUtils.js";
 
 
 const styles = `
@@ -250,7 +254,7 @@ const getHtml = function(data) {
 			<div class="search-bar">
 				<div class="form-group">
 					<i class="search-icon bi bi-search"></i>
-					<input type="text" class="form-control form-control-md" id="search" placeholder="Search friends..." maxlength="15">
+					<input type="text" class="form-control form-control-md" id="search" placeholder="${data.langDict.search_bar_placeholder_search}" maxlength="15">
 				</div>
 			</div>
 			<div class="friend-list"></div>
@@ -259,7 +263,7 @@ const getHtml = function(data) {
 			<div class=players-invited>players invited</div>
 			<div class=separator></div>
 			<div class="selected-list-section"></div>
-			<button type="button" class="btn-primary btn-invite" id="submit-invite">Invite</button>
+			<button type="button" class="btn-primary btn-invite" id="submit-invite">${data.langDict.invite_button}</button>
 		<div>
 	</div>
 	`;
@@ -267,7 +271,7 @@ const getHtml = function(data) {
 }
 
 export default class GameInviteSend extends HTMLElement {
-	static observedAttributes = ["username", "profile-photo"];
+	static observedAttributes = ["username", "profile-photo", "language"];
 
 	constructor() {
 		super()
@@ -283,6 +287,8 @@ export default class GameInviteSend extends HTMLElement {
 	attributeChangedCallback(name, oldValue, newValue) {
 		if (name == "profile-photo")
 			name = "profilePhoto";
+		if (name == "language")
+			this.data.langDict = getLanguageDict(newValue, enGameInviteSendDict, ptGameInviteSendDict, esGameInviteSendDict);
 		this.data[name] = newValue;
 	}
 
@@ -435,11 +441,12 @@ export default class GameInviteSend extends HTMLElement {
 					contentElm.innerHTML = `
 					<app-lobby 
 						lobby-id="${stateManager.getState("userId")}"
+						language="${this.data.language}"
 					></app-lobby>
 					`;
 				}
 				else
-					stateManager.setState("errorMsg", "Couldn't send invite");
+					stateManager.setState("errorMsg", `${data.langDict.error_msg}`);
 				this.inviteBtn.disabled = false;
 			}, null, getCsrfToken());
 		});

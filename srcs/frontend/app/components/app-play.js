@@ -11,6 +11,10 @@ import { getHtmlElm } from "../utils/getHtmlElmUtils.js";
 import checkUserLoginState from "../utils/checkUserLoginState.js";
 import PagePlay from "../page-components/page-play.js";
 import componentSetup from "../utils/componentSetupUtils.js";
+import { enAppPlayDict } from "../lang-dicts/enLangDict.js";
+import { ptAppPlayDict } from "../lang-dicts/ptLangDict.js";
+import { esAppPlayDict } from "../lang-dicts/esLangDict.js";
+import getLanguageDict from "../utils/languageUtils.js";
 
 const styles = `
 
@@ -118,7 +122,7 @@ const getHtml = function(data) {
 				</div>
 			</div>
 			<div class="btn-leave-div">
-				<button type="button" class="btn btn-primary btn-leave hide">Leave</button>
+				<button type="button" class="btn btn-primary btn-leave hide">${data.langDict.leave_button}</button>
 			</div>
 		</div>
 	</div>
@@ -127,7 +131,7 @@ const getHtml = function(data) {
 }
 
 export default class AppPlay extends HTMLElement {
-	static observedAttributes = ["host-username", "host-image", "guest-username", "guest-image", "lobby-id", "is-tournament"];
+	static observedAttributes = ["host-username", "host-image", "guest-username", "guest-image", "lobby-id", "is-tournament", "language"];
 
 	constructor() {
 		super()
@@ -164,6 +168,10 @@ export default class AppPlay extends HTMLElement {
 			name = "lobbyId";
 		else if (name == "is-tournament")
 			name = "isTournament"
+		else if (name == "language") {
+			this.data.langDict = getLanguageDict(newValue, enAppPlayDict, ptAppPlayDict, esAppPlayDict);
+			this.data.language = newValue;
+		}
 		this.data[name] = newValue;
 	}
 

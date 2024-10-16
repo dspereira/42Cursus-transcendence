@@ -18,8 +18,6 @@ export default class PageLocalPlay extends HTMLElement {
 	constructor() {
 		super()
 
-		document.title = title;
-
 		this.#initComponent();
 	}
 
@@ -28,6 +26,7 @@ export default class PageLocalPlay extends HTMLElement {
 	}
 
 	#initComponent() {
+		document.title = title;
 		this.html = componentSetup(this, getHtml(), styles);
 	}
 }
