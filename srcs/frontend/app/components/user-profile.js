@@ -318,8 +318,9 @@ export default class UserProfile extends HTMLElement {
 	}
 
 	#updateStats(stats) {
+		console.log(this.data.langDict);
 		this.totalGames.innerHTML = `${this.data.langDict.total_games} ${stats.totalGames}`;
-		this.gameWinRate.innerHTML = `${this.data.langDict.game_win_rate} ${stats.totalGames > 0 ? `${stats.gamesWinRate}%` : "---"}`;
+		this.gameWinRate.innerHTML = `${this.data.langDict.games_win_rate} ${stats.totalGames > 0 ? `${stats.gamesWinRate}%` : "---"}`;
 
 		if (!stats.gamesWinRate && !stats.totalGames)
 			this.winRateBarGame.style.background = `linear-gradient(to right, ${colors.game_win} 0%, ${colors.game_loss} 100%)`;
@@ -330,7 +331,7 @@ export default class UserProfile extends HTMLElement {
 		this.gamesLoses.innerHTML = `L: ${stats.gamesLost}`;
 
 		this.totalTournaments.innerHTML = `${this.data.langDict.total_tournaments} ${stats.totalTournaments}`;
-		this.tournamentWinRate.innerHTML = `${this.data.langDict.tournament_win_rate} ${stats.totalTournaments > 0 ? `${stats.tournamentsWinRate}%`: "---"}`;
+		this.tournamentWinRate.innerHTML = `${this.data.langDict.tournaments_win_rate} ${stats.totalTournaments > 0 ? `${stats.tournamentsWinRate}%`: "---"}`;
 		
 		if (!stats.tournamentsWinRate && !stats.totalTournaments)
 			this.winRateBarTournaments.style.background = `linear-gradient(to right,  ${colors.game_win} 0%, ${colors.game_loss} 100%)`;

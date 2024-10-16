@@ -355,7 +355,7 @@ const getHtml = function(data) {
 						<div class="form-check">
 							<input class="form-check-input" type="checkbox" value="qrcode" id="qrcode">
 							<label class="form-check-label" for="qrcode">QR Code</label>
-							<button class="show-qrcode hide">Show Qrcode</button>
+							<button class="show-qrcode hide">${data.langDict.show_qrcode}</button>
 							<div class="qr-popup popup-overlay">
 								<div class="popup-content">
 									<img src="" class="qrcode-img" alt="Qrcode image"></img>
@@ -389,7 +389,7 @@ const getHtml = function(data) {
 						<option value="4">Forest Retreat</option>
 					</select>
 
-					<div class="main-conf-text">${data.langDict.language_settings_header}<</div>
+					<div class="main-conf-text">${data.langDict.language_settings_header}</div>
 					<hr>
 					<label for="language-options">${data.langDict.language_label}</label>
 					<select class="form-select" id="language-options" aria-label="Language selection">
@@ -410,7 +410,7 @@ const getHtml = function(data) {
 					</div>
 				</div>
 			</div>
-			<div class="btn-container"><button type="submit" class="btn btn-primary btn-submit">Apply Changes</button></div>
+			<div class="btn-container"><button type="submit" class="btn btn-primary btn-submit">${data.langDict.apply_changes_button}</button></div>
 		</div>
 	</form>
 	`;

@@ -171,7 +171,7 @@ export default class GameHistory extends HTMLElement {
 
 		this.gamesListHtml.innerHTML = "";
 		if (!gameList || !gameList.length) {
-			this.gamesListHtml.innerHTML = `<div class="no-content-text">${this.data.langDict.no_games_played}div>`;
+			this.gamesListHtml.innerHTML = `<div class="no-content-text">${this.data.langDict.no_games_played}</div>`;
 			return ;
 		}
 		gameList.forEach(elm => {

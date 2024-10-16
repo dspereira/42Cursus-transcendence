@@ -14,6 +14,7 @@ export const enAppConfigs = {
 	new_bio_placeholder: "New Bio",
 	security_settings_header: "Security Settings",
 	security_settings_legend: "Choose where to receive your two-factor authentication:",
+	show_qrcode: "Show QR Code",
 	security_phone_label: "Phone",
 	game_settings_header: "Game Settings",
 	game_theme_label: "Choose the game theme:",
@@ -22,6 +23,7 @@ export const enAppConfigs = {
 	apply_changes_button: "Apply Changes",
 	upload_image_button: "Upload Image",
 	new_avatar_button: "New Avatar",
+	apply_changes_button: "Apply Changes",
 
 	/* connectedCallback */
 	success: "User settings successfully updated",

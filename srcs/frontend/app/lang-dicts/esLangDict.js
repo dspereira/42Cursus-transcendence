@@ -14,6 +14,7 @@ export const esAppConfigs = {
 	new_bio_placeholder: "Nueva Biografía",
 	security_settings_header: "Configuración de Seguridad",
 	security_settings_legend: "Elige dónde recibir tu autenticación de dos factores:",
+	show_qrcode: "Mostrar QR Code",
 	security_phone_label: "Teléfono",
 	game_settings_header: "Configuración del Juego",
 	game_theme_label: "Elige el tema del juego:",
@@ -22,6 +23,7 @@ export const esAppConfigs = {
 	apply_changes_button: "Aplicar Cambios",
 	upload_image_button: "Subir Imagen",
 	new_avatar_button: "Nuevo Avatar",
+	apply_changes_button: "Aplicar Cambios",
 
 	/* connectedCallback */
 	success: "Configuraciones de usuario actualizadas con éxito",

@@ -14,6 +14,7 @@ export const ptAppConfigs = {
 	new_bio_placeholder: "Nova Bio",
 	security_settings_header: "Configurações de Segurança",
 	security_settings_legend: "Escolha onde receber a sua autenticação de dois fatores:",
+	show_qrcode: "Mostar QR Code",
 	security_phone_label: "Telefone",
 	game_settings_header: "Configurações do Jogo",
 	game_theme_label: "Escolha o tema do jogo:",
@@ -22,6 +23,7 @@ export const ptAppConfigs = {
 	apply_changes_button: "Aplicar Alterações",
 	upload_image_button: "Enviar Imagem",
 	new_avatar_button: "Novo Avatar",
+	apply_changes_button: "Aplicar Mudanças",
 
 	/* connectedCallback */
 	success: "Configurações do usuário atualizadas com sucesso",
