@@ -102,9 +102,6 @@ export const enGameHistory = {
 
 	/* #insertTournaments(tournamentList) */
 	no_tournaments_played: "No tournaments played yet.",
-
-	/* tournament-card */
-	see_more_info_button: "More Info",
 }
 
 export const enGameInviteCardDict = {
@@ -174,6 +171,11 @@ export const enSidePanelDict = {
 	logout_popup_close: "Close",
 	logout_popup_logout: "Logout",
 	configurations: "Configurations"
+}
+
+export const enTournamentCardDict = {
+	/* HTML */
+	see_more_info_button: "More Info",
 }
 
 export const enTourneyGraphDict = {

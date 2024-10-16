@@ -102,9 +102,6 @@ export const ptGameHistory = {
 
 	/* #insertTournaments(tournamentList) */
 	no_tournaments_played: "Nenhum torneio jogado ainda.",
-
-	/* tournament-card */
-	see_more_info_button: "Mais Informações",
 }
 
 export const ptGameInviteCardDict = {
@@ -174,6 +171,11 @@ export const ptSidePanelDict = {
 	logout_popup_close: "Fechar",
 	logout_popup_logout: "Sair",
 	configurations: "Configurações"
+}
+
+export const ptTournamentCardDict = {
+	/* HTML */
+	see_more_info_button: "Mais Informações",
 }
 
 export const ptTourneyGraphDict = {

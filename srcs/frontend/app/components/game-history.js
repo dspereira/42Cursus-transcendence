@@ -210,7 +210,7 @@ export default class GameHistory extends HTMLElement {
 				name="${elm.name}"
 				is-winner="${elm.is_winner}"
 				date="${parseDate(elm.creation_date)}";
-				lang-dict="${this.data.langDict}"
+				language="${this.data.language}"
 			></tournament-card>`;
 			this.gamesListHtml.insertBefore(tournament, prev_tournament);
 			prev_tournament = tournament;

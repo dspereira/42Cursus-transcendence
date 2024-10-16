@@ -1,6 +1,10 @@
 import { redirect } from "../js/router.js";
 import { colors } from "../js/globalStyles.js";
 import componentSetup from "../utils/componentSetupUtils.js";
+import { enTournamentCardDict } from "../lang-dicts/enLangDict.js";
+import { ptTournamentCardDict } from "../lang-dicts/ptLangDict.js";
+import { esTournamentCardDict } from "../lang-dicts/esLangDict.js";
+import getLanguageDict from "../utils/languageUtils.js";
 
 const styles = `
 	.game-grid-container {
@@ -56,7 +60,7 @@ const getHtml = function(data) {
 				<div>${data.date}</div>
 			</div>
 			<div class="right">
-				<button type="button" class="btn btn-primary btn-tornament-info">${this.data.langDict.see_more_info_button}</button>
+				<button type="button" class="btn btn-primary btn-tornament-info">${data.langDict.see_more_info_button}</button>
 			</div>
 		</div>
 	`;
@@ -64,7 +68,7 @@ const getHtml = function(data) {
 }
 
 export default class TournamentCard extends HTMLElement {
-	static observedAttributes = ["id", "name", "is-winner", "date", "lang-dict"];
+	static observedAttributes = ["id", "name", "is-winner", "date", "language"];
 
 	constructor() {
 		super()
@@ -79,8 +83,8 @@ export default class TournamentCard extends HTMLElement {
 	attributeChangedCallback(name, oldValue, newValue) {
 		if (name == "is-winner")
 			name = "isWinner";
-		if (name == "lang-dict")
-			name = "langDict";
+		if (name == "language")
+			this.data.langDict = getLanguageDict(newValue, enTournamentCardDict, ptTournamentCardDict, esTournamentCardDict);
 		this.data[name] = newValue;
 	}
 
