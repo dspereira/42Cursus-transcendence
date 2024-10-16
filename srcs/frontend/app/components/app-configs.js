@@ -9,6 +9,9 @@ import { enAppConfigs } from "../lang-dicts/enLangDict.js";
 import { ptAppConfigs } from "../lang-dicts/ptLangDict.js";
 import { esAppConfigs } from "../lang-dicts/esLangDict.js";
 import getLanguageDict from "../utils/languageUtils.js";
+import PageConfigs from "../page-components/page-configs.js";
+import { getHtmlElm } from "../utils/getHtmlElmUtils.js";
+import { render } from "../js/router.js";
 
 const styles = `
 
@@ -525,6 +528,7 @@ export default class AppConfigs extends HTMLElement {
 		this.#qrcodeSelectEvent();
 		this.#showQrcode();
 		this.#errorMsgEvents();
+		this.#showSuccessMessageAfterInit();
 	}
 
 	#submit() {
@@ -571,6 +575,8 @@ export default class AppConfigs extends HTMLElement {
 					this.#loadData(resData.settings);
 					this.#cleanErrorStyles();
 					this.#setSuccessMessage(this.messages.success);
+					stateManager.setState("isUpdateConfigs", true); 
+					render(getHtmlElm(PageConfigs));
 				}
 				if (!res.ok && resData) {
 					this.#cleanSuccessMessage();
@@ -820,6 +826,14 @@ export default class AppConfigs extends HTMLElement {
 				mainDiv.insertBefore(alertCard, insertElement);
 			}
 		});
+	}
+
+	#showSuccessMessageAfterInit() {
+		if (stateManager.getState("isUpdateConfigs")) {
+			this.#setSuccessMessage(this.messages.success);
+			stateManager.setState("isUpdateConfigs" ,false);
+		}
+
 	}
 }
 
