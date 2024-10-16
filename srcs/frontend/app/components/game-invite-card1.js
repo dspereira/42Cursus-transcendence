@@ -1,9 +1,16 @@
+import { callAPI } from "../utils/callApiUtils.js";
+import { colors } from "../js/globalStyles.js";
+import { charLimiter } from "../utils/characterLimit.js";
+import charLimit from "../utils/characterLimit.js";
+import stateManager from "../js/StateManager.js";
+import { pfpStyle } from "../utils/stylingFunctions.js";
 import componentSetup from "../utils/componentSetupUtils.js";
 
 const styles = `
 .card-container {
 	display: inline-block;
-	background-color: #EEEDEB;
+	background-color: ${colors.input_background};
+	color: ${colors.second_text};
 	border-radius: 8px;
 	padding: 20px 30px 20px 30px;
 	cursor: pointer;
@@ -22,32 +29,54 @@ const styles = `
 }
 
 .profile-photo-section {
+	position: relative;
+	display: inline-block;
 	margin-bottom: 5px;
 }
 
-.profile-photo {
-	width: 60px;
-}
 
 .selected {
-	background-color: red;
+	background-color: ${colors.btn_default};
+	color: ${colors.primary_text};
 }
 
-`;
+${pfpStyle(".profile-photo", "60px", "auto")}
 
+.online-status {
+	position: absolute;
+	display: inline-block;
+	width: 15px;
+	height: 15px;
+	border-radius: 50%;
+	background-color: green;
+	z-index: 2;
+	top: 50px;
+	left: 45px;
+	border: 2px solid #A9A9A9;
+}
+
+.hide {
+	display: none;
+}
+	
+`;
 const getHtml = function(data) {
+	let onlineVisibility = "";
+	if (data.online == "false")
+		onlineVisibility = "hide";
+
 	let selected = "";
 	if (data.selected == "true")
 		selected = "selected";
-
 	const html = `
 	<div class="card-container ${selected}">
 		<div class="invite-card">
 			<div class="profile-photo-section">
 				<img src="${data.profilePhoto}" class="profile-photo" alt="profile photo chat"/>
+				<div class="online-status ${onlineVisibility}"></div>
 			</div>
 			<div class="username-section">
-				<span class="username">${data.username}</span>
+				<span class="username">${charLimiter(data.username, charLimit)}</span>
 			</div>
 		</div>
 	</div>
@@ -84,6 +113,7 @@ export default class GameInviteCard1 extends HTMLElement {
 	}
 
 	#scripts() {
+		this.#changeOnlineStatus();
 	}
 
 	#markAsSelected() {
@@ -96,6 +126,20 @@ export default class GameInviteCard1 extends HTMLElement {
 			card.classList.add("selected");
 		else
 			card.classList.remove("selected");
+	}
+
+	#changeOnlineStatus() {
+		stateManager.addEvent("onlineStatus", (value) => {
+			const onlineElm = this.html.querySelector(".online-status");
+			if (!onlineElm)
+				return ;
+			if (value.id == this.data.userId) {
+				if (value.online)
+					onlineElm.classList.remove("hide");
+				else
+					onlineElm.classList.add("hide");
+			}
+		});
 	}
 }
 

@@ -1,6 +1,8 @@
 import {redirect} from "../js/router.js";
 import { callAPI } from "../utils/callApiUtils.js";
+import { colors } from "../js/globalStyles.js";
 import componentSetup from "../utils/componentSetupUtils.js";
+import stateManager from "../js/StateManager.js";
 
 const styles = `
 .tfa-methods {
@@ -9,30 +11,122 @@ const styles = `
 	align-items: center;
 }
 
+.main-container {
+	display: flex;
+	min-width: 460px;
+	flex-direction: column;
+	align-items: center;
+}
+
 .message {
 	background: none;
 	border: none;
-	color: blue;
+	color: ${colors.btn_default};
 	cursor: pointer;
 	padding: 0;
 	font: inherit;
 }
 
 .methods {
-	width: 50%;
+	width: 400px;
+	display: flex;
+	justify-content: space-between;
+	flex-direction: row;
+	gap: 40px;
+	margin-top: 15px;
+}
+
+.methods > :not(.hide):nth-child(2):nth-last-child(2) {
+	margin: 0 auto;
 }
 
 .hide {
 	display: none;
 }
 
+.logo-img {
+	width: 200px;
+	height: auto;
+	margin: 20px 0px 20px 0px;
+}
+
+.main-text {
+	color: ${colors.primary_text};
+	font-size: 24px;
+	fonst-weight: bold;
+}
+
+.list-group-item {
+	background-color: ${colors.btn_default};
+	color: ${colors.primary_text};
+	border-radius: 5px;
+	border-style: hidden;
+	max-width: 200px;
+	text-align: center;
+}
+
+.list-group-item:hover {
+	background-color: ${colors.btn_hover};
+	color: ${colors.second_text};
+}
+
+.message {
+	margin-top: 15px;
+}
+
+.alert-div {
+	display: flex;
+	margin: 30px auto;
+	width: 80%;
+	animation: disappear linear 5s forwards;
+	background-color: ${colors.alert};
+	z-index: 1001;
+}
+
+.alert-bar {
+	width: 95%;
+	height: 5px;
+	border-style: hidden;
+	border-radius: 2px;
+	background-color: ${colors.alert_bar};
+	position: absolute;
+	bottom: 2px;
+	animation: expire linear 5s forwards;
+}
+
+@keyframes expire {
+	from {
+		width: 95%;
+	}
+	to {
+		width: 0%;
+	}
+}
+
+@keyframes disappear {
+	0% {
+		visibility: visible;
+		opacity: 1;
+	}
+	99% {
+		visibility: visible;
+		opacity: 1;
+	}
+	100% {
+		visibility: hidden;
+		opacity: 0;
+		display: none;
+	}
+}
+
 `;
 
 const getHtml = function(data) {
 	const html = `
-		<h1>2FA</h1>
+	<div class=main-container>
+		<img src="../img/pong-1k.png" class=logo-img>
+		<div class="main-text">2FA</div>
 		<div class="option-2fa"></div>
-
 		<div class="tfa-methods">
 			<button class="message">Select an alternative authentication method</button>
 			<div class="list-group methods hide">
@@ -41,6 +135,7 @@ const getHtml = function(data) {
 				<button type="button" class="list-group-item list-group-item-action hide" id="phone">Use Mobile Phone</button>
 			</div>
 		<div>
+	</div>
 	`;
 	return html;
 }
@@ -77,6 +172,7 @@ export default class Page2FA extends HTMLElement {
 		this.#get2faOption();
 		this.#selectAnAlternativeMsgEvent();
 		this.#setChooseMethodsBtnEvents();
+		this.#errorMsgEvents();
 	}
 
 	#get2faOption() {
@@ -144,6 +240,27 @@ export default class Page2FA extends HTMLElement {
 
 	#setAllowedMethods(methods) {
 		this.methodsObj = methods;
+	}
+
+	#errorMsgEvents() {
+		stateManager.addEvent("errorMsg", (msg) => {
+			if (msg) {
+				stateManager.setState("errorMsg", null);
+				const mainDiv = this.html.querySelector(".main-container");
+				const alertBefore  = this.html.querySelector(".alert");
+				if (alertBefore)
+					alertBefore.remove();
+				const insertElement = mainDiv.querySelector(".main-text");
+				var alertCard = document.createElement("div");
+				alertCard.className = "alert alert-danger hide from alert-div";
+				alertCard.role = "alert";
+				alertCard.innerHTML = `
+						${msg}
+						<div class=alert-bar></div>
+					`;
+				mainDiv.insertBefore(alertCard, insertElement);
+			}
+		});
 	}
 }
 

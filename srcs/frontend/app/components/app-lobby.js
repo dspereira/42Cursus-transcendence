@@ -2,6 +2,8 @@ import { callAPI } from "../utils/callApiUtils.js";
 import gameWebSocket from "../js/GameWebSocket.js";
 import stateManager from "../js/StateManager.js";
 import { redirect } from "../js/router.js";
+import { colors } from "../js/globalStyles.js";
+import { pfpStyle } from "../utils/stylingFunctions.js";
 import checkUserLoginState from "../utils/checkUserLoginState.js";
 import updateLoggedInStatus from "../utils/updateLoggedInUtils.js";
 import componentSetup from "../utils/componentSetupUtils.js";
@@ -11,6 +13,10 @@ const styles = `
 		display: flex;
 		justify-content: center;
 		text-align: center;
+	}
+
+	.text-color {
+		color: ${colors.primary_text};
 	}
 
 	.host {
@@ -30,11 +36,26 @@ const styles = `
 		display: inline-block;
 	}
 
-	.profile-photo {
-		width: 145px;
-		height: auto;
-		clip-path:circle();
+	${pfpStyle(".profile-photo","145px","auto")}
+
+	${pfpStyle(".default-photo","145px","auto")}
+
+	.default-photo {
+		margin-bottom: 20px;
 	}
+
+	.ready-btn {
+		border-style: hidden;
+		border-radius: 5px;
+		background-color: ${colors.btn_default};
+		color: ${colors.primary_text};
+	}
+
+	.ready-btn:hover {
+		background-color: ${colors.btn_hover};
+		color: ${colors.second_text};
+	}
+
 `;
 
 const getHtml = function(data) {
@@ -141,8 +162,8 @@ export default class AppLobby extends HTMLElement {
 			return ;
 		playerImage.innerHTML = `
 			<img src="${playerInfo.image}" class="profile-photo" alt="avatar">
-			<div>${playerInfo.username}</div>
-			<div>${playerInfo.is_ready ? "ready" : "not ready"}</div>
+			<div class=text-color>${playerInfo.username}</div>
+			<div class=text-color>${playerInfo.is_ready ? "ready" : "not ready"}</div>
 		`;
 
 		if (playerInfo.id == stateManager.getState("userId"))
@@ -153,7 +174,10 @@ export default class AppLobby extends HTMLElement {
 		const playerImage = this.html.querySelector(`.${playerType}`);
 		if (!playerImage)
 			return ;
-		playerImage.innerHTML = "";
+		playerImage.innerHTML = `
+			<img src="../img/default_profile.png" class="default-photo" alt="avatar">
+			<div class="text-color">waiting...</div>
+			`;
 	}
 
 	#setReadyBtnEvent() {
@@ -208,6 +232,9 @@ export default class AppLobby extends HTMLElement {
 			if (value) {
 				stateManager.setState("hasLobbyEnded", false);
 				redirect("/play");
+				setTimeout( () => {
+					stateManager.setState("errorMsg", "The lobby has ended");
+				}, 100);
 			}
 		});
 	}
@@ -223,7 +250,10 @@ export default class AppLobby extends HTMLElement {
 					if (res.ok) {
 						if (!data.has_pending_game_requests) {
 							clearInterval(this.intervalID);
-							redirect("/play"); // modificar esta redireçao
+							redirect("/play");
+							setTimeout( () => {
+								stateManager.setState("errorMsg", "All players have declined your invite");
+							}, 100);
 						}
 					}
 				});

@@ -1,10 +1,38 @@
 import { callAPI } from "../utils/callApiUtils.js";
 import isValidUsername from "../utils/usernameValidationUtils.js";
 import getCountryCodesOptions from "../utils/countryCodesUtils.js";
+import { colors } from "../js/globalStyles.js";
+import stateManager from "../js/StateManager.js";
 import { getCsrfToken } from "../utils/csrfTokenUtils.js"
 import componentSetup from "../utils/componentSetupUtils.js";
 
 const styles = `
+
+#settings-form {
+	color: ${colors.second_text};
+	min-width: 460px;
+}
+
+.form-control, .form-select {
+	border-radius: 5px;
+	border-style: hidden;
+	color: ${colors.second_text};
+	background-color: ${colors.input_background};
+}
+
+.form-control::placeholder {
+	color: ${colors.second_text};
+}
+
+.form-control:focus {
+	background-color: ${colors.input_background};
+	color: ${colors.second_text};
+}
+
+.form-control + input:focus {
+	color:  ${colors.second_text};
+}
+
 .main-container {
 	display: flex;
 	gap: 10px;
@@ -12,14 +40,18 @@ const styles = `
 }
 
 .general-settings-container {
-	width: 70%;
+	width: 60%;
+	/*background-color: red;*/
 }
 
 .image-settings-container {
-	dispay: flex;
-	flex-direction: column; 	
-	justify-content: center;
-	width: 30%;
+	display: flex;
+	flex-direction: column;
+	justify-content: flex-start;
+	width: 40%;
+	min-width: 300px;
+
+	/*background-color: blue;*/
 }
 
 .img-container {
@@ -41,10 +73,38 @@ const styles = `
 	gap: 2%;
 }
 
+.btn-submit {
+	width: 50%;
+	margin-top: 30px;
+	margin-bottom: 30px;
+	color: ${colors.primary_text};
+	background-color: ${colors.btn_default};
+	border-style: hidden;
+
+}
+
+.btn-submit:hover {
+	background-color: ${colors.btn_hover};
+	color: ${colors.second_text};
+}
+
 .btn-img {
 	width: 50%;
 	max-width: 150px;
-	font-size: clamp(0.5rem, 1vw, 1rem);
+	/*font-size: clamp(0.5rem, 1vw, 1rem);*/
+	color: ${colors.primary_text};
+	background-color: ${colors.btn_default};
+	border-style: hidden;
+}
+
+.btn-img:hover {
+	background-color: ${colors.btn_hover};
+	color: ${colors.second_text};
+}
+
+.form-check-input[type=checkbox] {
+	background-color: ${colors.main_card};
+	border-color: ${colors.second_text};
 }
 
 legend {
@@ -85,101 +145,270 @@ legend {
 .show-qrcode {
 	background: none;
 	border: none;
-	color: blue;
+	color: ${colors.btn_default};
 	cursor: pointer;
 	padding: 0;
 	font: inherit;
 }
 
 .qrcode-img {
-	dispay: inline-block;
+	display: flex;
+}
+
+.phone-container {
+	display: flex;
+}
+
+.country-code {
+	width: 20%;
+	min-width: 150px;
+}
+
+.phone-number {
+	width: 80%;
+}
+
+#country-code-select {
+	background-color: ${colors.second_card};
+	border-top-right-radius: 0;
+	border-bottom-right-radius: 0;
+}
+
+#phone-number-input {
+	border-top-left-radius: 0;
+	border-bottom-left-radius: 0;
 }
 
 .hide {
 	display: none;
 }
+
+.page-container {
+	display: flex;
+	flex-direction: column;
+}
+
+.btn-container {
+	display: flex;
+	width: 60%;
+	justify-content: center;
+}
+
+.main-conf-text {
+	font-size: 24px;
+	color: ${colors.primary_text};
+}
+
+.top-margin {
+	margin-top: 30px;
+}
+
+.div-margin {
+	margin-bottom: 40px;
+}
+
+.small-margin {
+	margin-bottom: 20px;
+}
+
+@media (max-width: 900px) {
+	.main-container {
+		flex-direction: column-reverse;
+		gap: 20px;
+	}
+	.general-settings-container, .image-settings-container {
+		width: 100%;
+	}
+	.image-settings-container {
+		justify-content: center;
+	}
+	.btn-container {
+		width: 100%;
+	}
+	.btn-submit {
+		width: 70%;
+	}
+
+	.img-buttons {
+		margin-bottom: 30px;
+	}
+}
+
+.popup-overlay {
+	display: none;
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	background: rgba(0, 0, 0, 0.5);
+	backdrop-filter: blur(5px);
+	justify-content: center; 
+	align-items: center;
+	z-index: 9999;
+}
+
+.popup-content {
+	display: flex;
+	flex-direction: column;
+	background-color: ${colors.second_card};
+	color: ${colors.primary_text};
+	padding: 20px;
+	border-radius: 5px;
+	text-align: center;
+	box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+	width: 30%;
+	gap: 10px;
+}
+
+#country-code-select::-webkit-scrollbar {
+	width: 15px;
+}
+	
+#country-code-select::-webkit-scrollbar-track {
+	width: 15px;
+	background: ${colors.second_card};
+}
+
+#country-code-select::-webkit-scrollbar-thumb {
+	background: ${colors.main_card};
+	border-radius: 10px;
+	border-style: hidden;
+	border: 3px solid transparent;
+	background-clip: content-box;
+}
+
+.alert-div {
+	display: flex;
+	margin: 30px auto;
+	width: 80%;
+	animation: disappear linear 5s forwards;
+	background-color: ${colors.alert};
+	z-index: 1001;
+}
+
+.alert-bar {
+	width: 95%;
+	height: 5px;
+	border-style: hidden;
+	border-radius: 2px;
+	background-color: ${colors.alert_bar};
+	position: absolute;
+	bottom: 2px;
+	animation: expire linear 5s forwards;
+}
+
+@keyframes expire {
+	from {
+		width: 95%;
+	}
+	to {
+		width: 0%;
+	}
+}
+
+@keyframes disappear {
+	0% {
+		visibility: visible;
+		opacity: 1;
+	}
+	99% {
+		visibility: visible;
+		opacity: 1;
+	}
+	100% {
+		visibility: hidden;
+		opacity: 0;
+		display: none;
+	}
+}
+
 `;
 
 const getHtml = function(data) {
 	const html = `
 	<form id="settings-form">
-		<div class="main-container">
-			<div class="general-settings-container">
-				<div class="alert alert-danger hide" role="alert"></div>
-				<div class="alert alert-success hide" role="alert"></div>
-				<h2>Profile Settings</h2>
-				<hr>
-				<label for="new-username">Change Username</label>
-				<input type="text" class="form-control form-control-md" id="new-username" placeholder="New Username" maxlength="15">
-				<label for="new-bio">Change Bio</label>
-				<textarea type="text" class="form-control form-control-md" id="new-bio" placeholder="New Bio" rows="3" maxlength="255"></textarea>
+		<div class="page-container">
+		<div class="main-conf-text">Profile Settings</div>
+		<hr>
+			<div class="main-container">
+				<div class="general-settings-container">
+					<div class="alert alert-danger hide" role="alert"></div>
+					<div class="alert alert-success hide" role="alert"></div>
+					<label for="new-username">Change Username</label>
+					<input type="text" class="form-control form-control-md small-margin" id="new-username" placeholder="New Username" maxlength="15">
+					<label for="new-bio">Change Bio</label>
+					<textarea type="text" class="form-control form-control-md div-margin" id="new-bio" placeholder="New Bio" rows="3" maxlength="255"></textarea>
 
-				<h2>Scurity Settings</h2>
-				<hr>
-				<fieldset>
-					<legend>Choose where to receive your two-factor authentication:</legend>
-					<div class="form-check">
-						<input class="form-check-input" checked type="checkbox" value="email" id="email">
-						<label class="form-check-label" for="email">Email</label>
-					</div>
-					<div class="form-check">
-						<input class="form-check-input" type="checkbox" value="qrcode" id="qrcode">
-						<label class="form-check-label" for="qrcode">QR Code</label>
-						<button class="show-qrcode hide">Show Qrcode</button>
-						<img src="" class="qrcode-img hide" alt="Qrcode image"></img>
-					</div>
-					<div class="form-check">
-						<input class="form-check-input" type="checkbox" value="phone" id="phone">
-						<label class="form-check-label" for="phone">
-							Phone
-						</label>
-					</div>
-
-					<div class="phone-container hide">
-						<div class="country-code">
-							<select class="form-select" id="country-code-select" aria-label="Country Code">
-							${getCountryCodesOptions()}
-							</select>
+					<div class="main-conf-text">Security Settings</div>
+					<hr>
+					<fieldset>
+						<legend>Choose where to receive your two-factor authentication:</legend>
+						<div class="form-check">
+							<input class="form-check-input" checked type="checkbox" value="email" id="email">
+							<label class="form-check-label" for="email">Email</label>
 						</div>
-						<div class="phone-number">
-							<input class="form-control form-control-md" id="phone-number-input" type="text">
+						<div class="form-check">
+							<input class="form-check-input" type="checkbox" value="qrcode" id="qrcode">
+							<label class="form-check-label" for="qrcode">QR Code</label>
+							<button class="show-qrcode hide">Show Qrcode</button>
+							<div class="qr-popup popup-overlay">
+								<div class="popup-content">
+									<img src="" class="qrcode-img" alt="Qrcode image"></img>
+								</div>
+							</div>
 						</div>
-					<div>
+						<div class="form-check ">
+							<input class="form-check-input" type="checkbox" value="phone" id="phone">
+							<label class="form-check-label" for="phone">
+								Phone
+							</label>
+						</div>
 
-				</fieldset>
+						<div class="phone-container hide">
+							<div class="country-code">
+								<select class="form-select" id="country-code-select" aria-label="Country Code">
+								${getCountryCodesOptions()}
+								</select>
+							</div>
+							<div class="phone-number">
+								<input class="form-control form-control-md" id="phone-number-input" type="text">
+							</div>
+						<div>
+					</fieldset>
+					<div class="main-conf-text top-margin">Game Settings</div>
+					<hr>
+					<label for="theme-options">Choose the game theme:</label>
+					<select class="form-select div-margin" id="theme-options" aria-label="Game theme selection">
+						<option value="0" selected>Classic Retro</option>
+						<option value="1">Modern Neon</option>
+						<option value="2">Ocean Vibes</option>
+						<option value="3">Sunset Glow</option>
+						<option value="4">Forest Retreat</option>
+					</select>
 
-				<h2>Game Settings</h2>
-				<hr>
-				<label for="theme-options">Choose the game theme:</label>
-				<select class="form-select" id="theme-options" aria-label="Game theme selection">
-					<option value="0" selected>Classic Retro</option>
-					<option value="1">Modern Neon</option>
-					<option value="2">Ocean Vibes</option>
-					<option value="3">Sunset Glow</option>
-					<option value="4">Forest Retreat</option>
-				</select>
-			
-				<h2>Language Settings</h2>
-				<hr>
-				<label for="language-options">Choose language:</label>
-				<select class="form-select" id="language-options" aria-label="Language selection">
-					<option value="en">English &#x1F1EC;&#x1F1E7;</option>
-					<option value="pt">Português &#x1F1F5;&#x1F1F9;</option>
-					<option value="es">Espanhol &#x1F1EA;&#x1F1F8;</option>
-				</select>
-				<div><button type="submit" class="btn btn-primary btn-submit">Apply Changes</button></div>
-			</div>
-
-			<div class="image-settings-container">
-				<div class="img-container">
-					<img src="../img/default_profile.png" class="image-preview" alt="Preview of the Image to be Changed">
+					<div class="main-conf-text">Language Settings</div>
+					<hr>
+					<label for="language-options">Choose language:</label>
+					<select class="form-select" id="language-options" aria-label="Language selection">
+						<option value="en">English &#x1F1EC;&#x1F1E7;</option>
+						<option value="pt">Português &#x1F1F5;&#x1F1F9;</option>
+						<option value="es">Espanhol &#x1F1EA;&#x1F1F8;</option>
+					</select>
 				</div>
-				<div class="img-buttons">
-					<label for="new-image" class="btn btn-primary btn-img">Upload Image</label>
-					<input id="new-image" class="hide" type="file" accept="image/png, image/jpeg, image/webp">
-					<button class="btn btn-primary btn-img btn-new-seed">New Avatar</button>
+
+				<div class="image-settings-container">
+					<div class="img-container">
+						<img src="../img/default_profile.png" class="image-preview" alt="Preview of the Image to be Changed">
+					</div>
+					<div class="img-buttons">
+						<label for="new-image" class="btn btn-primary btn-img">Upload Image</label>
+						<input id="new-image" class="hide" type="file" accept="image/png, image/jpeg, image/webp">
+						<button class="btn btn-primary btn-img btn-new-seed">New Avatar</button>
+					</div>
 				</div>
 			</div>
+			<div class="btn-container"><button type="submit" class="btn btn-primary btn-submit">Apply Changes</button></div>
 		</div>
 	</form>
 	`;
@@ -238,6 +467,13 @@ export default class AppConfigs extends HTMLElement {
 		this.savedImageUrl;
 		this.#initComponent();
 		this.#scripts();
+		this.escQrClose = () => {
+			const popup = document.querySelector('.qr-popup');
+			if (popup)
+				popup.style.display = "none";
+			this.showQrcode.disabled = false;
+			document.removeEventListener('keydown', this.escQrClose);
+		};
 	}
 
 	attributeChangedCallback(name, oldValue, newValue) {
@@ -282,6 +518,7 @@ export default class AppConfigs extends HTMLElement {
 		this.#disableEmailCheckbox();
 		this.#qrcodeSelectEvent();
 		this.#showQrcode();
+		this.#errorMsgEvents();
 	}
 
 	#submit() {
@@ -541,11 +778,47 @@ export default class AppConfigs extends HTMLElement {
 			event.preventDefault();
 			callAPI("POST", "/two-factor-auth/request-qr-code/", null, (res, data) => {
 				if (res.ok && data && data.qr_code) {
-					this.qrcodeImg.classList.remove("hide");
 					this.qrcodeImg.setAttribute("src", 'data:image/png;base64,' + data.qr_code);
+					const qrElm = document.querySelector(".qr-popup");
+					qrElm.style.display = 'flex';
+					this.#qrPopUp();
+					document.addEventListener('keydown', this.escQrClose);
 				}
-				this.showQrcode.disabled = false;
+				else
+					stateManager.setState("errorMsg", "Error: couldn't get the QR code");
 			}, null, getCsrfToken());
+		});
+	}
+
+	#qrPopUp() {
+		const popup = document.querySelector('.qr-popup');
+		window.addEventListener('click', (event) => {
+			if (event.target === popup) {
+				popup.style.display = 'none';
+				this.showQrcode.disabled = false;
+				document.removeEventListener('keydown', this.escQrClose);
+			}
+		});
+	}
+
+	#errorMsgEvents() {
+		stateManager.addEvent("errorMsg", (msg) => {
+			if (msg) {
+				stateManager.setState("errorMsg", null);
+				const mainDiv = this.html.querySelector(".page-container");
+				const alertBefore  = this.html.querySelector(".alert");
+				if (alertBefore)
+					alertBefore.remove();
+				const insertElement = mainDiv.querySelector(".main-container"); 
+				var alertCard = document.createElement("div");
+				alertCard.className = "alert alert-danger hide from alert-div";
+				alertCard.role = "alert";
+				alertCard.innerHTML = `
+						${msg}
+						<div class=alert-bar></div>
+					`;
+				mainDiv.insertBefore(alertCard, insertElement);
+			}
 		});
 	}
 }

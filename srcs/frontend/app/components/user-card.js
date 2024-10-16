@@ -1,6 +1,9 @@
 import { callAPI } from "../utils/callApiUtils.js";
+import { colors } from "../js/globalStyles.js";
 import stateManager from "../js/StateManager.js";
+import { pfpStyle } from "../utils/stylingFunctions.js";
 import { redirect } from "../js/router.js";
+import friendProfileRedirectionEvent from "../utils/profileRedirectionUtils.js";
 import { getCsrfToken } from "../utils/csrfTokenUtils.js"
 import componentSetup from "../utils/componentSetupUtils.js";
 
@@ -8,24 +11,25 @@ const styles = `
 
 .user-card {
 	display: flex;
-	flex-direction: row;
+	flex-direction: column;
 	justify-content: space-between;
+	max-width: 200px;
+	min-width: 150px;
 	align-items: center;
 	border-radius: 8px;
-	padding: 5px 25px;
-	background-color: #A9A9A9;
+	padding: 20px 10px 20px 10px;
+	background-color: ${colors.second_card};
 }
 
 .user {
 	display: flex;
-	flex-direction: row;
+	position: relative;
+	flex-direction: column;
 	align-items: center;
-	gap: 20px;
+	margin-bottom: 20px;
 }
 
-.user-photo {
-	width: 50px;
-}
+${pfpStyle(".user-photo", "70px", "auto")}
 
 .user-name {
 	font-size: 16px;
@@ -40,13 +44,28 @@ button {
 	margin-left: 5px;
 }
 
+.clickable {
+	cursor: pointer;
+}
+
+.hover-popup {
+	position: fixed;
+	padding: 10px;
+	background-color: ${colors.main_card};
+	color: ${colors.primary_text};
+	opacity: 0.9;
+	backdrop-filter: blur(5px);
+	border-radius: 5px;
+	white-space: nowrap;
+	display: none;
+	pointer-events: none;
+	z-index: 1000;
+}
 `;
 
 const getBtn = function(type) {
 	let icone = null;
 	let colorBtn = "btn-success";
-
-	console.log
 
 	if (type == "play")
 		icone = `bi-controller`;
@@ -95,7 +114,8 @@ const getHtml = function(data) {
 	const html = `
 		<div class="user-card">
 			<div class="user">
-				<img src="${data.profilePhoto}" class="user-photo" alt="profile photo chat"/>
+				<img src="${data.profilePhoto}" class="user-photo clickable" alt="profile photo chat"/>
+				<div id="hover-popup" class="hover-popup">${data.username}'s profile</div>
 				<span class="user-name">${data.username}</span>
 			</div>
 			<div class="buttons">
@@ -167,6 +187,7 @@ export default class UserCard extends HTMLElement {
 		this.#setDeclineEvent();
 		this.#setAcceptEvent();
 		this.#setRemoveEvent();
+		this.#addProfileRedirect();
 		this.#setPlayBtnEvent();
 		this.#setChatBtnEvent();
 	}
@@ -175,6 +196,8 @@ export default class UserCard extends HTMLElement {
 		callAPI(method, "/friends/request/", body, (res, data) => {
 			if (res.ok)
 				callback(data);
+			else
+				stateManager.setState("errorMsg", "Friend Request Accepted");
 		}, null, getCsrfToken());
 	}
 
@@ -182,6 +205,8 @@ export default class UserCard extends HTMLElement {
 		callAPI(method, "/friends/friendships/", body, (res, data) => {
 			if (res.ok)
 				callback(data);
+			else
+				stateManager.setState("errorMsg", "Friend Request Expired");
 		}, null, getCsrfToken());
 	}
 
@@ -261,6 +286,27 @@ export default class UserCard extends HTMLElement {
 		});
 	}
 
+	#addProfileRedirect() {
+		const movePopup = (event) => {
+			popup.style.left = event.clientX + 'px';
+			popup.style.top = event.clientY + 'px';
+		};
+		const userCard = this.html.querySelector(".user-card");
+		const profilePhoto = userCard.querySelector(".user-photo");
+		const popup = userCard.querySelector('.hover-popup');
+		if (!userCard || !profilePhoto || !popup)
+			return ;
+		friendProfileRedirectionEvent(userCard, ".user-photo", this.data.userId);
+		profilePhoto.addEventListener('mouseenter', () => {
+			popup.style.display = 'block'
+			profilePhoto.addEventListener('mousemove', movePopup);
+		});
+		profilePhoto.addEventListener('mouseleave', () => {
+			popup.style.display = 'none'
+			profilePhoto.removeEventListener('mousemove', movePopup);
+		});
+	}
+
 	#setPlayBtnEvent() {
 		let btn = this.html.querySelector(".play")
 		if (!btn)
@@ -273,8 +319,10 @@ export default class UserCard extends HTMLElement {
 					redirect("/play");
 					btn.disabled = false;
 				}
-				else 
+				else {
+					stateManager.setState("errorMsg", "User is no longer your friend");
 					this.remove();
+				}
 			});
 		});
 	}
@@ -291,8 +339,10 @@ export default class UserCard extends HTMLElement {
 					redirect("/chat");
 					btn.disabled = false;
 				}
-				else 
+				else {
+					stateManager.setState("errorMsg", "User is no longer your friend");
 					this.remove();
+				}
 			});
 		});		
 	}
@@ -305,5 +355,4 @@ export default class UserCard extends HTMLElement {
 		});
 	}
 }
-
 customElements.define("user-card", UserCard);

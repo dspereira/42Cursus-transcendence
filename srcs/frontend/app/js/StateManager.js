@@ -33,10 +33,14 @@ class StateManager {
 			tournamentGameLobby: null,
 			tournamentId: null,
 			isChatMsgReadyToSend: null,
+			errorMsg: null,
+			friendIdInvitedFromChat: null,
+			hasFriendInvite: null,
+			removeFriendIdFromChat: null,
 			inviteToPlayFriendID: null,
 			hasFriendInvite: null,
 			removeFriendIdFromChat: null,
-			isOnline: navigator.onLine,
+			isOnline: navigator.onLine
 		}
 
 		this.stateEvents = {
@@ -66,6 +70,10 @@ class StateManager {
 			finishedTournament: [],
 			tournamentId: [],
 			isChatMsgReadyToSend: [],
+			errorMsg: [],
+			friendIdInvitedFromChat: [],
+			hasFriendInvite: [],
+			removeFriendIdFromChat: [],
 			inviteToPlayFriendID: [],
 			hasFriendInvite: [],
 			removeFriendIdFromChat: [],

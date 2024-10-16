@@ -1,5 +1,6 @@
 import {redirect} from "../js/router.js";
 import {callAPI} from "../utils/callApiUtils.js";
+import { colors } from "../js/globalStyles.js"
 import { render } from "../js/router.js";
 import PageEmailResend from "../page-components/page-email-resend.js";
 import { getDynamicHtmlElm, getHtmlElm } from "../utils/getHtmlElmUtils.js";
@@ -12,10 +13,32 @@ form {
 	position: relative;
 }
 
+.card-background {
+	background-color: ${colors.main_card};
+	color: ${colors.primary_text};
+}
+
+.card-background:focus {
+	background-color: ${colors.main_card};
+	color: ${colors.primary_text};
+}
+
+input:-internal-autofill-selected {
+	background-color: ${colors.second_card};
+}
+
+.highlight-text {
+	text-align: center;
+	font-size: 32px;
+	margin-top: 0px;
+	color: ${colors.primary_text};
+}
+
 .icon {
 	position: absolute;
 	margin-top: 3px;
 	font-size: 28px;
+	color: ${colors.second_text};
 }
 
 .right-icon {
@@ -44,8 +67,35 @@ div {
 	display: none;
 }
 
-#email, #password {
+.main-container {
+
+	display: flex;
+	align-items: center;
+	width: 100%;
+	flex-direction: column;
+
+}
+
+.second-container {
+	display: flex;
+	align-items: center;
+	flex-direction: column;
+	width: 50%;
+	min-width: 460px;
+	max-width: 750px;
+}
+
+#login-form {
+	width: 100%;
+}
+
+#email, #password, #email::placeholder, #password::placeholder {
+	color: ${colors.primary_text};
 	background-image: none;
+}
+
+#email:focus::placeholder, #password:focus::placeholder {
+	color: ${colors.second_text};
 }
 
 h1 {
@@ -57,12 +107,45 @@ h1 {
 .btn-submit {
 	width: 100%;
 	margin-top: 30px;
+	color: ${colors.primary_text};
+	background-color: ${colors.btn_default};
+}
+
+.btn-submit:hover {
+	background-color: ${colors.btn_default};
+	color: ${colors.second_text};
 }
 
 .btn-signup {
 	width: 100%;
+	border: 2px solid ${colors.btn_default};
+	color: ${colors.second_text};
 }
 
+.btn-signup:hover {
+	background-color: ${colors.btn_default};
+	color: ${colors.primary_text};
+}
+
+.logo-img {
+	width: 100%;
+	height: auto;
+	align-test: center;
+	margin-top: 40px;
+}
+
+.logo-container {
+	display: flex;
+	width: 90%;
+	justify-content: center;
+}
+
+input:-webkit-autofill, input:-webkit-autofill:hover, input:-webkit-autofill:focus, input:-webkit-autofill:active {
+	-webkit-background-clip: text;
+	-webkit-text-fill-color: #ffffff;
+	transition: background-color 5000s ease-in-out 0s;
+	box-shadow: inset 0 0 20px 20px #23232329;
+}
 .btn-resend-email {
 	width: 100%;
 }
@@ -71,27 +154,38 @@ h1 {
 
 const getHtml = function(data) {
 	const html = `
-		<h1>Sign in</h1>
-		<form id="login-form">
-			<div class="alert alert-danger hide" role="alert">
-				Invalid authentication credentials.
+		<div class="main-container">
+			<div class="second-container">
+				<div class="logo-container">
+					<img src="/img/pong-1k.png" class="logo-img" alt="logo">
+				</div>
+				<div class="highlight-text">Sign in</div>
+				<form id="login-form">
+					<div class="alert alert-danger hide from" role="alert">
+						Invalid authentication credentials.
+					</div>
+					<div class="form-group">
+						<i class="icon left-icon bi-person"></i>
+						<input type="text" class="input-padding form-control form-control-lg card-background" id="email" placeholder="Email / Username" maxlength="254">
+					</div>
+					<div class="form-group">
+						<i class="icon left-icon bi bi-key"></i>
+						<i class="icon right-icon bi bi-eye-slash eye-icon"></i>
+						<input type="password" class="input-padding form-control form-control-lg card-background" id="password" placeholder="Password" maxlength="25">
+					</div>
+					<div>
+						<button type="submit" class="btn btn-primary btn-submit">Sign In</button>
+					</div>
+					<div>
+						<button type="button" class="btn btn-outline-primary btn-signup">Without an account? Create one here</button>
+					</div>
+				</form>
 			</div>
-			<div class="form-group">
-				<i class="icon left-icon bi-person"></i>
-				<input type="text" class="input-padding form-control form-control-lg" id="email" placeholder="Email / Username" maxlength="254">
-			</div>
-			<div class="form-group">
-				<i class="icon left-icon bi bi-key"></i>
-				<i class="icon right-icon bi bi-eye-slash eye-icon"></i>
-				<input type="password" class="input-padding form-control form-control-lg" id="password" placeholder="Password" maxlength="25">
-			</div>
-			<div>
-				<button type="submit" class="btn btn-primary btn-submit">Sign In</button>
-			</div>
-			<div>
-				<button type="button" class="btn btn-outline-primary btn-signup">Without an account? Create one here</button>
-			</div>
-		</form>
+			<div class=ball></div>
+			<div class=paddle id=left></div>
+			<div class=paddle id=right></div>
+			<div class="blur-test"></div>
+		</div>
 	`;
 	return html;
 }

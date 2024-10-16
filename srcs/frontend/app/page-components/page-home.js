@@ -1,20 +1,41 @@
 import stateManager from "../js/StateManager.js";
 import { adjustContent } from "../utils/adjustContent.js";
 import componentSetup from "../utils/componentSetupUtils.js";
+import { colors } from "../js/globalStyles.js";
 
 const styles = `
 	.profile-container {
+		min-width: 460px;
+		flex-direction: row;
+		color: ${colors.second_text};
 		display: flex;
-		justify-content: flex-start;
+		justify-content: center;
 		gap: 50px;
 	}
 
 	.profile {
 		width: 30%;
+		min-width: 280px;
 	}
 
 	.history {
 		width: 70%;
+		min-width: 350px;
+	}
+
+	@media (max-width: 1100px) {
+		.profile-container {
+			flex-direction: column;
+			align-items: center;
+		}
+
+		.history {
+			width: 100%;
+		}
+
+		.profile {
+			width: 100%;
+		}
 	}
 `;
 
