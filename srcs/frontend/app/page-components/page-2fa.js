@@ -13,9 +13,17 @@ const styles = `
 
 .main-container {
 	display: flex;
+	width: 50%;
 	min-width: 460px;
 	flex-direction: column;
 	align-items: center;
+	margin: 65px auto 0;
+}
+
+.logo-container {
+	display: flex;
+	width: 90%;
+	justify-content: center;
 }
 
 .message {
@@ -45,7 +53,7 @@ const styles = `
 }
 
 .logo-img {
-	width: 200px;
+	width: 70%;
 	height: auto;
 	margin: 20px 0px 20px 0px;
 }
@@ -124,8 +132,9 @@ const styles = `
 const getHtml = function(data) {
 	const html = `
 	<div class=main-container>
-		<img src="../img/pong-1k.png" class=logo-img>
-		<div class="main-text">2FA</div>
+		<div class="logo-container">
+			<img src="../img/pong-1k.png" class=logo-img>
+		</div>
 		<div class="option-2fa"></div>
 		<div class="tfa-methods">
 			<button class="message">Select an alternative authentication method</button>
@@ -247,10 +256,14 @@ export default class Page2FA extends HTMLElement {
 			if (msg) {
 				stateManager.setState("errorMsg", null);
 				const mainDiv = this.html.querySelector(".main-container");
+				if (!mainDiv)
+					return ;
 				const alertBefore  = this.html.querySelector(".alert");
 				if (alertBefore)
 					alertBefore.remove();
 				const insertElement = mainDiv.querySelector(".main-text");
+				if (!insertElement)
+					return ;
 				let alertCard = document.createElement("div");
 				alertCard.className = "alert alert-danger hide from alert-div";
 				alertCard.role = "alert";

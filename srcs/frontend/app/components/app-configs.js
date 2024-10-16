@@ -329,12 +329,12 @@ const getHtml = function(data) {
 	const html = `
 	<form id="settings-form">
 		<div class="page-container">
+		<div class="alert alert-danger hide" role="alert"></div>
+		<div class="alert alert-success hide" role="alert"></div>
 		<div class="main-conf-text">Profile Settings</div>
 		<hr>
 			<div class="main-container">
 				<div class="general-settings-container">
-					<div class="alert alert-danger hide" role="alert"></div>
-					<div class="alert alert-success hide" role="alert"></div>
 					<label for="new-username">Change Username</label>
 					<input type="text" class="form-control form-control-md small-margin" id="new-username" placeholder="New Username" maxlength="15">
 					<label for="new-bio">Change Bio</label>
@@ -718,7 +718,6 @@ export default class AppConfigs extends HTMLElement {
 		const option = this.html.querySelector(`[value="${code}"]`);
 		if (!option)
 			return ;
-
 		option.setAttribute("selected", "");
 		let value = option.innerHTML;
 		let idx = value.indexOf("&nbsp;&nbsp; ");
@@ -780,6 +779,8 @@ export default class AppConfigs extends HTMLElement {
 				if (res.ok && data && data.qr_code) {
 					this.qrcodeImg.setAttribute("src", 'data:image/png;base64,' + data.qr_code);
 					const qrElm = document.querySelector(".qr-popup");
+					if (!qrElm)
+						return ;
 					qrElm.style.display = 'flex';
 					this.#qrPopUp();
 					document.addEventListener('keydown', this.escQrClose);
@@ -792,6 +793,8 @@ export default class AppConfigs extends HTMLElement {
 
 	#qrPopUp() {
 		const popup = document.querySelector('.qr-popup');
+		if (!popup)
+			return ;
 		window.addEventListener('click', (event) => {
 			if (event.target === popup) {
 				popup.style.display = 'none';
@@ -807,9 +810,13 @@ export default class AppConfigs extends HTMLElement {
 				stateManager.setState("errorMsg", null);
 				const mainDiv = this.html.querySelector(".page-container");
 				const alertBefore  = this.html.querySelector(".alert");
+				if (!mainDiv)
+					return ;
 				if (alertBefore)
 					alertBefore.remove();
-				const insertElement = mainDiv.querySelector(".main-container"); 
+				const insertElement = mainDiv.querySelector(".main-container");
+				if (!insertElement)
+					return ;
 				let alertCard = document.createElement("div");
 				alertCard.className = "alert alert-danger hide from alert-div";
 				alertCard.role = "alert";

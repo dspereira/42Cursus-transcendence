@@ -146,9 +146,35 @@ user-card {
 	text-align: center;
 }
 
-.no-content-text {
-	color: ${colors.second_text};
+.no-content-container {
+	position: relative;
+	display: flex;
+	width: 100%;
+	height: 500px;
+	flex-direction: column;
+	max-height: 500px;
 }
+
+	.no-content-img {
+		position: absolute;
+		width: 450px;
+		height: auto;
+		margin: 20px auto;
+		opacity: 5%;
+		left: 50%;
+		top: 50%;
+		transform: translate(-50%, -50%);
+	}
+
+	.no-content-text {
+		position: absolute;
+		margin-top: 50px;
+		font-size: 24px;
+		left: 50%;
+		transform: translate(-50%, 0);
+		text-align: center;
+		color: ${colors.second_text};
+	}
 
 .alert-div {
 	display: flex;
@@ -316,10 +342,10 @@ export default class AppFriends extends HTMLElement {
 		let userCard = null;
 		let cardButtons = null;
 		let requestId = 0;
-
+		if (!userListHtml)
+			return ;
 		if (!userList || userList.length == 0)
 			return ;
-
 		userListHtml.innerHTML = "";
 		userList.forEach((elm) => {
 			cardButtons = this.#getButtonsForElement(elm, page);
@@ -379,9 +405,10 @@ export default class AppFriends extends HTMLElement {
 	#createSearchPage() {
 		const listPanel = this.html.querySelector(".list-panel");
 		listPanel.innerHTML = "";	
+		if (!listPanel)
+			return ;
 		this.#addSearchBar(listPanel, "search");
 		this.#addUserList(listPanel);
-
 		this.#setOptionSelected("search");
 		this.searchMenuBtn.disabled = true;
 		callAPI("GET", `/friends/search_user_by_name/`, null, (res, data) => {
@@ -389,7 +416,13 @@ export default class AppFriends extends HTMLElement {
 				if (data.users)
 					this.#insertUsersCards(data.users, "search");
 				else
-					listPanel.innerHTML = `<div class="no-content-text">There are no users to search for!</div>`;
+					listPanel.innerHTML = 
+				`
+				<div class= "no-content-container">
+					<img src="/img/pong-gs.png" class="no-content-img">
+					<div class="no-content-text">There are no users to search for!</div>
+				</div>
+				`;
 			}
 			this.searchMenuBtn.disabled = false;
 		});
@@ -397,10 +430,11 @@ export default class AppFriends extends HTMLElement {
 
 	#createFriendsPage() {
 		const listPanel = this.html.querySelector(".list-panel");
-		listPanel.innerHTML = "";	
+		if (!listPanel)
+			return ;
+		listPanel.innerHTML = "";
 		this.#addSearchBar(listPanel, "friends");
 		this.#addUserList(listPanel);
-
 		this.#setOptionSelected("friends");
 		this.friendsMenuBtn.disabled = true;
 		callAPI("GET", `/friends/friendships/`, null, (res, data) => {
@@ -408,7 +442,13 @@ export default class AppFriends extends HTMLElement {
 				if (data.friends)
 					this.#insertUsersCards(data.friends, "friends");
 				else
-					listPanel.innerHTML = `<div class="no-friends-text">Add friends to see them here!</div>`;
+					listPanel.innerHTML = 
+				`
+				<div class= "no-content-container">
+					<img src="/img/pong-gs.png" class="no-content-img">
+					<div class="no-content-text">Add friends to see them here!</div>
+				</div>
+				`;
 			}
 			this.friendsMenuBtn.disabled = false;
 		});	
@@ -416,9 +456,10 @@ export default class AppFriends extends HTMLElement {
 
 	#createRequestsPage() {
 		const listPanel = this.html.querySelector(".list-panel");
+		if (!listPanel)
+			return ;
 		listPanel.innerHTML = "";
 		this.#addUserList(listPanel);
-
 		this.#setOptionSelected("requests");
 		this.requestsMenuBtn.disabled = true;
 		callAPI("GET", `/friends/request/`, null, (res, data) => {
@@ -426,7 +467,13 @@ export default class AppFriends extends HTMLElement {
 				if (data.friend_requests)
 					this.#insertUsersCards(data.friend_requests, "requests");
 				else 
-					listPanel.innerHTML = "<h1>Your friend requests list is empty. Make the first move</h1>";
+					listPanel.innerHTML = 
+				`
+				<div class= "no-content-container">
+					<img src="/img/pong-gs.png" class="no-content-img">
+					<div class="no-content-text">Your friend requests list is empty. Make the first move</div>
+				</div>
+				`;
 			}
 			this.requestsMenuBtn.disabled = false;
 		});
@@ -434,7 +481,6 @@ export default class AppFriends extends HTMLElement {
 
 	#setOptionSelected(option) {
 		const options = this.html.querySelectorAll(".options");
-
 		if (!options)
 			return ;
 		options.forEach((elm) => {
@@ -477,6 +523,8 @@ export default class AppFriends extends HTMLElement {
 
 	#search(type, value) {
 		const userList = this.html.querySelector(".user-list");
+		if (!userList)
+			return ;
 		let path = "";
 
 		if (type=="search")
@@ -491,7 +539,13 @@ export default class AppFriends extends HTMLElement {
 				else if (type=="friends" && data.friends)
 					this.#insertUsersCards(data.friends, "friends");
 				else
-					userList.innerHTML = "<h1>Username not Found!</h1>";
+					userList.innerHTML = 
+				`
+				<div class= "no-content-container">
+					<img src="/img/pong-gs.png" class="no-content-img">
+					<div class="no-content-text">Username not Found!</div>
+				</div>
+				`;
 			}
 		});
 	}
@@ -504,6 +558,8 @@ export default class AppFriends extends HTMLElement {
 				if (alertBefore)
 					alertBefore.remove();
 				const insertElement = this.html.querySelector(".friends-section");
+				if (!insertElement)
+					return ;
 				let alertCard = document.createElement("div");
 				alertCard.className = "alert alert-danger hide from alert-div";
 				alertCard.role = "alert";

@@ -78,7 +78,7 @@ class GameWebSocket {
 
 	#setSocketCallbacks() {
 		this.socket.onopen = (event) => {
-			console.log('WebSocket game open: ', event);
+			// console.log('WebSocket game open: ', event);
 		};
 
 		this.socket.onerror = (error) => {
@@ -104,7 +104,7 @@ class GameWebSocket {
 		};
 
 		this.socket.onclose = (event) => {
-			console.log('WebSocket game close: ', event);
+			// console.log('WebSocket game close: ', event);
 			this.socket = null;
 			stateManager.setState("gameSocket", "closed");
 		};
