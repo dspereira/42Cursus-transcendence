@@ -32,11 +32,6 @@ header {
 	cursor: pointer;
 }
 
-.logo-img {
-	width: 30px;
-	height: 30px;
-}
-
 .logo-text {
 	font-size: 16px;
 	color: ${colors.second_text};

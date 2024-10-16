@@ -104,9 +104,8 @@ h1 {
 }
 
 .logo-img {
-	width: 80%;
+	width: 70%;
 	height: auto;
-	align-test: center;
 	margin-top: 40px;
 }
 

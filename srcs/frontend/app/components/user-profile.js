@@ -312,7 +312,6 @@ export default class UserProfile extends HTMLElement {
 	}
 
 	#updateStats(stats) {
-		console.log(stats);
 		this.totalGames.innerHTML = `Total games: ${stats.totalGames}`;
 		this.gameWinRate.innerHTML = `Game win rate: ${stats.totalGames > 0 ? `${stats.gamesWinRate}%` : "---"}`;
 

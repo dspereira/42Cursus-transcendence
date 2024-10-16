@@ -329,12 +329,12 @@ const getHtml = function(data) {
 	const html = `
 	<form id="settings-form">
 		<div class="page-container">
+		<div class="alert alert-danger hide" role="alert"></div>
+		<div class="alert alert-success hide" role="alert"></div>
 		<div class="main-conf-text">Profile Settings</div>
 		<hr>
 			<div class="main-container">
 				<div class="general-settings-container">
-					<div class="alert alert-danger hide" role="alert"></div>
-					<div class="alert alert-success hide" role="alert"></div>
 					<label for="new-username">Change Username</label>
 					<input type="text" class="form-control form-control-md small-margin" id="new-username" placeholder="New Username" maxlength="15">
 					<label for="new-bio">Change Bio</label>
