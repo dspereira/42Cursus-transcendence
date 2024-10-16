@@ -785,7 +785,7 @@ export default class AppConfigs extends HTMLElement {
 					document.addEventListener('keydown', this.escQrClose);
 				}
 				else
-					stateManager.setState("errorMsg", "Error: couldn't get the QR code");
+					stateManager.setState("errorMsg", `${this.data.langDict.error_msg}`);
 			}, null, getCsrfToken());
 		});
 	}

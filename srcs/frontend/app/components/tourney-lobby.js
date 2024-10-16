@@ -449,7 +449,7 @@ export default class TourneyLobby extends HTMLElement {
 				if (res.ok)
 					stateManager.setState("isTournamentChanged", true);
 				else
-					stateManager.setState("errorMsg", "Couldn't cancel tournament");
+					stateManager.setState("errorMsg", `${data.langDict.error_msg1}`);
 				btn.disabled = false;
 			}, null, getCsrfToken());
 		});
@@ -469,7 +469,7 @@ export default class TourneyLobby extends HTMLElement {
 					stateManager.setState("isTournamentChanged", true);
 				}
 				else
-					stateManager.setState("errorMsg", "Couldn't leave tournament");
+					stateManager.setState("errorMsg", `${data.langDict.error_msg2}`);
 				btn.disabled = false;
 			}, null, getCsrfToken());
 		});
@@ -488,7 +488,7 @@ export default class TourneyLobby extends HTMLElement {
 					stateManager.setState("isTournamentChanged", true);
 				else
 				{
-					stateManager.setState("errorMsg", "Tournament couldn't be started");
+					stateManager.setState("errorMsg", `${data.langDict.error_msg3}`);
 					this.#toggleStartButton(false);
 				}
 			}, null, getCsrfToken());
@@ -508,7 +508,7 @@ export default class TourneyLobby extends HTMLElement {
 				if (res.status == 409)
 				{
 					nameInput.value = data.tournament_name;
-					stateManager.setState("errorMsg", "Couldn't change tournament name");
+					stateManager.setState("errorMsg", `${data.langDict.error_msg4}`);
 				}
 				btn.disabled = false;
 			}, null, getCsrfToken());

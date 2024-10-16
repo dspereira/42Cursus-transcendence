@@ -2,7 +2,10 @@ export const esAppChatDict = {
 	/* HTML */
 	no_friends_msg: "No se han añadido amigos.",
 	find_friends_msg: "¡Haz clic aquí para hacer amigos!",
-	no_friend_selected: "No se ha seleccionado ningún amigo. Selecciona un amigo para comenzar a hablar."
+	no_friend_selected: "No se ha seleccionado ningún amigo. Selecciona un amigo para comenzar a hablar.",
+
+	/* stateManager.setState("errorMsg */
+	error_msg: "Error: Error: El usuario al que intentaste enviar un mensaje ya no es tu amigo",
 }
 
 export const esAppConfigs = {
@@ -30,6 +33,9 @@ export const esAppConfigs = {
 	username_invalid: "¡Nombre de usuario inválido!",
 	image_size: "El tamaño de la imagen no debe exceder",
 	image_type: "Solo se aceptan los siguientes formatos:",
+
+	/* stateManager.setState("errorMsg */
+	error_msg: "Error: no se pudo obtener el código QR",
 }
 
 export const esAppFriendsDict = {
@@ -58,7 +64,11 @@ export const esAppLobbyDict = {
 
 	/* #updatePlayer(playerInfo, playerType) */
 	ready_status: "Listo",
-	not_ready_status: "No Listo", 
+	not_ready_status: "No Listo",
+
+	/* stateManager.setState("errorMsg */
+	error_msg1: "El juego ya no existe",
+	error_msg2: "Todos los jugadores rechazarán tu invitación",
 }
 
 export const esAppPlayDict = {
@@ -104,13 +114,19 @@ export const esGameInviteCardDict = {
 
 export const esGameInviteRequestDict = {
 	/* HTML */
-	game_invites: "Invitaciones a Juegos"
+	game_invites: "Invitaciones a Juegos",
+
+	/* stateManager.setState("errorMsg */
+	error_msg: "La invitación ha expirado",
 }
 
 export const esGameInviteSendDict = {
 	/* HTML */
 	search_bar_placeholder_search: "Buscar amigos...",
-	invite_button: "Invitar"
+	invite_button: "Invitar",
+
+	/* stateManager.setState("errorMsg */
+	error_msg: "No se pudo enviar la invitación",
 }
 
 export const esPageChatDict = {
@@ -190,7 +206,13 @@ export const esTourneyLobbyDict = {
 	update_name_button: "Cambiar Nombre",
 
 	/* #setDefaultPhoto(elmHtml) */
-	player_username_placeholder: "esperando..."
+	player_username_placeholder: "esperando...",
+
+	/* stateManager.setState("errorMsg */
+	error_msg1: "No fue posible cancelar el torneo",
+	error_msg2: "No fue posible salir del torneo",
+	error_msg3: "No fue posible iniciar el torneo",
+	error_msg4: "No fue posible cambiar el nombre del torneo",
 }
 
 export const esUserProfile = {
@@ -199,4 +221,11 @@ export const esUserProfile = {
 	games_win_rate: "Porcentaje de Victorias",
 	total_tournaments: "Total de Torneos:",
 	tournaments_win_rate: "Porcentaje de Victorias de Torneos:",
+}
+
+export const esUserCardDict = {
+	/* stateManager.setState("errorMsg */
+	error_msg1: "Solicitud de amistad aceptada",
+	error_msg2: "Solicitud de amistad expirada",
+	error_msg3: "El usuario ya no es tu amigo",
 }

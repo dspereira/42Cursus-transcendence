@@ -443,7 +443,7 @@ export default class GameInviteSend extends HTMLElement {
 					`;
 				}
 				else
-					stateManager.setState("errorMsg", "Couldn't send invite");
+					stateManager.setState("errorMsg", `${data.langDict.error_msg}`);
 				this.inviteBtn.disabled = false;
 			}, null, getCsrfToken());
 		});

@@ -243,7 +243,7 @@ export default class AppLobby extends HTMLElement {
 				stateManager.setState("hasLobbyEnded", false);
 				redirect("/play");
 				setTimeout( () => {
-					stateManager.setState("errorMsg", "The lobby has ended");
+					stateManager.setState("errorMsg", `${this.data.langDict.error_msg1}`);
 				}, 100);
 			}
 		});
@@ -262,7 +262,7 @@ export default class AppLobby extends HTMLElement {
 							clearInterval(this.intervalID);
 							redirect("/play");
 							setTimeout( () => {
-								stateManager.setState("errorMsg", "All players have declined your invite");
+								stateManager.setState("errorMsg", `${this.data.langDict.error_msg1}`);
 							}, 100);
 						}
 					}

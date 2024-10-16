@@ -6,6 +6,10 @@ import { redirect } from "../js/router.js";
 import friendProfileRedirectionEvent from "../utils/profileRedirectionUtils.js";
 import { getCsrfToken } from "../utils/csrfTokenUtils.js"
 import componentSetup from "../utils/componentSetupUtils.js";
+import { enUserCardDict } from "../lang-dicts/enLangDict.js";
+import { ptUserCardDict } from "../lang-dicts/ptLangDict.js";
+import { esUserCardDict } from "../lang-dicts/esLangDict.js";
+import getLanguageDict from "../utils/languageUtils.js";
 
 
 const styles = `
@@ -141,6 +145,7 @@ export default class UserCard extends HTMLElement {
 		"chat-btn",
 		"play-btn",
 		"remove-friend-btn",
+		"language",
 	];
 
 	constructor() {
@@ -176,6 +181,8 @@ export default class UserCard extends HTMLElement {
 			name = "playBtn";
 		else if (name == "remove-friend-btn")
 			name = "removeFriendBtn";
+		else if (name == "language")
+			this.data.langDict = getLanguageDict(newValue, enUserCardDict, ptUserCardDict, esUserCardDict);
 		this.data[name] = newValue;
 	}
 
@@ -198,7 +205,7 @@ export default class UserCard extends HTMLElement {
 			if (res.ok)
 				callback(data);
 			else
-				stateManager.setState("errorMsg", "Friend Request Accepted");
+				stateManager.setState("errorMsg", `${data.langDict.error_msg1}`);
 		}, null, getCsrfToken());
 	}
 
@@ -207,7 +214,7 @@ export default class UserCard extends HTMLElement {
 			if (res.ok)
 				callback(data);
 			else
-				stateManager.setState("errorMsg", "Friend Request Expired");
+				stateManager.setState("errorMsg", `${data.langDict.error_msg2}`);
 		}, null, getCsrfToken());
 	}
 
@@ -321,7 +328,7 @@ export default class UserCard extends HTMLElement {
 					btn.disabled = false;
 				}
 				else {
-					stateManager.setState("errorMsg", "User is no longer your friend");
+					stateManager.setState("errorMsg", `${data.langDict.error_msg3}`);
 					this.remove();
 				}
 			});
@@ -341,7 +348,7 @@ export default class UserCard extends HTMLElement {
 					btn.disabled = false;
 				}
 				else {
-					stateManager.setState("errorMsg", "User is no longer your friend");
+					stateManager.setState("errorMsg", `${data.langDict.error_msg3}`);
 					this.remove();
 				}
 			});

@@ -2,7 +2,10 @@ export const enAppChatDict = {
 	/* HTML */
 	no_friends_msg: "No friends added.",
 	find_friends_msg: "Click here to make friends!",
-	no_friend_selected: "No friend selected. Select a friend to start talking."
+	no_friend_selected: "No friend selected. Select a friend to start talking.",
+	
+	/* stateManager.setState("errorMsg */
+	error_msg: "Error: The user you tried to message is no longer your friend",
 }
 
 export const enAppConfigs = {
@@ -30,6 +33,9 @@ export const enAppConfigs = {
 	username_invalid: "Invalid username!",
 	image_size: "The image size must not exceed",
 	image_type: "Only the following formats are accepted:",
+
+	/* stateManager.setState("errorMsg */
+	error_msg: "Error: couldn't get the QR code",
 }
 
 export const enAppFriendsDict = {
@@ -58,7 +64,11 @@ export const enAppLobbyDict = {
 
 	/* #updatePlayer(playerInfo, playerType) */
 	ready_status: "Ready",
-	not_ready_status: "Not Ready", 
+	not_ready_status: "Not Ready",
+
+	/* stateManager.setState("errorMsg */
+	error_msg1: "The lobby has ended",
+	error_msg2: "All players have declined your invite",
 }
 
 export const enAppPlayDict = {
@@ -104,13 +114,19 @@ export const enGameInviteCardDict = {
 
 export const enGameInviteRequestDict = {
 	/* HTML */
-	game_invites: "Game Invites"
+	game_invites: "Game Invites",
+
+	/* stateManager.setState("errorMsg */
+	error_msg: "An invite has expired",
 }
 
 export const enGameInviteSendDict = {
 	/* HTML */
 	search_bar_placeholder_search: "Search friends...",
-	invite_button: "Invite"
+	invite_button: "Invite",
+
+	/* stateManager.setState("errorMsg */
+	error_msg: "Couldn't send invite",
 }
 
 export const enPageChatDict = {
@@ -190,7 +206,13 @@ export const enTourneyLobbyDict = {
 	update_name_button: "Update Name",
 
 	/* #setDefaultPhoto(elmHtml) */
-	player_username_placeholder: "waiting..."
+	player_username_placeholder: "waiting...",
+
+	/* stateManager.setState("errorMsg */
+	error_msg1: "Couldn't cancel tournament",
+	error_msg2: "Couldn't leave tournament",
+	error_msg3: "Tournament couldn't be started",
+	error_msg4: "Couldn't change tournament name",
 }
 
 export const enUserProfile = {
@@ -199,4 +221,11 @@ export const enUserProfile = {
 	games_win_rate: "Games win rate:",
 	total_tournaments: "Total Tournaments:",
 	tournaments_win_rate: "Tournaments win rate:",
+}
+
+export const enUserCardDict = {
+	/* stateManager.setState("errorMsg */
+	error_msg1: "Friend Request Accepted",
+	error_msg2: "Friend Request Expired",
+	error_msg3: "User is no longer your friend",
 }

@@ -185,9 +185,9 @@ export default class AppChat extends HTMLElement {
 			if (!state) {
 				this.chatSection.innerHTML = `
 				<div class="no-friends-selected-msg">
-					<span>You have no friend selected. Please select a friend to start a chat.</span>
+					<span>${data.langDict.no_friend_selected}</span>
 				</div>`;
-				stateManager.setState("errorMsg", "Error: The user you tried to message is no longer your friend");
+				stateManager.setState("errorMsg", `${data.langDict.error_msg}`);
 			}
 		});
 	}
