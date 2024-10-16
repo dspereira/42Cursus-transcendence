@@ -219,9 +219,11 @@ const suportedFileTypesToString = function() {
 
 const messages = {
 	"success": "User settings updated with success",
-	"usernameInvalid": "Invalid username",
 	"imageSize": `The image size must not exceed ${MAX_IMAGE_SIZE_BYTES / MEGABYTE}MB`,
-	"imageType": `Only the following formats are accepted:${suportedFileTypesToString()}`
+	"imageType": `Only the following formats are accepted:${suportedFileTypesToString()}`,
+	"invalidUsername" : "Invalid username!",
+	"invalidPhone": "Invalid Phone Number!",
+	"unexpectedError": "Unexpected error"
 }
 
 export default class AppConfigs extends HTMLElement {
@@ -285,11 +287,12 @@ export default class AppConfigs extends HTMLElement {
 	#submit() {
 		this.settingsForm.addEventListener("submit", (event) => {
 			event.preventDefault();
+			this.#cleanErrorStyles();
 			this.submitBtn.disabled = true;
 			const username = this.usernameInp.value.trim();
 			if (!isValidUsername(username)) {
 				this.#setFieldInvalid("username");
-				this.#setErrorMessage("Invalid username!");
+				this.#setErrorMessage(messages.invalidUsername);
 				this.submitBtn.disabled = false;
 				return ;
 			}
@@ -297,7 +300,7 @@ export default class AppConfigs extends HTMLElement {
 			if (phoneNum) {
 				if (!this.#isValidPhoneNumber(phoneNum)) {
 					this.#setFieldInvalid("phone");
-					this.#setErrorMessage("Invalid Phone Number!");
+					this.#setErrorMessage(messages.invalidPhone);
 					this.submitBtn.disabled = false;
 					return ;
 				}
@@ -321,10 +324,10 @@ export default class AppConfigs extends HTMLElement {
 			if (this.imageFile)
 				formData.append('image', this.imageFile);
 			
-			callAPI("POST", "/settings/", formData, (res, resData) => {
+			callAPI("POST", "/settings/", formData, 
+			(res, resData) => {
 				if (res.ok && resData) {
 					this.#loadData(resData.settings);
-					this.#cleanErrorStyles();
 					this.#setSuccessMessage(messages.success);
 				}
 				if (!res.ok && resData) {
@@ -333,7 +336,12 @@ export default class AppConfigs extends HTMLElement {
 					this.#setErrorMessage(resData.message);
 				}
 				this.submitBtn.disabled = false;
-			}, null, getCsrfToken());
+			}, 
+			() => {
+				this.submitBtn.disabled = false;
+				this.#setErrorMessage(messages.unexpectedError);
+			}, 
+			getCsrfToken());
 		});
 	}
 
