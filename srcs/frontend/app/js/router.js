@@ -171,8 +171,10 @@ export const router = function(route, isHistoryNavigation) {
 		route = normalizeRoute(route);
 		
 		const routeObj = getRouteInfo(route, isLoggedIn);
-		if (!routeObj)
+		if (!routeObj) {
 			console.log("Error: Getting the route");
+			return ;
+		}
 
 		if ((isLoggedIn && routeObj.accessLevel == PRIVATE_ACCESS) 
 			|| (!isLoggedIn && routeObj.accessLevel == PUBLIC_ACCESS)) {
@@ -227,8 +229,10 @@ const getCurrentRoute = function() {
 }
 
 export const redirect = function(route) {
-	if (!route)
+	if (!route) {
 		console.log(`Error: Redirection Failed`);
+		return ;
+	}
 	else {
 		router(route);
 	}

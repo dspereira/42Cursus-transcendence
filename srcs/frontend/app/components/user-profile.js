@@ -10,7 +10,6 @@ import { esUserProfile } from "../lang-dicts/esLangDict.js";
 import getLanguageDict from "../utils/languageUtils.js";
 
 const styles = `
-
 	.profile-grid-container {
 		display: flex;
 		min-width: 200px;
@@ -144,7 +143,6 @@ const styles = `
 		.game-stats-container, .tournament-stats-container {
 			width: 100%;
 		}
-
 		.game-stats {
 			flex-direction: column;
 		}
@@ -156,7 +154,6 @@ const styles = `
 		.game-stats > .separator-v {
 			display: none;
 		}
-	
 	}
 
 	.game-stats-container, .tournament-stats-container {
@@ -283,11 +280,13 @@ export default class UserProfile extends HTMLElement {
 
 	#scripts() {
 		this.#getProfileInfo();
+		this.#setOnlineStatusEvent();
 	}
 
 	#getProfileInfo() {
 		callAPI("GET", `/profile/?username=${this.data.username}`, null, (res, resData) => {
 			if (res.ok && resData && resData.data)
+				this.data.id = resData.data.id;
 				this.#updateProfile(resData.data);
 		});
 	}
@@ -343,11 +342,13 @@ export default class UserProfile extends HTMLElement {
 	}
 
 	#updateOnline(online) {
-		if (!online || online == "false")
-			return ;
 		const onlineHtml = this.html.querySelector(".online-status");
-		if (onlineHtml)
+		if (!onlineHtml)
+			return ;
+		if (online)
 			onlineHtml.classList.remove("hide");
+		else
+			onlineHtml.classList.add("hide");
 	}
 
 	#getPlayedStatsObj(data) {
@@ -361,6 +362,13 @@ export default class UserProfile extends HTMLElement {
 			tournamentsLost: data.tournaments_lost,
 			tournamentsWinRate: data.tournaments_win_rate,
 		}
+	}
+
+	#setOnlineStatusEvent() {
+		stateManager.addEvent("onlineStatus", (value) => {
+			if (value.id == this.data.id)
+				this.#updateOnline(value.online);
+		});
 	}
 }
 
