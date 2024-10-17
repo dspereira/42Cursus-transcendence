@@ -40,9 +40,9 @@ const styles = `
 		display: inline-block;
 	}
 
-	${pfpStyle(".profile-photo","145px","auto")}
+	${pfpStyle(".profile-photo","145px")}
 
-	${pfpStyle(".default-photo","145px","auto")}
+	${pfpStyle(".default-photo","145px")}
 
 	.default-photo {
 		margin-bottom: 20px;

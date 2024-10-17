@@ -18,7 +18,7 @@ import getLanguageDict from "../utils/languageUtils.js";
 
 const styles = `
 
-${pfpStyle(".profile-photo", "50px", "auto")}
+${pfpStyle(".profile-photo", "50px")}
 
 .players-info {
 	display: flex;

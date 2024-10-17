@@ -1,12 +1,12 @@
-export function pfpStyle(className, width, height) {
-	if (!className || !width || !height)
+export function pfpStyle(className, width) {
+	if (!className || !width)
 		return ;
 	return `
 	${className} {
 		width: ${width};
-		height: ${height};
 		clip-path: circle();
 		object-fit: cover;
+		aspect-ratio: 1 / 1;
 	}
 	`;
 }

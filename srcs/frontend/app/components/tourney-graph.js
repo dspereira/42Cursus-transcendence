@@ -101,21 +101,17 @@ const styles = `
 		justify-content: flex-end;
 	}
 
-	${pfpStyle(".profile-photo", "40px", "auto")}
+	${pfpStyle(".profile-photo", "40px")}
 
 	.profile-photo {
 		cursor: pointer;
 	}
 
-	${pfpStyle(".winner .profile-photo", "70px", "auto")}
+	${pfpStyle(".winner .profile-photo", "70px")}
 
 	.winner {
 		padding-top: 20px;
 	}
-
-	.winner .profile-photo {
-		width: 70px;
-	} 
 
 	.winner-border {
 		border: 4px solid green;

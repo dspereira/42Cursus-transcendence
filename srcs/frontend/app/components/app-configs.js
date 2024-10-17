@@ -12,6 +12,7 @@ import getLanguageDict from "../utils/languageUtils.js";
 import PageConfigs from "../page-components/page-configs.js";
 import { getHtmlElm } from "../utils/getHtmlElmUtils.js";
 import { render } from "../js/router.js";
+import { pfpStyle } from "../utils/stylingFunctions.js";
 
 const styles = `
 
@@ -66,12 +67,7 @@ const styles = `
 	justify-content: center;
 }
 
-.image-preview {
-	width: 100%;
-	height: auto;
-	clip-path:circle();
-	max-width: 300px;
-}
+${pfpStyle(".image-preview", "300px")}
 
 .img-buttons {
 	display: flex;
@@ -470,8 +466,8 @@ export default class AppConfigs extends HTMLElement {
 			"invalidUsername": this.data.langDict.username_invalid,
 			"imageSize": `${this.data.langDict.image_size} ${MAX_IMAGE_SIZE_BYTES / MEGABYTE}MB`,
 			"imageType": `${this.data.langDict.image_type}${suportedFileTypesToString()}`,
-			"invalidPhone": '${this.data.langDict.invalid_phone}',
-			"unexpectedError": '${this.data.langDict.unexpected_error}'
+			"invalidPhone": `${this.data.langDict.invalid_phone}`,
+			"unexpectedError": `${this.data.langDict.unexpected_error}`,
 		}
 		this.#initComponent();
 		this.#scripts();
@@ -550,7 +546,7 @@ export default class AppConfigs extends HTMLElement {
 			if (phoneNum) {
 				if (!this.#isValidPhoneNumber(phoneNum)) {
 					this.#setFieldInvalid("phone");
-					this.#setErrorMessage(messages.invalidPhone);
+					this.#setErrorMessage(this.messages.invalidPhone);
 					this.submitBtn.disabled = false;
 					return ;
 				}
@@ -592,7 +588,7 @@ export default class AppConfigs extends HTMLElement {
 			}, 
 			() => {
 				this.submitBtn.disabled = false;
-				this.#setErrorMessage(messages.unexpectedError);
+				this.#setErrorMessage(this.messages.unexpectedError);
 			}, 
 			getCsrfToken());
 		});

@@ -138,14 +138,10 @@ const getHtml = function(data) {
 			<chat-friends-list language=${data.language}></chat-friends-list>
 		</div>
 		<div class="chat-area">
-<<<<<<< HEAD
 			<div class= "no-content-container">
 				<img src="/img/pong-gs.png" class="no-content-img">
-				<div class="no-content-text">You have no friend selected. Please select a friend to start a chat.</div>
+				<div class="no-content-text">${data.langDict.no_friend_selected}</div>
 			</div>
-=======
-			<div class="no-friends-selected-msg hide"><span>${data.langDict.no_friend_selected}</span></div>
->>>>>>> main
 		</div>
 	</div>
 	`;

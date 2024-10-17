@@ -169,6 +169,7 @@ const styles = `
 
 	.games-win-rate, .tournaments-win-rate {
 		margin-bottom: 10px;
+		text-align: center;
 	}
 
 	.online-status {
@@ -179,8 +180,8 @@ const styles = `
 		border-radius: 50%;
 		background-color: green;
 		z-index: 2;
-		bottom: 33px;
-		right: 20px;
+		bottom: 23px;
+		right: 23px;
 		border: 2px solid white;
 	}
 

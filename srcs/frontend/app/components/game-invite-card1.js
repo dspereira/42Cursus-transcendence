@@ -40,7 +40,7 @@ const styles = `
 	color: ${colors.primary_text};
 }
 
-${pfpStyle(".profile-photo", "60px", "auto")}
+${pfpStyle(".profile-photo", "75px")}
 
 .online-status {
 	position: absolute;
@@ -51,7 +51,7 @@ ${pfpStyle(".profile-photo", "60px", "auto")}
 	background-color: green;
 	z-index: 2;
 	top: 50px;
-	left: 45px;
+	left: 50px;
 	border: 2px solid #A9A9A9;
 }
 

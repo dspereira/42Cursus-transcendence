@@ -51,7 +51,7 @@ const styles = `
 	margin-bottom: 5px;
 }
 
-${pfpStyle(".profile-photo", "60px", "auto")}
+${pfpStyle(".profile-photo", "60px")}
 
 .exp-date {
 	margin-bottom: 5px;
@@ -69,8 +69,8 @@ ${pfpStyle(".profile-photo", "60px", "auto")}
 	border-radius: 50%;
 	background-color: green;
 	z-index: 2;
-	top: 50px;
-	left: 45px;
+	top: 60px;
+	left: 55px;
 	border: 2px solid #A9A9A9;
 }
 

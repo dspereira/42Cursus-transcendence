@@ -20,11 +20,7 @@ const styles = `
 	justify-content: flex-end;
 }
 
-.profile-photo {
-	width: 40px;
-}
-
-${pfpStyle(".profile-photo", "40px", "auto")}
+${pfpStyle(".profile-photo", "40px")}
 
 .msg {
 	max-width: 80%;

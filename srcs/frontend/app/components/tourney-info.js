@@ -1,6 +1,7 @@
 import parseDate from "../utils/timeDateUtils.js";
 import { colors } from "../js/globalStyles.js";
 import componentSetup from "../utils/componentSetupUtils.js";
+import { pfpStyle } from "../utils/stylingFunctions.js";
 
 const styles = `
 	.bracket {
@@ -21,11 +22,10 @@ const styles = `
 		align-items: center;
 		width: 33.33%;
 	}
+
+	${".profile-photo", "65px", "65px"}
 	
 	.profile-photo {
-		width: 65px;
-		height: auto;
-		clip-path:circle();
 		cursor: pointer;
 		margin: 10px;
 	}
@@ -91,10 +91,9 @@ const styles = `
 		width: 100%;	
 	}
 
+	${".profile-photo-winner", "80px", "80px"}
+
 	.profile-photo-winner {
-		width: 80px;
-		height: auto;
-		clip-path:circle();
 		cursor: pointer;
 	}
 

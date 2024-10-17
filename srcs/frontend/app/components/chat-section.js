@@ -12,6 +12,7 @@ import { enChatSectionDict } from "../lang-dicts/enLangDict.js";
 import { ptChatSectionDict } from "../lang-dicts/ptLangDict.js";
 import { esChatSectionDict } from "../lang-dicts/esLangDict.js";
 import getLanguageDict from "../utils/languageUtils.js";
+import { pfpStyle } from "../utils/stylingFunctions.js";
 
 const styles = `
 /* Chat section */
@@ -45,11 +46,7 @@ const styles = `
 	background-color: ${chatColors.header};
 }
 
-.chat-header .profile-photo {
-	width: 50px;
-	height: auto;
-	clip-path:circle();
-}
+${pfpStyle(".chat-header .profile-photo", "50px")}
 
 .chat-header .name {
 	font-size: 16px;
