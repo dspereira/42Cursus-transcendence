@@ -439,7 +439,6 @@ export default class SidePanel extends HTMLElement {
 
 	constructor() {
 		super()
-		
 		this.data = {};
 	}
 
@@ -491,6 +490,7 @@ export default class SidePanel extends HTMLElement {
 		this.#responsiveSidePanel();
 		this.#getNumberRequestsCallApi();
 		this.#startInvitesPolling();
+		this.#logoutEvent();
 	}
 
 	#startInvitesPolling(){
@@ -622,9 +622,7 @@ export default class SidePanel extends HTMLElement {
 			popup.style.display = 'none';
 			document.removeEventListener('keydown',this.escClose);
 		});
-
 		window.addEventListener('click', this.#logOutPopUpEventHandler);
-		this.#logoutEvent();
 	}
 
 	#apiResHandlerCalback(res, data) {
@@ -632,9 +630,8 @@ export default class SidePanel extends HTMLElement {
 			if (stateManager.getState("isLoggedIn", true))
 				stateManager.setState("isLoggedIn", false);
 		}
-		else {
+		else
 			redirect("/");
-		}
 	}
 
 	#logoutEvent() {
