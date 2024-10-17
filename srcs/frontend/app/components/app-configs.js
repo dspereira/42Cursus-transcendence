@@ -529,6 +529,7 @@ export default class AppConfigs extends HTMLElement {
 		this.#showQrcode();
 		this.#errorMsgEvents();
 		this.#showSuccessMessageAfterInit();
+		this.#qrPopUp();
 	}
 
 	#submit() {
@@ -795,7 +796,6 @@ export default class AppConfigs extends HTMLElement {
 					if (!qrElm)
 						return ;
 					qrElm.style.display = 'flex';
-					this.#qrPopUp();
 					document.addEventListener('keydown', this.escQrClose);
 				}
 				else
