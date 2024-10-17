@@ -3,7 +3,6 @@ import stateManager from "./StateManager.js";
 import chatWebSocket from "./ChatWebSocket.js";
 import checkUserLoginState from "../utils/checkUserLoginState.js";
 import { getCsrfTokenFromApi } from "../utils/csrfTokenUtils.js";
-import { redirect } from "./router.js";
 
 stateManager.addEvent("isLoggedIn", (stateValue) => {
 	if (stateValue) {
