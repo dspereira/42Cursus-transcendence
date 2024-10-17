@@ -457,15 +457,9 @@ export default class SidePanel extends HTMLElement {
 	}
 
 	disconnectedCallback() {
-		if (this.intervalID) {
+		if (this.intervalID)
 			clearInterval(this.intervalID);
-		}
-	}
-
-	disconnectedCallback() {
-		if (this.intervalID) {
-			clearInterval(this.intervalID);
-		}
+		window.removeEventListener('click', this.#logOutPopUpEventHandler);
 	}
 
 	attributeChangedCallback(name, oldValue, newValue) {
@@ -609,6 +603,16 @@ export default class SidePanel extends HTMLElement {
 		stateManager.setState("sidePanel", value);
 	}
 
+	#logOutPopUpEventHandler = (event) => {
+		const popup = this.html.querySelector('.logout-popup');
+		if (!popup)
+			return ;
+		if (event.target === popup) {
+			popup.style.display = 'none';
+			document.removeEventListener('keydown', this.escClose);
+		}
+	}
+
 	#logOutPopUp() {
 		const popup = document.querySelector('.logout-popup');
 		const closePopupButton = document.querySelector('.close-popup');
@@ -619,12 +623,7 @@ export default class SidePanel extends HTMLElement {
 			document.removeEventListener('keydown',this.escClose);
 		});
 
-		window.addEventListener('click', (event) => {
-			if (event.target === popup) {
-				popup.style.display = 'none';
-				document.removeEventListener('keydown', this.escClose);
-			}
-		});
+		window.addEventListener('click', this.#logOutPopUpEventHandler);
 		this.#logoutEvent();
 	}
 

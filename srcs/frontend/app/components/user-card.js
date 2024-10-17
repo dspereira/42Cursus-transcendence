@@ -205,7 +205,7 @@ export default class UserCard extends HTMLElement {
 			if (res.ok)
 				callback(data);
 			else
-				stateManager.setState("errorMsg", `${data.langDict.error_msg1}`);
+				stateManager.setState("errorMsg", `${this.data.langDict.error_msg1}`);
 		}, null, getCsrfToken());
 	}
 
@@ -214,7 +214,7 @@ export default class UserCard extends HTMLElement {
 			if (res.ok)
 				callback(data);
 			else
-				stateManager.setState("errorMsg", `${data.langDict.error_msg2}`);
+				stateManager.setState("errorMsg", `${this.data.langDict.error_msg2}`);
 		}, null, getCsrfToken());
 	}
 
@@ -328,7 +328,7 @@ export default class UserCard extends HTMLElement {
 					btn.disabled = false;
 				}
 				else {
-					stateManager.setState("errorMsg", `${data.langDict.error_msg3}`);
+					stateManager.setState("errorMsg", `${this.data.langDict.error_msg3}`);
 					this.remove();
 				}
 			});
@@ -348,7 +348,7 @@ export default class UserCard extends HTMLElement {
 					btn.disabled = false;
 				}
 				else {
-					stateManager.setState("errorMsg", `${data.langDict.error_msg3}`);
+					stateManager.setState("errorMsg", `${this.data.langDict.error_msg3}`);
 					this.remove();
 				}
 			});

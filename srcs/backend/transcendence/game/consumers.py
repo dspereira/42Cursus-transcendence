@@ -345,8 +345,9 @@ class Game(AsyncWebsocketConsumer):
 		tournament = game.tournament
 		if tournament and game:
 			if is_final_game(game.id, tournament):
-				update_tournament_status(tournament, TOURNAMENT_STATUS_FINISHED)
-				update_users_tournament_stats(tournament)
+				if tournament.status != TOURNAMENT_STATUS_FINISHED:
+					update_tournament_status(tournament, TOURNAMENT_STATUS_FINISHED)
+					update_users_tournament_stats(tournament)
 			else:
 				update_next_game(tournament, game.winner, game)
 
