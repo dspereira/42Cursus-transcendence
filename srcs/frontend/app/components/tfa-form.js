@@ -132,7 +132,7 @@ const getHtml = function(data) {
 	else if (data.method == "phone")
 		infoMsg = "A code has been sent to your mobile phone via SMS. Please check your messages and enter it in the box below.";
 	else
-		infoMsg = "Please scan the QR code using your authentication app and enter the generated code in the box below.";
+		infoMsg = "Please check your authentication app and enter the generated code in the box below.";
 
 	const html = `
 		<div class="tfa-container">
