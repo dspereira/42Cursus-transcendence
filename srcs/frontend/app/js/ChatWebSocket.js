@@ -101,7 +101,7 @@ class ChatWebSocket {
 
 	#setSocketCallbacks() {
 		this.socket.onopen = (event) => {
-			console.log('WebSocket chat open: ', event);
+			//console.log('WebSocket chat open: ', event);
 			stateManager.setState("chatSocket", "open");
 		};
 
@@ -142,7 +142,7 @@ class ChatWebSocket {
 		};
 
 		this.socket.onclose = (event) => {
-			console.log('WebSocket chat close: ', event);
+			//console.log('WebSocket chat close: ', event);
 			this.socket = null;
 			stateManager.setState("chatSocket", "closed");
 		};

@@ -227,7 +227,6 @@ const styles = `
 `;
 
 const getHtml = function(data) {
-	console.log("1", data);
 	const html = `
 	<div class=tourney-div>
 		<div class="tourney-title">${data.tournamentName}</div>
