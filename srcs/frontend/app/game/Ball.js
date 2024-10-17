@@ -63,6 +63,7 @@ export class Ball {
 	}
 
 	resetPosition() {
+		this.last_time = 0;
 		this.x = this.x_start;
 		this.y = this.y_start;
 	}
