@@ -63,7 +63,6 @@ const styles = `
 `;
 
 const getHtml = function(data) {
-	console.log(data, data.langDict, data.langDict.ready_button);
 	const html = `
 		<div class="lobby">
 			<div class="host">

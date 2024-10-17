@@ -20,7 +20,7 @@ stateManager.addEvent("isLoggedIn", (stateValue) => {
 // Event triggered when the refresh token expires and closes the chat. 
 // The chat should reopen, reconnect, and send the last message.
 stateManager.addEvent("chatSocket", (stateValue) => {
-	console.log(`Chat socket: ${stateValue}`);
+	//console.log(`Chat socket: ${stateValue}`);
 	const isLoggedIn = stateManager.getState("isLoggedIn");
 	if (stateValue == "closed") {
 		if (isLoggedIn) {
