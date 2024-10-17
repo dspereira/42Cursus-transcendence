@@ -3,6 +3,7 @@ import { callAPI } from "../utils/callApiUtils.js";
 import stateManager from "../js/StateManager.js";
 import {colors} from "../js/globalStyles.js"
 import componentSetup from "../utils/componentSetupUtils.js";
+import { pfpStyle } from "../utils/stylingFunctions.js";
 
 
 const styles = `
@@ -44,10 +45,9 @@ header {
 	color: ${colors.second_text};
 }
 
+${pfpStyle(".profile-photo", "45px")}
+
 .profile-photo {
-	width: 45px;
-	height: auto;
-	clip-path:circle();
 	cursor: pointer;
 }
 

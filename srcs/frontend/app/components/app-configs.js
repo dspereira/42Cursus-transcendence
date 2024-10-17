@@ -67,7 +67,7 @@ const styles = `
 	justify-content: center;
 }
 
-${pfpStyle(".image-preview", "300px", "300px")}
+${pfpStyle(".image-preview", "300px")}
 
 .img-buttons {
 	display: flex;

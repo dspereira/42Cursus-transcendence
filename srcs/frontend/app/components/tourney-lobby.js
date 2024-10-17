@@ -43,21 +43,19 @@ const styles = `
 }
 
  .img-container {
+	width: 100%;
 	display: flex;
 	justify-content: center;
  }
 
-.profile-photo {
-	width: 120px;
-	width: 50%;
-	height: auto;
-	clip-path:circle();
+${pfpStyle(".profile-photo","50%")}
+
+${pfpStyle(".default-photo","50%")}
+
+.profile-photo, .default-photo {
+	min-width: 75px;
+	min-height: 75px;
 }
-
-${pfpStyle(".profile-photo","50%","auto")}
-
-${pfpStyle(".default-photo","50%","auto")}
-
 
 .default-photo {
 	background-color: ${colors.second_card};

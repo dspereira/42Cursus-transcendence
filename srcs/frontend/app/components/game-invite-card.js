@@ -53,7 +53,7 @@ const styles = `
 	margin-bottom: 5px;
 }
 
-${pfpStyle(".profile-photo", "60px", "auto")}
+${pfpStyle(".profile-photo", "75px")}
 
 .exp-date {
 	margin-bottom: 5px;
@@ -72,7 +72,7 @@ ${pfpStyle(".profile-photo", "60px", "auto")}
 	background-color: green;
 	z-index: 2;
 	top: 50px;
-	left: 45px;
+	left: 50px;
 	border: 2px solid #A9A9A9;
 }
 

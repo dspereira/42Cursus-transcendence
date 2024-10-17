@@ -9,6 +9,7 @@ import { enChatFriendListDict } from "../lang-dicts/enLangDict.js";
 import { ptChatFriendListDict } from "../lang-dicts/ptLangDict.js";
 import { esChatFriendListDict } from "../lang-dicts/esLangDict.js";
 import getLanguageDict from "../utils/languageUtils.js";
+import { pfpStyle } from "../utils/stylingFunctions.js";
 
 const styles = `
 .friend-list {
@@ -51,11 +52,7 @@ const styles = `
 	padding: 5px 10px 5px 10px;
 }
 
-.user .profile-photo {
-	width: 45px;
-	height: auto;
-	clip-path:circle();
-}
+${pfpStyle(".user .profile-photo", "45px")}
 
 .user .name {
 	font-size: 16px;
