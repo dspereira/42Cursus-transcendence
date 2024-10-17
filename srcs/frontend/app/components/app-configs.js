@@ -494,6 +494,7 @@ export default class AppConfigs extends HTMLElement {
 	disconnectedCallback() {
 		if (this.savedImageUrl)
 			URL.revokeObjectURL(this.savedImageUrl);
+		window.removeEventListener('click', this.#qrPopUpEventHandler);
 	}
 
 	#initComponent() {
@@ -806,17 +807,19 @@ export default class AppConfigs extends HTMLElement {
 		});
 	}
 
+	#qrPopUpEventHandler = (event) => {
+		if (event.target === popup) {
+			popup.style.display = 'none';
+			this.showQrcode.disabled = false;
+			document.removeEventListener('keydown', this.escQrClose);
+		}
+	}
+
 	#qrPopUp() {
 		const popup = document.querySelector('.qr-popup');
 		if (!popup)
 			return ;
-		window.addEventListener('click', (event) => {
-			if (event.target === popup) {
-				popup.style.display = 'none';
-				this.showQrcode.disabled = false;
-				document.removeEventListener('keydown', this.escQrClose);
-			}
-		});
+		window.addEventListener('click', this.#qrPopUpEventHandler);
 	}
 
 	#errorMsgEvents() {
