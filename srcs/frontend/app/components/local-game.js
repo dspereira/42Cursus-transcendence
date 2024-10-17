@@ -242,6 +242,8 @@ export default class LocalGame extends HTMLElement {
 
 	#startGameBtnEvent() {
 		this.btnStart.addEventListener('click', (event) => {
+			if (this.gameLoopId)
+				clearInterval(this.gameLoopId);
 			this.#startGame();
 		});
 	}
@@ -256,8 +258,12 @@ export default class LocalGame extends HTMLElement {
 	#gameLoop() {
 		const intervalMiliSeconds = 10;
 		this.gameLoopId = setInterval(() => {
+			console.log(".");
 			this.gameLogic.update();
-			this.game.updateState(this.#getGameState());
+			const data = this.#getGameState();
+			if (!data)
+				return ;
+			this.game.updateState(data);
 			if (this.gameLogic.isEndGame()) {
 				this.game.updateState(this.#getGameState());
 				this.#finishGame();
