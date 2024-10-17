@@ -808,6 +808,9 @@ export default class AppConfigs extends HTMLElement {
 	}
 
 	#qrPopUpEventHandler = (event) => {
+		const popup = document.querySelector('.qr-popup');
+		if (!popup)
+			return ;
 		if (event.target === popup) {
 			popup.style.display = 'none';
 			this.showQrcode.disabled = false;
@@ -816,9 +819,6 @@ export default class AppConfigs extends HTMLElement {
 	}
 
 	#qrPopUp() {
-		const popup = document.querySelector('.qr-popup');
-		if (!popup)
-			return ;
 		window.addEventListener('click', this.#qrPopUpEventHandler);
 	}
 

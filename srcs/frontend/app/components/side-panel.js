@@ -604,6 +604,9 @@ export default class SidePanel extends HTMLElement {
 	}
 
 	#logOutPopUpEventHandler = (event) => {
+		const popup = this.html.querySelector('.logout-popup');
+		if (!popup)
+			return ;
 		if (event.target === popup) {
 			popup.style.display = 'none';
 			document.removeEventListener('keydown', this.escClose);
