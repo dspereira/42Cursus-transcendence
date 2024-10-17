@@ -23,7 +23,7 @@ const styles = `
 		width: 33.33%;
 	}
 
-	${".profile-photo", "65px", "65px"}
+	${pfpStyle(".profile-photo", "65px", "65px")}
 	
 	.profile-photo {
 		cursor: pointer;
@@ -88,10 +88,10 @@ const styles = `
 		flex-direction: column;
 		justify-content: center;
 		align-items: center;
-		width: 100%;	
+		width: 100%;
 	}
 
-	${".profile-photo-winner", "80px", "80px"}
+	${pfpStyle(".profile-photo-winner", "80px", "80px")}
 
 	.profile-photo-winner {
 		cursor: pointer;
