@@ -123,7 +123,7 @@ export default class GameInviteRequest extends HTMLElement {
 				{
 					this.#createRequestList(data.requests_list);
 					if (data.requests_list.length < this.lastRequestSize)
-						stateManager.setState("errorMsg", `${data.langDict.error_msg}`);
+						stateManager.setState("errorMsg", `${this.data.langDict.error_msg}`);
 					this.lastRequestSize = data.requests_list.length;
 				}
 			}

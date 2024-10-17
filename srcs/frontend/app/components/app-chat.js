@@ -224,10 +224,10 @@ export default class AppChat extends HTMLElement {
 				`
 				<div class= "no-content-container">
 					<img src="/img/pong-gs.png" class="no-content-img">
-					<div class="no-content-text">${data.langDict.no_friend_selected}</div>
+					<div class="no-content-text">${this.data.langDict.no_friend_selected}</div>
 				</div>
 				`;
-				stateManager.setState("errorMsg", `${data.langDict.error_msg}`);
+				stateManager.setState("errorMsg", `${this.data.langDict.error_msg}`);
 			}
 		});
 	}
