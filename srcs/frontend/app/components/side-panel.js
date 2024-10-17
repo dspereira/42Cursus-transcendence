@@ -491,6 +491,7 @@ export default class SidePanel extends HTMLElement {
 		this.#getNumberRequestsCallApi();
 		this.#startInvitesPolling();
 		this.#logoutEvent();
+		this.#logOutPopUp();
 	}
 
 	#startInvitesPolling(){
@@ -561,7 +562,6 @@ export default class SidePanel extends HTMLElement {
 				const popup = this.html.querySelector('.logout-popup');
 				popup.style.display = 'flex';
 				document.addEventListener('keydown', this.escClose);
-				this.#logOutPopUp();
 				return ;
 			}
 			if (btnId === "home")
