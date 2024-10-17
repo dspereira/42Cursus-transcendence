@@ -461,7 +461,6 @@ export default class AppFriends extends HTMLElement {
 			this.friendsMenuBtn.disabled = false;
 		});	
 	}
-	/* ${this.data.langDict.create_friends_no_friends} */
 
 	#createRequestsPage() {
 		const listPanel = this.html.querySelector(".list-panel");

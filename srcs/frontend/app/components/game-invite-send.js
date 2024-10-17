@@ -446,7 +446,7 @@ export default class GameInviteSend extends HTMLElement {
 					`;
 				}
 				else
-					stateManager.setState("errorMsg", `${data.langDict.error_msg}`);
+					stateManager.setState("errorMsg", `${this.data.langDict.error_msg}`);
 				this.inviteBtn.disabled = false;
 			}, null, getCsrfToken());
 		});
