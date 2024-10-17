@@ -148,6 +148,7 @@ export default class AppPlay extends HTMLElement {
 		document.removeEventListener('keydown',this.#keyDownHandler);
 		document.removeEventListener('keyup',this.#keyUpHandler);
 		document.removeEventListener('fullscreenchange', this.#fullsCreenChangeEventHandler);
+		window.addEventListener("resize", this.#resizeEventHandler);
 		this.game.stop();
 		this.game = null;
 		gameWebSocket.close();
@@ -347,11 +348,13 @@ export default class AppPlay extends HTMLElement {
 			this.game.resizeGame(this.canvas.width, this.canvas.height);
 	}
 
+	#resizeEventHandler = () => {
+		if (!this.isFullScreen)
+			this.#resizeGameBoard();
+	}
+
 	#windowResizingEvent() {
-		window.addEventListener("resize", () => {
-			if (!this.isFullScreen)
-				this.#resizeGameBoard();
-		});
+		window.addEventListener("resize", this.#resizeEventHandler);
 	}
 
 	#fullsCreenChangeEventHandler = () => {
