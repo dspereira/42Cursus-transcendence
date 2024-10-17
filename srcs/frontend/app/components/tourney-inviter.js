@@ -354,7 +354,7 @@ export default class TourneyInviter extends HTMLElement {
 	#selectFriend(friendCard) {
 		friendCard.setAttribute("selected", "true");
 		this.selectedElm.push(friendCard.id);
-		const inviteButton = document.querySelector(".invite-btn");
+		const inviteButton = this.html.querySelector(".invite-btn");
 		if (inviteButton)
 			inviteButton.disabled = this.selectedElm == 0;
 	}
@@ -364,7 +364,7 @@ export default class TourneyInviter extends HTMLElement {
 		const index = this.selectedElm.indexOf(friendCard.id);
 		if (index > -1)
 			this.selectedElm.splice(index, 1);
-		const inviteButton = document.querySelector(".invite-btn");
+		const inviteButton = this.html.querySelector(".invite-btn");
 		if (inviteButton)
 			inviteButton.disabled = this.selectedElm == 0;
 	}
@@ -409,7 +409,7 @@ export default class TourneyInviter extends HTMLElement {
 				this.#setCancelInviteEvent(elm);
 			});
 		}
-		const inviteButton = document.querySelector(".invite-btn");
+		const inviteButton = this.html.querySelector(".invite-btn");
 		if (inviteButton)
 			inviteButton.disabled = this.selectedElm == 0;
 	}

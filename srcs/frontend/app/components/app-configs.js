@@ -287,6 +287,7 @@ legend {
 	width: 80%;
 	animation: disappear linear 5s forwards;
 	background-color: ${colors.alert};
+	color: ${colors.alert_text};
 	z-index: 1001;
 }
 
@@ -472,7 +473,7 @@ export default class AppConfigs extends HTMLElement {
 		this.#initComponent();
 		this.#scripts();
 		this.escQrClose = () => {
-			const popup = document.querySelector('.qr-popup');
+			const popup = this.html.querySelector('.qr-popup');
 			if (popup)
 				popup.style.display = "none";
 			this.showQrcode.disabled = false;
@@ -790,7 +791,7 @@ export default class AppConfigs extends HTMLElement {
 			callAPI("POST", "/two-factor-auth/request-qr-code/", null, (res, data) => {
 				if (res.ok && data && data.qr_code) {
 					this.qrcodeImg.setAttribute("src", 'data:image/png;base64,' + data.qr_code);
-					const qrElm = document.querySelector(".qr-popup");
+					const qrElm = this.html.querySelector(".qr-popup");
 					if (!qrElm)
 						return ;
 					qrElm.style.display = 'flex';
@@ -804,7 +805,7 @@ export default class AppConfigs extends HTMLElement {
 	}
 
 	#qrPopUpEventHandler = (event) => {
-		const popup = document.querySelector('.qr-popup');
+		const popup = this.html.querySelector('.qr-popup');
 		if (!popup)
 			return ;
 		if (event.target === popup) {

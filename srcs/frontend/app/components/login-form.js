@@ -13,6 +13,13 @@ form {
 	position: relative;
 }
 
+.alert.alert-danger {
+	--bs-alert-bg: ${colors.alert};
+	--bs-alert-color: ${colors.alert_text};
+	--bs-alert-border-color: #FFBAAB;
+	--bs-alert-link-color: var(--bs-danger-text-emphasis);
+}
+
 .card-background {
 	background-color: ${colors.main_card};
 	color: ${colors.primary_text};

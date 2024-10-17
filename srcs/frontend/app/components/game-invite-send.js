@@ -201,6 +201,7 @@ const styles = `
 	width: 80%;
 	animation: disappear linear 5s forwards;
 	background-color: ${colors.alert};
+	color: ${colors.alert_text};
 	z-index: 1001;
 }
 
@@ -300,11 +301,10 @@ export default class GameInviteSend extends HTMLElement {
 	}
 
 	#scripts() {
-
 		this.#getFriendsCallApi();
 		this.#setFriendsSearchEvent();
 		this.#setInviteSubmitEvent();
-		const inviteButton = document.querySelector(".btn-primary");
+		const inviteButton = this.html.querySelector(".btn-primary");
 		if (inviteButton)
 			inviteButton.disabled = this.selectedElm == 0;
 		this.#errorMsgEvents();
@@ -377,21 +377,22 @@ export default class GameInviteSend extends HTMLElement {
 	#selectFriend(friendCard) {
 		const rightListFriendHtml = this.#getFriendHtmlForRightList(friendCard.id);
 		const listLength = this.rightFriendListElm.length;
-		const inviteButton = document.querySelector(".btn-primary");
+		const inviteButton = this.html.querySelector(".btn-primary");
 		if (!listLength)
 			this.rightFriendListElm.appendChild(rightListFriendHtml);
 		else
 		this.rightFriendListElm.insertBefore(this.rightFriendListElm[listLength - 1], rightListFriendHtml);
 	
 		this.selectedElm.push(friendCard.id);
-		inviteButton.disabled = this.selectedElm == 0;
+		if (inviteButton)
+			inviteButton.disabled = this.selectedElm == 0;
 		friendCard.setAttribute("selected", "true");
 	}
 
 	#unselectFriend(elmId) {
 		const friendCard = this.html.querySelector(`#${elmId}`);
 		const friendRightList = this.rightFriendListElm.querySelector(`.${elmId}`);
-		const inviteButton = document.querySelector(".btn-primary");
+		const inviteButton = this.html.querySelector(".btn-primary");
 		if (!friendCard && !friendRightList)
 			return ;
 		friendCard.setAttribute("selected", "false");
@@ -399,7 +400,8 @@ export default class GameInviteSend extends HTMLElement {
 		const index = this.selectedElm.indexOf(elmId);
 		if (index > -1)
 			this.selectedElm.splice(index, 1);
-		inviteButton.disabled = this.selectedElm == 0;
+		if (inviteButton)
+			inviteButton.disabled = this.selectedElm == 0;
 	}
 
 	#getFriendHtmlForRightList(elmId) {

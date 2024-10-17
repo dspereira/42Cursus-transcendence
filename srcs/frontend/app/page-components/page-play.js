@@ -45,6 +45,7 @@ const styles = `
 		width: 80%;
 		animation: disappear linear 10s forwards;
 		background-color: ${colors.alert};
+		color: ${colors.alert_text};
 	}
 	
 	.alert-bar {
