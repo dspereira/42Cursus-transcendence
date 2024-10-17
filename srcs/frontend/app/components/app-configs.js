@@ -287,6 +287,7 @@ legend {
 	width: 80%;
 	animation: disappear linear 5s forwards;
 	background-color: ${colors.alert};
+	color: ${colors.alert_text};
 	z-index: 1001;
 }
 
