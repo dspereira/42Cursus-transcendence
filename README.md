@@ -11,5 +11,5 @@
 ## Minor Modules
 - [x] Bootstrap
 - [x] Database
-- [ ] Multi language support
-- [ ] Expanding Browser Compatibility
+- [x] Multi language support
+- [x] Expanding Browser Compatibility
