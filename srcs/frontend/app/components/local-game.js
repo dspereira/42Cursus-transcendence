@@ -133,6 +133,8 @@ export default class LocalGame extends HTMLElement {
 			clearInterval(this.gameLoopId);
 		document.removeEventListener('keydown',this.#keyDownHandler);
 		document.removeEventListener('keyup',this.#keyUpHandler);
+		window.removeEventListener("resize", this.#resizeEventHandler);
+		document.removeEventListener("fullscreenchange", this.#fullScreenEventHandler);
 	}
 
 	attributeChangedCallback(name, oldValue, newValue) {
@@ -258,7 +260,6 @@ export default class LocalGame extends HTMLElement {
 	#gameLoop() {
 		const intervalMiliSeconds = 10;
 		this.gameLoopId = setInterval(() => {
-			console.log(".");
 			this.gameLogic.update();
 			const data = this.#getGameState();
 			if (!data)
@@ -334,11 +335,25 @@ export default class LocalGame extends HTMLElement {
 		}
 	}
 
+	#resizeEventHandler = () => {
+		if (!this.isFullScreen)
+			this.#resizeGameBoard();
+	}
+
 	#windowResizingEvent() {
-		window.addEventListener("resize", () => {
-			if (!this.isFullScreen)
-				this.#resizeGameBoard();
-		});
+		window.addEventListener("resize", this.#resizeEventHandler);
+	}
+
+
+	#fullScreenEventHandler = () => {
+		if (document.fullscreenElement)
+			this.isFullScreen = true;
+		else {
+			this.isFullScreen = false;
+			this.#resizeGameBoard();
+		}
+		this.#updateFullScreenButton();
+		this.game.setIsFullScreen(this.isFullScreen);
 	}
 
 	#FullScreenEvent() {
@@ -349,16 +364,7 @@ export default class LocalGame extends HTMLElement {
 				document.exitFullscreen();
 		});
 
-		document.addEventListener("fullscreenchange", () => {
-			if (document.fullscreenElement)
-				this.isFullScreen = true;
-			else {
-				this.isFullScreen = false;
-				this.#resizeGameBoard();
-			}
-			this.#updateFullScreenButton();
-			this.game.setIsFullScreen(this.isFullScreen);
-		});
+		document.addEventListener("fullscreenchange", this.#fullScreenEventHandler);
 	}
 
 	#btnFullScreenHover() {
