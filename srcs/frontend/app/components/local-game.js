@@ -256,8 +256,6 @@ export default class LocalGame extends HTMLElement {
 	#gameLoop() {
 		const intervalMiliSeconds = 10;
 		this.gameLoopId = setInterval(() => {
-			if (!stateManager.getState("isOnline"))
-				return ;
 			this.gameLogic.update();
 			this.game.updateState(this.#getGameState());
 			if (this.gameLogic.isEndGame()) {
