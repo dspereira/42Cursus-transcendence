@@ -3,28 +3,48 @@ verification_code_html = """<!DOCTYPE html>
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Steam Verification Code</title>
+<title>Verification Code</title>
+    <style>
+        .background-clr {
+            background-color: #292B2F;
+        }
+        .card-clr {
+            background-color: #2F3136;
+        }
+        #code_box {
+            background-color: #66c0f4;
+            color: #FFFFFF;
+            border-radius: 10px;
+            padding: 10px;
+            font-size: 30px;
+            display: inline-block;
+            margin: 30px 0px 30px 0px;
+        }
+        h1, p {
+            color: #FFFFFF;
+        }
+        .email-container {
+            max-width: 600px;
+            margin: 100px auto;
+            padding: 50px;
+        }
+        .body-container {
+            padding: 50px;
+        }
+    </style>
 </head>
-<body style="font-family: Arial, sans-serif; background-color: #f9f9f9; padding: 20px;">
-
-<div style="max-width: 600px; margin: 0 auto;">
-    <div style="background-color: #ffffff; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
-        <div style="padding: 20px;">
-            <div style="text-align: center;">
-                <h1 style="margin-top: 20px;">Verification Code</h1>
-            </div>
-            <div style="text-align: center; margin-top: 30px;">
-                <p style="color: #777;">Use the following code to verify your account:</p>
-                <div style="background-color: #66c0f4; color: #fff; border-radius: 10px; padding: 10px; font-size: 30px; display: inline-block;">
-                    <h2 style="margin: 0;">{verification_code}</h2>
-                </div>
-                <p style="color: #777; margin-top: 20px;">This code will expire in 5 minutes.</p>
-                <p style="color: #777;">If you didn't request this code, you can safely ignore this email.</p>
-            </div>
-        </div>
-    </div>
-</div>
-
+<body class="background-clr body-container" style="font-family: Arial, sans-serif;">
+    <table class="card-clr email-container">
+        <tr>
+            <td style="text-align: center;">
+                <h1>Verification Code</h1>
+                <p>Use the following code to verify your account:</p>
+                <div id="code_box">{verification_code}</div>
+                <p style="margin-top: 20px;">This code will expire in 5 minutes.</p>
+                <p>If you didn't request this code, you can safely ignore this email.</p>
+            </td>
+        </tr>
+    </table>
 </body>
 </html>
 """
