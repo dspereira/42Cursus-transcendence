@@ -13,10 +13,9 @@ form {
 }
 
 .alert.alert-danger {
-	--bs-alert-color: ${colors.primary_text};
-    --bs-alert-bg: #FFBAAB;
-    --bs-alert-border-color: #FFBAAB;
-    --bs-alert-link-color: var(--bs-danger-text-emphasis);
+	--bs-alert-bg: ${colors.alert};
+	--bs-alert-border-color: #FFBAAB;
+	--bs-alert-link-color: var(--bs-danger-text-emphasis);
 }
 
 .icon {

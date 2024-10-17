@@ -449,7 +449,7 @@ export default class SidePanel extends HTMLElement {
 		this.#scripts();
 		this.lastState = "open";
 		this.escClose = () => {
-			const popup = document.querySelector('.logout-popup');
+			const popup = this.html.querySelector('.logout-popup');
 			if (popup)
 				popup.style.display = "none";
 			document.removeEventListener('keydown', this.escClose);
@@ -558,7 +558,7 @@ export default class SidePanel extends HTMLElement {
 		btn.addEventListener("click", () => {
 			if (btnId == "logout")
 			{
-				const popup = document.querySelector('.logout-popup');
+				const popup = this.html.querySelector('.logout-popup');
 				popup.style.display = 'flex';
 				document.addEventListener('keydown', this.escClose);
 				this.#logOutPopUp();
@@ -614,8 +614,8 @@ export default class SidePanel extends HTMLElement {
 	}
 
 	#logOutPopUp() {
-		const popup = document.querySelector('.logout-popup');
-		const closePopupButton = document.querySelector('.close-popup');
+		const popup = this.html.querySelector('.logout-popup');
+		const closePopupButton = this.html.querySelector('.close-popup');
 		if (!popup || !closePopupButton)
 			return ;
 		closePopupButton.addEventListener('click', () => {

@@ -260,7 +260,7 @@ export default class Page2FA extends HTMLElement {
 				const alertBefore  = this.html.querySelector(".alert");
 				if (alertBefore)
 					alertBefore.remove();
-				const insertElement = mainDiv.querySelector(".main-text");
+				const insertElement = mainDiv.querySelector(".option-2fa");
 				if (!insertElement)
 					return ;
 				let alertCard = document.createElement("div");
