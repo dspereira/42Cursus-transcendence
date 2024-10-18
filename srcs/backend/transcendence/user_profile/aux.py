@@ -56,6 +56,7 @@ def get_user_profile_data(user):
     image_url = get_image_url(user_profile)
     username = user.username
     user_profile_data = {
+        "id": user.id,
     	"username": username,
     	"bio": user_profile.bio,
     	"image_url": image_url,
