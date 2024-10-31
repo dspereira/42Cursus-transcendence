@@ -41,12 +41,12 @@ Before running the project, create a .env file in the root directory and populat
 
 Shell:
 ```shell
-touch srcs/.env
+touch .env
 ```
 
 PowerShell:
 ```shell
-New-Item -Path srcs/.env -ItemType File
+New-Item -Path .env -ItemType File
 ```
 
 ## License
