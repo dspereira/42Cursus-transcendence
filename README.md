@@ -49,6 +49,18 @@ PowerShell:
 New-Item -Path .env -ItemType File
 ```
 
+### Build:
+
+Shell:
+```shell
+make
+```
+
+PowerShell:
+```shell
+docker compose -f docker-compose.yml up -d --build
+```
+
 ## License
 
 This project is licensed under the [MIT License]().
