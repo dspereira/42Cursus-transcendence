@@ -3,7 +3,7 @@ from custom_utils.auth_utils import is_valid_username
 from custom_utils.models_utils import ModelManager
 from two_factor_auth.models import OtpUserOptions
 from user_profile.models import UserProfileInfo
-from user_profile.aux import get_image_url
+from user_profile.utils import get_image_url
 from user_auth.models import User
 from .models import UserSettings
 from io import BytesIO

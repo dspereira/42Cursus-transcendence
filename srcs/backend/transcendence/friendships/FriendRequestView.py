@@ -4,7 +4,7 @@ from user_profile.models import UserProfileInfo
 from friendships.models import FriendRequests
 from custom_decorators import login_required
 from custom_decorators import check_request_body
-from user_profile.aux import get_image_url
+from user_profile.utils import get_image_url
 from django.http import JsonResponse
 from user_auth.models import User
 from django.views import View

@@ -2,7 +2,7 @@ from friendships.models import FriendList, FriendRequests
 from custom_utils.models_utils import ModelManager
 from user_profile.models import UserProfileInfo
 from live_chat.models import ChatRoom
-from user_profile.aux import get_image_url
+from user_profile.utils import get_image_url
 from user_auth.models import User
 from django.db.models import Q
 

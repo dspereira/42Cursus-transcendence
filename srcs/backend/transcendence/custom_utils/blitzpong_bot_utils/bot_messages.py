@@ -2,7 +2,7 @@ from custom_utils.models_utils import ModelManager
 from live_chat.models import ChatRoom, Message
 from channels.layers import get_channel_layer
 from asgiref.sync import sync_to_async, async_to_sync
-from user_profile.aux import get_image_url
+from user_profile.utils import get_image_url
 from user_profile.models import UserProfileInfo
 from datetime import datetime
 from user_auth.models import User
