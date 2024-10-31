@@ -2,7 +2,7 @@
 
 Our application uses a **PostgreSQL** database to store user data, game information, tournament results and chat intofmation.
 
-<iframe width="560" height="315" src='https://dbdiagram.io/e/67238e8cb1b39dd85815854e/67238e9ab1b39dd85815872f'></iframe>
+![Untitled(5)](https://github.com/user-attachments/assets/86101a12-3ec8-4448-9640-603fe883b452)
 
 ## Table of Contents
 1. [User](#user)
@@ -17,7 +17,7 @@ There are a few main tables to consider in our application.
 
 ### User
 
-<iframe width="560" height="315" src='https://dbdiagram.io/e/67238e8cb1b39dd85815854e/67238e9ab1b39dd85815872f'> </iframe>
+![Untitled](https://github.com/user-attachments/assets/57f8e0af-2c71-4d71-a2e5-a4129db22cb8)
 
 When it comes to user-related data, we have a couple of main tables:
 
@@ -31,7 +31,7 @@ When it comes to user-related data, we have a couple of main tables:
 
 ### Friends
 
-<iframe width="560" height="315" src='https://dbdiagram.io/e/67238e8cb1b39dd85815854e/67238e9ab1b39dd85815872f'> </iframe>
+![Untitled(1)](https://github.com/user-attachments/assets/c33eacfa-15ac-4245-97db-ddb2c2f070b6)
 
 These tables are used to store all friend-related information, including:
 
@@ -40,7 +40,7 @@ These tables are used to store all friend-related information, including:
 
 ### Live Chat
 
-<iframe width="560" height="315" src='https://dbdiagram.io/e/67238e8cb1b39dd85815854e/67238e9ab1b39dd85815872f'> </iframe>
+![Untitled(2)](https://github.com/user-attachments/assets/f2d2f347-6157-4ce4-81d0-5d591aab2c75)
 
 Our application features a real-time chat system, and these are the tables responsible for it:
 
@@ -49,7 +49,7 @@ Our application features a real-time chat system, and these are the tables respo
 
 ### Games
 
-<iframe width="560" height="315" src='https://dbdiagram.io/e/67238e8cb1b39dd85815854e/67238e9ab1b39dd85815872f'> </iframe>
+![Untitled(3)](https://github.com/user-attachments/assets/5fd9fd85-9374-44df-8f97-03bc307a9a02)
 
 These are the tables responsible for storing game information:
 
@@ -58,7 +58,7 @@ These are the tables responsible for storing game information:
 
 ### Tournaments
 
-<iframe width="560" height="315" src='https://dbdiagram.io/e/67238e8cb1b39dd85815854e/67238e9ab1b39dd85815872f'> </iframe>
+![Untitled(4)](https://github.com/user-attachments/assets/7c7e0c5a-54a7-4dcb-811c-5884125e0dc6)
 
 These tables are responsible for storing tournament information:
 
