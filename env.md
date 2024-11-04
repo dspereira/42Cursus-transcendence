@@ -6,6 +6,7 @@ To ensure the project works correctly, we need to create a `.env` file.
 
 - [Template](#template)
 - [Variables](#variables)
+- [Cryptographer Keys](#cryptographer-keys)
 
 ## Template
 
@@ -40,22 +41,27 @@ CRYPTOGRAPHER_PUBLIC_KEY=[value]
 
 ## Variables
 
-- [DB_NAME](#db_name)
-- [DB_USER](#db_user)
-- [DB_PASS](#db_pass)
-- [DOMAIN](#domain)
-- [JWT_SECRET_KEY](#jwt_secret_key)
-- [EMAIL_HOST](#email_host)
-- [EMAIL_PORT](#email_port)
-- [EMAIL_USE_TLS](#email_use_tls)
-- [EMAIL_HOST_USER](#email_host_user)
-- [EMAIL_HOST_PASSWORD](#email_host_password)
-- [TWILIO_ACCOUNT_SID](#twilio_account_sid)
-- [TWILIO_AUTH_TOKEN](#twilio_auth_token)
-- [TWILIO_PHONE_NUMBER](#twilio_phone_number)
-- [BACKEND_DEBUG_MODE](#backend_debug_mode)
-- [CRYPTOGRAPHER_PRIVATE_KEY](#cryptographer_private_key)
-- [CRYPTOGRAPHER_PUBLIC_KEY](#cryptographer_public_key)
+- [ENV File](#env-file)
+  - [Table of Contents](#table-of-contents)
+  - [Template](#template)
+  - [Variables](#variables)
+    - [DB\_NAME](#db_name)
+    - [DB\_USER](#db_user)
+    - [DB\_PASS](#db_pass)
+    - [DOMAIN](#domain)
+    - [JWT\_SECRET\_KEY](#jwt_secret_key)
+    - [EMAIL\_HOST](#email_host)
+    - [EMAIL\_PORT](#email_port)
+    - [EMAIL\_USE\_TLS](#email_use_tls)
+    - [EMAIL\_HOST\_USER](#email_host_user)
+    - [EMAIL\_HOST\_PASSWORD](#email_host_password)
+    - [TWILIO\_ACCOUNT\_SID](#twilio_account_sid)
+    - [TWILIO\_AUTH\_TOKEN](#twilio_auth_token)
+    - [TWILIO\_PHONE\_NUMBER](#twilio_phone_number)
+    - [BACKEND\_DEBUG\_MODE](#backend_debug_mode)
+    - [CRYPTOGRAPHER\_PRIVATE\_KEY](#cryptographer_private_key)
+    - [CRYPTOGRAPHER\_PUBLIC\_KEY](#cryptographer_public_key)
+  - [Cryptographer Keys](#cryptographer-keys)
 
 ---
 
@@ -122,3 +128,15 @@ Specifies the private key used for cryptographic operations.
 ### CRYPTOGRAPHER_PUBLIC_KEY
 
 Specifies the public key used for cryptographic operations.
+
+## Cryptographer Keys
+
+**IMPORTANT:** Before generating the keys, ensure that you have created an `.env` file. If you haven't done so, please create it before proceeding.
+
+To generate the `CRYPTOGRAPHER_PRIVATE_KEY` and `CRYPTOGRAPHER_PUBLIC_KEY`, run the following command:
+
+```bash
+python3 generate_cryptographer_keys.py
+```
+
+After running the command, the keys will be added to your `.env` file and will be ready for use.
