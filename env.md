@@ -10,6 +10,7 @@ To ensure the project works correctly, we need to create a `.env` file.
   - [DB\_USER](#db_user)
   - [DB\_PASS](#db_pass)
   - [DOMAIN](#domain)
+  - [PORT](#port)
   - [JWT\_SECRET\_KEY](#jwt_secret_key)
   - [EMAIL\_HOST](#email_host)
   - [EMAIL\_PORT](#email_port)
