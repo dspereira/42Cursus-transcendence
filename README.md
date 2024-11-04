@@ -1,7 +1,7 @@
 # ft_transcendence
 
 ## Table of Content
-
+* [Video Showcases](#video-showcases)
 * [Installation / Usage](#installation--usage)
 * [License](#license)
 
@@ -19,13 +19,16 @@
 - [x] Multi language support
 - [x] Expanding Browser Compatibility
 
-## Examples
+## Video Showcases
+
+### Register/Login
 https://github.com/user-attachments/assets/b6433038-3eb9-46dc-8d08-fdc04155295f
 
+### Friendships/Chat/Games
 https://github.com/user-attachments/assets/e0450f30-1a60-464f-a25e-887bf9f038e8
 
+### Tournaments
 https://github.com/user-attachments/assets/c617ba59-7a98-489f-b513-617a737ac3ec
-
 
 ## Installation / Usage
 Here you will find instructions to start this project in `Shell` for Unix systems.
