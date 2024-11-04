@@ -38,7 +38,7 @@ git clone git@github.com:dspereira/42Cursus-transcendence.git transcendence && c
 ```
 
 ### Setting Up Environment Variables:
-Before running the project, create a .env file in the root directory and populate it with the required environment variables, following the [.env.template](https://github.com/dspereira/42Cursus-transcendence/blob/main/.env_template) as a guide.
+Before running the project, create a `.env` file in the root directory and fill it with the required environment variables, as outlined in this [documentation](https://github.com/dspereira/42Cursus-transcendence/blob/improve-readme/env.md).
 ```shell
 touch .env
 ```
