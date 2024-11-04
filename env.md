@@ -131,7 +131,7 @@ Specifies the public key used for cryptographic operations.
 
 ## Cryptographer Keys
 
-**IMPORTANT:** Before generating the keys, ensure that you have created an `.env` file. If you haven't done so, please create it before proceeding.
+**IMPORTANT:** Before generating the keys, ensure that you have created an `.env` file. If you haven't done so, please create it before proceeding. Make sure you do not have the variables `CRYPTOGRAPHER_PRIVATE_KEY` and `CRYPTOGRAPHER_PUBLIC_KEY` in the `.env` file
 
 To generate the `CRYPTOGRAPHER_PRIVATE_KEY` and `CRYPTOGRAPHER_PUBLIC_KEY`, run the following command:
 
