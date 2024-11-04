@@ -35,6 +35,7 @@ DB_USER=[value]
 DB_PASS=[value]
 
 DOMAIN=[value]
+PORT=[value]
 
 JWT_SECRET_KEY=[value]
 
@@ -73,6 +74,10 @@ Specifies the database host password.
 ### DOMAIN
 
 Specifies the domain of the application.
+
+### PORT
+
+Specifies the port of the application.
 
 ### JWT_SECRET_KEY
 
