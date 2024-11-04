@@ -50,8 +50,10 @@ def generate():
 	)
 
 	with open(env_file_path, 'a') as env_file:
-		env_file.write(f"CRYPTOGRAPHER_PRIVATE_KEY=\"{private_key_pem.decode('utf-8')}\"\n")
-		env_file.write(f"CRYPTOGRAPHER_PUBLIC_KEY=\"{public_key_pem.decode('utf-8')}\"\n")
+		key_priv = private_key_pem.decode('utf-8').replace('\n', '\\n')
+		key_pub = public_key_pem.decode('utf-8').replace('\n', '\\n')
+		env_file.write(f"\nCRYPTOGRAPHER_PRIVATE_KEY=\"{key_priv}\"\n")
+		env_file.write(f"\nCRYPTOGRAPHER_PUBLIC_KEY=\"{key_pub}\"\n")
 
 	if exist_already_cryptographer_keys(env_file_path):
 		print(f"{GREEN}CRYPTOGRAPHER KEYS created in .env file.{RESET}", file=sys.stdout)
