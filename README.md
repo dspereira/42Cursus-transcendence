@@ -23,7 +23,7 @@ The reverse proxy acts as a single entry point between our Docker services and t
 This container hosts a [Django](https://www.djangoproject.com/) application that serves a REST-like API to handle all frontend requests, processes them, and returns the appropriate responses. Acting as the main interface between the frontend and the database, it manages data retrieval, creation, and updates. This setup ensures efficient communication and a smooth data flow throughout the application.
 
 ### NGINX - SPA Server
-This container hosts a [NGINX](https://nginx.org/en/) server for host a static files of the spa. For this project was created a SPA Aplication in vanila JavaScript, using the [webcomponents](https://www.webcomponents.org/introduction) to create reusable components. All routing and history management are handled in vanilla JavaScript, which updates the main <div> with the appropriate page component. Each page component is built using custom components to minimize code repetition and enhance maintainability.
+This container hosts a [NGINX](https://nginx.org/en/) server for host a static files of the SPA. For this project was created a SPA Aplication in vanila JavaScript, using the [webcomponents](https://www.webcomponents.org/introduction) to create reusable components. All routing and history management are handled in vanilla JavaScript, which updates the main <div> with the appropriate page component. Each page component is built using custom components to minimize code repetition and enhance maintainability.
 
 ### Database
 For the complete database schemas and documentation, please see [here](https://github.com/dspereira/42Cursus-transcendence/blob/improve-readme/database.md).
