@@ -1,6 +1,7 @@
 # ft_transcendence
 
 ## Table of Content
+* [Application Architecture](#application-architecture)
 * [Video Showcases](#video-showcases)
 * [Installation / Usage](#installation--usage)
 * [License](#license)
@@ -18,6 +19,9 @@
 - [x] Database
 - [x] Multi language support
 - [x] Expanding Browser Compatibility
+
+## Application Architecture
+<img src="https://github.com/dspereira/42Cursus-transcendence/blob/improve-readme/architecture-schema.jpg" alt="Application Architecture" width="900"/>
 
 ## Video Showcases
 
