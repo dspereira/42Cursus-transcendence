@@ -1,5 +1,6 @@
 # ft_transcendence
-This project is an integral part of the 42Lisboa curriculum and aims to create a web application to permit users register/login
+This project is an integral part of the 42Lisboa curriculum and aims to create a web application that allows users to register, log in, add friends, chat, play Pong, and participate in tournaments.
+In this project, we have the flexibility to choose from multiple modules to build the application. Detailed information about each module is available in the project’s subject. Below, there is a section listing all the chosen [modules](#modules).
 
 For more info see the [subject](https://github.com/dspereira/42Cursus-transcendence/blob/improve-readme/en.subject.pdf).
 
@@ -7,27 +8,14 @@ For more info see the [subject](https://github.com/dspereira/42Cursus-transcende
 * [Application Architecture](#application-architecture)
 * [Video Showcases](#video-showcases)
 * [Installation / Usage](#installation--usage)
+* [Makefile Commands](#makefile-commands)
+* [Modules](#modules)
 * [License](#license)
-
-## Major Modules
-- [x] Django
-- [x] Standart user management
-- [x] Live Chat
-- [x] Implement Two-Factor Authentication (2FA) and JWT
-- [x] Remote players
-- [x] Server side pong - API
-
-## Minor Modules
-- [x] Bootstrap
-- [x] Database
-- [x] Multi language support
-- [x] Expanding Browser Compatibility
 
 ## Application Architecture
 <img src="https://github.com/dspereira/42Cursus-transcendence/blob/improve-readme/architecture-schema.jpg" alt="Application Architecture" width="900"/>
 
 ## Video Showcases
-
 ### Register/Login
 https://github.com/user-attachments/assets/b6433038-3eb9-46dc-8d08-fdc04155295f
 
@@ -91,6 +79,21 @@ Since we are using OpenSSL, your certificate is self-signed, which may trigger a
 - **`make nginx-it`**: Opens an interactive shell session in the Nginx container.
 - **`make backend-django-it`**: Opens an interactive shell session in the Django backend container.
 - **`make reverse-proxy-it`**: Opens an interactive shell session in the reverse proxy container.
+
+## Modules
+### Major Modules
+- [x] Django
+- [x] Standart user management
+- [x] Live Chat
+- [x] Implement Two-Factor Authentication (2FA) and JWT
+- [x] Remote players
+- [x] Server side pong - API
+
+### Minor Modules
+- [x] Bootstrap
+- [x] Database
+- [x] Multi language support
+- [x] Expanding Browser Compatibility
 
 ## License
 This project is licensed under the [MIT License]().
