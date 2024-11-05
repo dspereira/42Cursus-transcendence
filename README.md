@@ -15,16 +15,17 @@ For more info see the [subject](https://github.com/dspereira/42Cursus-transcende
 ## Application Architecture
 <img src="https://github.com/dspereira/42Cursus-transcendence/blob/improve-readme/architecture-schema.jpg" alt="Application Architecture" width="900"/>
 
-### Reverse Proxy
+### NGINX - Reverse Proxy
 This container operates an HTTP server powered by NGINX, serving as a Reverse Proxy. Its primary role is to handle incoming client requests, distributing them to the backend or frontend services as needed. This setup enhances security, and allows for centralized management of incoming traffic by forwarding requests to appropriate application servers based on predefined rules.
 The reverse proxy acts as a single entry point between our Docker services and the external network, facilitating secure and efficient communication.
 
 ### Django - API Server
 This container hosts a [Django](https://www.djangoproject.com/) application that serves a REST-like API to handle all frontend requests, processes them, and returns the appropriate responses. Acting as the main interface between the frontend and the database, it manages data retrieval, creation, and updates. This setup ensures efficient communication and a smooth data flow throughout the application.
 
+### NGINX - SPA Server
+
 ### Database
-
-
+For the complete database schemas and documentation, please see [here](https://github.com/dspereira/42Cursus-transcendence/blob/improve-readme/database.md).
 
 ## Video Showcases
 ### Register/Login
