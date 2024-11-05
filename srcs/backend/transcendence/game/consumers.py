@@ -3,7 +3,7 @@ from channels.generic.websocket import AsyncWebsocketConsumer
 from custom_utils.models_utils import ModelManager
 from user_profile.models import UserProfileInfo
 from channels.exceptions import StopConsumer
-from user_profile.aux import get_image_url
+from user_profile.utils import get_image_url
 from .models import Games, GameRequests
 from asgiref.sync import sync_to_async, async_to_sync
 from user_auth.models import User

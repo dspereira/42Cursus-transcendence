@@ -1,4 +1,4 @@
-from user_profile.aux import get_image_url, set_new_bio, set_new_username, set_new_default_seed, set_new_profile_picture
+from user_profile.utils import get_image_url, set_new_bio, set_new_username, set_new_default_seed, set_new_profile_picture
 from custom_decorators import accepted_methods, login_required
 from custom_utils.models_utils import ModelManager
 from user_profile.models import UserProfileInfo
@@ -10,7 +10,7 @@ import json
 from PIL import Image
 from io import BytesIO
 
-from .aux import get_user_profile_data
+from .utils import get_user_profile_data
 
 user_model = ModelManager(User)
 user_profile_info_model = ModelManager(UserProfileInfo)

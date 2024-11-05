@@ -5,7 +5,7 @@ from channels.generic.websocket import AsyncWebsocketConsumer
 from .models import ChatRoom, Message
 from user_auth.models import User
 from user_profile.models import UserProfileInfo
-from user_profile.aux import get_image_url
+from user_profile.utils import get_image_url
 from channels.exceptions import StopConsumer
 from .auth_utils import is_authenticated, get_authenticated_user
 from custom_utils.models_utils import ModelManager

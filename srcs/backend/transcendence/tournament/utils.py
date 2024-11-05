@@ -1,6 +1,6 @@
 from custom_utils.requests_utils import get_request_exp_time
 from custom_utils.models_utils import ModelManager
-from user_profile.aux import get_image_url
+from user_profile.utils import get_image_url
 from datetime import datetime
 from django.db.models import Q
 from asgiref.sync import async_to_sync
