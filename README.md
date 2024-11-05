@@ -10,6 +10,7 @@ For more info see the [subject](https://github.com/dspereira/42Cursus-transcende
 * [Installation / Usage](#installation--usage)
 * [Makefile Commands](#makefile-commands)
 * [Modules](#modules)
+* [Contributors](#contributors)
 * [License](#license)
 
 ## Application Architecture
@@ -108,5 +109,11 @@ Since we are using OpenSSL, your certificate is self-signed, which may trigger a
 - [x] Multi language support
 - [x] Expanding Browser Compatibility
 
+## Contributors
+- [Diogo Antunes](https://github.com/Diogo13Antunes)
+- [Diogo Pereira](https://github.com/dspereira)
+- [Pedro Martins](https://github.com/pcampos-42)
+- [Ricardo Lopes](https://github.com/Hanhuka)
+
 ## License
-This project is licensed under the [MIT License]().
+This project is licensed under the [MIT License](https://github.com/dspereira/42Cursus-transcendence/blob/main/LICENSE).
