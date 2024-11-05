@@ -110,10 +110,15 @@ Since we are using OpenSSL, your certificate is self-signed, which may trigger a
 - [x] Expanding Browser Compatibility
 
 ## Contributors
-- [Diogo Antunes](https://github.com/Diogo13Antunes)
-- [Diogo Pereira](https://github.com/dspereira)
-- [Pedro Martins](https://github.com/pcampos-42)
-- [Ricardo Lopes](https://github.com/Hanhuka)
+<table>
+  <tbody>
+    <tr>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/Diogo13Antunes"><img src="https://avatars.githubusercontent.com/u/87118740?v=4" width="100px;" alt="Diogo Antunes"/><br /><sub><b>Diogo Antunes</b></sub></a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/dspereira"><img src="https://avatars.githubusercontent.com/u/10051787?v=4" width="100px;" alt="Diogo Pereira"/><br /><sub><b>Diogo Pereira</b></sub></a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/pcampos-42"><img src="https://avatars.githubusercontent.com/u/87333918?v=4" width="100px;" alt="Pedro Martins"/><br /><sub><b>Pedro Martins</b></sub></a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/Hanhuka"><img src="https://avatars.githubusercontent.com/u/73935964?v=4" width="100px;" alt="Ricardo Lopes"/><br /><sub><b>Ricardo Lopes</b></sub></a></td>
+  </tbody>
+</table>
 
 ## License
 This project is licensed under the [MIT License](https://github.com/dspereira/42Cursus-transcendence/blob/main/LICENSE).
