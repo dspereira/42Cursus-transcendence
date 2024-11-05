@@ -2,7 +2,7 @@
 This project is an integral part of the 42Lisboa curriculum and aims to create a web application that allows users to register, log in, add friends, chat, play Pong, and participate in tournaments.
 In this project, we have the flexibility to choose from multiple modules to build the application. Detailed information about each module is available in the project’s subject. Below, there is a section listing all the chosen [modules](#modules).
 
-For more info see the [subject](https://github.com/dspereira/42Cursus-transcendence/blob/improve-readme/en.subject.pdf).
+For more info see the [subject](https://github.com/dspereira/42Cursus-transcendence/blob/main/en.subject.pdf).
 
 ## Table of Content
 * [Application Architecture](#application-architecture)
@@ -13,7 +13,7 @@ For more info see the [subject](https://github.com/dspereira/42Cursus-transcende
 * [License](#license)
 
 ## Application Architecture
-<img src="https://github.com/dspereira/42Cursus-transcendence/blob/improve-readme/architecture-schema.jpg" alt="Application Architecture" width="900"/>
+<img src="https://github.com/dspereira/42Cursus-transcendence/blob/main/architecture-schema.jpg" alt="Application Architecture" width="900"/>
 
 ### NGINX - Reverse Proxy
 This container operates an HTTP server powered by [NGINX](https://nginx.org/en/), serving as a Reverse Proxy. Its primary role is to handle incoming client requests, distributing them to the backend or frontend services as needed. This setup enhances security, and allows for centralized management of incoming traffic by forwarding requests to appropriate application servers based on predefined rules.
@@ -26,7 +26,7 @@ This container hosts a [Django](https://www.djangoproject.com/) application that
 This container hosts a [NGINX](https://nginx.org/en/) server for host a static files of the SPA. For this project was created a SPA Aplication in vanila JavaScript, using the [webcomponents](https://www.webcomponents.org/introduction) to create reusable components. All routing and history management are handled in vanilla JavaScript, which updates the main <div> with the appropriate page component. Each page component is built using custom components to minimize code repetition and enhance maintainability.
 
 ### Database
-For the complete database schemas and documentation, please see [here](https://github.com/dspereira/42Cursus-transcendence/blob/improve-readme/database.md).
+For the complete database schemas and documentation, please see [here](https://github.com/dspereira/42Cursus-transcendence/blob/main/database.md).
 
 ## Video Showcases
 ### Register/Login
@@ -49,7 +49,7 @@ git clone git@github.com:dspereira/42Cursus-transcendence.git transcendence && c
 ```
 
 ### Setting Up Environment Variables:
-Before running the project, create a `.env` file in the root directory and fill it with the required environment variables, as outlined in this [documentation](https://github.com/dspereira/42Cursus-transcendence/blob/improve-readme/env.md).
+Before running the project, create a `.env` file in the root directory and fill it with the required environment variables, as outlined in this [documentation](https://github.com/dspereira/42Cursus-transcendence/blob/main/env.md).
 ```shell
 touch .env
 ```
