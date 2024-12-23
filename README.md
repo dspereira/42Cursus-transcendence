@@ -67,6 +67,9 @@ You can access the app by navigating to `https://DOMAIN:PORT` (where `DOMAIN` an
 
 Since we are using OpenSSL, your certificate is self-signed, which may trigger a privacy and security warning in your browser. If this occurs, you will need to click on the option to "accept and continue" or a similar prompt, depending on the browser you are using.
 
+**⚠️ NOTE:**  
+> This app is fully compatible with the latest versions of Google Chrome and all Chromium-based browsers.
+
 ## Makefile Commands
 
 ### Docker Compose Setup and Management
