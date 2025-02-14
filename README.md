@@ -56,6 +56,8 @@ touch .env
 ```
 
 ### Build:
+**⚠️ NOTE:** 
+> You must run `make` with `sudo`.
 ```shell
 make
 ```
